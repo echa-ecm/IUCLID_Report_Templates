@@ -15,7 +15,7 @@ Updates to modules will be coordinated and monitored via the ECHA IUCLID team an
 # Governance
 To contribute to the updates, maintenance, and discussion of the common modules for reporting, you will need to join the IUCLID customisation forum.
 
-![Alt text](./customisation_forum_logo.jpg)
+![Alt text](https://dev.azure.com/MarkROBERTS0677/IUCLID-common-modules-ftl/_git/common-modules?path=%2Fcustomisation_forum_logo.jpg)
 
 > You can register directly from the forum’s [page](https://community.oecd.org/community/iuclidcustomisation)
 >> **_Important information_**: before making changes to the common modules which affects other users, ensure you have discussed and consulted these changes with the customisation forum.
