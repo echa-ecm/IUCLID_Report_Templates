@@ -3,7 +3,7 @@
 <#macro assessmentEntityTable _subject referenceSubstance>
 <#compress>
 	
-	<#assign aeList = studyandsummaryCom.assessmentEntities/>
+	<#assign aeList = studyandsummaryCom.assessmentEntities />
 	
 	<informaltable border="1">
 		<col width="35%" />
