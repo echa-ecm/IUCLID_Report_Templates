@@ -61,4 +61,3 @@ Git checkout <name of branch>
 
 # Current status (badge)
 [![Board Status](https://dev.azure.com/echa-ecm/8fd87d2f-4297-4bd5-b438-08eaa6ad1ff0/50047eca-0f52-43a3-ac58-fbcc622f051d/_apis/work/boardbadge/237ea8d0-b186-4e6c-9a12-a5b02a966f1d)](https://dev.azure.com/echa-ecm/8fd87d2f-4297-4bd5-b438-08eaa6ad1ff0/_boards/board/t/50047eca-0f52-43a3-ac58-fbcc622f051d/Microsoft.RequirementCategory/)
-
