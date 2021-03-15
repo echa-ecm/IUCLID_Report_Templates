@@ -1,5 +1,5 @@
 
-<!-- Nanoform information for substance composition -->
+<!-- Nanoform information for the substance composition -->
 <#macro nanoforms _subject>
 <#compress>
 
