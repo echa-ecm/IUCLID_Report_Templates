@@ -2,7 +2,7 @@
 <#macro activeSubstanceIdentity activeSubstances>
 <#compress>
 			
-		<!-- Active substance ID from ref substance -->
+		<!-- Active substance *ID from ref substance -->
 		<#assign referenceSubstance = iuclid.getDocumentForKey(activeSubstances.ReferenceSubstance.ReferenceSubstance) />			
 		<#if referenceSubstance?has_content>
 			<@com.emptyLine/>
