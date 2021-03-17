@@ -7116,12 +7116,22 @@
 	</#if>	
 
 	<para>
-		<#if documentID=="ENDPOINT_STUDY_RECORD.ExposureRelatedObservationsOther"> <#elseif documentID=="ENDPOINT_STUDY_RECORD.SensitisationData">Type of population: <#else><@com.picklistMultiple study.MaterialsAndMethods.Method.TypeOfPopulation/></#if>
+		<#if documentID=="ENDPOINT_STUDY_RECORD.ExposureRelatedObservationsOther">
+			<#-- placeholder -->
+		<#elseif documentID=="ENDPOINT_STUDY_RECORD.SensitisationData">
+			Type of population: <@com.picklistMultiple study.MaterialsAndMethods.Method.TypeOfPopulation/>
+		<#else>
+			<@com.picklistMultiple study.MaterialsAndMethods.Method.TypeOfPopulation/>
+		</#if>
 	</para>
 
 	<#if !(documentID=="ENDPOINT_STUDY_RECORD.SensitisationData")>
 		<para>
-			<#if documentID=="ENDPOINT_STUDY_RECORD.DirectObservationsClinicalCases">Subjects:<#else>Details on study design: <@com.text study.MaterialsAndMethods.Method.DetailsOnStudyDesign/></#if>
+			<#if documentID=="ENDPOINT_STUDY_RECORD.DirectObservationsClinicalCases">
+				Subjects: <@com.text study.MaterialsAndMethods.Method.Subjects/>
+			<#else>
+				Details on study design: <@com.text study.MaterialsAndMethods.Method.DetailsOnStudyDesign/>
+			</#if>
 		</para>
 
 		<para>
