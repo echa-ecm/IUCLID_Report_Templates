@@ -1183,8 +1183,9 @@
 						<td>
 							<#if com.picklistValueMatchesPhrases(study.AdministrativeData.Endpoint, ["eye irritation: in vitro / ex vivo"])>
 							<para>in vitro study</para>
-							<@nonHumanStudyMethod study/>
 							</#if>
+
+							<@nonHumanStudyMethod study/>
 						</td>
 						<!-- Results -->
 						<td>
@@ -2019,8 +2020,9 @@
 						<td>
 						<#if com.picklistValueMatchesPhrases(study.AdministrativeData.Endpoint, ["respiratory sensitisation: in vitro", "respiratory sensitisation: in chemico"])>
 							<para>in vitro study</para>							
-						<@nonHumanStudyMethod study />
 						</#if>
+
+						<@nonHumanStudyMethod study />
 						</td>
 						<!-- Results -->
 						<td>
