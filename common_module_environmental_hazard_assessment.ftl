@@ -2929,3 +2929,26 @@
 	</#if>
     <#return com.picklistValueMatchesPhrases(study.AdministrativeData.StudyResultType, ["experimental study planned.*"]) />
 </#function>
+
+
+<#---------------------------------------- PPP additions -------------------------------------------------------------------------->
+<#--Macro for general toxicity results, applicable to different document sub types-->
+<#macro results_envToxicity study>
+	<#compress>
+		<#if study.ResultsAndDiscussion.EffectConcentrations?has_content>
+			<para>Effect concentrations(${study.ResultsAndDiscussion.EffectConcentrations?node_type}):
+				<@effectList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectConcentrations) study/>
+			</para>
+		</#if>
+
+		<#list study.ResultsAndDiscussion?children as child>
+			<#if child?node_type?contains("multilingual_text") && !(child?node_type?contains("html")) >
+				<#if child?has_content>
+					<#assign childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+					<para>${childName}: <span role="indent"><@com.text child/></span></para>
+				</#if>
+			</#if>
+		</#list>
+
+	</#compress>
+</#macro>
