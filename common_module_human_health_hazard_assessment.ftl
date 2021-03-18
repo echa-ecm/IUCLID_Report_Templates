@@ -6294,7 +6294,7 @@
 	<#if TargetEffectRepeatableBlock?has_content>
 		<#list TargetEffectRepeatableBlock as blockItem>
 			<#local criticalEffectsObserved><@com.picklist blockItem.CriticalEffectsObserved/>></#local>
-			<#if criticalEffectsObserved?contains(".*yes.*")>
+			<#if criticalEffectsObserved?contains("yes")>
 			<para role="indent">
 				Target system / organ toxicity:
                 <?linebreak?>
@@ -6319,12 +6319,12 @@
 <#compress>
 	<#if InductionRepeatableBlock?has_content>
 		<#list InductionRepeatableBlock as blockItem>
-			<#if Endpoint?contains(".*skin sensitisation: in vivo (non-LLNA).*")>
+			<#if Endpoint?contains("skin sensitisation: in vivo (non-LLNA)")>
 				<para role="indent">
 					Induction: <@com.picklist blockItem.Route/>
 					Vehicle: <@com.picklist blockItem.Vehicle/>
 				</para>
-			<#elseif Endpoint?contains(".*skin sensitisation: in vivo (LLNA).*")>
+			<#elseif Endpoint?contains("skin sensitisation: in vivo (LLNA)")>
 	            <para role="indent">
 	                Vehicle: <@com.picklist blockItem.Vehicle/>
 				</para>
@@ -6336,7 +6336,7 @@
 
 <#--TODO The following two macros could be possible merged to one -->
 <#macro inVivoLLNAList inVivoLLNARepeatableBlock endPoint>
-	<#if !endPoint?contains(".*(LLNA).*")>
+	<#if !endPoint?contains("(LLNA)")>
 		<#return>
 	</#if>
 	<#compress>
@@ -6345,7 +6345,7 @@
 				<#local parameter>
 					<@com.picklist blockItem.Parameter />
 				</#local>
-				<#if parameter?contains(".*SI.*")>
+				<#if parameter?contains("SI")>
 					<#local prefix = "Stimulation index: " />
 				<#else>
 					<#local prefix = parameter + ": "/>
@@ -6358,7 +6358,7 @@
 	</#compress>
 </#macro>
 <#macro inVitroLLNAList inVivoLLNARepeatableBlock endPoint>
-	<#if !endPoint?contains(".*in vitro.*") && !endPoint?contains(".*in chemico.*")>
+	<#if !endPoint?contains("in vitro") && !endPoint?contains("in chemico")>
 		<#return>
 	</#if>
 	<#compress>
@@ -6380,7 +6380,7 @@
 </#macro>
 
 <#macro inVivoNonLLNAList inVivoNonLLNARepeatableBlock endPoint>
-	<#if endPoint?contains(".*non-LLNA.*")>
+	<#if endPoint?contains("non-LLNA")>
 		<#compress>
 		<#if inVivoNonLLNARepeatableBlock?has_content>
 			<#list inVivoNonLLNARepeatableBlock as blockItem>
@@ -7238,7 +7238,7 @@
 			${endpointData}
 		</para>
 
-		<#if !endpointData?contains(".*in vivo.*")>
+		<#if !endpointData?contains("in vivo")>
 			<para>in vitro study</para>
 		</#if>
 	</#if>
@@ -7293,14 +7293,14 @@
 
 	<#-- endpoint, induction, challenge -->
 	<#if documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
-		<#if endpointData?contains(".*skin sensitisation: in vivo (LLNA).*")>
+		<#if endpointData?contains("skin sensitisation: in vivo (LLNA)")>
 			<para>Local lymph node assay</para>
 		</#if>
 
 		<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.StudyDesignInVivoNonLLNA.Induction")>
 			<@InductionList study.MaterialsAndMethods.InVivoTestSystem.StudyDesignInVivoNonLLNA.Induction endpointData/>
 
-			<#elseif !endpointData?contains(".*skin sensitisation: in vivo (LLNA)") && !endpointData?contains(".*skin sensitisation:  in vitro.*")>
+			<#elseif !endpointData?contains("skin sensitisation: in vivo (LLNA)") && !endpointData?contains("skin sensitisation:  in vitro")>
 				<para>${endpointData}</para>
 		</#if>
 	
