@@ -689,10 +689,10 @@
 </#macro>
 
 <#--Macro to interatively print all children fields of an element-->
-<#macro children path>
+<#macro children path exclude=[]>
 	<#compress>
 		<#list path?children as child>
-			<#if child?node_type!="repeatable" && child?node_type!="block" && child?has_content>
+			<#if child?node_type!="repeatable" && child?node_type!="block" && !(exclude?seq_contains(child?node_name)) && child?has_content>
 				<#assign childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
 				<para>${childName}: <span role="indent"><@value child/></span></para>
 			</#if>
