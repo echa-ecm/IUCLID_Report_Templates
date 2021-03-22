@@ -7275,18 +7275,14 @@
         skinIrritation?has_content ||
         skinCorrosion?has_content ||
         documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity")>		
-        documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
-        skinIrritation?has_content ||
-        skinCorrosion?has_content ||
-        documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity")>		
 		<#if study.hasElement("MaterialsAndMethods.TestAnimals.Sex")>
 		<para>
-			com.picklist study.MaterialsAndMethods.TestAnimals.Sex/>
+			<@com.picklist study.MaterialsAndMethods.TestAnimals.Sex/>
 		</para>
 		</#if>
 		<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex")>
 		<para>
-			com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex/>
+			<@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex/>
 		</para>
 		</#if>
 
