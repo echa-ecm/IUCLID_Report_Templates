@@ -7249,10 +7249,10 @@
 	</#if>
 
 	<#-- species and strain -->
-	<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation")>
+	<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" || documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation")>
 		<para>
 			<#if study.hasElement("MaterialsAndMethods.TestAnimals.Species")>
-			<@com.picklist study.MaterialsAndMethods.TestAnimals.Species/> 
+			<@com.picklist study.MaterialsAndMethods.TestAnimals.Species/>
 			</#if>
 
 			<#if study.hasElement("MaterialsAndMethods.TestAnimals.Strain")>
@@ -7280,7 +7280,11 @@
 			<@com.picklist study.MaterialsAndMethods.TestAnimals.Sex/>
 		</para>
 		</#if>
-		
+		<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex")>
+		<para>
+			<@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex/>
+		</para>
+		</#if>
 
 		<#if documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
 			<para>
