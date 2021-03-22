@@ -58,6 +58,3 @@ Git checkout <name of branch>
 > When committing, type in a subject and description of the commit
 6. When finished working on the branch, create a pull request under ‘common_modules_ftls’ and include a title, description and reviewer for your pull request
 > The Reviewer may comment on your commits, and request or make, changes. When the pull request is approved, the changes will be merged to the main branch and will be part of the series of common modules
-
-# Current status (badge)
-[![Board Status](https://dev.azure.com/echa-ecm/8fd87d2f-4297-4bd5-b438-08eaa6ad1ff0/50047eca-0f52-43a3-ac58-fbcc622f051d/_apis/work/boardbadge/237ea8d0-b186-4e6c-9a12-a5b02a966f1d)](https://dev.azure.com/echa-ecm/8fd87d2f-4297-4bd5-b438-08eaa6ad1ff0/_boards/board/t/50047eca-0f52-43a3-ac58-fbcc622f051d/Microsoft.RequirementCategory/)

@@ -1223,7 +1223,7 @@
     <#return com.picklistValueMatchesPhrases(study.AdministrativeData.StudyResultType, ["experimental study planned.*"]) />
 </#function>
 
-<#-- Macros for PPP including new results -->
+<#-- Macros added for PPP including new results -->
 
 <#--1. Methods-->
 <#macro physchemMethod study>
@@ -1258,7 +1258,6 @@
 		<#if study.hasElement("TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed") && study.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed?has_content>
 			<para><emphasis role="bold">Titration of acidity / alkalinity: </emphasis><@com.text study.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed/></para>
 		</#if>
-
 
 	</#compress>
 </#macro>
@@ -1759,6 +1758,7 @@
 	</#compress>
 </#macro>
 
+
 <#macro phList phRepeatableBlock>
 	<#compress>
 		<#if phRepeatableBlock?has_content>
@@ -1895,6 +1895,8 @@
 		</#if>
 	</#compress>
 </#macro>
+
+
 
 <#macro dilutionStabilityList dilutionStabilityRepeatableBlock>
 	<#compress>
