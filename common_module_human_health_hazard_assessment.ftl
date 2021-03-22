@@ -7479,3 +7479,100 @@
 	<#assign returnList = iuclid.sortByField(returnList, "AdministrativeData.PurposeFlag", ["key study","supporting study","weight of evidence","disregarded due to major methodological deficiencies","other information"]) />
     <#return returnList />
 </#function>
+
+
+<#macro metabolitesTox mixture activeSubstance>
+	<#compress>
+
+		<#local metabCompList = iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_SUMMARY", "Metabolites") />
+		<#local metabList=[]/>
+
+	<#-- get list of metabolites-->
+		<#if metabCompList?has_content>
+
+			<#list metabCompList as metabComp>
+
+				<#local parentLink=metabComp.MetabolitesInfo.ParentOfMetabolites/>
+				<#if parentLink?has_content>
+					<#local parent=iuclid.getDocumentForKey(parentLink)/>
+					<#local asReference=iuclid.getDocumentForKey(activeSubstance.ReferenceSubstance.ReferenceSubstance)/>
+
+				<#-- Consider case where parent of metabolite is substance or reference substance-->
+					<#if (parent.documentType=="SUBSTANCE" && parent.documentKey.uuid==activeSubstance.documentKey.uuid) ||
+					(parent.documentType=="REFERENCE_SUBSTANCE" && parent.documentKey.uuid==asReference.documentKey.uuid)>
+						<#list metabComp.ListMetabolites.Metabolites as metabolite>
+							<#if metabolite.LinkMetaboliteDataset?has_content>
+								<#local metaboliteDataset=iuclid.getDocumentForKey(metabolite.LinkMetaboliteDataset)/>
+								<#if metaboliteDataset.documentType=="SUBSTANCE">
+									<#local metabList = com.addDocumentToSequenceAsUnique(metaboliteDataset, metabList)/>
+								</#if>
+							</#if>
+						</#list>
+					</#if>
+				</#if>
+			</#list>
+		</#if>
+
+	<#-- iterate over the list of metabolites and get all tox studies-->
+		<#if metabList?has_content>
+
+			<para>${metabList?size} metabolite dataset<#if metabList?size gt 1>s are<#else>is</#if> present for ${activeSubstance.ChemicalName}
+				<#if metabList?size gt 1>
+					:
+					<#list metabList as metab>
+						<command linkend="${metab.documentKey.uuid!}">${metab.ChemicalName}</command>
+						<#if metab_has_next><#if metab_index==(metabList?size-2)> and <#else>, </#if></#if>
+					</#list>
+				</#if>
+			</para>
+			<@com.emptyLine/>
+
+			<#list metabList as metab>
+
+				<sect3 xml:id="${metab.documentKey.uuid!}" role="NotInToc">
+					<title  role="HEAD-4" >Metabolite<#if metabList?size gt 1>#${metab_index+1}</#if>: ${metab.ChemicalName}</title>
+					<#--				<para xml:id="${metab.documentKey.uuid!}"><emphasis role="bold">Metabolite<#if metabList?size gt 1>#${metab_index+1}</#if>: ${metab.ChemicalName}</emphasis></para>-->
+					<@com.emptyLine/>
+
+					<#--Get all summaries: iterate over list and output one by one-->
+					<#local summaryDocNames=[
+					"Toxicokinetics","AcuteToxicity", "IrritationCorrosion", "Sensitisation","Phototoxicity"
+					,"RepeatedDoseToxicity", "GeneticToxicity","Carcinogenicity_EU_PPP", "ToxicityToReproduction_EU_PPP"
+					,"Neurotoxicity", "AdditionalToxicologicalInformation", "Immunotoxicity", "ToxicEffectsLivestockPets"
+					,"ExposureRelatedObservationsHumans", "DermalAbsorption", "SpecificInvestigationsOtherStudies"
+					,"ToxRefValues", "EndocrineDisruptingPropertiesAssessmentPest", "NonDietaryExpo"]/>
+					<#local summaryFirst=true/>
+					<#list summaryDocNames as summaryDocName>
+						<#local summary><@summarySingle metab summaryDocName "table"/></#local>
+						<#if summary?has_content>
+							<#if summaryFirst>
+								<#local summaryFirst=false/>
+								<para><emphasis role="HEAD-WoutNo">Summaries</emphasis></para>
+								<para>Summaries for toxicological studies on metabolite ${metab.ChemicalName} are provided below:</para>
+							</#if>
+							<#local summaryDocFullName=summaryDocName?replace("_EU_PPP", "")?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+							${summary?replace('<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>',
+							'<para>-- for <emphasis role="HEAD-WoutNo">${summaryDocFullName}</emphasis>:</para>')}
+						</#if>
+					</#list>
+
+					<@com.emptyLine/>
+
+					<#--Get all studies-->
+					<@keyAppendixE.appendixEstudies _subject=metab
+					docSubTypes=["BasicToxicokinetics", "AcuteToxicityOral", "AcuteToxicityDermal", "AcuteToxicityInhalation",
+					"SkinIrritationCorrosion","EyeIrritation","SkinSensitisation","PhototoxicityVitro",
+					"AcuteToxicityOtherRoutes", "RepeatedDoseToxicityOral", "RepeatedDoseToxicityInhalation",
+					"RepeatedDoseToxicityDermal", "RepeatedDoseToxicityOther", "GeneticToxicityVitro", "GeneticToxicityVivo",
+					"Carcinogenicity", "ToxicityReproduction", "ToxicityReproductionOther", "DevelopmentalToxicityTeratogenicity",
+					"Neurotoxicity", "Immunotoxicity", "ToxicEffectsLivestock","EndocrineDisrupterMammalianScreening",
+					"AdditionalToxicologicalInformation", "DermalAbsorption", "ExposureRelatedObservationsOther","SensitisationData",
+					"DirectObservationsClinicalCases","EpidemiologicalData","HealthSurveillanceData"]
+					name="toxicity of metabolite ${metab.ChemicalName}"/>
+
+					<#--NOTE: missing "IntermediateEffects"-->
+				</sect3>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
