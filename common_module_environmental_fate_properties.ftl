@@ -1,4 +1,3 @@
-
 <!-- 4. ENVIRONMENTAL FATE PROPERTIES template file -->
 
 <!-- General discussion of environmental fate and pathways -->
