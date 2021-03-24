@@ -13590,6 +13590,7 @@
 		<#if metabList?has_content>
 
 			<para>${metabList?size} metabolite dataset<#if metabList?size gt 1>s are<#else> is</#if> present for ${activeSubstance.ChemicalName}
+
 				<#if metabList?size gt 1>
 					:
 					<#list metabList as metab>
