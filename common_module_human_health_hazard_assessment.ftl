@@ -12265,7 +12265,7 @@
 
 			<#list resultStudyList as study>
 
-				<sect4 xml:id="${study.documentKey.uuid!}" label="/${study_index+1}"><title  role="HEAD-5" >${study.name}</title>
+				<sect4 xml:id="${study.documentKey.uuid!}" label="/${study_index+1}" role="NotInToc"><title  role="HEAD-5" >${study.name}</title>
 
 					<#--1. Header-->
 					<para><emphasis role="HEAD-WoutNo">1. Information on the study</emphasis></para>
@@ -12326,9 +12326,6 @@
 
 								<#if NoSId?has_content>
 									${NoSId}
-								<#-- NOTE: Remarks should contain the justification of no NoS_ID, but not safe to report automatically since it could contain other info-->
-								<#--<#elseif reference.GeneralInfo.Remarks?has_content>-->
-								<#--<@com.text reference.GeneralInfo.Remarks/>-->
 								</#if>
 							</td>
 						</tr>
@@ -12352,7 +12349,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Deviations from current test guideline (change): </emphasis></th>
+							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Deviations from current test guideline: </emphasis></th>
 							<td>
 								<#local deviations><@com.picklist study.MaterialsAndMethods.MethodUsed.Deviations/></#local>
 								<#if deviations?starts_with('yes')>${deviations}</#if>
@@ -12388,7 +12385,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">GLP/Officially recognised testing facilities (changed): </emphasis></th>
+							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">GLP/Officially recognised testing facilities: </emphasis></th>
 							<td><@com.picklist study.MaterialsAndMethods.MethodUsed.GLPCompliance/>
 								<?linebreak?>
 								<#if study.MaterialsAndMethods.MethodUsed.OtherQualityFollowed?has_content>
@@ -12423,8 +12420,8 @@
 					<#--4.Assessment and conclusion-->
 					<#local assess= study.ApplicantSSummaryAndConclusion/>
 					<para><emphasis role="HEAD-WoutNo">3. Assessment and conclusion </emphasis> </para>
-					<@com.emptyLine/>
-					<para><emphasis role="bold">a) Assessment and conclusion by applicant:</emphasis></para>
+					<#--					<@com.emptyLine/>-->
+					<#--					<para><emphasis role="bold">a) Assessment and conclusion by applicant:</emphasis></para>-->
 
 					<#if assess.ExecutiveSummary.ExecutiveSummary?has_content>
 						<@com.emptyLine/>
@@ -12460,9 +12457,9 @@
 						</para>
 					</#if>
 
-					<@com.emptyLine/>
+					<#--					<@com.emptyLine/>-->
 
-					<para><emphasis role="bold">b) Assessment and conclusion by RMS:</emphasis></para>
+					<#--					<para><emphasis role="bold">b) Assessment and conclusion by RMS:</emphasis></para>-->
 
 				</sect4>
 			</#list>
@@ -12541,7 +12538,7 @@
 
 	<#-- 1. Test material-->
 		<para>
-			<emphasis role="bold">Test material:</emphasis><?linebreak?>
+			<emphasis role="bold">Test material:</emphasis>
 			<span role="indent"><@studyandsummaryCom.testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/></span>
 
 			<#if study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy?has_content>
@@ -12577,7 +12574,7 @@
 		<para>
 			<emphasis role="bold">Detection method:</emphasis>
 			<#local det=study.MaterialsAndMethods.DetectionMethod/>
-			<span role="indent">
+			<para role="indent">
 				<#if det.DetectionMethodUsed?has_content>
 					<@com.picklist det.DetectionMethodUsed/>
 				</#if>
@@ -12585,7 +12582,7 @@
 					: <@com.text det.DetailsOnDetectionMethod/>
 				</#if>
 				.
-			</span>
+			</para>
 		</para>
 
 	<#-- 4. Test design -->
@@ -12593,68 +12590,62 @@
 		<para>
 			<emphasis role="bold">Study design:</emphasis>
 
-			<span role="indent">
+			<para role="indent">
 				Test material preparation:
-				<span role="indent2"><itemizedlist>
-					<#if des.TestMaterialPreparation.ConcentrationSelection?has_content>
-						<listitem>Concentration selection: <@com.picklist des.TestMaterialPreparation.ConcentrationSelection/>.</listitem>
-					</#if>
-						<#if des.TestMaterialPreparation.Vehicle?has_content>
-							<listitem>Vehicle / solvent: <@com.picklist des.TestMaterialPreparation.Vehicle/>.</listitem>
-						</#if>
-						<#if des.TestMaterialPreparation.DilutionStepsDoseIntervals?has_content>
-							<listitem>Dilution steps / dose intervals: <@com.text des.TestMaterialPreparation.DilutionStepsDoseIntervals/>.</listitem>
-						</#if>
-				</itemizedlist></span>
-			</span>
 
-			<span role="indent">
+				<#if des.TestMaterialPreparation.ConcentrationSelection?has_content>
+					<para role="indent2">Concentration selection: <@com.picklist des.TestMaterialPreparation.ConcentrationSelection/>.</para>
+				</#if>
+				<#if des.TestMaterialPreparation.Vehicle?has_content>
+					<para role="indent2">Vehicle / solvent: <@com.picklist des.TestMaterialPreparation.Vehicle/>.</para>
+				</#if>
+				<#if des.TestMaterialPreparation.DilutionStepsDoseIntervals?has_content>
+					<para role="indent2">Dilution steps / dose intervals: <@com.text des.TestMaterialPreparation.DilutionStepsDoseIntervals/>.</para>
+				</#if>
+
+			</para>
+
+			<para role="indent">
 				Control and reference items:
 				<#if des.ControlAndReferenceItems.ControlsReferenceItemsUsed?has_content>
 					<@com.picklist des.ControlAndReferenceItems.ControlsReferenceItemsUsed/>.
 				</#if>
 				<#if des.ControlAndReferenceItems.ControlsReferenceSubstances?has_content>
-					<span role="indent2"><itemizedlist>
-						<#list des.ControlAndReferenceItems.ControlsReferenceSubstances as ref>
-							<listitem>
-								<#if ref.TypeOfControls?has_content><@com.picklist ref.TypeOfControls/></#if>
-								<#if ref.ControlOrReferenceItemsUsed?has_content>: <@com.picklist ref.ControlOrReferenceItemsUsed/></#if>
-								<#if ref.Remarks?has_content> (<@com.text ref.Remarks/>)</#if>
-							</listitem>
-						</#list>
-					</itemizedlist></span>
+					<#list des.ControlAndReferenceItems.ControlsReferenceSubstances as ref>
+						<para role="indent2">
+							<#if ref.TypeOfControls?has_content><@com.picklist ref.TypeOfControls/></#if>
+							<#if ref.ControlOrReferenceItemsUsed?has_content>: <@com.picklist ref.ControlOrReferenceItemsUsed/></#if>
+							<#if ref.Remarks?has_content> (<@com.text ref.Remarks/>)</#if>
+						</para>
+					</#list>
 				</#if>
-			</span>
+			</para>
 
-			<span role="indent">
+			<para role="indent">
 				Experimental conditions:
-				<span role="indent2"><itemizedlist>
-					<#if des.ExperimentalConditions.NumberOfReplicates?has_content>
-						<listitem>No of replicates: <@com.text des.ExperimentalConditions.NumberOfReplicates/>.</listitem>
-					</#if>
-						<#if des.ExperimentalConditions.ExperimentalConditions?has_content>
-							<listitem>Conditions:<@com.text des.ExperimentalConditions.ExperimentalConditions/>.</listitem>
-						</#if>
-						<#if des.ExperimentalConditions.AdditionalAnalysis?has_content>
-							<listitem>Additional analysis: <@com.picklist des.ExperimentalConditions.AdditionalAnalysis/>.</listitem>
-						</#if>
-				</itemizedlist></span>
-			</span>
+				<#if des.ExperimentalConditions.NumberOfReplicates?has_content>
+					<para role="indent2">No of replicates: <@com.text des.ExperimentalConditions.NumberOfReplicates/>.</para>
+				</#if>
+				<#if des.ExperimentalConditions.ExperimentalConditions?has_content>
+					<para role="indent2">Conditions:<@com.text des.ExperimentalConditions.ExperimentalConditions/>.</para>
+				</#if>
+				<#if des.ExperimentalConditions.AdditionalAnalysis?has_content>
+					<para role="indent2">Additional analysis: <@com.picklist des.ExperimentalConditions.AdditionalAnalysis/>.</para>
+				</#if>
+			</para>
 
-			<span role="indent">
+			<para role="indent">
 				Data analysis:
-				<span role="indent2"><itemizedlist>
-					<#if des.DataAnalysis.AcceptanceCriteria?has_content>
-						<listitem>Acceptance criteria: <@com.text des.DataAnalysis.AcceptanceCriteria/>.</listitem>
-					</#if>
-						<#if des.DataAnalysis.DataCalculationAndStatistics?has_content>
-							<listitem>Data calculation and statistics:<@com.text des.DataAnalysis.DataCalculationAndStatistics/>.</listitem>
-						</#if>
-						<#if des.DataAnalysis.EvaluationDataInterpretationCriteria?has_content>
-							<listitem>Evaluation / data interpretation criteria: <@com.text des.DataAnalysis.EvaluationDataInterpretationCriteria/>.</listitem>
-						</#if>
-				</itemizedlist></span>
-			</span>
+				<#if des.DataAnalysis.AcceptanceCriteria?has_content>
+					<para role="indent2">Acceptance criteria: <@com.text des.DataAnalysis.AcceptanceCriteria/>.</para>
+				</#if>
+				<#if des.DataAnalysis.DataCalculationAndStatistics?has_content>
+					<para role="indent2">Data calculation and statistics:<@com.text des.DataAnalysis.DataCalculationAndStatistics/>.</para>
+				</#if>
+				<#if des.DataAnalysis.EvaluationDataInterpretationCriteria?has_content>
+					<para role="indent2">Evaluation / data interpretation criteria: <@com.text des.DataAnalysis.EvaluationDataInterpretationCriteria/>.</para>
+				</#if>
+			</para>
 		</para>
 
 	</#compress>
@@ -13441,7 +13432,7 @@
 				</#if>
 
 			<#--CSA value:todo
-                3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
+            3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
 				<#if docSubType=="ToxRefValues">
 					<para><emphasis role="bold">Toxicological reference values: </emphasis></para>
 					<@toxRefValuesTable summary/>
@@ -13469,7 +13460,7 @@
 							<#else>
 								<#local summarySeq = getSummarySeq(summary)/>
 							</#if>
-
+							<#local endpointsHash={}/>
 							<#list summarySeq as seqEntry>
 								<#if endpointsHash[seqEntry["name"]]??>
 									<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
@@ -13492,7 +13483,7 @@
 				</#if>
 
 			<#--Discussion-->
-				<#if summary.hasElement("Discussion") && summary.Discussion.Discussion?has_content>
+				<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
 					<para><emphasis role="bold">Discussion:</emphasis></para>
 					<para><@com.richText summary.Discussion.Discussion/></para>
 				</#if>
@@ -13558,7 +13549,6 @@
 				<#if value_has_next>
 					<?linebreak?>
 				</#if>
-
 			</#list>
 		</#if>
 	</#compress>
