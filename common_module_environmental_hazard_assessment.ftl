@@ -75,7 +75,7 @@
 						
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["LC50","LC0","LC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -238,7 +238,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","IC10"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -402,7 +402,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["EC50","IC50","LC50","EC0","IC0","LC0","EC100","LC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -567,7 +567,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","IC10"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -748,7 +748,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["EC50","IC50","NOEC","LOEC","EC10","IC10","EC20","IC20","EC0","IC0","EC100","IC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -788,7 +788,7 @@
 							<!-- Results -->
 							<td>
 								<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["EC50","IC50","NOEC","LOEC","EC10","IC10","EC20","IC20","EC0","IC0","EC100","IC100"]) />
-								<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+								<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 							</td>
 							<!-- Remarks -->
 							<td>
@@ -898,7 +898,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["EC50","IC50","NOEC","LOEC","EC10","IC10","EC20","IC20","EC0","IC0","EC100","IC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1072,7 +1072,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LOEC","EC10","LC10","LD10","EC50","LC50","LD50","EC0","LC0","LD0"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1184,7 +1184,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","IC10","LC10","EC50","IC50","LC50","EC0","IC0","LC0"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1322,7 +1322,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","LD10","EC50","LC50","LD50"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1366,7 +1366,7 @@
 								<!-- Results -->
 								<td>
 									<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","LD10","EC50","LC50","LD50"]) />
-									<@effectList sortedEffectList study/>
+									<@effectList sortedEffectList/>
 								</td>
 								<!-- Remarks -->
 								<td>
@@ -1480,7 +1480,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","LD10","EC50","LC50","LD50"]) />
-							<@effectList sortedEffectList study/>
+							<@effectList sortedEffectList/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1731,7 +1731,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","EC10","EC25","EC50","EC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1865,7 +1865,7 @@
 							<!-- Results -->
 							<td>
 								<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","IC10","EC50","IC50","EC0","IC0"]) />
-								<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+								<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
 							</td>
 							<!-- Remarks -->
 							<td>
@@ -2082,7 +2082,7 @@
 						</td>
 						<!-- Results -->
 						<td>
-							<@effectList study.ResultsAndDiscussion.EffectConcentrations study/>
+							<@effectList study.ResultsAndDiscussion.EffectConcentrations/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -2177,22 +2177,6 @@
 		</para>						
 		</#if>
 		
-		<!-- long-term toxicity to fish freshwater -->
-		<#if valueForCsaText=="valueForCsaTextLongTermToxicityToFishFreshwater">
-		<para>
-			<@com.emptyLine/>
-			${valueCsa}
-		</para>						
-		</#if>
-		
-		<!-- long-term toxicity to fish marine -->
-		<#if valueForCsaText=="valueForCsaTextLongTermToxicityToFishMarine">
-		<para>
-			<@com.emptyLine/>
-			${valueCsa}
-		</para>						
-		</#if>		
-		
 		<!-- long-term toxicity to aquatic invertebrates freshwater -->
 		<#if valueForCsaText=="valueForCsaTextLongTermToxicityToAquaticInvertebratesFreshwater">
 		<para>
@@ -2227,7 +2211,7 @@
 	</#if>
 </#macro>
 		
-<#macro effectList effectConcRepeatableBlock study>
+<#macro effectList effectConcRepeatableBlock>
 <#compress>
 	<#if effectConcRepeatableBlock?has_content>
 		<#list effectConcRepeatableBlock as blockItem>
@@ -2256,20 +2240,9 @@
 						(<@com.picklist blockItem.NominalMeasured/>)
 					</#if>
 					
-					<#local docDefId = study.documentType +"."+ study.documentSubType/>
-					<#if !(docDefId=="ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant")>
-						
-						<#if blockItem.BasisForEffect?has_content>
-							based on: <@com.picklist blockItem.BasisForEffect/>
-						</#if>
-						
-						<#elseif docDefId=="ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant">
-						
-							<#if blockItem.BasisForEffectMulti?has_content>
-							based on: <@com.picklistMultiple blockItem.BasisForEffectMulti/>
-							</#if>
+					<#if blockItem.BasisForEffect?has_content>
+						based on: <@com.picklist blockItem.BasisForEffect/>
 					</#if>
-					
 					
 					<#if blockItem.RemarksOnResults?has_content>
 						(<@com.picklist blockItem.RemarksOnResults/>)
@@ -2616,12 +2589,16 @@
 	</#if>
 	
 	<#list summaryList as summary>
-		<#if summary?has_content>
+		<#if isCSALongTermToxicityToAquaticInvertebrates(summary)>
 			<#local valuesCSA = valuesCSA + [summary]/>			
 		</#if>				
 	</#list>
 	
 	<#return valuesCSA />	
+</#function>
+<#function isCSALongTermToxicityToAquaticInvertebrates summary>
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
 </#function>
 
 <#function getValuesShortTermToxicityToAquaticInvertebrates summaryList>
@@ -2632,12 +2609,16 @@
 	</#if>
 	
 	<#list summaryList as summary>
-		<#if summary?has_content>
+		<#if isCSAShortTermToxicityToAquaticInvertebrates(summary)>
 			<#local valuesCSA = valuesCSA + [summary]/>			
 		</#if>				
 	</#list>
 	
 	<#return valuesCSA />	
+</#function>
+<#function isCSAShortTermToxicityToAquaticInvertebrates summary>
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
 </#function>
 
 <#function getValuesLongTermToxicityToFish summaryList>
@@ -2648,13 +2629,18 @@
 	</#if>
 	
 	<#list summaryList as summary>
-		<#if summary?has_content>
+		<#if isCSALongTermToxicityToFish(summary)>
 			<#local valuesCSA = valuesCSA + [summary]/>			
 		</#if>				
 	</#list>
 	
 	<#return valuesCSA />	
 </#function>
+<#function isCSALongTermToxicityToFish summary>
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
+</#function>
+
 
 <#function getValuesForToxicityToTerrestrialArthropods summaryList>
 	<#local valuesCSA = []/>
@@ -2707,12 +2693,16 @@
 	</#if>
 	
 	<#list summaryList as summary>
-		<#if summary?has_content>
+		<#if isCSAShortTermToxicityToFish(summary)>
 			<#local valuesCSA = valuesCSA + [summary]/>			
 		</#if>				
 	</#list>
 	
 	<#return valuesCSA />	
+</#function>
+<#function isCSAShortTermToxicityToFish summary>
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
+					summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
 </#function>
 
 <#function getValuesForToxicityToSoilMacroorganismsExceptArthropods summaryList>
