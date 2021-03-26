@@ -431,9 +431,9 @@
 
 			<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
 			
-			<#if summary.KeyValue.Bioaccumulation?has_content || 
-			summary.KeyValue.AbsorptionOral?has_content || 
-			summary.KeyValue.AbsorptionDerm?has_content || 
+			<#if summary.KeyValue.Bioaccumulation?has_content ||
+			summary.KeyValue.AbsorptionOral?has_content ||
+			summary.KeyValue.AbsorptionDerm?has_content ||
 			summary.KeyValue.AbsorptionInhal?has_content>
 			
 				<@com.emptyLine/>
@@ -868,14 +868,14 @@
 
 		<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
 	   
-		<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content || 
+		<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content ||
 		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content>
 
 		<@com.emptyLine/>
@@ -1183,8 +1183,9 @@
 						<td>
 							<#if com.picklistValueMatchesPhrases(study.AdministrativeData.Endpoint, ["eye irritation: in vitro / ex vivo"])>
 							<para>in vitro study</para>
-							<@nonHumanStudyMethod study/>
 							</#if>
+
+							<@nonHumanStudyMethod study/>
 						</td>
 						<!-- Results -->
 						<td>
@@ -1485,8 +1486,8 @@
 
 			<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.EndpointConclusion.EndpointConclusion?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.EndpointConclusion.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.RespiratoryIrritation.EndpointConclusion.EndpointConclusion?has_content>
 			<@com.emptyLine/>
 			<para><emphasis role="bold">Value used for CSA:</emphasis></para>
@@ -2019,8 +2020,9 @@
 						<td>
 						<#if com.picklistValueMatchesPhrases(study.AdministrativeData.Endpoint, ["respiratory sensitisation: in vitro", "respiratory sensitisation: in chemico"])>
 							<para>in vitro study</para>							
-						<@nonHumanStudyMethod study />
 						</#if>
+
+						<@nonHumanStudyMethod study />
 						</td>
 						<!-- Results -->
 						<td>
@@ -2720,13 +2722,13 @@
 		</#if>
 		<@com.emptyLine/>
 		
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Species?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Organ?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Species?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Species?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Organ?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Species?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Organ?has_content>
 							
 				<@studyandsummaryCom.summaryKeyInformation summary/>
@@ -2762,10 +2764,10 @@
 							
 			<@endpointSummary summary valueForCsaTextOralSystemic "valueForCsaTextOralSystemic" printSummaryName/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Species?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Species?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Organ?has_content>
 			
 			<#assign valueForCsaTextInhalationSystemic>
@@ -2794,9 +2796,9 @@
 			
 			<@endpointSummary summary valueForCsaTextInhalationSystemic "valueForCsaTextInhalationSystemic" printSummaryName/>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelValue?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.Species?has_content>
 			
 			<#assign valueForCsaTextInhalationLocal>                    
@@ -2820,9 +2822,9 @@
 			
 			<@endpointSummary summary valueForCsaTextInhalationLocal "valueForCsaTextInhalationLocal" printSummaryName/>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelValue?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.Species?has_content>
 			
 			<#assign valueForCsaTextDermalSystemic>
@@ -2849,9 +2851,9 @@
 			
 			<@endpointSummary summary valueForCsaTextDermalSystemic "valueForCsaTextDermalSystemic" printSummaryName/>				
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelValue?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.Species?has_content>
 			
 			<#assign valueForCsaTextDermalLocal>
@@ -3670,10 +3672,10 @@
 				<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>			
 			
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content ||					
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.TestType?has_content || 
+				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.TestType?has_content ||
 				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.Species?has_content ||
 				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.Organ?has_content>
 				
@@ -3702,10 +3704,10 @@
 				</#if>		
 				<@endpointSummary summary valueForCsaTextOralCacrinogenicity "valueForCsaTextOralCacrinogenicity" printSummaryName/>
 								
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content ||					
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.TestType?has_content || 
+				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.TestType?has_content ||
 				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.Species?has_content ||
 				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.Organ?has_content>
 				
@@ -3731,10 +3733,10 @@
 				</#if>		
 				<@endpointSummary summary valueForCsaTextDermalCarcinogenicity "valueForCsaTextDermalCarcinogenicity" false/>
 	
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content ||					
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.TestType?has_content || 
+				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.TestType?has_content ||
 				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.Species?has_content ||
 				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.Organ?has_content>
 				
@@ -4336,10 +4338,10 @@
 				</para>
 			</#if>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species?has_content || 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.ExperimentalExposureTimePerWeek?has_content>
 			
 				<#assign valueForCsaTextOralFertilityEffects>
@@ -4363,8 +4365,8 @@
 			</#if>
 			<@endpointSummary summary valueForCsaTextOralFertilityEffects "valueForCsaTextOralFertilityEffects" printSummaryName/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species?has_content>
 			<#assign valueForCsaTextDermalEffectsOnFertility>
@@ -4389,9 +4391,9 @@
 			</#if>
 			<@endpointSummary summary valueForCsaTextDermalEffectsOnFertility "valueForCsaTextDermalEffectsOnFertility" false/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EndpointConclusion?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit?has_content || 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species?has_content>
 			<#assign valueForCsaTextInhalationEffectsOnFertility>
@@ -4450,9 +4452,9 @@
 			</para>
 
 			<emphasis role="underline">Effect on developmental toxicity - development (via oral route)</emphasis>	
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit?has_content || 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species?has_content>
 			
@@ -4477,7 +4479,7 @@
 			<@endpointSummary summary valueForCsaTextOralDevelopmentalToxicity "valueForCsaTextOralDevelopmentalToxicity" false/>
 			
 			<emphasis role="underline">Effect on developmental toxicity - development (via dermal route)</emphasis>
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelUnit?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species?has_content>
@@ -4499,7 +4501,7 @@
 			<@endpointSummary summary valueForCsaTextDermalDevelopmentToxicity "valueForCsaTextDermalDevelopmentToxicity" false/>
 			
 			<emphasis role="underline">Effect on developmental toxicity - development (via inhalation route)</emphasis>
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EndpointConclusion?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species?has_content>
@@ -5180,10 +5182,10 @@
 			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.TestType?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.Species?has_content>
 				<#assign valueForCsaTextOralNeurotoxicity>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content>
@@ -5205,10 +5207,10 @@
 			</#if>
 			<@endpointSummary summary valueForCsaTextOralNeurotoxicity "valueForCsaTextOralNeurotoxicity" printSummaryName/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.TestType?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.Species?has_content>
 				<#assign valueForCsaTextDermalNeurotoxicity>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content>
@@ -5231,10 +5233,10 @@
 			</#if>			
 			<@endpointSummary summary valueForCsaTextDermalNeurotoxicity "valueForCsaTextDermalNeurotoxicity" false/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.TestType?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.Species?has_content>
 				<#assign valueForCsaTextInhalationNeurotoxicity>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content>
@@ -5297,10 +5299,10 @@
 			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.TestType?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.Species?has_content>
 			
 				<#assign valueForCsaTextOralImmunotoxicity>
@@ -5324,10 +5326,10 @@
 			</#if>			
 			<@endpointSummary summary valueForCsaTextOralImmunotoxicity "valueForCsaTextOralImmunotoxicity" false/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.TestType?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.Species?has_content>
 				<#assign valueForCsaTextDermalImmunotoxicity>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content>
@@ -5350,10 +5352,10 @@
 			</#if>				
 			<@endpointSummary summary valueForCsaTextDermalImmunotoxicity "valueForCsaTextDermalImmunotoxicity" false/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.TestType?has_content || 
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.TestType?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.Species?has_content>
 				<#assign valueForCsaTextInhalationImmunotoxicity>				
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content>
@@ -6175,7 +6177,7 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: added basis-->
+
 <#macro EffectLevelsMatAbnormalitiesList EffectsMaternalRepeatableBlock>
 <#compress>
 	<#if EffectsMaternalRepeatableBlock?has_content>
@@ -6188,13 +6190,8 @@
 					<@com.range blockItem.EffectLevel/>
 				</#if>
 				<#if blockItem.BasedOn?has_content>
-					<?linebreak?>based on: (<@com.picklist blockItem.BasedOn/>)
-				</#if>
-				<#if pppRelevant??>
-					<#if blockItem.Basis?has_content>
-						<?linebreak?>basis:<@com.picklistMultiple blockItem.Basis/>
-					</#if>
-				</#if>
+					based on: (<@com.picklist blockItem.BasedOn/>) 
+				</#if>	
 				<#if blockItem.RemarksOnResults?has_content>
 					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
@@ -6203,8 +6200,6 @@
   	</#if>
 </#compress>
 </#macro>
-
-<#--changed for PPP: added basis. NOTE: this is pretty much same as previous macro and very similar to others.-->
 <#macro EffectLevelsFetusesList EffectsFetusesRepeatableBlock>
 <#compress>
 	<#if EffectsFetusesRepeatableBlock?has_content>
@@ -6217,13 +6212,8 @@
 					<@com.range blockItem.EffectLevel/>
 				</#if>
 				<#if blockItem.BasedOn?has_content>
-					<?linebreak?>based on: (<@com.picklist blockItem.BasedOn/>)
-				</#if>
-				<#if pppRelevant??>
-					<#if blockItem.Basis?has_content>
-						<?linebreak?>basis: <@com.picklistMultiple blockItem.Basis/>
-					</#if>
-				</#if>
+					based on: (<@com.picklist blockItem.BasedOn/>) 
+				</#if>	
 				<#if blockItem.RemarksOnResults?has_content>
 					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
@@ -6232,7 +6222,6 @@
   	</#if>
 </#compress>
 </#macro>
-
 <#macro EffectLevelsExtendedList EffectsExtendedRepeatableBlock>
 <#compress>
 	<#if EffectsExtendedRepeatableBlock?has_content>
@@ -6248,13 +6237,13 @@
 					(<@com.picklist blockItem.Sex/>)
 				</#if>
 				<#if blockItem.BasedOn?has_content>
-					<?linebreak?>based on: (<@com.picklist blockItem.BasedOn/>)
+					based on: (<@com.picklist blockItem.BasedOn/>)
 				</#if>
 				<#if blockItem.Basis?has_content>
-					<?linebreak?><@com.picklistMultiple blockItem.Basis/>
+					<@com.picklistMultiple blockItem.Basis/>
 				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
-					<?linebreak?>(<@com.picklist blockItem.RemarksOnResults/>)
+					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 		</#list>
@@ -6262,7 +6251,6 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: exclude some conditions. NOTE: is the phrasing correct? e.g. effective dose conc and then system?. ALso, could be merged with below macro.-->
 <#macro TargetSystemOrganToxList TargetRepeatableBlock>
 <#compress>
 	<#if TargetRepeatableBlock?has_content>
@@ -6283,7 +6271,8 @@
 					</#if>
 				</#local>
 				<para role="indent">
-                    <#if !pppRelevant??><emphasis role="bold">Target system  / organ toxicity</emphasis><?linebreak?></#if>
+                    <emphasis role="bold">Target system  / organ toxicity</emphasis>
+                    <?linebreak?>
 					<#if blockItem.System?has_content>
 						Lowest effective dose /concentration: <@com.picklist blockItem.System/>
 					</#if>	
@@ -6300,48 +6289,24 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: added sections and exclude some conditions. NOTE: the ?contains statement DOES NOT WORK. Also, it could be merged with the above.-->
 <#macro TargetSystemOrganToxforEffectLevelsList TargetEffectRepeatableBlock>
 <#compress>
 	<#if TargetEffectRepeatableBlock?has_content>
 		<#list TargetEffectRepeatableBlock as blockItem>
-			<#local criticalEffectsObserved><@com.picklist blockItem.CriticalEffectsObserved/></#local>
-			<#if criticalEffectsObserved?contains(".*yes.*") || pppRelevant??>
+			<#local criticalEffectsObserved><@com.picklist blockItem.CriticalEffectsObserved/>></#local>
+			<#if criticalEffectsObserved?contains("yes")>
 			<para role="indent">
-				<#if !pppRelevant??>
-					Target system / organ toxicity:<?linebreak?><@com.quantity blockItem.LowestEffectiveDoseConc/>
-				<#else>
-					Critical effects observed: ${criticalEffectsObserved}
-					<#if blockItem.LowestEffectiveDoseConc?has_content><?linebreak?>Lowest effective dose/conc. = <@com.quantity blockItem.LowestEffectiveDoseConc/></#if>
-				</#if>
-
+				Target system / organ toxicity:
+                <?linebreak?>
+				<@com.quantity blockItem.LowestEffectiveDoseConc/>
 				<#if blockItem.System?has_content>
 					(on <@com.picklist blockItem.System/>
 				</#if>
 				<#if blockItem.Organ?has_content>
-					: <@com.picklistMultiple blockItem.Organ/>)
+					<@com.picklistMultiple blockItem.Organ/>)
 					<?linebreak?>
-				<#else>
+					<#else/>
 					)
-				</#if>
-
-				<#if !pppRelevant??>
-					<#local details=[]/>
-					<#if blockItem.TreatmentRelated?has_content>
-						<#local tr>treatment related: <@com.picklist blockItem.TreatmentRelated/></#local>
-						<#local details=details+[tr]/>
-					</#if>
-					<#if blockItem.DoseResponseRelationship?has_content>
-						<#local dr>dose-response relationship: <@com.picklist blockItem.DoseResponseRelationship/></#local>
-						<#local details=details+[dr]/>
-					</#if>
-					<#if blockItem.RelevantForHumans?has_content>
-						<#local hu>relevant for humans: <@com.picklist blockItem.RelevantForHumans/></#local>
-						<#local details=details+[hu]/>
-					</#if>
-					<#if details?has_content>
-						<?linebreak?>(${details?join("; ")})
-					</#if>
 				</#if>
 			</para>
 			</#if>
@@ -6354,12 +6319,12 @@
 <#compress>
 	<#if InductionRepeatableBlock?has_content>
 		<#list InductionRepeatableBlock as blockItem>
-			<#if Endpoint?contains(".*skin sensitisation: in vivo (non-LLNA).*")>
+			<#if Endpoint?contains("skin sensitisation: in vivo (non-LLNA)")>
 				<para role="indent">
 					Induction: <@com.picklist blockItem.Route/>
 					Vehicle: <@com.picklist blockItem.Vehicle/>
 				</para>
-			<#elseif Endpoint?contains(".*skin sensitisation: in vivo (LLNA).*")>
+			<#elseif Endpoint?contains("skin sensitisation: in vivo (LLNA)")>
 	            <para role="indent">
 	                Vehicle: <@com.picklist blockItem.Vehicle/>
 				</para>
@@ -6371,7 +6336,7 @@
 
 <#--TODO The following two macros could be possible merged to one -->
 <#macro inVivoLLNAList inVivoLLNARepeatableBlock endPoint>
-	<#if !endPoint?contains(".*(LLNA).*")>
+	<#if !endPoint?contains("(LLNA)")>
 		<#return>
 	</#if>
 	<#compress>
@@ -6380,7 +6345,7 @@
 				<#local parameter>
 					<@com.picklist blockItem.Parameter />
 				</#local>
-				<#if parameter?contains(".*SI.*")>
+				<#if parameter?contains("SI")>
 					<#local prefix = "Stimulation index: " />
 				<#else>
 					<#local prefix = parameter + ": "/>
@@ -6392,9 +6357,8 @@
   	</#if>
 	</#compress>
 </#macro>
-
 <#macro inVitroLLNAList inVivoLLNARepeatableBlock endPoint>
-	<#if !endPoint?contains(".*in vitro.*") && !endPoint?contains(".*in chemico.*")>
+	<#if !endPoint?contains("in vitro") && !endPoint?contains("in chemico")>
 		<#return>
 	</#if>
 	<#compress>
@@ -6416,7 +6380,7 @@
 </#macro>
 
 <#macro inVivoNonLLNAList inVivoNonLLNARepeatableBlock endPoint>
-	<#if endPoint?contains(".*non-LLNA.*")>
+	<#if endPoint?contains("non-LLNA")>
 		<#compress>
 		<#if inVivoNonLLNARepeatableBlock?has_content>
 			<#list inVivoNonLLNARepeatableBlock as blockItem>
@@ -6480,8 +6444,8 @@
 			<#local posContrValid><@com.picklist blockItem.PosContrValid/></#local>
 			<#if genotoxicity?has_content || organism?has_content || metActIndicator?has_content || cytotoxicity?has_content || vehContrValid?has_content || negContrValid?has_content || posContrValid?has_content >
 			<para role="indent">
-				<#if !pppRelevant??>Test results:<?linebreak?></#if>
-
+				Test results:
+				<?linebreak?>
 				${genotoxicity} for ${organism};
 				<?linebreak?>
 				met. act.: ${metActIndicator}
@@ -6584,16 +6548,14 @@
 				<@com.picklist blockItem.Endpoint/>
 				<#if blockItem.EffectLevel?has_content>
 					(P1): <@com.range blockItem.EffectLevel/>
-					<?linebreak?>
+				<?linebreak?>
 				</#if>				
-
 				<#if blockItem.Sex?has_content>
 					(<@com.picklist blockItem.Sex/>) 
 				</#if>	
-
 				<#if blockItem.Basis?has_content>
 					based on: <@com.picklistMultiple blockItem.Basis/>
-					<?linebreak?>
+				<?linebreak?>
 				</#if>
 				<@com.picklist blockItem.RemarksOnResults/>
 			</para>
@@ -6602,26 +6564,22 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: added generation-->
 <#macro FgenerationList FgenerationListRepeatableBlock>
 <#compress>
 	<#if FgenerationListRepeatableBlock?has_content>
 		<#list FgenerationListRepeatableBlock as blockItem>
 			<para role="indent">
-
-				<@com.picklist blockItem.Endpoint/>
-				<#if pppRelevant?? && blockItem.Generation?has_content>(<@com.picklist blockItem.Generation/>)</#if>
+				<@com.picklist blockItem.Endpoint/> 
 				<#if blockItem.EffectLevel?has_content>
 					: <@com.range blockItem.EffectLevel/>
-					<?linebreak?>
+				<?linebreak?>
 				</#if>
-
 				<#if blockItem.Sex?has_content>
-					(<@com.picklist blockItem.Sex/>)
+					(<@com.picklist blockItem.Sex/>) 
 				</#if>
 				<#if blockItem.Basis?has_content>
 					based on: <@com.picklistMultiple blockItem.Basis/>
-					<?linebreak?>
+				<?linebreak?>
 				</#if>
 				<@com.picklist blockItem.RemarksOnResults/>
 			</para>
@@ -6630,110 +6588,58 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: added block-->
 <#macro OverallReproductiveToxicityList ReproToxRepeatableBlock>
 <#compress>
 	<#if ReproToxRepeatableBlock?has_content>
 		<#list ReproToxRepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.ReproductiveEffectsObserved/> -
-				Lowest effective dose / concentration: <@com.quantity blockItem.LowestEffectiveDoseConc/>
+				<@com.picklist blockItem.ReproductiveEffectsObserved/>
+				Lowest effective dose / concentration <@com.quantity blockItem.LowestEffectiveDoseConc/>
 				<?linebreak?>
 				Relation to other toxic effects: <@com.picklist blockItem.RelationToOtherToxicEffects/>
-
-				<#if !pppRelevant??>
-					<#local details=[]/>
-					<#if blockItem.TreatmentRelated?has_content>
-						<#local tr>treatment related: <@com.picklist blockItem.TreatmentRelated/></#local>
-						<#local details=details+[tr]/>
-					</#if>
-					<#if blockItem.DoseResponseRelationship?has_content>
-						<#local dr>dose-response relationship: <@com.picklist blockItem.DoseResponseRelationship/></#local>
-						<#local details=details+[dr]/>
-					</#if>
-					<#if blockItem.RelevantForHumans?has_content>
-						<#local hu>relevant for humans: <@com.picklist blockItem.RelevantForHumans/></#local>
-						<#local details=details+[hu]/>
-					</#if>
-					<#if details?has_content>
-						<?linebreak?>(${details?join("; ")})
-					</#if>
-				</#if>
-
 			</para>
 		</#list>
   	</#if>
 </#compress>
 </#macro>
 
-<#--changed for PPP: added description-->
 <#macro MatAbnormalitiesList MatAbnormalitiesRepeatableBlock>
 <#compress>
 	<#if MatAbnormalitiesRepeatableBlock?has_content>
 		<#list MatAbnormalitiesRepeatableBlock as blockItem>
 			<para role="indent">
-				<#if !pppRelevant??>Maternal abnormalities </#if>
-				<@com.picklist blockItem.Abnormalities/>
+				Maternal abnormalities <@com.picklist blockItem.Abnormalities/>
 				<?linebreak?>
-				localisation: <@com.picklistMultiple blockItem.Localisation/>
-				<#if pppRelevant?? && blockItem.DescriptionIncidenceAndSeverity?has_content>
-					<?linebreak?>description: <@com.text blockItem.DescriptionIncidenceAndSeverity/>
-				</#if>
+				<@com.picklistMultiple blockItem.Localisation/>
 			</para>
 		</#list>
   	</#if>
 </#compress>
 </#macro>
 
-<#--changed for PPP: added description: this macro is basically same as above-->
 <#macro FetalAbnormalitiesList FetalAbnormalitiesRepeatableBlock>
 <#compress>
 	<#if FetalAbnormalitiesRepeatableBlock?has_content>
 		<#list FetalAbnormalitiesRepeatableBlock as blockItem>
 			<para role="indent">
-				<#if !pppRelevant??>Fetal abnormalities </#if>
-				<@com.picklist blockItem.Abnormalities/>
+				Fetal abnormalities <@com.picklist blockItem.Abnormalities/>
 				<?linebreak?>
-				localisation: <@com.picklistMultiple blockItem.Localisation/>
-				<#if pppRelevant?? && blockItem.DescriptionIncidenceAndSeverity?has_content>
-					<?linebreak?>description: <@com.text blockItem.DescriptionIncidenceAndSeverity/>
-				</#if>
+				<@com.picklistMultiple blockItem.Localisation/>
 			</para>
 		</#list>
   	</#if>
 </#compress>
 </#macro>
 
-<#--changed for PPP: added block. NOTE: very similar to OverallReproductiveToxicityList-->
 <#macro OverallDevToxList OverallDevToxRepeatableBlock>
 <#compress>
 	<#if OverallDevToxRepeatableBlock?has_content>
 		<#list OverallDevToxRepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.DevelopmentalEffectsObserved/> -
-				Lowest effective dose / concentration: <@com.quantity blockItem.LowestEffectiveDoseConc/>
+				<@com.picklist blockItem.DevelopmentalEffectsObserved/>
 				<?linebreak?>
+				Lowest effective dose / concentration: <@com.quantity blockItem.LowestEffectiveDoseConc/>
 				Relation to maternal toxicity: <@com.picklist blockItem.RelationToMaternalToxicity/>
-
-				<#if !pppRelevant??>
-					<#local details=[]/>
-					<#if blockItem.TreatmentRelated?has_content>
-						<#local tr>treatment related: <@com.picklist blockItem.TreatmentRelated/></#local>
-						<#local details=details+[tr]/>
-					</#if>
-					<#if blockItem.DoseResponseRelationship?has_content>
-						<#local dr>dose-response relationship: <@com.picklist blockItem.DoseResponseRelationship/></#local>
-						<#local details=details+[dr]/>
-					</#if>
-					<#if blockItem.RelevantForHumans?has_content>
-						<#local hu>relevant for humans: <@com.picklist blockItem.RelevantForHumans/></#local>
-						<#local details=details+[hu]/>
-					</#if>
-					<#if details?has_content>
-						<?linebreak?>(${details?join("; ")})
-					</#if>
-				</#if>
-
 			</para>
 		</#list>
   	</#if>
@@ -7203,50 +7109,56 @@
 <#-- Macros to separate documents into three lists: 'study results', 'data waiving', 'testing proposal' -->
 <#macro humanStudyMethod study>
 
-	<#local documentID = study.documentType +"."+ study.documentSubType />
-
-	<#if !pppRelevant??>
-		<#if study.hasElement("MaterialsAndMethods.StudyType")>
-			<para>
-				Study type: <@com.picklist study.MaterialsAndMethods.StudyType/>
-			</para>
-		</#if>
-
+<#local documentID = study.documentType +"."+ study.documentSubType />
+	
+	<#if study.hasElement("MaterialsAndMethods.StudyType")>
 		<para>
-			<#if documentID=="ENDPOINT_STUDY_RECORD.ExposureRelatedObservationsOther"> <#elseif documentID=="ENDPOINT_STUDY_RECORD.SensitisationData">Type of population: <#else><@com.picklistMultiple study.MaterialsAndMethods.Method.TypeOfPopulation/></#if>
+			Study type: <@com.picklist study.MaterialsAndMethods.StudyType/>
+		</para>
+	</#if>	
+
+	<para>
+		<#if documentID=="ENDPOINT_STUDY_RECORD.ExposureRelatedObservationsOther">
+			<#-- placeholder -->
+		<#elseif documentID=="ENDPOINT_STUDY_RECORD.SensitisationData">
+			Type of population: <@com.picklistMultiple study.MaterialsAndMethods.Method.TypeOfPopulation/>
+		<#else>
+			<@com.picklistMultiple study.MaterialsAndMethods.Method.TypeOfPopulation/>
+		</#if>
+	</para>
+
+	<#if !(documentID=="ENDPOINT_STUDY_RECORD.SensitisationData")>
+		<para>
+			<#if documentID=="ENDPOINT_STUDY_RECORD.DirectObservationsClinicalCases">
+				Subjects: <@com.text study.MaterialsAndMethods.Method.Subjects/>
+			<#else>
+				Details on study design: <@com.text study.MaterialsAndMethods.Method.DetailsOnStudyDesign/>
+			</#if>
 		</para>
 
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.SensitisationData")>
-			<para>
-				<#if documentID=="ENDPOINT_STUDY_RECORD.DirectObservationsClinicalCases">Subjects:<#else>Details on study design: <@com.text study.MaterialsAndMethods.Method.DetailsOnStudyDesign/></#if>
-			</para>
+		<para>
+			Endpoint addressed: <@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/>
+		</para>
+	</#if>
 
-			<para>
-				Endpoint addressed: <@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/>
-			</para>
-		</#if>
+	<#if documentID=="ENDPOINT_STUDY_RECORD.SensitisationData">
+	Subjects: <@com.text study.MaterialsAndMethods.Method.Subjects/>
+	</#if>
 
-		<#if documentID=="ENDPOINT_STUDY_RECORD.SensitisationData">
-		Subjects: <@com.text study.MaterialsAndMethods.Method.Subjects/>
-		</#if>
+		<para>
+			<#if study.hasElement("MaterialsAndMethods.TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
+				Study type: <@com.text study.MaterialsAndMethods.TypeOfStudyInformation/>
+			</#if>
+		</para>
 
-			<para>
-				<#if study.hasElement("MaterialsAndMethods.TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
-					Study type: <@com.text study.MaterialsAndMethods.TypeOfStudyInformation/>
-				</#if>
-			</para>
+		<para>
+			<@studyandsummaryCom.guidelineList study.MaterialsAndMethods.Guideline/>
+		</para>
 
-			<para>
-				<@studyandsummaryCom.guidelineList study.MaterialsAndMethods.Guideline/>
-			</para>
+		<para>
+		<@com.text study.MaterialsAndMethods.MethodNoGuideline/>
+		</para>
 
-			<para>
-			<@com.text study.MaterialsAndMethods.MethodNoGuideline/>
-			</para>
-		<#else>
-			<#--ideally this should be merged with the above-->
-			<@toxHumanMethodPPP study/>
-		</#if>
 </#macro>
 
 <#macro basicHumanStudyResults study>
@@ -7257,301 +7169,357 @@
 
 <#macro nonHumanStudyMethod study>
 
-	<#local documentID = study.documentType +"."+ study.documentSubType />
+<#local documentID = study.documentType +"."+ study.documentSubType />
 
-	<#local adminpath = "study." + "AdministrativeData.Endpoint" />
-	<#local pathAdmin = adminpath?eval />
+<#local adminpath = "study." + "AdministrativeData.Endpoint" />
+<#local pathAdmin = adminpath?eval />
 
-	<#local carcinoOralValue><#if com.picklistValueMatchesPhrases(pathAdmin, ["carcinogenicity: oral"])></#if></#local>
-	<#local carcinoInhalationValue><#if com.picklistValueMatchesPhrases(pathAdmin, ["carcinogenicity: inhalation"])></#if></#local>
-	<#local carcinoDermalValue><#if com.picklistValueMatchesPhrases(pathAdmin, ["carcinogenicity: dermal"])></#if></#local>
-	<#local carcinoOtherValue><#if com.picklistValueMatchesPhrases(pathAdmin, ["carcinogenicity, other"])></#if></#local>
+<#local carcinoOralValue><#if com.picklistValueMatchesPhrases(pathAdmin, ["carcinogenicity: oral"])></#if></#local>
+<#local carcinoInhalationValue><#if com.picklistValueMatchesPhrases(pathAdmin, ["carcinogenicity: inhalation"])></#if></#local>
+<#local carcinoDermalValue><#if com.picklistValueMatchesPhrases(pathAdmin, ["carcinogenicity: dermal"])></#if></#local>
+<#local carcinoOtherValue><#if com.picklistValueMatchesPhrases(pathAdmin, ["carcinogenicity, other"])></#if></#local>
 
-	<#assign skinIrritation = getSortedSkinIrritationNonHumanStudy(study, ["skin irritation: in vitro / ex vivo", "skin irritation: in vivo", "skin irritation / corrosion, other"] ) />
-	<#assign skinCorrosion = getSortedSkinCorrosionNonHumanStudy(study, ["skin corrosion: in vitro / ex vivo", "skin irritation / corrosion.*"]) />
+<#assign skinIrritation = getSortedSkinIrritationNonHumanStudy(study, ["skin irritation: in vitro / ex vivo", "skin irritation: in vivo", "skin irritation / corrosion, other"] ) />			
+<#assign skinCorrosion = getSortedSkinCorrosionNonHumanStudy(study, ["skin corrosion: in vitro / ex vivo", "skin irritation / corrosion.*"]) />			
 
-	<#if csrRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
+<#if csrRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
 
-	<#--	NOTE: PPP: interim solution - to be changed-->
-	<#if !pppRelevant??>
+	<#-- endpoint and method type -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations">
+		<para>
+			Endpoint addressed: <@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/>
+		</para>
 
-		<#-- endpoint and method type -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations">
+		<para>
+			Type of effects studied: ${endpointData} 
+			<#if study.MaterialsAndMethods.MethodType?has_content>
+				(<@com.picklist study.MaterialsAndMethods.MethodType/>)
+			</#if>
+		</para>
+	</#if>
+
+	<#-- type of assay and endpoint, species, test concentration, controls -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro">
+		<para>
+			<@com.picklist study.MaterialsAndMethods.TypeOfAssay/> 
+			<#if endpointData??>
+				(${endpointData})
+			</#if>
+		</para>
+
+		<para>
+		<@SpeciesStrainList study.MaterialsAndMethods.Method/>
+		</para>
+
+		<para>
+		Test concentrations: <@com.text study.MaterialsAndMethods.Method.TestConcentrationsWithJustificationForTopDose/>
+		</para>
+
+		<para>
+		<@ControlsList study.MaterialsAndMethods.Method.Controls/>
+		</para>
+	</#if>
+
+	<#-- study type -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo">	
+		<para>
+			<@com.picklist study.MaterialsAndMethods.Studytype/> 
+		</para>
+		
+	<#elseif documentID=="ENDPOINT_STUDY_RECORD.AdditionalToxicologicalInformation">
+		<para>
+			Study type: <@com.text study.MaterialsAndMethods.TypeOfStudyInformation/>
+		</para>
+	</#if>
+
+	<#-- endpoint -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" ||
+        documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption" ||
+        documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
+		<para>
+			${endpointData}
+		</para>
+
+		<#if !endpointData?contains("in vivo")>
+			<para>in vitro study</para>
+		</#if>
+	</#if>
+	
+	<#-- tissue studied -->
+	<#if skinCorrosion?has_content>
+	<para>Tissue studied: ${endpointData}</para>
+	</#if>
+
+	<#-- species and strain -->
+	<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" || documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation")>
+		<para>
+			<#if study.hasElement("MaterialsAndMethods.TestAnimals.Species")>
+			<@com.picklist study.MaterialsAndMethods.TestAnimals.Species/>
+			</#if>
+
+			<#if study.hasElement("MaterialsAndMethods.TestAnimals.Strain")>
+				(<@com.picklist study.MaterialsAndMethods.TestAnimals.Strain/>)
+			</#if>
+		</para>
+		<#elseif documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
+			<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Species")>
+				<para><@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Species/></para> 
+			</#if>
+			
+			<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Strain")>
+				<para>(<@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Strain/>)</para> 
+			</#if>
+	</#if>
+
+	<#-- sex, coverage and endpoint -->
+	<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" ||
+        documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
+        skinIrritation?has_content ||
+        skinCorrosion?has_content ||
+        documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity")>		
+		<#if study.hasElement("MaterialsAndMethods.TestAnimals.Sex")>
+		<para>
+			<@com.picklist study.MaterialsAndMethods.TestAnimals.Sex/>
+		</para>
+		</#if>
+		<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex")>
+		<para>
+			<@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex/>
+		</para>
+		</#if>
+
+		<#if documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
 			<para>
-				Endpoint addressed: <@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/>
-			</para>
-
-			<para>
-				Type of effects studied: ${endpointData}
-				<#if study.MaterialsAndMethods.MethodType?has_content>
-					(<@com.picklist study.MaterialsAndMethods.MethodType/>)
-				</#if>
+				Coverage (dermal absorption study): <@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfCoverage/>
 			</para>
 		</#if>
 
-		<#-- type of assay and endpoint, species, test concentration, controls -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro">
-			<para>
-				<@com.picklist study.MaterialsAndMethods.TypeOfAssay/>
-				<#if study.AdministrativeData.Endpoint?has_content>
-					(${endpointData})
-				</#if>
-			</para>
-
-			<para>
-			<@SpeciesStrainList study.MaterialsAndMethods.Method/>
-			</para>
-
-			<para>
-			Test concentrations: <@com.text study.MaterialsAndMethods.Method.TestConcentrationsWithJustificationForTopDose/>
-			</para>
-
-			<para>
-			<@ControlsList study.MaterialsAndMethods.Method.Controls/>
-			</para>
-		</#if>
-
-		<#-- study type -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo">
-			<para>
-				<@com.picklist study.MaterialsAndMethods.Studytype/>
-			</para>
-
-		<#elseif documentID=="ENDPOINT_STUDY_RECORD.AdditionalToxicologicalInformation">
-			<para>
-				Study type: <@com.text study.MaterialsAndMethods.TypeOfStudyInformation/>
-			</para>
-		</#if>
-
-		<#-- endpoint -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" || documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" || documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
+		<#if !(carcinoOtherValue?has_content ||
+          carcinoDermalValue?has_content ||
+          carcinoInhalationValue?has_content ||
+          carcinoOralValue?has_content ||
+          documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" ||
+          documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" ||
+          documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation" ||
+          documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes" ||
+          documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" ||
+          documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation" ||
+          documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral" ||
+          documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations" ||
+          documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetic" ||
+          documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption")>
 			<para>
 				${endpointData}
 			</para>
-
-			<#if !endpointData?contains(".*in vivo.*")>
-				<para>in vitro study</para>
-			</#if>
 		</#if>
-
-		<#-- tissue studied -->
-		<#if skinCorrosion?has_content>
-		<para>Tissue studied: ${endpointData}</para>
-		</#if>
-
-		<#-- species and strain -->
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation")>
-			<para>
-				<#if study.hasElement("MaterialsAndMethods.TestAnimals.Species")>
-				<@com.picklist study.MaterialsAndMethods.TestAnimals.Species/>
-				</#if>
-
-				<#if study.hasElement("MaterialsAndMethods.TestAnimals.Strain")>
-					(<@com.picklist study.MaterialsAndMethods.TestAnimals.Strain/>)
-				</#if>
-			</para>
-			<#elseif documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
-				<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Species")>
-					<para><@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Species/></para>
-				</#if>
-
-				<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Strain")>
-					<para>(<@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Strain/>)</para>
-				</#if>
-		</#if>
-
-		<#-- sex, coverage and endpoint -->
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation") || !(skinIrritation?has_content) || !(skinCorrosion?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity")>
-			<#if study.hasElement("MaterialsAndMethods.TestAnimals.Sex")>
-			<para>
-				<@com.picklist study.MaterialsAndMethods.TestAnimals.Sex/>
-			</para>
-			</#if>
-
-
-			<#if documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
-				<para>
-					Coverage (dermal absorption study): <@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfCoverage/>
-				</para>
-			</#if>
-
-			<#if !(carcinoOtherValue?has_content) || !(carcinoDermalValue?has_content) || !(carcinoInhalationValue?has_content) || !(carcinoOralValue?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo") || !(documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral") || !(documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations") || !(documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetic") || !(documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption")>
-				<para>
-					${endpointData}
-				</para>
-			</#if>
-		</#if>
-
-		<#-- endpoint, induction, challenge -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
-			<#if endpointData?contains(".*skin sensitisation: in vivo (LLNA).*")>
-				<para>Local lymph node assay</para>
-			</#if>
-
-			<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.StudyDesignInVivoNonLLNA.Induction")>
-				<@InductionList study.MaterialsAndMethods.InVivoTestSystem.StudyDesignInVivoNonLLNA.Induction endpointData/>
-
-				<#elseif !endpointData?contains(".*skin sensitisation: in vivo (LLNA)") && !endpointData?contains(".*skin sensitisation:  in vitro.*")>
-					<para>${endpointData}</para>
-			</#if>
-
-			<#elseif documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation">
-			<para>Local lymph node assay</para>
-
-			<para>
-				<#if study.MaterialsAndMethods.TestSystem.RouteOfInductionExposure?has_content>
-					Induction: <@com.picklist study.MaterialsAndMethods.TestSystem.RouteOfInductionExposure/>
-				</#if>
-			</para>
-
-			<para>
-				<#if study.MaterialsAndMethods.TestSystem.RouteOfChallengeExposure?has_content>
-					Challenge: <@com.picklist study.MaterialsAndMethods.TestSystem.RouteOfChallengeExposure/>
-				</#if>
-			</para>
-		</#if>
-
-		<#-- coverage -->
-		<#if skinIrritation?has_content>
-			Coverage: <@com.picklist study.MaterialsAndMethods.TestSystem.TypeOfCoverage/>
-			<#if study.MaterialsAndMethods.TestSystem.PreparationOfTestSite?has_content>
-				(<@com.picklist study.MaterialsAndMethods.TestSystem.PreparationOfTestSite/>)
-			</#if>
-
-		<#elseif documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal">
-			<para>
-				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfCoverage")>
-					Coverage: <@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfCoverage/>
-				</#if>
-			</para>
-		</#if>
-
-		<#-- route of administration and type of inhalation -->
-		<#if !(carcinoDermalValue?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal") || !(documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation") || !(skinIrritation?has_content) || !(skinCorrosion?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal")>
-		<para>
-			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.RouteOfAdministration")>
-			<@com.picklist study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration/>
-			</#if>
-
-			<#if documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation">
-				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposure")>
-					(<@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposure/>)
-				</#if>
-			</#if>
-		</para>
-		</#if>
-
-		<#--  type of inhalation -->
-		<#if !(carcinoOtherValue?has_content) || !(carcinoOralValue?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo") || !(documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOther") || !(documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityInhalation") || !(documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOral") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral") || !(documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics") || !(documentID=="ENDPOINT_STUDY_RECORD.Neurotoxicity") || !(documentID=="ENDPOINT_STUDY_RECORD.Immunotoxicity") || !(documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations")>
-			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposureIfApplicable")>
-				(<@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposureIfApplicable/>)
-			</#if>
-		</#if>
-
-		<#--  frequency of treatment exposure -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics">
-			<para>
-				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DurationAndFrequencyOfTreatmentExposure")>
-					Exposure regime: <@com.text study.MaterialsAndMethods.AdministrationExposure.DurationAndFrequencyOfTreatmentExposure/>
-				</#if>
-			</para>
-		</#if>
-
-		<#--  duration of exposure -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
-			<para>
-				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DurationOfExposure")>
-					<@com.text study.MaterialsAndMethods.AdministrationExposure.DurationOfExposure/>
-				</#if>
-			</para>
-		</#if>
-
-		<#-- doses ocncentration -->
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation") || !(skinIrritation?has_content) || !(skinCorrosion?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation")>
-			<#if !(documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption")>
-
-				<para>
-				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DosesConcentrations")>
-					<@DosesConcentrationsWithRemarksList study.MaterialsAndMethods.AdministrationExposure.DosesConcentrations/>
-				</#if>
-				</para>
-
-			<#elseif study.hasElement("MaterialsAndMethods.AdministrationExposure.Doses")>
-				<para>
-					Doses/conc.: <@com.text study.MaterialsAndMethods.AdministrationExposure.Doses/>
-				</para>
-
-			</#if>
-		</#if>
-
-		<#-- vehicle -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" || documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation">
-			<#if study.hasElement("MaterialsAndMethods.TestSystem.Vehicle")>
-			<para>
-				Vehicle: <@com.picklist study.MaterialsAndMethods.TestSystem.Vehicle/>
-			</para>
-
-			</#if>
-
-			<#elseif documentID=="ENDPOINT_STUDY_RECORD.Neurotoxicity" || documentID=="ENDPOINT_STUDY_RECORD.Immunotoxicity" || documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations" || documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOral" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityInhalation" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOther" || documentID=="ENDPOINT_STUDY_RECORD.Carcinogenicity" || documentID=="ENDPOINT_STUDY_RECORD.ToxicityReproduction" || documentID=="ENDPOINT_STUDY_RECORD.ToxicityReproductionOther" || documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity">
-				<para>
-					<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.Vehicle")>
-					Vehicle: <@com.picklist study.MaterialsAndMethods.AdministrationExposure.Vehicle/>
-					</#if>
-				</para>
-		</#if>
-
-		<#-- vehicle -->
-		<#if skinIrritation?has_content || skinCorrosion?has_content>
-			<para>
-				<#if study.MaterialsAndMethods.InVitroTestSystem.Vehicle?has_content>
-				Vehicle: <@com.picklist study.MaterialsAndMethods.InVitroTestSystem.Vehicle/>
-				</#if>
-			</para>
-		</#if>
-
-		<#-- duration of exposure, frequency of treatment, in vitro test system -->
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo") || !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation") || !(skinIrritation?has_content) || !(skinCorrosion?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral")>
-			<#if !(documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption") || !(documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics") >
-
-			<para>
-				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DurationOfTreatmentExposure")>
-				Exposure: <@com.text study.MaterialsAndMethods.AdministrationExposure.DurationOfTreatmentExposure/>
-				</#if>
-
-				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.FrequencyOfTreatment")>
-					(<@com.text study.MaterialsAndMethods.AdministrationExposure.FrequencyOfTreatment/>)
-				</#if>
-			</para>
-			<#else>
-				<para>
-					<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DetailsOnInVitroTestSystemIfApplicable")>
-					<@com.text study.MaterialsAndMethods.AdministrationExposure.DetailsOnInVitroTestSystemIfApplicable/>
-					</#if>
-				</para>
-			</#if>
-		</#if>
-
-		<#-- positive controls -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo">
-			<para>
-			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.PositiveControls")><@com.text study.MaterialsAndMethods.AdministrationExposure.PositiveControls/></#if>
-			</para>
-		</#if>
-
-		<#-- guideline followed -->
-		<para>
-			<@studyandsummaryCom.guidelineList study.MaterialsAndMethods.Guideline/>
-		</para>
-
-		<#-- method no. -->
-		<para>
-			<@com.text study.MaterialsAndMethods.MethodNoGuideline/>
-		</para>
-
-	<#else>
-		<@toxNonHumanMethodPPP study/>
 	</#if>
+
+	<#-- endpoint, induction, challenge -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
+		<#if endpointData?contains("skin sensitisation: in vivo (LLNA)")>
+			<para>Local lymph node assay</para>
+		</#if>
+
+		<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.StudyDesignInVivoNonLLNA.Induction")>
+			<@InductionList study.MaterialsAndMethods.InVivoTestSystem.StudyDesignInVivoNonLLNA.Induction endpointData/>
+
+			<#elseif !endpointData?contains("skin sensitisation: in vivo (LLNA)") && !endpointData?contains("skin sensitisation:  in vitro")>
+				<para>${endpointData}</para>
+		</#if>
+	
+		<#elseif documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation">
+		<para>Local lymph node assay</para>
+
+		<para>
+			<#if study.MaterialsAndMethods.TestSystem.RouteOfInductionExposure?has_content>
+				Induction: <@com.picklist study.MaterialsAndMethods.TestSystem.RouteOfInductionExposure/>
+			</#if>
+		</para>
+
+		<para>
+			<#if study.MaterialsAndMethods.TestSystem.RouteOfChallengeExposure?has_content>
+				Challenge: <@com.picklist study.MaterialsAndMethods.TestSystem.RouteOfChallengeExposure/>
+			</#if>
+		</para>
+	</#if>
+
+	<#-- coverage -->
+	<#if skinIrritation?has_content>
+		Coverage: <@com.picklist study.MaterialsAndMethods.TestSystem.TypeOfCoverage/> 
+		<#if study.MaterialsAndMethods.TestSystem.PreparationOfTestSite?has_content>
+			(<@com.picklist study.MaterialsAndMethods.TestSystem.PreparationOfTestSite/>)
+		</#if>
+
+	<#elseif documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal">
+		<para>
+			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfCoverage")>
+				Coverage: <@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfCoverage/>
+			</#if>
+		</para>
+	</#if>
+
+	<#-- route of administration and type of inhalation -->
+	<#if !(carcinoDermalValue?has_content ||
+        documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" ||
+        documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal" ||
+        documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
+        skinIrritation?has_content ||
+        skinCorrosion?has_content ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal")>
+	<para>
+		<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.RouteOfAdministration")>
+		<@com.picklist study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration/> 
+		</#if>
+
+		<#if documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation">
+			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposure")>
+				(<@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposure/>)
+			</#if>
+		</#if>
+	</para>
+	</#if>	
+	
+	<#--  type of inhalation -->
+	<#if !(carcinoOtherValue?has_content ||
+        carcinoOralValue?has_content ||
+        documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" ||
+        documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOther" ||
+        documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityInhalation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOral" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral" ||
+        documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" ||
+        documentID=="ENDPOINT_STUDY_RECORD.Neurotoxicity" ||
+        documentID=="ENDPOINT_STUDY_RECORD.Immunotoxicity" ||
+        documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations")>
+		<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposureIfApplicable")>
+			(<@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposureIfApplicable/>)
+		</#if>
+	</#if>
+
+	<#--  frequency of treatment exposure -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics">
+		<para>
+			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DurationAndFrequencyOfTreatmentExposure")>
+				Exposure regime: <@com.text study.MaterialsAndMethods.AdministrationExposure.DurationAndFrequencyOfTreatmentExposure/>
+			</#if>
+		</para>
+	</#if>
+
+	<#--  duration of exposure -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
+		<para>
+			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DurationOfExposure")>			
+				<@com.text study.MaterialsAndMethods.AdministrationExposure.DurationOfExposure/>
+			</#if>
+		</para>
+	</#if>
+
+	<#-- doses concentration -->
+	<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" ||
+        documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
+        skinIrritation?has_content ||
+        skinCorrosion?has_content ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation")>
+		<#if !(documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption")>
+		
+			<para>
+			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DosesConcentrations")>
+				<@DosesConcentrationsWithRemarksList study.MaterialsAndMethods.AdministrationExposure.DosesConcentrations/>
+			</#if>
+			</para>
+			
+		<#elseif study.hasElement("MaterialsAndMethods.AdministrationExposure.Doses")>
+			<para>
+				Doses/conc.: <@com.text study.MaterialsAndMethods.AdministrationExposure.Doses/>
+			</para>
+
+		</#if>
+	</#if>
+
+	<#-- vehicle -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" || documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation">
+		<#if study.hasElement("MaterialsAndMethods.TestSystem.Vehicle")>
+		<para>
+			Vehicle: <@com.picklist study.MaterialsAndMethods.TestSystem.Vehicle/>
+		</para>
+		
+		</#if>
+		
+		<#elseif documentID=="ENDPOINT_STUDY_RECORD.Neurotoxicity" || documentID=="ENDPOINT_STUDY_RECORD.Immunotoxicity" || documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations" || documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOral" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityInhalation" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOther" || documentID=="ENDPOINT_STUDY_RECORD.Carcinogenicity" || documentID=="ENDPOINT_STUDY_RECORD.ToxicityReproduction" || documentID=="ENDPOINT_STUDY_RECORD.ToxicityReproductionOther" || documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity"> 
+			<para>
+				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.Vehicle")>
+				Vehicle: <@com.picklist study.MaterialsAndMethods.AdministrationExposure.Vehicle/>
+				</#if>
+			</para>
+	</#if>
+
+	<#-- vehicle -->
+	<#if skinIrritation?has_content || skinCorrosion?has_content>
+		<para>
+			<#if study.MaterialsAndMethods.InVitroTestSystem.Vehicle?has_content>
+			Vehicle: <@com.picklist study.MaterialsAndMethods.InVitroTestSystem.Vehicle/>
+			</#if>
+		</para>
+	</#if>
+
+	<#-- duration of exposure, frequency of treatment, in vitro test system -->
+	<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" ||
+        documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" ||
+        documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
+        skinIrritation?has_content ||
+        skinCorrosion?has_content ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation" ||
+        documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral")>
+		<#if !(documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption") || !(documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics") >
+	
+		<para>
+			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DurationOfTreatmentExposure")>
+			Exposure: <@com.text study.MaterialsAndMethods.AdministrationExposure.DurationOfTreatmentExposure/> 
+			</#if>
+			
+			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.FrequencyOfTreatment")>
+				(<@com.text study.MaterialsAndMethods.AdministrationExposure.FrequencyOfTreatment/>)
+			</#if>
+		</para>
+		<#else>
+			<para>
+				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.DetailsOnInVitroTestSystemIfApplicable")>
+				<@com.text study.MaterialsAndMethods.AdministrationExposure.DetailsOnInVitroTestSystemIfApplicable/>
+				</#if>
+			</para>
+		</#if>
+	</#if>
+
+	<#-- positive controls -->
+	<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo">
+		<para>
+		<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.PositiveControls")><@com.text study.MaterialsAndMethods.AdministrationExposure.PositiveControls/></#if>
+		</para>
+	</#if>
+
+	<#-- guideline followed -->
+	<para>
+		<@studyandsummaryCom.guidelineList study.MaterialsAndMethods.Guideline/>
+	</para>
+
+	<#-- method no. -->
+	<para>
+		<@com.text study.MaterialsAndMethods.MethodNoGuideline/>
+	</para>			
+
 </#macro>
 
 <#function getSortedSkinIrritationNonHumanStudy study endpointValueList>
@@ -10570,7 +10538,8 @@
 	</#compress>
 </#macro>
 
-<#-------------------------------------PPP: additions------------------------------------------------------------->
+
+<#-------------------------------------PPP: additions-------------------------------------------------------------new>
 <#--1. Methods-->
 <#macro toxNonHumanMethodPPP study>
 	<#compress>
@@ -13650,4 +13619,3 @@
 		</#if>
 	</#compress>
 </#macro>
-
