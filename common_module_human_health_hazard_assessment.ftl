@@ -7233,13 +7233,7 @@
 	</#if>
 
 	<#-- endpoint -->
-<<<<<<< HEAD
-	<#if documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" ||
-        documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption" ||
-        documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
-=======
 	<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" || documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" || documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
->>>>>>> 98e3e02353f73a688fbc4a32b41f72fd95e17294
 		<para>
 			${endpointData}
 		</para>
@@ -7558,13 +7552,9 @@
     <#return returnList />
 </#function>
 
-<<<<<<< HEAD
 
 
 <#-------------------------------------PPP: additions-------------------------------------------------------------new>
-=======
-<#-------------------------------------PPP: additions------------------------------------------------------------->
->>>>>>> 98e3e02353f73a688fbc4a32b41f72fd95e17294
 <#--1. Methods-->
 <#macro toxNonHumanMethodPPP study>
 	<#compress>
