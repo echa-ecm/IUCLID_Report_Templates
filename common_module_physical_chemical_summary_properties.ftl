@@ -107,19 +107,12 @@
 			"infoReq" : "Stability in organic solvents and identity of relevant degradation products"},
 		"Storage stability and reactivity towards container material" :
 			{"subType" : "StorageStability",
-			"infoReq" : "Reactivity towards container material",
-			"pppName" : "Storage stability"},
+			"infoReq" : "Reactivity towards container material"},
 		"Stability: thermal, sunlight, metals" :
 			{"subType" : "StabilityThermal",
 			"infoReq" : "Thermal stability"},
 		"pH" :
-			<#--NOTE: missing checkbox-->
-			{"subType" : "pH",
-			"path" : "KeyValueForChemicalSafetyAssessment",
-			"values" : [{"type":"value", "field" : "pH", "preText" : "pH:"},
-						{"type": "value", "field" : "SolutionConcentration", "preText" : "Solution concentration: ", "postText":"%"},
-						{"type": "listValue", "field" : "Justification"}],
-			"pppName" : "acidity/alcalinity and pH value"},
+			{"subType" : "pH"},
 		"Dissociation constant" :
 			{"subType" : "Dissociation",
 			"path" : "KeyValueForChemicalSafetyAssessment",
@@ -149,29 +142,28 @@
 			"path" : "KeyValueForChemicalSafetyAssessment",
 			"values" : [{"type":"value", "field" : "HenrysLawConstant", "preText" : "Henry's Law Constant:", "atField" : "AtTheTemperatureOf", "postText" : "Pa m³/mol"}],
 			"infoReq" : "Volatility"},
+		<#--NOTE: Spectra has different structure, and no summary-->
+		<#-- "Spectra" :-->
+		<#-- {"subType" : "AnalyticalInformation",-->
+		<#-- "infoReq" : "Spectra, molar extinction, optical purity",-->
+		<#-- "pppName" : "Spectra (UV/VIS, IR, NMR, MS), molar extinction at relevant wavelengths, optical purity"}-->
 		"Other studies" :
 			{"subType" : "AdditionalPhysicoChemical",
 			"infoReq" : "Other studies"}
 	}/>
 
-	<#-- if for PPP, define list of properties to be used and their order-->
+	<#-- ACR: if for PPP, define list of properties to be used and their order-->
 	<#if pppRelevant??>
-		<#if _subject.documentType=="SUBSTANCE">
-			<#assign properties = ["Melting / freezing point", "Boiling point", "Vapour pressure", "Volatility", "Physical state", <#--"Spectra",-->
-			"Water solubility", "Solubility in organic solvents / fat solubility", "Partition coefficient n-octanol/water (log value)", "Dissociation constant",
-			"Flammability","Autoflammability / self-ignition temperature", "Flash point", "Explosive properties", "Surface tension", "Oxidising properties", "Other studies", "pH"]
-			/>
-		<#elseif _subject.documentType=="MIXTURE">
-			<#assign properties = ["Physical state", "Explosive properties", "Oxidising properties", "Flammability", "Autoflammability / self-ignition temperature", "Flash point",
-			"pH", "Viscosity", "Surface tension", "Relative density", "Storage stability and reactivity towards container material", "Stability: thermal, sunlight, metals", "Other studies" ]
-			/>
-		</#if>
+		<#assign properties = ["Melting / freezing point", "Boiling point", "Vapour pressure", "Volatility", "Physical state", <#--"Spectra",-->
+		"Water solubility", "Solubility in organic solvents / fat solubility", "Partition coefficient n-octanol/water (log value)", "Dissociation constant",
+		"Flammability","Autoflammability / self-ignition temperature", "Flash point", "Explosive properties", "Surface tension", "Oxidising properties", "Other studies"]
+		/>
 	<#else>
 		<#assign properties = propertyToDataMap?keys />
 	</#if>
 
 	<#if properties?has_content>
-	<#if pppRelevant??><para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary of physicochemical properties</emphasis></para></#if>
+	
 	<table border="1">
 		<title>Physicochemical properties</title>
 		<#if studyandsummaryCom.assessmentEntitiesExist && csrRelevant??>
@@ -179,6 +171,7 @@
 			<col width="34%" />
 			<col width="33%" />
 			<col width="15%" />
+		<#-- ACR: ADDED. It was missing and caused crashing if flags were true.-->
 		<#elseif darRelevant?? && rarRelevant??>
 			<#if pppRelevant??>
 				<col width="10%" />
@@ -205,7 +198,7 @@
 		<tbody>
 			<tr>
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
-				<#--new column for PPP-->
+				<#--ACR: new column for PPP-->
 				<#if pppRelevant??>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
 				</#if>
@@ -251,7 +244,7 @@
 							<#assign usespan = false />
 						</#if>
 
-						<#--added Link to individual studies-->
+						<#--ACR: added Link to individual studies-->
 						<#if pppRelevant??>
 							<td>
 								<#if summary.LinkToRelevantStudyRecord.Link?has_content>
@@ -444,7 +437,6 @@
 		<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "PhysicalChemicalProperties") />
 
 			<#if summaryList?has_content>
-				<@com.emptyLine/>
 				<para><emphasis role="HEAD-WoutNo">Discussion of physicochemical properties</emphasis></para>
 			</#if>
 
@@ -455,7 +447,6 @@
 					<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
 				</#list>
 			</#if>
-
 		</#compress>
 	</#macro>
 						
@@ -489,26 +480,17 @@ This allows an indeterminate number of values to be considered -->
 					<#-- preText -->
 					${value["preText"]!}
 
-					<#-- value
-					NOTE: the "type" field in the hashMap could be omitted and just use node_type for each case
-					e.g. picklist_single, picklist_multi...-->
+					<#-- value -->
 					<#if value["type"]=='listValue'>
 						<@com.picklist val />
 					<#elseif value["type"]=='mListValue'>
 						<@com.picklistMultiple  val />
 					<#elseif value["type"]=='value'>
-						<#if (val?node_type)=="decimal">
+						<#if val?is_number>
 							<@com.number val />
-						<#elseif (val?node_type)=="quantity">
+						<#else>
 							<@com.quantity val />
-						<#elseif (val?node_type)=="range">
-							<@com.range val />
 						</#if>
-<#--						<#if val?is_number>-->
-<#--							<@com.number val />-->
-<#--						<#else>-->
-<#--							<@com.quantity val />-->
-<#--						</#if>-->
 					</#if>
 
 					<#-- postText -->

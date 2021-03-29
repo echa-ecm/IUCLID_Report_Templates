@@ -1,4 +1,3 @@
-
 <!-- 4. ENVIRONMENTAL FATE PROPERTIES template file -->
 
 <!-- General discussion of environmental fate and pathways -->
@@ -1708,11 +1707,12 @@
 			<#local referenceSubstance = iuclid.getDocumentForKey(blockItem.ReferenceSubstance) />
 			<#if referenceSubstance?has_content>
 				<para role="indent">
-
 					<@com.picklist blockItem.No/> 
+
 						<#if referenceSubstance.ReferenceSubstanceName?has_content>						
 							<@com.referenceSubstanceName com.getReferenceSubstanceKey(blockItem.ReferenceSubstance) />						
 						</#if>
+
 				</para>
 			</#if>
 		</#list>

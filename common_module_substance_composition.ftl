@@ -270,12 +270,12 @@
 	<#return false />
 </#function>
 
-<#macro referenceSubstanceData referenceSubstanceKey>
+<#macro referenceSubstanceData referenceSubstanceKey >
 <#compress>
 	<#local refSubst = iuclid.getDocumentForKey(referenceSubstanceKey) />
 	<#if refSubst?has_content>
 		<@com.text refSubst.ReferenceSubstanceName/>
-		<para><@com.inventoryECNumber com.getReferenceSubstanceKey(referenceSubstanceKey)/></para>
+		EC no.: <@com.inventoryECNumber com.getReferenceSubstanceKey(referenceSubstanceKey)/>
   	</#if>
 </#compress>
 </#macro>
