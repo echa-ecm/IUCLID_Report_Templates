@@ -7232,9 +7232,10 @@
 	</#if>
 
 	<#-- endpoint -->
-	<#if documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" ||
-        documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption" ||
-        documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
+  <#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" ||
+       documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" ||
+       documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption" ||
+       documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
 		<para>
 			${endpointData}
 		</para>
