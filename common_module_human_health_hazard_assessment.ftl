@@ -1,4 +1,3 @@
-
 <!-- 5. HUMAN HEALTH HAZARD ASSESSMENT template file -->
 
 <!-- Summary Discussion of Toxicokinetics (absorption, metabolism, distribution and elimination) -->
@@ -13529,7 +13528,7 @@
 		<#local metabCompList = iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_SUMMARY", "Metabolites") />
 		<#local metabList=[]/>
 
-	<#-- get list of metabolites-->
+		<#-- get list of metabolites-->
 		<#if metabCompList?has_content>
 
 			<#list metabCompList as metabComp>
@@ -13555,7 +13554,7 @@
 			</#list>
 		</#if>
 
-	<#-- iterate over the list of metabolites and get all tox studies-->
+		<#-- iterate over the list of metabolites and get all tox studies-->
 		<#if metabList?has_content>
 
 			<para>${metabList?size} metabolite dataset<#if metabList?size gt 1>s are<#else> is</#if> present for ${activeSubstance.ChemicalName}
