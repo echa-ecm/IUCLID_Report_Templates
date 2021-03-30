@@ -7952,31 +7952,26 @@
 		</#if>
 
 		<#-- Details-->
-		<span role="indent">
-			<#if admExp.hasElement("DetailsOnStudyDesign") && admExp.DetailsOnStudyDesign?has_content>
-				Study design: <@com.text admExp.DetailsOnStudyDesign/>
-			</#if>
-		</span>
-		<span role="indent">
-			<#if admExp.hasElement("DetailsOnStudySchedule") && admExp.DetailsOnStudySchedule?has_content>
-				Study schedule: <@com.text admExp.DetailsOnStudySchedule/>
-			</#if>
-		</span>
-		<span role="indent">
-			<#if admExp.hasElement("DetailsOnDosingAndSampling") && admExp.DetailsOnDosingAndSampling?has_content>
-				Dosing / sampling: <@com.text admExp.DetailsOnDosingAndSampling/>
-			</#if>
-		</span>
-		<span role="indent">
-			<#if admExp.hasElement("DetailsOnInVitroTestSystemIfApplicable") && admExp.DetailsOnInVitroTestSystemIfApplicable?has_content>
-				In vitro test system: <@com.text admExp.DetailsOnInVitroTestSystemIfApplicable/>
-			</#if>
-		</span>
-		<span role="indent">
-			<#if admExp.hasElement("Statistics") && admExp.Statistics?has_content>
-				Statistics: <@com.text admExp.Statistics/>
-			</#if>
-		</span>
+		<#if admExp.hasElement("DetailsOnStudyDesign") && admExp.DetailsOnStudyDesign?has_content>
+			<span role="indent">Study design: <@com.text admExp.DetailsOnStudyDesign/></span>
+		</#if>
+
+		<#if admExp.hasElement("DetailsOnStudySchedule") && admExp.DetailsOnStudySchedule?has_content>
+			<span role="indent">Study schedule: <@com.text admExp.DetailsOnStudySchedule/></span>
+		</#if>
+
+		<#if admExp.hasElement("DetailsOnDosingAndSampling") && admExp.DetailsOnDosingAndSampling?has_content>
+			<span role="indent">Dosing / sampling: <@com.text admExp.DetailsOnDosingAndSampling/></span>
+		</#if>
+
+		<#if admExp.hasElement("DetailsOnInVitroTestSystemIfApplicable") && admExp.DetailsOnInVitroTestSystemIfApplicable?has_content>
+			<span role="indent">In vitro test system: <@com.text admExp.DetailsOnInVitroTestSystemIfApplicable/></span>
+		</#if>
+
+		<#if admExp.hasElement("Statistics") && admExp.Statistics?has_content>
+			<span role="indent">Statistics: <@com.text admExp.Statistics/></span>
+		</#if>
+
 	</#compress>
 </#macro>
 
