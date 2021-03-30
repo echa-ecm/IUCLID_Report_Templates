@@ -7939,7 +7939,10 @@
 		</#if>
 		<#if admExp.hasElement("ControlAnimal") && admExp.ControlAnimal?has_content>
 			<span role="indent">Control animals: <@com.picklist admExp.ControlAnimal/></span>
+		<#elseif admExp.hasElement("ControlAnimals") && admExp.ControlAnimals?has_content>
+			<span role="indent">Control animals: <@com.picklist admExp.ControlAnimals/></span>
 		</#if>
+
 		<#if admExp.hasElement("PositiveControl") && admExp.PositiveControl?has_content>
 			<span role="indent">Positive control: <@com.text admExp.PositiveControl/></span>
 		</#if>
