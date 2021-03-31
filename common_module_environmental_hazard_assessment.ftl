@@ -2240,21 +2240,21 @@
 						(<@com.picklist blockItem.NominalMeasured/>)
 					</#if>
 					
-					<#assign docIdToxPlant = "ENDPOINT_STUDY_RECORD" + "." + "ToxicityToAquaticPlant"/>
-
-					<#if docIdToxPlant??>
-					<#if blockItem.BasisForEffect?has_content>
-						based on: <@com.picklistMultiple blockItem.BasisForEffect/>
-					</#if>
-					<#else>
+					<#local docDefId = document.documentType +"."+ document.documentSubType />
+					<#if docDefId==ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant>
 						<#if blockItem.BasisForEffect?has_content>
-							based on: <@com.picklist blockItem.BasisForEffect/>
+							based on: <@com.picklistMultiple blockItem.BasisForEffect/>
 						</#if>
+						<#else>
+							<#if blockItem.BasisForEffect?has_content>
+								based on: <@com.picklist blockItem.BasisForEffect/>
+							</#if>
 					</#if>
 
 					<#if blockItem.RemarksOnResults?has_content>
 						(<@com.picklist blockItem.RemarksOnResults/>)
 					</#if>
+					
 				</para>
 			</#if>
 		</#list>
