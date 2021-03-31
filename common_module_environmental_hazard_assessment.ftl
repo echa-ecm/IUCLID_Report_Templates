@@ -2241,7 +2241,7 @@
 					</#if>
 					
 					<#if blockItem.BasisForEffect?has_content>
-						based on: <@com.picklist blockItem.BasisForEffect/>
+						based on: <@com.picklistMultiple blockItem.BasisForEffect/>
 					</#if>
 					
 					<#if blockItem.RemarksOnResults?has_content>
