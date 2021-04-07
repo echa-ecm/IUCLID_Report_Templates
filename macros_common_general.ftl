@@ -28,8 +28,20 @@
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
+	'relevant' : 'nzepa_classification',
 	'relevant' : 'generic'
 } />
+
+<#macro initiRelevanceForNZepaClassification relevance>
+	
+	<#global nzepaClassification = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign nzepaClassification><#if prop=="nzepa_classification"></#if></#assign>			
+		</#if>
+	</#list>
+</#macro>
 
 <#macro initiRelevanceForCSR relevance>
 	
