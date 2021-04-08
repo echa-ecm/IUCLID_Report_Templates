@@ -701,12 +701,21 @@
 </#macro>
 
 <#--Macro to interatively print all children fields of an element-->
-<#macro children path exclude=[]>
+<#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
 	<#compress>
 		<#list path?children as child>
 			<#if child?node_type!="repeatable" && child?node_type!="block" && !(exclude?seq_contains(child?node_name)) && child?has_content>
 				<#assign childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+
+				<para role="${role1}">
+					<#if titleEmphasis><emphasis role="bold"></#if>
+						${childName}:
+					<#if titleEmphasis></emphasis></#if>
+					<span role="${role2}"><@value child/></span>
+				</para>
+
 				<para>${childName}: <span role="indent"><@value child/></span></para>
+
 			</#if>
 		</#list>
 	</#compress>
