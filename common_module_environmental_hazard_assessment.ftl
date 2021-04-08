@@ -75,7 +75,7 @@
 						
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["LC50","LC0","LC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -238,7 +238,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","IC10"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -402,7 +402,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["EC50","IC50","LC50","EC0","IC0","LC0","EC100","LC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -567,7 +567,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","IC10"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -748,7 +748,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["EC50","IC50","NOEC","LOEC","EC10","IC10","EC20","IC20","EC0","IC0","EC100","IC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -788,7 +788,7 @@
 							<!-- Results -->
 							<td>
 								<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["EC50","IC50","NOEC","LOEC","EC10","IC10","EC20","IC20","EC0","IC0","EC100","IC100"]) />
-								<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+								<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 							</td>
 							<!-- Remarks -->
 							<td>
@@ -898,7 +898,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["EC50","IC50","NOEC","LOEC","EC10","IC10","EC20","IC20","EC0","IC0","EC100","IC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1072,7 +1072,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LOEC","EC10","LC10","LD10","EC50","LC50","LD50","EC0","LC0","LD0"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1184,7 +1184,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","IC10","LC10","EC50","IC50","LC50","EC0","IC0","LC0"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1322,7 +1322,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","LD10","EC50","LC50","LD50"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1366,7 +1366,7 @@
 								<!-- Results -->
 								<td>
 									<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","LD10","EC50","LC50","LD50"]) />
-									<@effectList sortedEffectList/>
+									<@effectList sortedEffectList study/>
 								</td>
 								<!-- Remarks -->
 								<td>
@@ -1480,7 +1480,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","LD10","EC50","LC50","LD50"]) />
-							<@effectList sortedEffectList/>
+							<@effectList sortedEffectList study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1731,7 +1731,7 @@
 						<!-- Results -->
 						<td>
 							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","EC10","EC25","EC50","EC100"]) />
-							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1865,7 +1865,7 @@
 							<!-- Results -->
 							<td>
 								<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","IC10","EC50","IC50","EC0","IC0"]) />
-								<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList)/>
+								<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
 							</td>
 							<!-- Remarks -->
 							<td>
@@ -2082,7 +2082,7 @@
 						</td>
 						<!-- Results -->
 						<td>
-							<@effectList study.ResultsAndDiscussion.EffectConcentrations/>
+							<@effectList study.ResultsAndDiscussion.EffectConcentrations study/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -2211,7 +2211,7 @@
 	</#if>
 </#macro>
 		
-<#macro effectList effectConcRepeatableBlock>
+<#macro effectList effectConcRepeatableBlock study>
 <#compress>
 	<#if effectConcRepeatableBlock?has_content>
 		<#list effectConcRepeatableBlock as blockItem>
@@ -2240,13 +2240,21 @@
 						(<@com.picklist blockItem.NominalMeasured/>)
 					</#if>
 					
-					<#if blockItem.BasisForEffect?has_content>
-						based on: <@com.picklist blockItem.BasisForEffect/>
+					<#local docDefId = study.documentType +"."+ study.documentSubType />
+					<#if docDefId=="ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant">
+						<#if blockItem.BasisForEffect?has_content>
+							based on: <@com.picklistMultiple blockItem.BasisForEffect/>
+						</#if>
+						<#else>
+							<#if blockItem.BasisForEffect?has_content>
+								based on: <@com.picklist blockItem.BasisForEffect/>
+							</#if>
 					</#if>
-					
+
 					<#if blockItem.RemarksOnResults?has_content>
 						(<@com.picklist blockItem.RemarksOnResults/>)
 					</#if>
+
 				</para>
 			</#if>
 		</#list>

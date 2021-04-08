@@ -1228,9 +1228,9 @@
 <#--1. Methods-->
 <#macro physchemMethod study>
 	<#compress>
-		<#if study.hasElement("MaterialsAndMethods.StudyDesign")>
+		<#if study.hasElement("MaterialsAndMethods.StudyDesign") && study.MaterialsAndMethods.StudyDesign?has_content>
+			<para><emphasis role="bold">Study design:</emphasis></para>
 			<para>
-				<emphasis role="bold">Study design:</emphasis>
 				<#local sd=study.MaterialsAndMethods.StudyDesign/>
 
 				<#if sd.hasElement("ContactWith") && sd.ContactWith?has_content>
@@ -1251,12 +1251,17 @@
 			</para>
 		</#if>
 
-		<#if study.hasElement("Reagents.Reagent") && study.Reagents.Reagent?has_content>
-			<para><emphasis role="bold">Reagents: </emphasis><@com.picklist study.Reagents.Reagent/></para>
+		<#if study.hasElement("MaterialsAndMethods.Reagents.Reagent") && study.MaterialsAndMethods.Reagents.Reagent?has_content>
+			<para><emphasis role="bold">Reagents: </emphasis><@com.picklist study.MaterialsAndMethods.Reagents.Reagent/></para>
 		</#if>
 
-		<#if study.hasElement("TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed") && study.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed?has_content>
-			<para><emphasis role="bold">Titration of acidity / alkalinity: </emphasis><@com.text study.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed/></para>
+		<#if study.hasElement("MaterialsAndMethods.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed") && study.MaterialsAndMethods.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed?has_content>
+			<para><emphasis role="bold">Titration of acidity / alkalinity: </emphasis><@com.text study.MaterialsAndMethods.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed/></para>
+		</#if>
+
+		<#-- Type of compatibility-->
+		<#if study.hasElement("DataSource.TypeOfCompatibility.TypeOfCompatibilityLabel") && study.DataSource.TypeOfCompatibility.TypeOfCompatibilityLabel?has_content>
+			<para><emphasis role="bold">Type of compatibility: </emphasis><@com.picklist study.DataSource.TypeOfCompatibility.TypeOfCompatibilityLabel/></para>
 		</#if>
 
 	</#compress>
