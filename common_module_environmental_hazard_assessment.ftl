@@ -2921,24 +2921,904 @@
 </#function>
 
 
-<#---------------------------------------- PPP additions -------------------------------------------------------------------------->
+<#---------------------------------------------PPP additions------------------------------------------------->
+<#--1. Results-->
+
+<#--Toxicity to birds
+	NOTE: could be merged with the general macro-->
+<#macro results_toxicityToBirds study>
+	<#compress>
+
+		<#if study.ResultsAndDiscussion.EffectLevels?has_content>
+			<para>Effect levels:
+				<@effectBirdsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels)/>
+			</para>
+		</#if>
+
+		<@com.children study.ResultsAndDiscussion/>
+	</#compress>
+</#macro>
+
 <#--Macro for general toxicity results, applicable to different document sub types-->
 <#macro results_envToxicity study>
 	<#compress>
 		<#if study.ResultsAndDiscussion.EffectConcentrations?has_content>
-			<para>Effect concentrations(${study.ResultsAndDiscussion.EffectConcentrations?node_type}):
+			<para>Effect concentrations:
 				<@effectList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectConcentrations) study/>
 			</para>
 		</#if>
 
-		<#list study.ResultsAndDiscussion?children as child>
-			<#if child?node_type?contains("multilingual_text") && !(child?node_type?contains("html")) >
-				<#if child?has_content>
-					<#assign childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
-					<para>${childName}: <span role="indent"><@com.text child/></span></para>
+		<@com.children study.ResultsAndDiscussion/>
+
+	</#compress>
+</#macro>
+
+<#--Bioaccumulation-->
+<#macro results_bioaccumulation study>
+	<#compress>
+		<#if study.ResultsAndDiscussion.LipidContent?has_content>
+			<para>Lipid content:
+				<@lipidContentList study.ResultsAndDiscussion.LipidContent/>
+			</para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.BioaccumulationFactor?has_content>
+			<para>Lipid content:
+				<@bioConcFactorList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.BioaccumulationFactor)/>
+			</para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.Depuration?has_content>
+			<para>Lipid content:
+				<@depurationList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.Depuration)/>
+			</para>
+		</#if>
+
+		<@com.children study.ResultsAndDiscussion/>
+
+	</#compress>
+</#macro>
+
+
+<#macro lipidContentList lipidContentRepeatableBlock>
+	<#compress>
+		<#if lipidContentRepeatableBlock?has_content>
+			<#list lipidContentRepeatableBlock as blockItem>
+				<#if blockItem.LipidContent?has_content || blockItem.TimePoint?has_content || blockItem.RemarksOnResults?has_content>
+					<para role="indent">
+						<#if blockItem.TimePoint?has_content>
+							<@com.picklist blockItem.TimePoint/>:
+						</#if>
+
+						<#if blockItem.LipidContent?has_content>
+							<@com.range blockItem.LipidContent/>
+						</#if>
+
+						<#if blockItem.RemarksOnResults?has_content>
+							(<@com.picklist blockItem.RemarksOnResults/>)
+						</#if>
+					</para>
 				</#if>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro bioConcFactorList bioConcFactorRepeatableBlock>
+	<#compress>
+		<#if bioConcFactorRepeatableBlock?has_content>
+			<#list bioConcFactorRepeatableBlock as blockItem>
+				<#if blockItem.Type?has_content || blockItem.Value?has_content || blockItem.Basis?has_content ||
+				blockItem.TimeOfPlateau?has_content || blockItem.CalculationBasis?has_content || blockItem.RemarksOnResults?has_content >
+					<para role="indent">
+						<#if blockItem.Type?has_content>
+							<@com.picklist blockItem.Type/>:
+						</#if>
+
+						<#if blockItem.Value?has_content>
+							<@com.range blockItem.Value/>
+						</#if>
+
+						<#if blockItem.Basis?has_content>
+							on <@com.picklist blockItem.Basis/>
+						</#if>
+
+						<#if blockItem.TimeOfPlateau?has_content>
+							. Time of plateau: <@com.quantity blockItem.TimeOfPlateau/>
+						</#if>
+
+						<#if blockItem.CalculationBasis?has_content>
+							. Calculation basis: <@com.picklist blockItem.CalculationBasis/>
+						</#if>
+
+						<#if blockItem.RemarksOnResults?has_content>
+							(<@com.picklist blockItem.RemarksOnResults/>)
+						</#if>
+					</para>
+				</#if>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro depurationList depurationRepeatableBlock>
+	<#compress>
+		<#if depurationRepeatableBlock?has_content>
+			<#list depurationRepeatableBlock as blockItem>
+				<#if blockItem.Elimination?has_content || blockItem.Endpoint?has_content || blockItem.DepurationTime?has_content ||
+				blockItem.RemarksOnResults?has_content >
+					<para role="indent">
+						<#if blockItem.Elimination?has_content>
+							elimination: <@com.picklist blockItem.Elimination/>
+						</#if>
+
+						<#if blockItem.Endpoint?has_content>
+							<@com.picklist blockItem.Endpoint/>:
+						</#if>
+
+						<#if blockItem.DepurationTime?has_content>
+							<@com.quantity blockItem.DepurationTime/>
+						</#if>
+
+						<#if blockItem.RemarksOnResults?has_content>
+							(<@com.picklist blockItem.RemarksOnResults/>)
+						</#if>
+					</para>
+				</#if>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#--2. methods-->
+<#macro ecotoxMethod study>
+	<#compress>
+
+	<#--Test organisms-->
+	<#--NOTE: sometimes (ToxicityToTerrestrialPlants) is a repeatable block-->
+		<#if study.MaterialsAndMethods.hasElement("TestOrganisms") && study.MaterialsAndMethods.TestOrganisms?has_content>
+			<#local to=study.MaterialsAndMethods.TestOrganisms/>
+			<para><emphasis role='bold'>Test organisms:</emphasis>
+				<#if study.documentSubType=="ToxicityToTerrestrialPlants">
+					<@TestOrgsForTerrestrialPlants to.TestOrganisms/>
+				<#else>
+					<#if to.hasElement("TestOrganismsSpecies") && to.TestOrganismsSpecies?has_content>
+						<@com.picklist to.TestOrganismsSpecies/>
+
+					<#elseif to.hasElement("TestOrganismsInoculum") && to.TestOrganismsInoculum?has_content>
+						<@com.picklist to.TestOrganismsInoculum/>
+					</#if>
+
+					<#if to.hasElement("DetailsOnTestOrganisms") && to.DetailsOnTestOrganisms?has_content>
+						<span role="indent">
+							(<@com.text to.DetailsOnTestOrganisms/>)
+						</span>
+					</#if>
+				</#if>
+			</para>
+		</#if>
+
+	<#--Sampling and analysis-->
+		<#if study.MaterialsAndMethods.hasElement("SamplingAndAnalysis") && study.MaterialsAndMethods.SamplingAndAnalysis?has_content>
+			<para><emphasis role='bold'>Sampling and analysis:</emphasis>
+				<@com.children study.MaterialsAndMethods.SamplingAndAnalysis/>
+			</para>
+		</#if>
+
+	<#--Test solutions-->
+		<#if study.MaterialsAndMethods.hasElement("TestSolutions") && study.MaterialsAndMethods.TestSolutions?has_content>
+			<para><emphasis role='bold'>Test solutions:</emphasis>
+				<@com.children study.MaterialsAndMethods.TestSolutions/>
+			</para>
+		</#if>
+
+	<#--Test substrate-->
+		<#if study.MaterialsAndMethods.hasElement("TestSubstrate") && study.MaterialsAndMethods.TestSubstrate?has_content>
+			<para><emphasis role='bold'>Test substrate:</emphasis>
+				<@com.children study.MaterialsAndMethods.TestSubstrate/>
+			</para>
+		</#if>
+
+	<#--Study design-->
+		<#if study.MaterialsAndMethods.hasElement("StudyDesign") && study.MaterialsAndMethods.StudyDesign?has_content>
+			<para><emphasis role='bold'>Study design:</emphasis>
+				<@com.children study.MaterialsAndMethods.StudyDesign/>
+			</para>
+		</#if>
+
+	<#--Examinations-->
+		<#if study.MaterialsAndMethods.hasElement("Examinations") && study.MaterialsAndMethods.Examinations?has_content>
+			<para><emphasis role='bold'>Examinations:</emphasis>
+				<@com.children study.MaterialsAndMethods.Examinations/>
+			</para>
+		</#if>
+
+	<#--Test conditions-->
+		<#if study.MaterialsAndMethods.hasElement("TestConditions") && study.MaterialsAndMethods.TestConditions?has_content>
+			<para><emphasis role='bold'>Test conditions:</emphasis>
+				<@com.children study.MaterialsAndMethods.TestConditions/>
+			</para>
+		</#if>
+
+	</#compress>
+</#macro>
+
+<#--3. summaries-->
+<#--General macro to print individual ecotox summaries, with CSA data in table format-->
+<#macro ecotoxPPPsummary _subject docSubType>
+	<#compress>
+
+	<#-- Get doc-->
+		<#if docSubType=="AquaticToxicityRacReporting">
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+		<#else>
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+		</#if>
+
+	<#-- Iterate-->
+		<#if summaryList?has_content>
+			<@com.emptyLine/>
+			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+
+			<#assign printSummaryName = summaryList?size gt 1 />
+
+			<#list summaryList as summary>
+				<@com.emptyLine/>
+
+				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
+
+			<#--Key Information-->
+				<#if summary.hasElement("KeyInformation") && summary.KeyInformation.KeyInformation?has_content>
+					<para><emphasis role="bold">Key information: </emphasis></para>
+					<para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para>
+				</#if>
+
+			<#--Links (in cases with tables this is repeated then)-->
+				<#if summary.hasElement("LinkToRelevantStudyRecord.Link") && summary.LinkToRelevantStudyRecord.Link?has_content>
+					<para><emphasis role="bold">Link to relevant study records: </emphasis>
+						<#list summary.LinkToRelevantStudyRecord.Link as link>
+							<#if link?has_content>
+								<#local studyReference = iuclid.getDocumentForKey(link) />
+								<command  linkend="${studyReference.documentKey.uuid!}">
+									<@com.text studyReference.name/>
+								</command>
+								<#if link_has_next> | </#if>
+							</#if>
+						</#list>
+					</para>
+				</#if>
+
+			<#--CSA value-->
+				<#if summary.hasElement("KeyValueForCsa")>
+					<#local csaPath=summary["KeyValueForCsa"]>
+				<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment")>
+					<#local csaPath=summary["KeyValueForChemicalSafetyAssessment"]>
+				<#elseif summary.hasElement("KeyValueCsa")>
+					<#local csaPath=summary["KeyValueCsa"]>
+				</#if>
+
+				<#if summary.documentSubType=="AquaticToxicityRacReporting" && summary.KeyInformation.RACValues?has_content>
+					<para><emphasis role="bold">RAC values: </emphasis></para>
+					<@RACvaluesTable summary.KeyInformation.RACValues/>
+
+				<#elseif summary.documentSubType=="BioaccumulationTerrestrial" && summary.KeyValueForChemicalSafetyAssessment?has_content>
+					<span role="indent">
+						BCF (terrestrial species): <@com.quantity summary.KeyValueForChemicalSafetyAssessment.BcfTerrestrialSpecies/>
+					</span>
+
+				<#elseif summary.documentSubType=="BioaccumulationAquaticSediment_EU_PPP" && summary.KeyValueCsa?has_content>
+					<@bioconcentrationFishTable summary.KeyValueCsa/>
+
+				<#elseif csaPath?has_content>
+					<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+					<@ecoToxCSAtable summary/>
+
+				</#if>
+
+			<#--Hier tier testing-->
+				<#if summary.hasElement("HigherTierTesting.field1350") && summary.HigherTierTesting.field1350?has_content>
+					<para><emphasis role="bold">Higher tier testing for safety assessment:</emphasis></para>
+					<para role="indent"><@com.richText summary.HigherTierTesting.field1350/></para>
+				</#if>
+
+			<#--Discussion-->
+				<#if summary.hasElement("Discussion") && summary.Discussion.Discussion?has_content>
+					<para><emphasis role="bold">Discussion:</emphasis></para>
+					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
+				</#if>
+
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#--This macro merges all summaries of the indicated types, including all endpoints in one single table-->
+<#--NOTE: does not work for RAC, or BioAccummulation (aquatic and terrestrial) since they have different format-->
+<#macro ecotoxPPPsummary_merged _subject docSubTypes>
+	<#compress>
+
+	<#--Get all documents, from same or different type-->
+		<#if !docSubTypes?is_sequence>
+			<#local docSubTypes=[docSubTypes]/>
+		</#if>
+
+		<#local allSummaryList=[]/>
+		<#list docSubTypes as docSubType>
+			<#if docSubType=="AquaticToxicityRacReporting">
+				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+			<#else>
+				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+			</#if>
+			<#local allSummaryList = allSummaryList + summaryList/>
+		</#list>
+
+	<#--Need to iterate in every section, so that all Discussions, Key Information, Endpoints, etc appear together-->
+		<#if allSummaryList?has_content>
+			<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+
+		<#-- Key information-->
+			<#list allSummaryList as summary>
+				<#if summary.KeyInformation.KeyInformation?has_content>
+					<#if summary_index==0><para><emphasis role="bold">Key information: </emphasis></para></#if>
+					<para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para>
+				</#if>
+			</#list>
+			<@com.emptyLine/>
+
+		<#--Linked studies (not included)-->
+
+		<#--CSA value:
+        3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
+			<#assign endpointsHash={}/>
+			<#list allSummaryList as summary>
+				<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
+
+			<#-- 1.Get hashmap-->
+				<#local summarySeq = getEcotoxSummarySeq(summary)/>
+
+				<#list summarySeq as seqEntry>
+					<#if endpointsHash[seqEntry["name"]]??>
+						<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
+						<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
+					<#else>
+						<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
+					</#if>
+				</#list>
+
+			<#--2. At last item, print in table format and ordering endpoints-->
+				<#if !summary_has_next && endpointsHash?has_content>
+					<@getEcotoxSummaryFromHash endpointsHash/>
+				</#if>
+			</#list>
+
+		<#--Hier tier testing-->
+			<#list allSummaryList as summary>
+				<#if summary.hasElement("HigherTierTesting.field1350") && summary.HigherTierTesting.field1350?has_content>
+					<#if summary_index==0><para><emphasis role="bold">Higher tier testing for safety assessment:</emphasis></para></#if>
+					<para role="indent"><@com.richText summary.HigherTierTesting.field1350/></para>
+				</#if>
+			</#list>
+
+		<#--Discussion-->
+			<#list allSummaryList as summary>
+				<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
+					<#if summary_index==0><para><emphasis role="bold">Discussion:</emphasis></para></#if>
+					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
+				</#if>
+			</#list>
+
+		</#if>
+	</#compress>
+</#macro>
+
+<#--Function to crete a hashmap with CSA info from ecotox summaries-->
+<#function getEcotoxSummarySeq summary>
+
+	<#local mySeq=[]/>
+
+<#-- consider different path names (missing RAC, and bioterrestrial)-->
+	<#if summary.hasElement("KeyValueForCsa")>
+		<#local csaPath=summary["KeyValueForCsa"]>
+	<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment")>
+		<#local csaPath=summary["KeyValueForChemicalSafetyAssessment"]>
+	<#elseif summary.hasElement("KeyValueCsa")>
+		<#local csaPath=summary["KeyValueCsa"]>
+	</#if>
+
+<#-- consider case where links are outside of the table-->
+	<#local generalLinks=""/>
+	<#if summary.hasElement("LinkToRelevantStudyRecord.Link") && summary.LinkToRelevantStudyRecord.Link?has_content>
+		<#local generalLinks><#compress>
+			<#list summary.LinkToRelevantStudyRecord.Link as link>
+				<#if link?has_content>
+					<#local studyReference = iuclid.getDocumentForKey(link) />
+					<command  linkend="${studyReference.documentKey.uuid!}">
+						<@com.text studyReference.name/>
+					</command>
+					<#if link_has_next><?linebreak?></#if>
+				</#if>
+			</#list>
+		</#compress></#local>
+	</#if>
+
+<#-- iterate CSA blocks-->
+	<#list csaPath?children as block>
+		<#if block?node_type=="repeatable" && block?has_content>
+			<#local testType=block?node_name?replace("([A-Z]{1})", " $1", "r")?replace("_list", "")?lower_case?cap_first/>
+
+			<#list block as item>
+			<#--Test type-->
+				<#local testType><#compress>
+					${testType}
+					<#if item.hasElement("TypeOfStudy") && item.TypeOfStudy?has_content>
+						<?linebreak?>(<@com.picklist item.TypeOfStudy/>)
+					</#if>
+				</#compress></#local>
+
+			<#--Links-->
+				<#local links><#compress>
+					<#if item.hasElement("Link")>
+						<#if item.Link?has_content>
+							<#local studyReference = iuclid.getDocumentForKey(item.Link) />
+							<command  linkend="${studyReference.documentKey.uuid!}">
+								<@com.text studyReference.name/>
+							</command>
+						</#if>
+					<#elseif generalLinks?has_content>
+						${generalLinks}
+					</#if>
+				</#compress></#local>
+
+			<#-- Organisms-->
+				<#local orgs><#compress>
+					<#if item.hasElement("AnimalGroup") && item.AnimalGroup?has_content>
+						<#if item.AnimalGroup?node_type=="picklist_multi">
+							<@com.picklistMultiple item.AnimalGroup/>
+						<#else>
+							<@com.text item.AnimalGroup/>
+						</#if>
+						<#if item.TestOrganismsSpecies?has_content>: </#if>
+					</#if>
+					<#if item.hasElement("TestOrganismsSpecies") && item.TestOrganismsSpecies?has_content>
+						<@com.picklistMultiple item.TestOrganismsSpecies/>
+					</#if>
+				</#compress></#local>
+
+			<#-- Substance-->
+				<#local substance><#compress>
+					<#if item.Substance?has_content>
+						<#local refSubstance=iuclid.getDocumentForKey(item.Substance)/>
+						<@com.text refSubstance.ChemicalName/>
+					</#if>
+					<#if item.ParentMetabolite?has_content>
+						<?linebreak?>(<@com.picklist item.ParentMetabolite/>)
+					</#if>
+				<#--								PreparationApplicationTestSubstance (richText) details preparation/application substance-->
+				</#compress></#local>
+
+			<#-- Endpoint -->
+				<#local endpoint><#compress>
+					<#if item.DoseDescriptor?has_content>
+						<@com.picklist item.DoseDescriptor/>:
+						<#if item.hasElement("EffectConcentration")><@com.range item.EffectConcentration/>
+						<#elseif item.hasElement("EffectConc")><@com.range item.EffectConc/>
+						<#elseif item.hasElement("EffectValue")><@com.range item.EffectValue/>
+						</#if>
+					</#if>
+					<#if item.hasElement("NominalMeasured") && item.NominalMeasured?has_content>
+						<?linebreak?>(<@com.picklist item.NominalMeasured/>)
+					</#if>
+					<#if item.BasisForEffect?has_content>
+						<?linebreak?>(basis: <@com.picklistMultiple item.BasisForEffect/>)
+					</#if>
+				</#compress></#local>
+
+			<#--append-->
+				<#if links?has_content || endpoint?has_content || orgs?has_content || substance?has_content>
+					<#local mySeq = mySeq + [{'name': testType!, "links" : links!, "endpoint":endpoint!, "substance":substance!, "organisms":orgs!}]/>
+				</#if>
+
+			</#list>
+		</#if>
+	</#list>
+
+
+<#--special cases-->
+	<#if csaPath.hasElement("EcTenLcTenNoecMarineWaterFish") && csaPath.EcTenLcTenNoecMarineWaterFish?has_content>
+		<#local endpoint>EC10 / LC10 / NOEC: <@com.range csaPath.EcTenLcTenNoecMarineWaterFish/></#local>
+		<#local mySeq = mySeq + [{'name': "Long-term toxicity to marine fish", "links" : generalLinks!, "endpoint":endpoint, "substance":"",
+		"organisms":"Marine fish"}]/>
+	</#if>
+
+	<#return mySeq/>
+
+</#function>
+
+<#--Macro for the basic summary table of ecotox CSA using info stored in a hashmap-->
+<#macro getEcotoxSummaryFromHash hash>
+	<#compress>
+		<table border="1">
+			<tbody>
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Test type</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Study</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Organism</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Endpoint</emphasis></th>
+			</tr>
+
+			<#list hash?keys?sort as key>
+				<#local seq = hash[key]/>
+				<#local usespan = true />
+				<#list seq as item>
+					<tr>
+						<#if usespan>
+							<td rowspan="${seq?size}">${key}</td>
+							<#local usespan = false />
+						</#if>
+						<td>${item.links}</td>
+						<td>${item.organisms}</td>
+						<td>${item.substance}</td>
+						<td>${item.endpoint}</td>
+					</tr>
+				</#list>
+			</#list>
+			</tbody></table>
+	</#compress>
+</#macro>
+
+<#--Macro for the basic summary table of ecotox CSA, using other independent functions/macros-->
+<#macro ecoToxCSAtable summary>
+	<#compress>
+
+	<#-- 1.Get hashmap-->
+		<#local endpointsHash={}/>
+		<#local summarySeq = getEcotoxSummarySeq(summary)/>
+
+		<#list summarySeq as seqEntry>
+			<#if endpointsHash[seqEntry["name"]]??>
+				<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
+				<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
+			<#else>
+				<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
 			</#if>
 		</#list>
 
+		<@getEcotoxSummaryFromHash endpointsHash/>
+
+	</#compress>
+</#macro>
+
+<#--Table for RAC-->
+<#macro RACvaluesTable rac>
+	<#compress>
+
+		<table border="1">
+			<tbody>
+
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Test type</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Organism</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Endpoint</emphasis></th>
+			</tr>
+
+			<#list rac as item>
+				<tr>
+					<td>
+						<@com.picklist item.TimeScale/> <@com.picklist item.Tier/>
+					</td>
+					<td>
+						<@com.picklistMultiple item.TestOrganisms/>
+					</td>
+					<td>
+						<#if item.Substance?has_content>
+							<#local refSubstance=iuclid.getDocumentForKey(item.Substance)/>
+							<@com.text refSubstance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							<?linebreak?>(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+					</td>
+					<td>
+						<#if item.RacValueType?has_content && item.RacValue?has_content>
+							<@com.picklist item.RacValueType/>: <@com.quantity item.RacValue/>
+						</#if>
+						<#if item.AssessmentFactor?has_content>
+							<?linebreak?>(assessment factor: <@com.picklistMultiple item.AssessmentFactor/>)
+						</#if>
+					</td>
+				</tr>
+			</#list>
+
+			</tbody>
+		</table>
+	</#compress>
+</#macro>
+
+<#--Table for bioconcentration in fish-->
+<#macro bioconcentrationFishTable csa>
+	<#compress>
+
+	<#-- consider case where links are outside of the table-->
+		<#local generalLinks=""/>
+		<#if csa?parent.hasElement("LinkToRelevantStudyRecord.Link") && csa?parent.LinkToRelevantStudyRecord.Link?has_content>
+			<#local generalLinks><#compress>
+				<#list csa?parent.LinkToRelevantStudyRecord.Link as link>
+					<#if link?has_content>
+						<#local studyReference = iuclid.getDocumentForKey(link) />
+						<command  linkend="${studyReference.documentKey.uuid!}">
+							<@com.text studyReference.name/>
+						</command>
+						<#if link_has_next><?linebreak?></#if>
+					</#if>
+				</#list>
+			</#compress></#local>
+		</#if>
+
+		<table border="1">
+			<tbody>
+
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Assessment</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Nature/level residues</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Study</emphasis></th>
+			</tr>
+
+			<#list csa.BioconcentrationFish as item>
+				<tr>
+					<td>
+						<#if item.Substance?has_content>
+							<#local refSubstance=iuclid.getDocumentForKey(item.Substance)/>
+							<@com.text refSubstance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							<?linebreak?>(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+					</td>
+					<td>
+						<#if item.LogPow?has_content>
+							logPo/w = <@com.text item.LogPow/><?linebreak?>
+						</#if>
+						<#if item.BcfAquaticSpecies?has_content>
+							BCF (aquatic species) = <@com.quantity item.BcfAquaticSpecies/><?linebreak?>
+						</#if>
+						<#if item.CtFiftyClearaceTime?has_content>
+							CT50 = <@com.quantity item.CtFiftyClearaceTime/><?linebreak?>
+						</#if>
+						<#if item.CtNinetyClearaceTime?has_content>
+							CT90 = <@com.quantity item.CtNinetyClearaceTime/><?linebreak?>
+						</#if>
+					</td>
+					<td>
+						<#if item.NatureAndLevelOfResidues?has_content>
+							<@com.richText item.NatureAndLevelOfResidues/>
+						</#if>
+					</td>
+					<td>
+						<#if item.Remarks?has_content>
+							<@com.richText item.Remarks/>
+						</#if>
+					</td>
+					<td>${generalLinks}</td>
+				</tr>
+			</#list>
+			<#if csa.FishBmf?has_content>
+				<tr>
+					<td></td>
+					<td>
+						BMF (fish) = <@com.number csa.FishBmf/><?linebreak?>
+					</td>
+					<td></td>
+					<td></td>
+					<td>${generalLinks}</td>
+				</tr>
+			</#if>
+
+			</tbody>
+		</table>
+	</#compress>
+</#macro>
+
+<#--Summary of ecotox risk assessment-->
+<#macro ecotoxRiskAssessmentPPP>
+	<#compress>
+
+		<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", "EcotoxRiskAssessmentPesticides") />
+
+		<#if summaryList?has_content>
+			<@com.emptyLine/>
+			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+
+			<#assign printSummaryName = summaryList?size gt 1 />
+
+			<#list summaryList as summary>
+				<@com.emptyLine/>
+
+				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
+
+			<#--Assessment(table)-->
+				<#if summary.EcotoxRiskAssessmentPesticides?has_content>
+
+					<para>
+
+						<table border="1">
+							<title>Ecotoxicological risk assessment of pesticides:</title>
+
+							<col width="25%" />
+							<col width="75%" />
+
+							<tbody>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentBirds.field9187?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Birds</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentBirds.field9187/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentWildMammals.field8618?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Wild mammals</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentWildMammals.field8618/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentOtherTerrestrialVertebrates.field593?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Other terrestrial vertebrates</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentOtherTerrestrialVertebrates.field593/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentAquaticOrganisms.field4291?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Aquatic organisms</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentAquaticOrganisms.field4291/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentBees.field9185?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Bees</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentBees.field9185/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentNonBees.field5875?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Non-target arthropods other than bees</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentNonBees.field5875/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentSoilMesoMacrofauna.field9216?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Non-target soil meso- and macrofauna</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentSoilMesoMacrofauna.field9216/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentSoilTransformation.field9651?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Soil nitrogen transformation</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentSoilTransformation.field9651/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentHigherPlants.field4576?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Terrestrial non-target higher plants</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentHigherPlants.field4576/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentSewageTreatmentMethods.field6508?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Biological methods for sewage treatment</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentSewageTreatmentMethods.field6508/></td>
+								</tr>
+							</#if>
+							<#if summary.EcotoxRiskAssessmentPesticides.RiskAssessmentToOtherTerrestrialOrganismsFloraAndFauna.field2441?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Other terrestrial organisms (flora and fauna)</emphasis></th>
+									<td><@com.richText summary.EcotoxRiskAssessmentPesticides.RiskAssessmentToOtherTerrestrialOrganismsFloraAndFauna.field2441/></td>
+								</tr>
+							</#if>
+
+							</tbody>
+						</table>
+					</para>
+				</#if>
+
+			<#--Add Information-->
+				<#if summary.AdditionalInformation.field9160?has_content>
+					<para><emphasis role="bold">Additional information: </emphasis></para>
+					<para role="indent"><@com.richText summary.AdditionalInformation.field9160/></para>
+				</#if>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro ecotoxicologicalInformationSummary>
+	<#compress>
+		<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "EcotoxicologicalInformation") />
+
+		<#if summaryList?has_content>
+			<@com.emptyLine/>
+			<para><emphasis role="HEAD-WoutNo">Summary of ecotoxicological information</emphasis></para>
+
+			<#assign printSummaryName = summaryList?size gt 1 />
+
+			<#list summaryList as summary>
+				<@com.emptyLine/>
+
+				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
+
+			<#-- iterate over blocks-->
+			<#--				<para><emphasis role="bold">Hazard assessment: </emphasis></para>-->
+
+				<table border="1">
+					<title>Hazard assessment</title>
+					<col width="20%" />
+					<col width="40%" />
+					<col width="40%" />
+
+					<tbody>
+
+					<tr>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard</emphasis></th>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Assessment conclusion</emphasis></th>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Explanation</emphasis></th>
+					</tr>
+
+					<#local hazardBlocks=["HazardForAquaticOrganisms","HazardForAir","HazardForTerrestrialOrganisms","HazardForPredators"]/>
+					<#list summary?children as section>
+						<#if hazardBlocks?seq_contains(section?node_name)>
+							<#local sectionName=section?node_name?replace("HazardFor", "")?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+							<#list section?children as block>
+								<#local blockName=block?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+								<#if block?has_content>
+									<tr>
+										<td>${sectionName}: ${blockName}</td>
+										<td>
+											<@com.picklist block.HazAssessConcl/>
+											<#if block.HazAssessConclVal?has_content>
+												: <@com.quantity block.HazAssessConclVal/>
+											</#if>
+
+											<#if block.hasElement("PNECFreshwaterIntermittentReleases") && block.PNECFreshwaterIntermittentReleases?has_content>
+												<?linebreak?>(PNEC (intermittent releases) = <@com.quantity block.PNECFreshwaterIntermittentReleases/>)
+											<#elseif block.hasElement("PNECMarineWaterIntermittentReleases") && block.PNECMarineWaterIntermittentReleases?has_content>
+												<?linebreak?>(PNEC (intermittent releases) = <@com.quantity block.PNECMarineWaterIntermittentReleases/>)
+											</#if>
+
+											<#if block.hasElement("AssessmentFactor") && block.AssessmentFactor?has_content>
+												<@com.emptyLine/>
+												<?linebreak?>assessment factor = <@com.number block.AssessmentFactor/>
+											</#if>
+											<#if block.hasElement("ExtrapolationMethod") && block.ExtrapolationMethod?has_content>
+												<@com.emptyLine/>
+												<?linebreak?>extrapolation method: <@com.picklist block.ExtrapolationMethod/>
+											</#if>
+
+										</td>
+										<td><@com.richText block.Justification/></td>
+									</tr>
+								</#if>
+							</#list>
+						</#if>
+					</#list>
+					</tbody>
+				</table>
+
+			<#--Add Information-->
+				<#if summary.Discussion.Discussion?has_content>
+					<para><emphasis role="bold">Additional information: </emphasis></para>
+					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
+				</#if>
+
+			<#--Conclusion-->
+				<#if summary.ConclusionOnClassification.JustificationEnv?has_content>
+					<para><emphasis role="bold">Conclusion on classification: </emphasis></para>
+					<para role="indent"><@com.richText summary.ConclusionOnClassification.JustificationEnv/></para>
+				</#if>
+
+			</#list>
+
+		</#if>
 	</#compress>
 </#macro>
