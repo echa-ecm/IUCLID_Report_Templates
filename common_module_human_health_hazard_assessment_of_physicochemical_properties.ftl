@@ -1228,9 +1228,9 @@
 <#--1. Methods-->
 <#macro physchemMethod study>
 	<#compress>
-		<#if study.hasElement("MaterialsAndMethods.StudyDesign")>
+		<#if study.hasElement("MaterialsAndMethods.StudyDesign") && study.MaterialsAndMethods.StudyDesign?has_content>
+			<para><emphasis role="bold">Study design:</emphasis></para>
 			<para>
-				<emphasis role="bold">Study design:</emphasis>
 				<#local sd=study.MaterialsAndMethods.StudyDesign/>
 
 				<#if sd.hasElement("ContactWith") && sd.ContactWith?has_content>
