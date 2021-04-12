@@ -2211,7 +2211,7 @@
 	</#if>
 </#macro>
 		
-<#macro effectList effectConcRepeatableBlock>
+<#macro effectList effectConcRepeatableBlock study>
 <#compress>
 	<#if effectConcRepeatableBlock?has_content>
 		<#list effectConcRepeatableBlock as blockItem>
@@ -2239,9 +2239,19 @@
 					<#if blockItem.NominalMeasured?has_content>
 						(<@com.picklist blockItem.NominalMeasured/>)
 					</#if>
-					
-					<#if blockItem.BasisForEffect?has_content>
-						based on: <@com.picklist blockItem.BasisForEffect/>
+
+					<#local docDefId = study.documentType +"."+ study.documentSubType/>
+					<#if !(docDefId=="ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant")>
+
+						<#if blockItem.BasisForEffect?has_content>
+							based on: <@com.picklist blockItem.BasisForEffect/>
+						</#if>
+
+					<#elseif docDefId=="ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant">
+
+						<#if blockItem.BasisForEffectMulti?has_content>
+							based on: <@com.picklistMultiple blockItem.BasisForEffectMulti/>
+						</#if>
 					</#if>
 					
 					<#if blockItem.RemarksOnResults?has_content>
