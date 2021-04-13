@@ -713,7 +713,7 @@
 					<#if titleEmphasis></emphasis></#if>
 					<span role="${role2}"><@value child/></span>
 				</para>
-				
+
 			</#if>
 		</#list>
 	</#compress>
