@@ -7793,6 +7793,8 @@
 
 			<#if testAn.hasElement("DetailsOnSpeciesStrainSelectio") && testAn.DetailsOnSpeciesStrainSelectio?has_content>
 				- <@com.text testAn.DetailsOnSpeciesStrainSelectio/>
+			<#elseif testAn.hasElement("DetailsOnSpeciesStrainSelection") && testAn.DetailsOnSpeciesStrainSelection?has_content>
+				- <@com.text testAn.DetailsOnSpeciesStrainSelection/>
 			</#if>
 		</span>
 
@@ -7908,7 +7910,7 @@
 		<#if admExp.hasElement("DosesConcentrations") && admExp.DosesConcentrations?has_content>
 			<span role="indent">Doses / concentrations:</span>
 			<#if admExp.DosesConcentrations?node_type=="repeatable">
-				<@keyTox.DosesConcentrationsWithRemarksList admExp.DosesConcentrations/>
+				<@DosesConcentrationsWithRemarksList admExp.DosesConcentrations/>
 			<#--						<@keyTox.DosesConcentrationsList admExp.DosesConcentrations/>-->
 			<#--				<#else>-->
 			<#--					<@com.text admExp.DosesConcentrations/>-->
@@ -7980,7 +7982,9 @@
 		<para><emphasis role="bold">Examinations:</emphasis></para>
 
 		<#list exam?children as child>
-			<span role="indent">${child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}: <@com.text child/></span>
+			<#if child?has_content>
+				<span role="indent">${child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}: <@com.text child/></span>
+			</#if>
 		</#list>
 	</#compress>
 </#macro>
