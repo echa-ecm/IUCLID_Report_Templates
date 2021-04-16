@@ -691,10 +691,12 @@
 			<@com.quantity valuePath/>
 		<#elseif valueType=="decimal">
 			<@com.number valuePath/>
-		<#elseif valueType=="multilingual_text_html">
+		<#elseif valueType?contains("html")>
 			<@com.richText valuePath/>
-		<#elseif valueType?contains("multilingual_text")>
+		<#elseif valueType?contains("text")>
 			<@com.text valuePath/>
+		<#else>
+			value type ${valueType} not supported!
 		<#--multilingual_text_medium; multilingual_text_large-->
 		</#if>
 	</#compress>
