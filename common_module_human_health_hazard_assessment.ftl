@@ -7793,6 +7793,8 @@
 
 			<#if testAn.hasElement("DetailsOnSpeciesStrainSelectio") && testAn.DetailsOnSpeciesStrainSelectio?has_content>
 				- <@com.text testAn.DetailsOnSpeciesStrainSelectio/>
+			<#elseif testAn.hasElement("DetailsOnSpeciesStrainSelection") && testAn.DetailsOnSpeciesStrainSelection?has_content>
+				- <@com.text testAn.DetailsOnSpeciesStrainSelection/>
 			</#if>
 		</span>
 
@@ -7908,7 +7910,7 @@
 		<#if admExp.hasElement("DosesConcentrations") && admExp.DosesConcentrations?has_content>
 			<span role="indent">Doses / concentrations:</span>
 			<#if admExp.DosesConcentrations?node_type=="repeatable">
-				<@keyTox.DosesConcentrationsWithRemarksList admExp.DosesConcentrations/>
+				<@DosesConcentrationsWithRemarksList admExp.DosesConcentrations/>
 			<#--						<@keyTox.DosesConcentrationsList admExp.DosesConcentrations/>-->
 			<#--				<#else>-->
 			<#--					<@com.text admExp.DosesConcentrations/>-->
@@ -7943,9 +7945,9 @@
 			<span role="indent">Mating procedure: <@com.text admExp.DetailsOnMatingProcedure/></span>
 		</#if>
 		<#if admExp.hasElement("ControlAnimal") && admExp.ControlAnimal?has_content>
-			<span role="indent">Control animals: <@com.picklist admExp.ControlAnimal/></span>
+			<span role="indent">Control animals: <@com.value admExp.ControlAnimal/></span>
 		<#elseif admExp.hasElement("ControlAnimals") && admExp.ControlAnimals?has_content>
-			<span role="indent">Control animals: <@com.picklist admExp.ControlAnimals/></span>
+			<span role="indent">Control animals: <@com.value admExp.ControlAnimals/></span>
 		</#if>
 		<#if admExp.hasElement("PositiveControl") && admExp.PositiveControl?has_content>
 			<span role="indent">Positive control: <@com.text admExp.PositiveControl/></span>
@@ -7980,7 +7982,9 @@
 		<para><emphasis role="bold">Examinations:</emphasis></para>
 
 		<#list exam?children as child>
-			<span role="indent">${child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}: <@com.text child/></span>
+			<#if child?has_content>
+				<span role="indent">${child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}: <@com.text child/></span>
+			</#if>
 		</#list>
 	</#compress>
 </#macro>
@@ -10403,7 +10407,7 @@
 
 				<#else>
 					<#if resultFormat=="flat">
-					<#--In this case it goes sequentially: NOTE that uses function from physchem-->
+						<#--In this case it goes sequentially-->
 						<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
 						<#if summary_has_next || (summary_index>0)><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
 						<para role="indent"><@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/></para>
@@ -10481,15 +10485,15 @@
 </#macro>
 
 <#--flat format for study summaries: TO CHECK-->
-<#macro summarySingle _subject docSubType resultFormat="">
+<#macro summarySingle _subject docSubType resultFormat="flat">
 	<#compress>
 
 		<#local summaryDocToCSAMap = {
 		"Toxicokinetics" : {"path" : "KeyValue",
-		"values" : [{"type":"listValue", "field": "Bioaccumulation", "preText" : "Bioaccumulation potential: "},
-		{"type":"value", "field": "AbsorptionOral", "preText": "Oral absorption rate: ", "postText":"%"},
-		{"type":"value", "field": "AbsorptionDerm", "preText": "Dermal absorption rate: ", "postText":"%"},
-		{"type":"value", "field": "AbsorptionInhal", "preText": "Inhalation absorption rate: ", "postText":"%"}]},
+							"values" : [{"type":"listValue", "field": "Bioaccumulation", "preText" : "Bioaccumulation potential: "},
+							{"type":"value", "field": "AbsorptionOral", "preText": "Oral absorption rate: ", "postText":"%"},
+							{"type":"value", "field": "AbsorptionDerm", "preText": "Dermal absorption rate: ", "postText":"%"},
+							{"type":"value", "field": "AbsorptionInhal", "preText": "Inhalation absorption rate: ", "postText":"%"}]},
 		"Phototoxicity" : {"path":"KeyValueCsa", "values":[{"type":"listValue", "field":"Results", "preText":"Results: "}]}
 		}/>
 
@@ -10514,9 +10518,9 @@
 					<para><emphasis role="bold">Key information: </emphasis></para>
 					<para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para>
 				</#if>
-			<#--NOTE: for genetic toxicity this is included in the subsections. I could merge all together here or indicate it in the subsections.-->
+				<#--NOTE: for genetic toxicity this is included in the subsections. I could merge all together here or indicate it in the subsections.-->
 
-			<#--Linked studies-->
+				<#--Linked studies-->
 				<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
 					<para ><emphasis role="bold">Linked studies: </emphasis></para>
 					<para role="indent">
@@ -10531,8 +10535,8 @@
 					</para>
 				</#if>
 
-			<#--CSA value:todo
-            3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
+				<#--CSA value:todo
+            	3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
 				<#if docSubType=="ToxRefValues">
 					<para><emphasis role="bold">Toxicological reference values: </emphasis></para>
 					<@toxRefValuesTable summary/>
@@ -10550,7 +10554,11 @@
 						<@dermalAbsorptionSummary summary/>
 					</para>
 				<#else>
-					<#if resultFormat=="table">
+					<#if resultFormat=="flat">
+						<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+						<para role="indent"><@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/></para>
+
+					<#elseif resultFormat=="table">
 						<#if summaryDocToCSAMap?keys?seq_contains(docSubType)>
 							<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
 							<para role="indent"><@valueForCSA summary summaryDocToCSAMap[docSubType]/></para>
@@ -10576,7 +10584,7 @@
 					</#if>
 				</#if>
 
-			<#--Additional Info-->
+				<#--Additional Info-->
 				<#if summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
 					<para><emphasis role="bold">Additional information:</emphasis></para>
 					<para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para>
@@ -10613,6 +10621,7 @@
 				<#local valuePath = "summary." + propertyData["path"] + "." + value["field"] />
 				<#local val = valuePath?eval />
 				<#if val?has_content>
+					<para>
 					<#-- preText -->
 					${value["preText"]!}
 
@@ -10644,11 +10653,11 @@
 							at <@com.quantity atVal />
 						</#if>
 					</#if>
+					</para>
 				</#if>
-
-				<#if value_has_next>
-					<?linebreak?>
-				</#if>
+<#--				<#if value_has_next>-->
+<#--					<?linebreak?>-->
+<#--				</#if>-->
 			</#list>
 		</#if>
 	</#compress>
