@@ -50,7 +50,7 @@
 	
 		<@com.emptyLine/>
 		<table border="1">
-			<title>Classification and labelling according to CLP / GHS for physicochemical properties</title>
+			<#if nzepaClassificationRelevant??><title>Classification according to GHS for physicochemical properties</title><#else><title>Classification and labelling according to CLP / GHS for physicochemical properties</title></#if>
 			<col width="20%" />
 			<col width="25%" />
 			<col width="30%" />
@@ -407,6 +407,7 @@
 		</#if>
 		
 		<!-- Labelling section -->
+	<#if !nzepaClassificationRelevant??>
 		<@com.emptyLine/>
 		<para><emphasis role="bold">Labelling</emphasis></para>
 		
@@ -465,7 +466,7 @@
 				<@NotesLabellingList record.NotesBlock.Notes/>
 			</para>
 		</#if>
-		
+	</#if>
 		
 	</#list>	
 	</#if>
