@@ -49,8 +49,7 @@
 			</#if>		
 	
 		<@com.emptyLine/>
-		<table border="1">
-			
+		<table border="1">			
 				<#if nzEPArelevant??>
 				<title>Classification according to GHS for physicochemical properties</title>
 				<#else>
