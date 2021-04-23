@@ -1,4 +1,4 @@
-<!-- Common macros and functions that could be reused in any template based on IUCLID6 data  -->
+<!-- Common macros and functions that could be reused in any template based on IUCLID6 data -->
 
 <#--It initializes the following variables:
 	* _dossierHeader (:DossierHashModel) //The header document of a proper or 'raw' dossier, can be empty
@@ -24,21 +24,25 @@
 
 <#global relevance = {
 	'relevant' : 'csr',
+	'relevant' : 'nzEPAclassification',
 	'relevant' : 'ppp',
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
-	'relevant' : 'nzepaClass',
 	'relevant' : 'generic'
+	
 } />
 
-<#macro initiRelevanceForNZepaClassification relevance>
+<#macro initiateRelevanceNZ relevance>
 	
-	<#global nzepaClassification = [] />	
+	<#global nzEPArelevant = [] />	
 		
 	<#list relevance?keys as prop>
 		<#if prop?has_content>
-			<#assign nzepaClassification><#if prop=="nzepaClass"></#if></#assign>			
+			<#assign nzEPArelevant>
+				<#if prop=="nzEPAclassification">
+				</#if>
+			</#assign>			
 		</#if>
 	</#list>
 </#macro>
@@ -691,31 +695,22 @@
 			<@com.quantity valuePath/>
 		<#elseif valueType=="decimal">
 			<@com.number valuePath/>
-		<#elseif valueType?contains("html")>
+		<#elseif valueType=="multilingual_text_html">
 			<@com.richText valuePath/>
-		<#elseif valueType?contains("text")>
+		<#elseif valueType?contains("multilingual_text")>
 			<@com.text valuePath/>
-		<#else>
-			value type ${valueType} not supported!
 		<#--multilingual_text_medium; multilingual_text_large-->
 		</#if>
 	</#compress>
 </#macro>
 
 <#--Macro to interatively print all children fields of an element-->
-<#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
+<#macro children path exclude=[]>
 	<#compress>
 		<#list path?children as child>
 			<#if child?node_type!="repeatable" && child?node_type!="block" && !(exclude?seq_contains(child?node_name)) && child?has_content>
 				<#assign childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
-
-				<para role="${role1}">
-					<#if titleEmphasis><emphasis role="bold"></#if>
-						${childName}:
-					<#if titleEmphasis></emphasis></#if>
-					<span role="${role2}"><@value child/></span>
-				</para>
-
+				<para>${childName}: <span role="indent"><@value child/></span></para>
 			</#if>
 		</#list>
 	</#compress>
