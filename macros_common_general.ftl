@@ -28,7 +28,7 @@
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
-	'relevant' : 'nzepa_classification',
+	'relevant' : 'nzepaClass',
 	'relevant' : 'generic'
 } />
 
@@ -38,7 +38,7 @@
 		
 	<#list relevance?keys as prop>
 		<#if prop?has_content>
-			<#assign nzepaClassification><#if prop=="nzepa_classification"></#if></#assign>			
+			<#assign nzepaClassification><#if prop=="nzepaClass"></#if></#assign>			
 		</#if>
 	</#list>
 </#macro>
