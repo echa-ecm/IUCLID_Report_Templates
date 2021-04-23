@@ -51,8 +51,11 @@
 		<@com.emptyLine/>
 		<table border="1">
 			
+				<#if nzEPArelevant??>
+				<title>Classification according to GHS for physicochemical properties</title>
+				<#else>
 				<title>Classification and labelling according to CLP / GHS for physicochemical properties</title>
-			
+				</#if>
 			<col width="20%" />
 			<col width="25%" />
 			<col width="30%" />
@@ -409,63 +412,66 @@
 		</#if>
 		
 		<!-- Labelling section -->
-		<@com.emptyLine/>
-		<para><emphasis role="bold">Labelling</emphasis></para>
-		
-		<#if record.Labelling.SignalWord?has_content>
+		<#if !nzEPArelevant??>
 			<@com.emptyLine/>
-			<para>
-				Signal word: <@com.picklist record.Labelling.SignalWord/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.HazardPictogramBlock.HazardPictogram?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Hazard pictogram:</emphasis>
+			<para><emphasis role="bold">Labelling</emphasis></para>
+			
+			<#if record.Labelling.SignalWord?has_content>
 				<@com.emptyLine/>
-				<@HazardPictogramList record.Labelling.HazardPictogramBlock.HazardPictogram/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.HazardStatementsBlock.HazardStatements?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Hazard statements:</emphasis>
-				<@HazardStatementList record.Labelling.HazardStatementsBlock.HazardStatements/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.PrecautionaryStatementsBlock.PrecautionaryStatements?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Precautionary statements:</emphasis>
-				<@PrecautionaryStatementsList record.Labelling.PrecautionaryStatementsBlock.PrecautionaryStatements/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.LabelingRequirementsBlock.LabelingRequirements?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Additional labelling requirements (CLP supplemental hazard statement):</emphasis>
-				<@SupplimentalHazardStatementList record.Labelling.LabelingRequirementsBlock.LabelingRequirements/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.LabelingRequirementsBlock.AdditionalLabelling?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Additional labelling:</emphasis>
-				<@AdditionalLabellingList record.Labelling.LabelingRequirementsBlock.AdditionalLabelling/>
-			</para>
-		</#if>
-		
-		<#if record.NotesBlock.Notes?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Notes:</emphasis>
-				<@NotesLabellingList record.NotesBlock.Notes/>
-			</para>
+				<para>
+					Signal word: <@com.picklist record.Labelling.SignalWord/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.HazardPictogramBlock.HazardPictogram?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Hazard pictogram:</emphasis>
+					<@com.emptyLine/>
+					<@HazardPictogramList record.Labelling.HazardPictogramBlock.HazardPictogram/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.HazardStatementsBlock.HazardStatements?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Hazard statements:</emphasis>
+					<@HazardStatementList record.Labelling.HazardStatementsBlock.HazardStatements/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.PrecautionaryStatementsBlock.PrecautionaryStatements?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Precautionary statements:</emphasis>
+					<@PrecautionaryStatementsList record.Labelling.PrecautionaryStatementsBlock.PrecautionaryStatements/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.LabelingRequirementsBlock.LabelingRequirements?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Additional labelling requirements (CLP supplemental hazard statement):</emphasis>
+					<@SupplimentalHazardStatementList record.Labelling.LabelingRequirementsBlock.LabelingRequirements/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.LabelingRequirementsBlock.AdditionalLabelling?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Additional labelling:</emphasis>
+					<@AdditionalLabellingList record.Labelling.LabelingRequirementsBlock.AdditionalLabelling/>
+				</para>
+			</#if>
+			
+			<#if record.NotesBlock.Notes?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Notes:</emphasis>
+					<@NotesLabellingList record.NotesBlock.Notes/>
+				</para>
+			</#if>
+			
 		</#if>
 		
 		
