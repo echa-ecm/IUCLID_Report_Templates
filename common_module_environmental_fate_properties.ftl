@@ -1501,7 +1501,13 @@
 				
 				<#if blockItem.HalfLife?has_content>
 					<@com.range blockItem.HalfLife/> 
-				</#if>	
+				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.StDev?has_content>
+						[sd=<@com.number blockItem.StDev/>]
+					</#if>
+				</#if>
 				
 				<#if blockItem.Temp?has_content>
 					at <@com.quantity blockItem.Temp/>;
@@ -1536,6 +1542,12 @@
 				<#if blockItem.Recovery?has_content>
 					<@com.range blockItem.Recovery/> 
 				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.StDev?has_content>
+						[sd=<@com.number blockItem.StDev/>]
+					</#if>
+				</#if>
 				
 				<#if blockItem.Temp?has_content>
 					at <@com.quantity blockItem.Temp/> 
@@ -1543,6 +1555,12 @@
 				
 				<#if blockItem.Duration?has_content>
 					after <@com.range blockItem.Duration/>
+				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.picklist blockItem.RemarksOnResults/>)
+					</#if>
 				</#if>
 			</para>
 		</#list>
@@ -1581,11 +1599,17 @@
 			<para role="indent">
 				<#if blockItem.hasElement("HalfLife")>
 					<@com.range blockItem.HalfLife/>
-				<#else/>
+				<#else>
 					<@com.range blockItem.DT50/>
 				</#if>
 				<#if blockItem.TestCondition?has_content>
 					(<@com.text blockItem.TestCondition/>)
+				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.picklist blockItem.RemarksOnResults/>)
+					</#if>
 				</#if>
 			</para>
 		</#list>
@@ -1600,17 +1624,31 @@
 			<para role="indent">
 				<#if blockItem.hasElement("DegradationPercent")>
 					<@com.range blockItem.DegradationPercent/>
-				<#else/>
+				<#else>
 					<@com.range blockItem.Degr/>
 				</#if>
+
+				<#if pppRelevant??>
+					%
+					<#if blockItem.StDev?has_content>
+						[<@com.number blockItem.StDev/>]
+					</#if>
+				</#if>
+
 				after
 				<#if blockItem.hasElement("TimePoint")>
 					<@com.quantity blockItem.TimePoint/>
-				<#else/>
+				<#else>
 					<@com.quantity blockItem.SamplingTime/>
 				</#if>
 				<#if blockItem.TestCondition?has_content>
 					(<@com.text blockItem.TestCondition/>)
+				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.picklist blockItem.RemarksOnResults/>)
+					</#if>
 				</#if>
 			</para>
 		</#list>
@@ -1627,6 +1665,13 @@
 				<#if blockItem.ConcentrationOfSensitiser?has_content>
 					(<@com.range blockItem.ConcentrationOfSensitiser/>)
 				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.DetailsOnSensitiser?has_content>
+						- <@com.text blockItem.DetailsOnSensitiser/>
+					</#if>
+				</#if>
+
 			</para>
 		</#list>
   	</#if>
@@ -1642,6 +1687,9 @@
 				<#if blockItem.ReactionWith?has_content>
 					for reaction with <@com.picklist blockItem.ReactionWith/>
 				</#if>
+				<#if pppRelevant?? && blockItem.RemarksOnResults?has_content>
+					(<@com.text blockItem.RemarksOnResults/>)
+				</#if>
 			</para>
 		</#list>
   	</#if>
@@ -1653,23 +1701,52 @@
 	<#if degradationRepeatableBlock?has_content>
 		<#list degradationRepeatableBlock as blockItem>
 			<para role="indent">
-			
+				<#if pppRelevant??>
+					<#if blockItem.hasElement("SoilNo") && blockItem.SoilNo?has_content>
+						<@com.picklist blockItem.SoilNo/>:
+					</#if>
+
+					<#if blockItem.Parameter?has_content>
+						<@com.picklist blockItem.Parameter/> =
+					</#if>
+				</#if>
+
 				<@com.range blockItem.Degr/>
+
+				<#if pppRelevant??>
+					<#if blockItem.Degr?has_content>
+						%
+					</#if>
+
+					<#if blockItem.StDev?has_content>
+						[sd=<@com.number blockItem.StDev/>]
+					</#if>
+
+					<#if blockItem.hasElement("ParentProduct") && blockItem.ParentProduct?has_content>
+						for <@com.picklist blockItem.ParentProduct/>
+						<#if blockItem.NameOrCodeForProduct?has_content>
+							<#local product=iuclid.getDocumentForKey(blockItem.NameOrCodeForProduct)/>
+							<@com.text product.ReferenceSubstanceName/>
+						</#if>
+					</#if>
+				</#if>
 				
 				<#if blockItem.SamplingTime?has_content>
 					after
 					<@com.quantity blockItem.SamplingTime/>
 				</#if>
-				
-				<#if blockItem.Parameter?has_content>
-					(<@com.picklist blockItem.Parameter/>)
+
+				<#if !pppRelevant??>
+					<#if blockItem.Parameter?has_content>
+						(<@com.picklist blockItem.Parameter/>)
+					</#if>
 				</#if>
-				
+
 				<#if blockItem.RemarksOnResults?has_content>
 					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
-				
-				<#if blockItem.hasElement("SoilNo") && blockItem.SoilNo?has_content>
+
+				<#if !(pppRelevant??) && blockItem.hasElement("SoilNo") && blockItem.SoilNo?has_content>
 					(<@com.picklist blockItem.SoilNo/>)
 				</#if>
 			</para>
@@ -1685,7 +1762,17 @@
 			<para role="indent">
 			
 				<@com.range blockItem.HalfLife/>
-				
+
+				<#if pppRelevant??>
+					<#if blockItem.StDev?has_content>
+						[sd=<@com.picklist blockItem.StDev/>]
+					</#if>
+
+					<#if blockItem.Type?has_content>
+						(<@com.picklist blockItem.Type/>)
+					</#if>
+				</#if>
+
 				<#if blockItem.Compartment?has_content>
 					in
 					<@com.picklist blockItem.Compartment/>
@@ -1694,6 +1781,12 @@
 				<#if blockItem.Temp?has_content>
 					at
 					<@com.quantity blockItem.Temp/>
+				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.picklist blockItem.RemarksOnResults/>)
+					</#if>
 				</#if>
 			</para>
 		</#list>
@@ -1725,9 +1818,42 @@
 	<#if soilTypeBlock?has_content>
 		<#list soilTypeBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.SoilType/> 
-				<#if blockItem.SoilNo?has_content>
+				<#if pppRelevant??>
+					<#if blockItem.SoilNo?has_content>
+						<@com.picklist blockItem.SoilNo/>:
+					</#if>
+				</#if>
+
+				<@com.picklist blockItem.SoilType/>
+				<#if !pppRelevant?? && blockItem.SoilNo?has_content>
 					(<@com.picklist blockItem.SoilNo/>)
+				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.Clay?has_content>
+						. Clay: <@com.range blockItem.Clay/>%
+					</#if>
+					<#if blockItem.Silt?has_content>
+						. Silt: <@com.range blockItem.Silt/>%
+					</#if>
+					<#if blockItem.Sand?has_content>
+						. Sand: <@com.range blockItem.Sand/>%
+					</#if>
+					<#if blockItem.OrgC?has_content>
+						. Org.C: <@com.range blockItem.OrgC/>%
+					</#if>
+					<#if blockItem.Ph?has_content>
+						. pH: <@com.range blockItem.Ph/>%
+					</#if>
+					<#if blockItem.CEC?has_content>
+						. CEC: <@com.range blockItem.CEC/>%
+					</#if>
+					<#if blockItem.BulkDensityGCm?has_content>
+						. Bulk density: <@com.range blockItem.BulkDensityGCm/>g/cm3
+					</#if>
+					<#if blockItem.MoistureContent?has_content>
+						. Moisture: <@com.range blockItem.MoistureContent/>%
+					</#if>
 				</#if>
 			</para>
 		</#list>
@@ -1740,14 +1866,35 @@
 	<#if halfLifeRepeatableBlock?has_content>
 		<#list halfLifeRepeatableBlock as blockItem>
 			<para role="indent">
+				<#if pppRelevant??>
+					<#if blockItem.SoilNo?has_content>
+						<@com.picklist blockItem.SoilNo/>:
+					</#if>
+				</#if>
+
 				<#if blockItem.HalfLife?has_content>
 					<@com.range blockItem.HalfLife/> 
 				</#if>
-				
-				<#if blockItem.SoilNo?has_content>
-					(<@com.picklist blockItem.SoilNo/>) 
+
+				<#if pppRelevant??>
+					<#if blockItem.StDev?has_content>
+						[sd=<@com.number blockItem.StDev/>]
+					</#if>
+
+					<#if blockItem.Temp?has_content>
+						at <@com.range blockItem.Temp/>
+					</#if>
+
+					<#if blockItem.Type?has_content>
+						(<@com.picklist blockItem.Type/>)
+					</#if>
+				<#else>
+
+					<#if blockItem.SoilNo?has_content>
+						(<@com.picklist blockItem.SoilNo/>)
+					</#if>
 				</#if>
-				
+
 				<#if blockItem.RemarksOnResults?has_content>
 					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
@@ -1762,6 +1909,13 @@
 	<#if adsorptionCoefficientRepeatableBlock?has_content>
 		<#list adsorptionCoefficientRepeatableBlock as blockItem>
 			<para role="indent">
+
+				<#if pppRelevant??>
+					<#if blockItem.SampleNo?has_content>
+						<@com.picklist blockItem.SampleNo/>:
+					</#if>
+				</#if>
+
 				<#if blockItem.Type?has_content>
 					<@com.picklist blockItem.Type/>: 
 				</#if>
@@ -1772,7 +1926,17 @@
 				
 				<#if blockItem.Temp?has_content>
 					at <@com.quantity blockItem.Temp/>
-				</#if>	
+				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.Ph?has_content>
+						at pH=<@com.number blockItem.Ph/>
+					</#if>
+
+					<#if blockItem.Matrix?has_content>
+						(Matrix: <@com.text blockItem.Matrix/>)
+					</#if>
+				</#if>
 					
 				<#if blockItem.PercentageOfOrganicCarbon?has_content>
 					(Org. C (%): <@com.range blockItem.PercentageOfOrganicCarbon/>)
@@ -1792,6 +1956,19 @@
 	<#if partitionCoefficientRepeatableBlock?has_content>
 		<#list partitionCoefficientRepeatableBlock as blockItem>
 			<para role="indent">
+
+				<#if pppRelevant??>
+					<#if blockItem.SampleNo?has_content>
+						<@com.picklist blockItem.SampleNo/>
+					</#if>
+
+					<#if blockItem.PhaseSystem?has_content>
+						(<@com.picklist blockItem.PhaseSystem/>)
+					</#if>
+
+					<#if blockItem.SampleNo?has_content>:</#if>
+				</#if>
+
 				<#if blockItem.Type?has_content>
 					<@com.picklist blockItem.Type/>: 
 				</#if>
@@ -1802,6 +1979,20 @@
 					
 				<#if blockItem.Temp?has_content>
 					at <@com.quantity blockItem.Temp/>
+				</#if>
+
+				<#if pppRelevant??>
+					<#if blockItem.Ph?has_content>
+						at pH=<@com.number blockItem.Ph/>
+					</#if>
+
+					<#if blockItem.Matrix?has_content>
+						(Matrix: <@com.text blockItem.Matrix/>)
+					</#if>
+
+					<#if blockItem.OrgCarbon?has_content>
+						(Org. C (%): <@com.range blockItem.OrgCarbon/>)
+					</#if>
 				</#if>
 					
 				<#if blockItem.RemarksOnResults?has_content>					
@@ -1818,6 +2009,13 @@
 	<#if massBalanceAdsorptiontRepeatableBlock?has_content>
 		<#list massBalanceAdsorptiontRepeatableBlock as blockItem>
 			<para role="indent">
+
+				<#if pppRelevant??>
+					<#if blockItem.SampleNo?has_content>
+						<@com.picklist blockItem.SampleNo/>:
+					</#if>
+				</#if>
+
 				<#if blockItem.AdsorptionPercentage?has_content>
 					<@com.range blockItem.AdsorptionPercentage/> 
 				</#if>
@@ -1825,9 +2023,15 @@
 				<#if blockItem.Duration?has_content>
 					after <@com.quantity blockItem.Duration/>
 				</#if>
-				
-				<#if blockItem.SampleNo?has_content>
-					(<@com.picklist blockItem.SampleNo/>)
+
+				<#if !pppRelevant??>
+					<#if blockItem.SampleNo?has_content>
+						(<@com.picklist blockItem.SampleNo/>)
+					</#if>
+				<#else>
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.picklist blockItem.RemarksOnResults/>)
+					</#if>
 				</#if>
 			</para>
 		</#list>
@@ -1840,6 +2044,13 @@
 	<#if massBalanceDesorptiontRepeatableBlock?has_content>
 		<#list massBalanceDesorptiontRepeatableBlock as blockItem>
 			<para role="indent">
+
+				<#if pppRelevant??>
+					<#if blockItem.SampleNo?has_content>
+						<@com.picklist blockItem.SampleNo/>:
+					</#if>
+				</#if>
+
 				<#if blockItem.DesorptionPercentage?has_content>
 					<@com.range blockItem.DesorptionPercentage/> 
 				</#if>
@@ -1847,9 +2058,15 @@
 				<#if blockItem.Duration?has_content>
 					after <@com.quantity blockItem.Duration/>
 				</#if>
-				
-				<#if blockItem.SampleNo?has_content>
-					(<@com.picklist blockItem.SampleNo/>)
+
+				<#if !pppRelevant??>
+					<#if blockItem.SampleNo?has_content>
+						(<@com.picklist blockItem.SampleNo/>)
+					</#if>
+				<#else>
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.picklist blockItem.RemarksOnResults/>)
+					</#if>
 				</#if>
 			</para>
 		</#list>
