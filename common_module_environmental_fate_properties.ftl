@@ -3520,3 +3520,640 @@
 
 	</#compress>
 </#macro>
+
+<#--3. summaries-->
+<#macro fatePPPsummary _subject docSubType endpoint="">
+	<#compress>
+
+		<#local summaryDocToCSAMap = {"PhototransformationInSoil" : [{"field": "HalflifeInSoil", "preText" : "Half-life in soil: "}],
+										"AdsorptionDesorption" : [{"field": "KocAt20Celsius", "preText" : "Koc: ", "postText" : "at 20°C"},
+																	{"path":"OtherAdsorptionCoefficients", "field": "TypeValue", "preText" : "_path:Type", "postText" : "L/kg", "atField":"AtTheTemperatureOf"}],
+										"Hydrolysis" : [{"field": "HalflifeForHydrolysis", "preText" : "Half-life for hydrolysis: ", "atField":"AtTheTemperatureOf"}],
+										"PhototransformationInWater" : [{"field": "HalflifeInWater", "preText" : "Half-life in water: "}],
+										"BiodegradationInWaterScreeningTests" : [{"field": "BiodegradationInWater", "preText" : "Biodegradation in water: "},
+																					{"field": "TypeOfWater", "preText" : "Type of water: "}	],
+                                        "BiodegradationInWaterAndSedimentSimulationTests_EU_PPP" : [{"field": "DegradationMarineWater.HalfLifeMarineWater", "preText" : "Half-life in marine water: ", "atField":"DegradationMarineWater.Temperature"},
+                                                                                    {"field": "DegradationMarineSediment.HalfLifeMarineWaterSed", "preText" : "Half-life in marine water sediment: ", "atField": "DegradationMarineSediment.Temperature"}],
+										"PhototransformationInAir" : [{"field": "HalflifeInAir", "preText" : "Half-life in air: "},
+																		{"field": "DegradationRateConstantWithOHRadicals", "preText" : "Degradation rate constant with OH radicals: "}]
+
+		}/>
+
+		<#-- Get doc-->
+		<#if docSubType=="DefinitionResidueFate">
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+		<#else>
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+		</#if>
+
+		<#-- Iterate-->
+		<#if summaryList?has_content>
+			<@com.emptyLine/>
+			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+
+			<#assign printSummaryName = summaryList?size gt 1 />
+
+			<#list summaryList as summary>
+				<@com.emptyLine/>
+
+				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
+
+				<#--CSA path-->
+				<#if summary.hasElement("KeyValueForCsa")>
+					<#local csaPath=summary["KeyValueForCsa"]>
+				<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment")>
+					<#local csaPath=summary["KeyValueForChemicalSafetyAssessment"]>
+<#--					# I-->
+				<#elseif summary.hasElement("KeyValueCsa")>
+				<#--				# II-->
+					<#local csaPath=summary["KeyValueCsa"]>
+				</#if>
+
+				<#--Key Information-->
+				<#if summary.hasElement("KeyInformation") && summary.KeyInformation.KeyInformation?has_content>
+					<para><emphasis role="bold">Key information: </emphasis></para>
+					<para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para>
+				</#if>
+
+				<#--Links (only for cases with no standard table)-->
+				<#if summary.hasElement("LinkToRelevantStudyRecord.Link") && summary.LinkToRelevantStudyRecord.Link?has_content>
+					<para><emphasis role="bold">Link to relevant study records: </emphasis></para>
+					<para role="indent">
+						<#list summary.LinkToRelevantStudyRecord.Link as link>
+							<#if link?has_content>
+								<#local studyReference = iuclid.getDocumentForKey(link) />
+								<para>
+									<command  linkend="${studyReference.documentKey.uuid!}">
+										<@com.text studyReference.name/>
+									</command>
+								</para>
+							</#if>
+						</#list>
+					</para>
+				</#if>
+
+				<#--CSA-->
+				<#if csaPath?? && csaPath?has_content>
+
+					<para><emphasis role="bold">Key value for chemical safety assessment:</emphasis></para>
+
+					<#if docSubType=="BiodegradationInSoil_EU_PPP">
+						<#if csaPath.PersistenceDegradationSoil?has_content>
+							<para>Persistance / rate of degradation in soil:</para>
+							<para role="small"><@degradationRateSummaryTable csaPath.PersistenceDegradationSoil/></para>
+						</#if>
+						<#if csaPath.ModellingDegradationSoil?has_content>
+							<para>Modelling rate of degradation in soil:</para>
+							<para role="small"><@modellingDegradationRateSummaryTable csaPath.ModellingDegradationSoil/></para>
+						</#if>
+						<#if csaPath.KeyValueCsa?has_content>
+							<para>Key value for safety assessment:</para>
+							<para role="small"><@keyValueCSASummaryTable csaPath.KeyValueCsa/></para>
+						</#if>
+
+					<#elseif docSubType=="RouteDegSoil_EU_PPP">
+						<#if csaPath.DegradationSoil?has_content>
+							<para>Route of degradation in soil:</para>
+							<para role="small"><@degradationRouteSummaryTable csaPath.DegradationSoil/></para>
+						</#if>
+
+					<#elseif docSubType=="BiodegradationInWaterAndSedimentSimulationTests_EU_PPP">
+						<#if csaPath.PersistenceDegradationFreshwater?has_content>
+							<para>Persistance / rate of degradation in freshwater:</para>
+							<para role="small"><@degradationRateSummaryTable csaPath.PersistenceDegradationFreshwater/></para>
+						</#if>
+						<#if csaPath.ModelledDegradationFreshwater?has_content>
+							<para>Modelling rate of degradation in freshwater:</para>
+							<para role="small"><@modellingDegradationRateSummaryTable csaPath.ModelledDegradationFreshwater/></para>
+						</#if>
+						<#if csaPath.DegradationMarineWater.PersistenceDegradationFreshwaterSediment?has_content>
+							<para>Persistance / rate of degradation in freshwater sediment:</para>
+							<para role="small"><@degradationRateSummaryTable csaPath.DegradationMarineWater.PersistenceDegradationFreshwaterSediment/></para>
+						</#if>
+						<#if csaPath.DegradationMarineWater.ModelledDegradationFreshwaterSed?has_content>
+							<para>Modelling rate of degradation in freshwater sediment:</para>
+							<para role="small"><@modellingDegradationRateSummaryTable csaPath.DegradationMarineWater.ModelledDegradationFreshwaterSed/></para>
+						</#if>
+						<#if csaPath.DegradationMarineSediment.PersistenceDegradationWholeSystem?has_content>
+							<para>Persistance / rate of degradation in whole system:</para>
+							<para role="small"><@degradationRateSummaryTable csaPath.DegradationMarineSediment.PersistenceDegradationWholeSystem/></para>
+						</#if>
+						<#if csaPath.DegradationMarineSediment.ModelledDegradationWholeSystem?has_content>
+							<para>Modelling rate of degradation in whole system:</para>
+							<para role="small"><@modellingDegradationRateSummaryTable csaPath.DegradationMarineSediment.ModelledDegradationWholeSystem/></para>
+						</#if>
+
+                    <#elseif docSubType=="RouteDegWaterSed_EU_PPP">
+                        <#if csaPath.RouteDegradationFreshwater?has_content>
+                            <para>Route of degradation in freshwater:</para>
+                            <para role="small"><@degradationRouteSummaryTable csaPath.RouteDegradationFreshwater/></para>
+                        </#if>
+                        <#if csaPath.RouteDegradationMarineWater?has_content>
+                            <para>Route of degradation in marine water:</para>
+                            <para role="small"><@degradationRouteSummaryTable csaPath.RouteDegradationMarineWater/></para>
+                        </#if>
+                        <#if csaPath.RouteDegradationFreswaterSediment?has_content>
+                            <para>Route of degradation in freshwater sediment:</para>
+                            <para role="small"><@degradationRouteSummaryTable csaPath.RouteDegradationFreswaterSediment/></para>
+                        </#if>
+                        <#if csaPath.RouteDegradationMarineWaterSediment?has_content>
+                            <para>Route of degradation in marine water sediment:</para>
+                            <para role="small"><@degradationRouteSummaryTable csaPath.RouteDegradationMarineWaterSediment/></para>
+                        </#if>
+					</#if>
+
+					<#if summaryDocToCSAMap?keys?seq_contains(docSubType)>
+						<para role="indent"><@valueForCSA csaPath summaryDocToCSAMap[docSubType]/></para>
+					</#if>
+				<#else>
+					<#if docSubType=="DefinitionResidueFate">
+						<#if summary.KeyInformation[endpoint]?has_content>
+							<para><emphasis role="bold">Definition of the residue:</emphasis></para>
+							<para role="small"><@residueDefinitionSummaryTable summary.KeyInformation endpoint/></para>
+						</#if>
+					</#if>
+				</#if>
+
+				<#--Discussion-->
+				<#if summary.hasElement("Discussion") && summary.Discussion.Discussion?has_content>
+					<para><emphasis role="bold">Discussion:</emphasis></para>
+					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
+				</#if>
+
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro degradationRateSummaryTable path>
+	<#compress>
+
+		<table border="1">
+
+			<#if path[0].hasElement("TestConditions") && path[0].hasElement("SoilType")>
+				<col width="20%" />
+				<col width="8%" />
+				<col width="8%" />
+				<col width="8%" />
+				<col width="6%" />
+				<col width="6%" />
+				<col width="6%" />
+				<col width="6%" />
+				<col width="6%" />
+				<col width="6%" />
+				<col width="9%" />
+				<col width="10%" />
+			<#else>
+				<col width="25%" />
+				<col width="8%" />
+				<col width="8%" />
+				<col width="8%" />
+				<col width="8%" />
+				<col width="8%" />
+				<col width="8%" />
+				<col width="12%" />
+				<col width="15%" />
+			</#if>
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<#if path[0].hasElement("TestConditions")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Test cond.</emphasis></th></#if>
+				<#if path[0].hasElement("SoilType")>
+					<th colspan="4"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Soil characteristics</emphasis></th>
+				<#else>
+					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">pH</emphasis></th>
+					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Temp.</emphasis></th>
+				</#if>
+				<th colspan="4"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Degradation results</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Method of calculation</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+			</tr>
+			<tr>
+				<#if path[0].hasElement("SoilType")>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">type</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">pH</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">% moist.</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Temp.</emphasis></th>
+				</#if>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">DT50</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">DT90</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">f.f.</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">X2</emphasis></th>
+			</tr>
+
+			</thead>
+			<tbody valign="middle">
+			<#list path as item>
+				<tr>
+					<td>
+						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
+						<#if substance?has_content>
+							<@com.text substance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+						<#local precursor=iuclid.getDocumentForKey(item.Precursor)/>
+						<#if precursor?has_content>
+							<para>precursor: <@com.text precursor.ChemicalName/></para>
+						</#if>
+					</td>
+					<#if item.hasElement("TestConditions")><td><@com.picklist item.TestConditions/></td></#if>
+					<#if item.hasElement("SoilType")><td><@com.text item.SoilType/></td></#if>
+					<td>
+						<@com.number item.Ph/>
+						<#if item.MeasuredIn?has_content>
+							(<@com.text item.MeasuredIn/>)
+						</#if>
+					</td>
+					<#if item.hasElement("SoilMoisture")><td><#if item.SoilMoisture?has_content><@com.number item.SoilMoisture/>%</#if></td></#if>
+					<td><#if item.hasElement("Temperature")><@com.quantity item.Temperature/><#elseif item.hasElement("Teperature")><@com.quantity item.Teperature/></#if></td>
+					<td>
+						<#if item.hasElement("HalfLifeFreshWater")>
+							<@com.quantity item.HalfLifeFreshWater/>
+						<#elseif item.hasElement("HalfLifeSoil")>
+							<@com.quantity item.HalfLifeSoil/>
+						<#elseif item.hasElement("HalfLifeFreshwaterSediment")>
+							<@com.quantity item.HalfLifeFreshwaterSediment/>
+						</#if>
+					</td>
+					<td>
+						<#if item.hasElement("DtNinetyFreshwater")>
+							<@com.quantity item.DtNinetyFreshwater/>
+						<#elseif item.hasElement("DtNinetySoil")>
+							<@com.quantity item.DtNinetySoil/>
+						<#elseif item.hasElement("DTNinetyFreshwaterSediment")>
+							<@com.quantity item.DTNinetyFreshwaterSediment/>
+						</#if>
+					</td>
+					<td><@com.number item.KineticFormationFraction/></td>
+					<td><@com.number item.ChiSquare/></td>
+					<td><@com.text item.CalculationMethod/>
+						<#if item.KineticParameters?has_content>
+							<para>kin. param:<@com.picklistMultiple item.KineticParameters/></para>
+						</#if>
+
+					</td>
+					<td><@com.text item.Remarks/></td>
+				</tr>
+			</#list>
+			</tbody>
+		</table>
+
+	</#compress>
+</#macro>
+
+<#macro modellingDegradationRateSummaryTable path>
+
+	<#compress>
+
+		<table border="1">
+
+		<#if path[0].hasElement("SoilType")>
+			<col width="20%" />
+			<col width="9%" />
+			<col width="9%" />
+			<col width="9%" />
+			<col width="7%" />
+			<col width="7%" />
+			<col width="7%" />
+			<col width="7%" />
+			<col width="12%" />
+			<col width="12%" />
+		<#else>
+			<col width="26%" />
+			<col width="12%" />
+			<col width="10%" />
+			<col width="10%" />
+			<col width="10%" />
+			<col width="16%" />
+			<col width="16%" />
+		</#if>
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<#if path[0].hasElement("TestConditions")>
+					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Test cond.</emphasis></th>
+				</#if>
+				<#if path[0].hasElement("SoilType")>
+					<th colspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Soil characteristics</emphasis></th>
+				<#else>
+					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">pH</emphasis></th>
+				</#if>
+				<th colspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Degradation results</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Method of calculation</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+			</tr>
+			<tr>
+				<#if path[0].hasElement("SoilType")>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">type</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">pH</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">% moist.</emphasis></th>
+				</#if>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">norm. DT50</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">f.f.</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">X2</emphasis></th>
+			</tr>
+
+			</thead>
+			<tbody valign="middle">
+			<#list path as item>
+				<tr>
+					<td>
+						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
+						<#if substance?has_content>
+							<@com.text substance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+						<#local precursor=iuclid.getDocumentForKey(item.Precursor)/>
+						<#if precursor?has_content>
+							<para>precursor: <@com.text precursor.ChemicalName/></para>
+						</#if>
+					</td>
+					<#if item.hasElement("TestConditions")><td><@com.picklist item.TestConditions/></td></#if>
+					<#if item.hasElement("SoilType")><td><@com.text item.SoilType/></td></#if>
+					<td>
+						<@com.number item.Ph/>
+						<#if item.MeasuredIn?has_content>
+							(<@com.text item.MeasuredIn/>)
+						</#if>
+					</td>
+					<#if item.hasElement("SoilMoisture")><td><#if item.SoilMoisture?has_content><@com.number item.SoilMoisture/>%</#if></td></#if>
+					<td><@com.quantity item.NormalisedDtFifty/></td>
+					<td><@com.number item.KineticFormationFraction/></td>
+					<td><@com.number item.ChiSquare/></td>
+					<td><@com.text item.CalculationMethod/>
+						<#if item.KineticParameters?has_content>
+							<para>kin. param:<@com.picklistMultiple item.KineticParameters/></para>
+						</#if>
+					</td>
+					<td><@com.text item.Remarks/></td>
+				</tr>
+			</#list>
+			</tbody>
+		</table>
+
+	</#compress>
+</#macro>
+
+<#macro keyValueCSASummaryTable path>
+
+	<#compress>
+
+		<table border="1">
+
+			<col width="30%" />
+			<col width="15%" />
+			<col width="15%" />
+			<col width="15%" />
+			<col width="25%" />
+
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Half-life (DT50) in soil</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Mean formation fraction</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">pH dependence</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+			</tr>
+
+			</thead>
+			<tbody valign="middle">
+			<#list path as item>
+				<tr>
+					<td>
+						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
+						<#if substance?has_content>
+							<@com.text substance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+					</td>
+					<td><@com.quantity item.HalfLifeSoil/></td>
+					<td><@com.number item.FormationFraction/></td>
+					<td><@com.picklist item.PhDependence/></td>
+					<td><@com.text item.Remarks/></td>
+				</tr>
+			</#list>
+			</tbody>
+		</table>
+
+	</#compress>
+</#macro>
+
+<#macro degradationRouteSummaryTable path>
+
+	<#compress>
+
+		<table border="1">
+
+            <#if path[0].hasElement("TestConditions")>
+                <col width="20%" />
+                <col width="11%" />
+                <col width="11%" />
+                <col width="11%" />
+                <col width="11%" />
+                <col width="8%" />
+                <col width="8%" />
+                <col width="8%" />
+                <col width="14%" />
+            <#else>
+                <col width="24%" />
+                <col width="11%" />
+                <col width="11%" />
+                <col width="11%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="15%" />
+            </#if>
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<#if path[0].hasElement("TestConditions")><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Test cond.</emphasis></th></#if>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Duration</emphasis></th>
+				<#if path[0].hasElement("NumberSoils")><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">No. soils</emphasis></th></#if>
+                <#if path[0].hasElement("Ph")><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">pH</emphasis></th></#if>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Radio label</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Mineralis.</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Non extr. residues</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Max. occurrence</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+			</tr>
+
+			</thead>
+			<tbody valign="middle">
+			<#list path as item>
+				<tr>
+					<td>
+						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
+						<#if substance?has_content>
+							<@com.text substance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+					</td>
+					<#if item.hasElement("TestConditions")>
+                        <td>
+                            <@com.picklist item.TestConditions/>
+                            <#if item.SterileConditions?has_content>
+                                (sterile conditions)
+                            </#if>
+                        </td>
+                    </#if>
+					<td><#if item.ActualDuration?has_content><@com.number item.ActualDuration/>d</#if></td>
+					<#if item.hasElement("NumberSoils")><td><@com.number item.NumberSoils/></td></#if>
+					<#if item.hasElement("Ph")><td><@com.number item.Ph/></td></#if>
+					<td><@com.text item.RadioLabel/></td>
+					<td><#if item.Mineralisation?has_content><@com.range item.Mineralisation/>%</#if></td>
+					<td><#if item.NonExtractableResidues?has_content><@com.range item.NonExtractableResidues/>%</#if></td>
+					<td>
+						<#if item.MaximumOccurrence?has_content>
+							<@com.number item.MaximumOccurrence/>%
+						</#if>
+						<#if item.DayMaximumOccurence?has_content>
+							at <@com.number item.DayMaximumOccurence/>d
+						</#if>
+					</td>
+					<td><@com.text item.Remarks/></td>
+				</tr>
+			</#list>
+			</tbody>
+		</table>
+
+	</#compress>
+</#macro>
+
+<#macro valueForCSA csaPath propertyData>
+	<#compress>
+		<#list propertyData as value>
+
+			<#if value["path"]?has_content>
+				<#local iterPath="csaPath." + value["path"]/>
+				<#local iter=iterPath?eval/>
+				<#local value2 = [value + {"path":""}]>
+				<#list iter as elem>
+					<@valueForCSA elem value2/>
+				</#list>
+
+			<#else>
+
+				<#local valuePath = "csaPath." + value["field"] />
+				<#local val = valuePath?eval />
+				<#if val?has_content>
+					<para>
+
+					<#-- preText -->
+					<#local preText=value["preText"]!/>
+					<#if preText?starts_with("_path")>
+						<#local preTextPath=preText?replace("_path:", "")/>
+						<@com.value csaPath[preTextPath]/>:
+					<#else>
+						${preText}
+					</#if>
+
+					<#-- value -->
+					<@com.value val />
+
+					<#-- postText -->
+					${value["postText"]!}
+
+					<#-- atValuePath -->
+					<#if value["atField"]?has_content>
+						<#local atValuePath = "csaPath." + value["atField"] />
+						<#local atVal = atValuePath?eval />
+						<#if atVal?has_content>
+							at <@com.quantity atVal />
+						</#if>
+					</#if>
+					</para>
+				</#if>
+			</#if>
+		</#list>
+	</#compress>
+</#macro>
+
+<#macro residueDefinitionSummaryTable path selectedEndpoint>
+	<#compress>
+
+		<table border="1">
+
+			<#if !(selectedEndpoint?has_content) || path[selectedEndpoint][0].hasElement("LinkToValidatedMethod")>
+				<col width="20%" />
+				<col width="20%" />
+				<col width="20%" />
+				<col width="40%" />
+			</#if>
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Compartment</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Residue definition</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Residue components</emphasis></th>
+				<#if !(selectedEndpoint?has_content) || path[selectedEndpoint][0].hasElement("LinkToValidatedMethod")>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Other information</emphasis></th>
+				</#if>
+			</tr>
+			</thead>
+
+			<tbody valign="middle">
+
+			<#list path[selectedEndpoint] as item>
+				<tr>
+					<td><@com.picklist item.Compartment/></td>
+					<td>
+						<#if item.hasElement("ResidueDefinitionMonitoring") && item.ResidueDefinitionMonitoring?has_content>
+							<para><@com.text item.ResidueDefinitionMonitoring/></para>
+						</#if>
+						<#if item.hasElement("ResidueDefinitionRisk") && item.ResidueDefinitionRisk?has_content>
+							<para><@com.text item.ResidueDefinitionRisk/></para>
+						</#if>
+					</td>
+					<td>
+						<#if item.hasElement("ResidueDefinitionRiskComp")>
+							<#local compPath=item.ResidueDefinitionRiskComp/>
+						<#elseif item.hasElement("ResidueDefinitionMonitoringComp")>
+							<#local compPath=item.ResidueDefinitionMonitoringComp/>
+						</#if>
+
+						<#list compPath as link>
+							<#if link?has_content>
+								<#local comp = iuclid.getDocumentForKey(link) />
+								<para>
+									<@com.text comp.ReferenceSubstanceName/>
+								</para>
+							</#if>
+						</#list>
+					</td>
+
+					<#if item.hasElement("LinkToValidatedMethod")>
+						<td>
+							<#if item.hasElement("MonitoringResidueDefinitionLoq") && item.MonitoringResidueDefinitionLoq?has_content>
+								<para>LOQ: <@com.number item.MonitoringResidueDefinitionLoq/>mg/kg</para>
+							</#if>
+							<#if item.hasElement("LinkToValidatedMethod") && item.LinkToValidatedMethod?has_content>
+								<para>Validated method:
+									<#local method = iuclid.getDocumentForKey(item.LinkToValidatedMethod) />
+									<command linkend="${method.documentKey.uuid!}">
+										<@com.text method.name/>
+									</command>
+								</para>
+							</#if>
+						</td>
+					</#if>
+				</tr>
+			</#list>
+
+			</tbody>
+		</table>
+
+	</#compress>
+</#macro>
