@@ -53,16 +53,17 @@
 		<table border="1">			
 			<#if nzEPArelevant??>
 				<title>Classification according to GHS for physicochemical properties</title>
-			<col width="20%" />
-			<col width="25%" />
-			<col width="30%" />	  				  
+        <col width="20%" />
+        <col width="25%" />
+        <col width="30%" />	  				  
 			<#else>
 				<title>Classification and labelling according to CLP / GHS for physicochemical properties</title>
-			<col width="20%" />
-			<col width="25%" />
-			<col width="30%" />
-			<col width="25%" />
-			</#if>		  
+        <col width="20%" />
+        <col width="25%" />
+        <col width="30%" />
+        <col width="25%" />
+    	</#if>
+      
 			<tbody>
 			<#if nzEPArelevant??>
 				<tr>

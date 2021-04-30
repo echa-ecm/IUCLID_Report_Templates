@@ -1,4 +1,4 @@
-<!-- Common macros and functions that could be reused in any template based on IUCLID6 data  -->
+<!-- Common macros and functions that could be reused in any template based on IUCLID6 data -->
 
 <#--It initializes the following variables:
 	* _dossierHeader (:DossierHashModel) //The header document of a proper or 'raw' dossier, can be empty
@@ -24,21 +24,25 @@
 
 <#global relevance = {
 	'relevant' : 'csr',
+	'relevant' : 'nzEPAclassification',
 	'relevant' : 'ppp',
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
-	'relevant' : 'nzepa_classification',
 	'relevant' : 'generic'
+	
 } />
 
-<#macro initiRelevanceForNZepaClassification relevance>
+<#macro initiateRelevanceNZ relevance>
 	
-	<#global nzepaClassification = [] />	
+	<#global nzEPArelevant = [] />	
 		
 	<#list relevance?keys as prop>
 		<#if prop?has_content>
-			<#assign nzepaClassification><#if prop=="nzepa_classification"></#if></#assign>			
+			<#assign nzEPArelevant>
+				<#if prop=="nzEPAclassification">
+				</#if>
+			</#assign>			
 		</#if>
 	</#list>
 </#macro>
