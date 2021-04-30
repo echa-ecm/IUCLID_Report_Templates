@@ -41,32 +41,45 @@
 							The substance is not classified
 						</para>
 					<#else/>
+						<#if !nzEPArelevant??>	
 						<para>
 							The substance is classified as follows: 
 						</para>
+						</#if>
 					</#if>
-					
 			</#if>		
 	
 		<@com.emptyLine/>
 		<table border="1">			
-				<#if nzEPArelevant??>
+			<#if nzEPArelevant??>
 				<title>Classification according to GHS for physicochemical properties</title>
-				<#else>
+        <col width="20%" />
+        <col width="25%" />
+        <col width="30%" />	  				  
+			<#else>
 				<title>Classification and labelling according to CLP / GHS for physicochemical properties</title>
-				</#if>
-			<col width="20%" />
-			<col width="25%" />
-			<col width="30%" />
-			<col width="25%" />
+        <col width="20%" />
+        <col width="25%" />
+        <col width="30%" />
+        <col width="25%" />
+    	</#if>
+      
 			<tbody>
+			<#if nzEPArelevant??>
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
+				</tr>
+			<#else>
 				<tr>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Reason for no classification</emphasis></th>
 				</tr>
-				
+			</#if>
+			
 				<#assign classToBlockMap = {
 					"Explosives:" : record.Classification.PhysicalHazards.Explosives,
 					"Desensitised explosives:" : record.Classification.PhysicalHazards.DesensitizedExplosives,
@@ -91,7 +104,24 @@
 				
 				<#list hazardClasses as hazardClass>
 					<#assign block = classToBlockMap[hazardClass] />
-					
+				<#if nzEPArelevant??>
+					<#if isNotEmptyClassificationBlockNZEPA(block)>
+						<tr>
+							<!-- Hazard class -->
+							<td>
+								${hazardClass!}
+							</td>
+							<!-- Hazard category -->
+							<td>
+								<@com.picklist block.HazardCategory/>
+							</td>
+							<!-- Hazard statement -->
+							<td>
+								<@com.picklist block.HazardStatement/>
+							</td>
+						</tr>
+					</#if>
+				<#else>	
 					<#if isNotEmptyClassificationBlock(block)>
 						<tr>
 							<!-- Hazard class -->
@@ -112,24 +142,40 @@
 							</td>
 						</tr>
 					</#if>
+				</#if>
 				</#list>
 			</tbody>
 		</table>
 				
 		<@com.emptyLine/>
 		<table border="1">
+		<#if nzEPArelevant??>
+			<title>Classification according to GHS for health hazards</title>
+			<col width="20%" />
+			<col width="25%" />
+			<col width="30%" />
+		<#else>			
 			<title>Classification and labelling according to CLP / GHS for health hazards</title>
 			<col width="20%" />
 			<col width="25%" />
 			<col width="30%" />
 			<col width="25%" />
+		</#if>		  
 			<tbody>
+			<#if nzEPArelevant??>
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
+				</tr>
+			<#else>
 				<tr>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Reason for no classification</emphasis></th>
 				</tr>
+			</#if>
 				
 				<#assign classToBlockMap = {
 					"Acute toxicity - oral:" : record.Classification.HealthHazards.AcuteToxicityOral,
@@ -149,6 +195,24 @@
 				
 				<#list hazardClasses as hazardClass>
 					<#assign block = classToBlockMap[hazardClass] />
+				<#if nzEPArelevant??>
+					<#if isNotEmptyClassificationBlockNZEPA(block)>
+						<tr>
+							<!-- Hazard class -->
+							<td>
+								${hazardClass!}
+							</td>
+							<!-- Hazard category -->
+							<td>
+								<@com.picklist block.HazardCategory/>
+							</td>
+							<!-- Hazard statement -->
+							<td>
+								<@com.picklist block.HazardStatement/>
+							</td>
+						</tr>
+					</#if>
+				<#else>	 
 					<#if isNotEmptyClassificationBlock(block)>
 						<tr>
 							<!-- Hazard class -->
@@ -179,6 +243,7 @@
 							</td>
 						</tr>
 					</#if>
+				</#if>
 				</#list>
 				
 				<#assign usespan = true />
@@ -196,6 +261,7 @@
 							<para>
 								<@com.picklist item.Toxicity.HazardCategory/> 
 							</para>
+							<#if !nzEPArelevant??>
 							<para>
 								<#if item.Toxicity.AffectedOrgans?has_content>
 								Affected organs: <@com.picklistMultiple item.Toxicity.AffectedOrgans/>
@@ -206,15 +272,18 @@
 								Route of exposure: <@com.picklistMultiple item.Toxicity.RouteExposure/> 
 								</#if>
 							</para>
+							</#if>
 						</td>
 						<!-- Hazard statement -->
 						<td>
 							<@com.picklist item.Toxicity.HazardStatement/>
 						</td>
 						<!-- Reason for no classification -->
+						<#if !nzEPArelevant??>
 						<td>
 							<@com.picklist item.Toxicity.ReasonForNoClassification/>
 						</td>
+						</#if>
 					</tr>
 				</#list>
 				
@@ -233,6 +302,7 @@
 							<para>
 								<@com.picklist item.Toxicity.HazardCategory/> 
 							</para>
+							<#if !nzEPArelevant??>
 							<para>
 								<#if item.Toxicity.AffectedOrgans?has_content>
 								Affected organs: <@com.picklistMultiple item.Toxicity.AffectedOrgans/>
@@ -243,15 +313,18 @@
 								Route of exposure: <@com.picklistMultiple item.Toxicity.RouteExposure/> 
 								</#if>
 							</para>
+							</#if>
 						</td>
 						<!-- Hazard statement -->
 						<td>
 							<@com.picklist item.Toxicity.HazardStatement/>
 						</td>
 						<!-- Reason for no classification -->
+						<#if !nzEPArelevant??>
 						<td>
 							<@com.picklist item.Toxicity.ReasonForNoClassification/>
 						</td>
+						</#if>
 					</tr>
 				</#list>
 			</tbody>
@@ -289,19 +362,51 @@
 		
 		<@com.emptyLine/>
 		<table border="1">
+		<#if nzEPArelevant??>
+			<title>Classification according to GHS for environmental hazards</title>
+			<col width="24%" />
+			<col width="21%" />
+			<col width="30%" />
+		<#else>
 			<title>Classification and labelling according to CLP / GHS for environmental hazards</title>
 			<col width="24%" />
 			<col width="21%" />
 			<col width="30%" />
 			<col width="25%" />
+		</#if>
 			<tbody>
+			<#if nzEPArelevant??>
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
+				</tr>
+			<#else>
 				<tr>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Reason for no classification</emphasis></th>
 				</tr>
-				
+			</#if>
+				<#if nzEPArelevant??>
+					<#if isNotEmptyClassificationBlockNZEPA(record.Classification.EnvironmentalHazards.AquaticEnvironment.AcuteShortTerm)>
+						<tr>
+							<!-- Hazard class -->
+							<td>
+								Hazards to the aquatic environment (acute/short-term):
+							</td>
+							<!-- Hazard category -->
+							<td>
+								<@com.picklist record.Classification.EnvironmentalHazards.AquaticEnvironment.AcuteShortTerm.HazardCategory/>
+							</td>
+							<!-- Hazard statement -->
+							<td>
+								<@com.picklist record.Classification.EnvironmentalHazards.AquaticEnvironment.AcuteShortTerm.HazardStatement/>
+							</td>
+						</tr>
+					</#if>
+				<#else>
 				<#if isNotEmptyClassificationBlock(record.Classification.EnvironmentalHazards.AquaticEnvironment.AcuteShortTerm)>
 					<tr>
 						<!-- Hazard class -->
@@ -322,7 +427,26 @@
 						</td>
 					</tr>
 				</#if>
+				</#if>
 				
+				<#if nzEPArelevant??>
+				<#if isNotEmptyClassificationBlockNZEPA(record.Classification.EnvironmentalHazards.AquaticEnvironment.LongTerm)>
+					<tr>
+						<!-- Hazard class -->
+						<td>
+							Hazards to the aquatic environment (chronic/long-term):
+						</td>
+						<!-- Hazard category -->
+						<td>
+							<@com.picklist record.Classification.EnvironmentalHazards.AquaticEnvironment.LongTerm.HazardCategory/>
+						</td>
+						<!-- Hazard statement -->
+						<td>
+							<@com.picklist record.Classification.EnvironmentalHazards.AquaticEnvironment.LongTerm.HazardStatement/>
+						</td>
+					</tr>
+				</#if>
+				<#else>
 				<#if isNotEmptyClassificationBlock(record.Classification.EnvironmentalHazards.AquaticEnvironment.LongTerm)>
 					<tr>
 						<!-- Hazard class -->
@@ -343,8 +467,10 @@
 						</td>
 					</tr>
 				</#if>
+				</#if>
 				
 				<!-- M-Factor acute -->
+				<#if !nzEPArelevant??>
 				<tr>
 					<td colspan="4">
 						M-Factor acute: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorAcute/>
@@ -378,9 +504,17 @@
 						</td>
 					</tr>
 				</#if>
+				</#if>
 			</tbody>
 		</table>
 		
+	<#if nzEPArelevant??>
+		<#if record.Classification.AdditionalHazard.Classes?has_content>
+			<para>
+				<emphasis role="bold">Additional hazard classes: </emphasis><@com.text record.Classification.AdditionalHazard.Classes/>
+			</para>
+		</#if>
+	<#else>	
 		<#if (record.Classification.AdditionalHazard.Classes?has_content) && (record.Classification.AdditionalHazard.Statements?has_content)>
 			<@com.emptyLine/>
 			<table border="1">
@@ -397,6 +531,7 @@
 							<@com.text record.Classification.AdditionalHazard.Classes/>
 						</td>
 					</tr>																
+					   
 					<tr>		
 						<!-- Additional hazard statements -->
 						<td><?dbfo bgcolor="#FBDDA6" ?>
@@ -406,9 +541,11 @@
 							<@com.text record.Classification.AdditionalHazard.Statements/>
 						</td>
 					</tr>
+					
 				</tbody>
 			</table>
 		</#if>
+	</#if>
 		
 		<!-- Labelling section -->
 		<#if !nzEPArelevant??>
@@ -592,6 +729,16 @@
 	<#return false>
 </#function>
 
+<#function isNotEmptyClassificationBlockNZEPA block>
+	<#if !(block?has_content)>
+		<#return false>
+	</#if>
+	<#if block.HazardCategory?has_content>
+		<#return true>
+	</#if>
+	<#return false>
+</#function>
+
 <#function isNotEmptyConcentrationBlock record>
 	<#if !(record?has_content)>
 		<#return false>
@@ -615,4 +762,4 @@
   	</#if>
 </#compress>
 </#macro>
-	
+
