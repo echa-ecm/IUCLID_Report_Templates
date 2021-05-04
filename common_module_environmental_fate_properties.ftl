@@ -3527,16 +3527,21 @@
 
 		<#local summaryDocToCSAMap = {"PhototransformationInSoil" : [{"field": "HalflifeInSoil", "preText" : "Half-life in soil: "}],
 										"AdsorptionDesorption" : [{"field": "KocAt20Celsius", "preText" : "Koc: ", "postText" : "at 20°C"},
-																	{"path":"OtherAdsorptionCoefficients", "field": "TypeValue", "preText" : "_path:Type", "postText" : "L/kg", "atField":"AtTheTemperatureOf"}],
+																	{"path":"OtherAdsorptionCoefficients", "field": "TypeValue", "preTextPath" : "Type", "postText" : "L/kg", "atField":"AtTheTemperatureOf"}],
 										"Hydrolysis" : [{"field": "HalflifeForHydrolysis", "preText" : "Half-life for hydrolysis: ", "atField":"AtTheTemperatureOf"}],
 										"PhototransformationInWater" : [{"field": "HalflifeInWater", "preText" : "Half-life in water: "}],
 										"BiodegradationInWaterScreeningTests" : [{"field": "BiodegradationInWater", "preText" : "Biodegradation in water: "},
 																					{"field": "TypeOfWater", "preText" : "Type of water: "}	],
-                                        "BiodegradationInWaterAndSedimentSimulationTests_EU_PPP" : [{"field": "DegradationMarineWater.HalfLifeMarineWater", "preText" : "Half-life in marine water: ", "atField":"DegradationMarineWater.Temperature"},
-                                                                                    {"field": "DegradationMarineSediment.HalfLifeMarineWaterSed", "preText" : "Half-life in marine water sediment: ", "atField": "DegradationMarineSediment.Temperature"}],
+										"BiodegradationInWaterAndSedimentSimulationTests" :[{"field": "HalflifeInFreshwater", "preText" : "Half-life in freshwater: ", "atField":"AtTheTemperatureOfFreshwater"},
+																							{"field": "HalflifeInMarineWater", "preText" : "Half-life in marine water: ", "atField":"AtTheTemperatureOfMarineWater"},
+																							{"field": "HalflifeInFreshwaterSediment", "preText" : "Half-life in freshwater sediment: ", "atField":"AtTheTemperatureOfFreshwaterSediment"},
+																							{"field": "HalflifeInMarineWaterSediment", "preText" : "Half-life in marine sediment: ", "atField":"AtTheTemperatureOfMarineWaterSediment"},
+																							{"path":"WholeSystem.HalfLifeInWholeSystem", "field": "HalfLifeInWholeSystem", "preText" : "Whole system", "preTextPath": "TypeOfSystem", "atField":"AtTheTemperatureOfWholeSystem"}],
+										"BiodegradationInWaterAndSedimentSimulationTests_EU_PPP" : [{"field": "DegradationMarineWater.HalfLifeMarineWater", "preText" : "Half-life in marine water: ", "atField":"DegradationMarineWater.Temperature"},
+                                                                                    				{"field": "DegradationMarineSediment.HalfLifeMarineWaterSed", "preText" : "Half-life in marine water sediment: ", "atField": "DegradationMarineSediment.Temperature"}],
 										"PhototransformationInAir" : [{"field": "HalflifeInAir", "preText" : "Half-life in air: "},
-																		{"field": "DegradationRateConstantWithOHRadicals", "preText" : "Degradation rate constant with OH radicals: "}]
-
+																		{"field": "DegradationRateConstantWithOHRadicals", "preText" : "Degradation rate constant with OH radicals: "}],
+										"BiodegradationInSoil": [{"field": "HalflifeInSoil", "preText" : "Half-life in soil: ", "atField":"AtTheTemperatureOf"}]
 		}/>
 
 		<#-- Get doc-->
@@ -3563,9 +3568,7 @@
 					<#local csaPath=summary["KeyValueForCsa"]>
 				<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment")>
 					<#local csaPath=summary["KeyValueForChemicalSafetyAssessment"]>
-<#--					# I-->
 				<#elseif summary.hasElement("KeyValueCsa")>
-				<#--				# II-->
 					<#local csaPath=summary["KeyValueCsa"]>
 				</#if>
 
@@ -4051,13 +4054,13 @@
 				<#if val?has_content>
 					<para>
 
-					<#-- preText -->
-					<#local preText=value["preText"]!/>
-					<#if preText?starts_with("_path")>
-						<#local preTextPath=preText?replace("_path:", "")/>
-						<@com.value csaPath[preTextPath]/>:
-					<#else>
-						${preText}
+					${value["preText"]!}
+					<#if value?keys?seq_contains("preTextPath")>
+						<#local preTextPath=value["preTextPath"]/>
+						<#if value?keys?seq_contains("preText")>(</#if>
+						<@com.value csaPath[preTextPath]/>
+						<#if value?keys?seq_contains("preText")>)</#if>
+						:
 					</#if>
 
 					<#-- value -->
@@ -4152,6 +4155,351 @@
 				</tr>
 			</#list>
 
+			</tbody>
+		</table>
+
+	</#compress>
+</#macro>
+
+<#macro estConcSummary _subject docSubType>
+	<#compress>
+
+		<#-- Get doc-->
+		<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+
+
+		<#-- Iterate-->
+		<#if summaryList?has_content>
+			<@com.emptyLine/>
+			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+
+			<#assign printSummaryName = summaryList?size gt 1 />
+
+			<#list summaryList as summary>
+				<@com.emptyLine/>
+
+				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
+
+				<#--Links (only for cases with no standard table)-->
+				<#if summary.RelevantSummaries.InputSummaries?has_content>
+					<para><emphasis role="bold">Link to relevant study records: </emphasis></para>
+					<para role="indent">
+						<#list summary.RelevantSummaries.InputSummaries as link>
+							<#if link?has_content>
+								<#local studyReference = iuclid.getDocumentForKey(link) />
+								<para>
+									<command  linkend="${studyReference.documentKey.uuid!}">
+										<@com.text studyReference.name/>
+									</command>
+								</para>
+							</#if>
+						</#list>
+					</para>
+				</#if>
+
+				<#--Key Information-->
+				<#if summary.KeyInformation.field357?has_content>
+					<para><emphasis role="bold">Key information: </emphasis></para>
+					<para role="indent"><@com.richText summary.KeyInformation.field357/></para>
+				</#if>
+
+				<#--CSA-->
+				<#if summary.hasElement("PECOtherRoutes.PECOtherRoutesRep") && summary.PECOtherRoutes.PECOtherRoutesRep?has_content>
+					<para><emphasis role="bold">PEC from other routes of exposure:</emphasis></para>
+					<para role="small"><@pecOtherRoutesSummaryTable summary.PECOtherRoutes.PECOtherRoutesRep/></para>
+
+				<#elseif summary.hasElement("PecSoil") && summary.PecSoil?has_content>
+					<para><emphasis role="bold">PEC from soil:</emphasis></para>
+
+					<@com.children summary.PecSoil/>
+
+					<para>PEC:</para>
+					<para role="small"><@pecSoilSummaryTable summary.PecSoil.PecSoilMgkg/></para>
+
+				<#elseif summary.hasElement("PecGroundWater") && summary.PecGroundWater?has_content>
+					<para><emphasis role="bold">PEC from ground water:</emphasis></para>
+
+					<@com.children summary.PecGroundWater/>
+
+					<para>PEC:</para>
+					<para role="small"><@pecGroundWaterSummaryTable summary.PecGroundWater.PecGroundWater/></para>
+
+				<#elseif summary.hasElement("PecSurfaceWaterPecSediment") && summary.PecSurfaceWaterPecSediment?has_content>
+					<para><emphasis role="bold">PEC from surface water and sediment:</emphasis></para>
+
+					<@com.children summary.PecSurfaceWaterPecSediment/>
+
+					<#if summary.PecSurfaceWaterPecSediment.FocusStepOneTwoList?has_content>
+						<para>FOCUS step 1 and 2:</para>
+						<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepOneTwoList/></para>
+					</#if>
+
+					<#if summary.PecSurfaceWaterPecSediment.FocusStepThreeList?has_content>
+						<para>FOCUS step 3:</para>
+						<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepThreeList/></para>
+					</#if>
+
+					<#if summary.PecSurfaceWaterPecSediment.FocusStepFour?has_content>
+						<para>FOCUS step 4:</para>
+						<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepFour/></para>
+					</#if>
+				</#if>
+
+
+				<#--Discussion-->
+				<#if summary.Discussion.Discussion?has_content>
+					<para><emphasis role="bold">Discussion: </emphasis></para>
+					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
+				</#if>
+
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro pecOtherRoutesSummaryTable path>
+
+	<#compress>
+
+		<table border="1">
+
+			<col width="25%" />
+			<col width="21%" />
+			<col width="22%" />
+			<col width="22%" />
+			<col width="10%" />
+
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Route of exposure</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Method of calculation</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">PEC</emphasis></th>
+			</tr>
+
+			</thead>
+			<tbody valign="middle">
+			<#list path as item>
+				<tr>
+					<td>
+						<#list item.UseDescription as gaplink>
+							<#if gaplink?has_content>
+								<#local gap=iuclid.getDocumentForKey(gaplink)/>
+								<para><@com.text gap.name/></para>
+							</#if>
+						</#list>
+					</td>
+					<td>
+						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
+						<#if substance?has_content>
+							<@com.text substance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+					</td>
+					<td><@com.text item.RouteOfExposure/></td>
+					<td><@com.text item.MethodOfCalculation/></td>
+					<td><@com.quantity item.PEC/></td>
+				</tr>
+			</#list>
+			</tbody>
+		</table>
+
+	</#compress>
+</#macro>
+
+<#macro pecSoilSummaryTable path>
+
+	<#compress>
+
+		<table border="1">
+
+			<col width="20%" />
+			<col width="20%" />
+			<col width="20%" />
+			<col width="20%" />
+			<col width="20%" />
+
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Timing</emphasis></th>
+				<th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Application</emphasis></th>
+			</tr>
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Single</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Multiple</emphasis></th>
+			</tr>
+
+			</thead>
+			<tbody valign="middle">
+			<#list path as item>
+				<tr>
+					<td>
+						<#list item.UseDescription as gaplink>
+							<#if gaplink?has_content>
+								<#local gap=iuclid.getDocumentForKey(gaplink)/>
+								<para><@com.text gap.name/></para>
+							</#if>
+						</#list>
+					</td>
+					<td>
+						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
+						<#if substance?has_content>
+							<@com.text substance.ReferenceSubstanceName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+					</td>
+					<td><@com.picklist item.Timing/></td>
+					<td>
+						<para><#if item.SingleApplicationActual?has_content><@com.range item.SingleApplicationActual/> (actual)</#if></para>
+						<para><#if item.SingleApplicationTimeWa?has_content><@com.range item.SingleApplicationTimeWa/> (time weighted average)</#if></para>
+					</td>
+					<td>
+						<para><#if item.MultipleApplicationActual?has_content><@com.range item.MultipleApplicationActual/> (actual)</#if></para>
+						<para><#if item.MultipleApplicationTimeWa?has_content><@com.range item.MultipleApplicationTimeWa/> (time weighted average)</#if></para>
+					</td>
+				</tr>
+			</#list>
+			</tbody>
+		</table>
+
+	</#compress>
+</#macro>
+
+<#macro pecGroundWaterSummaryTable path>
+
+<#compress>
+
+	<table border="1">
+
+		<col width="20%" />
+		<col width="20%" />
+		<col width="15%" />
+		<col width="15%" />
+		<col width="15%" />
+		<col width="15%" />
+
+		<thead align="center" valign="middle">
+		<tr>
+			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
+			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Tier</emphasis></th>
+			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Model</emphasis></th>
+			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Scenario</emphasis></th>
+			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">PEC</emphasis></th>
+
+		</tr>
+		</thead>
+		<tbody valign="middle">
+		<#list path as item>
+			<tr>
+				<td>
+					<#list item.UseDescription as gaplink>
+						<#if gaplink?has_content>
+							<#local gap=iuclid.getDocumentForKey(gaplink)/>
+							<para><@com.text gap.name/></para>
+						</#if>
+					</#list>
+				</td>
+				<td>
+					<#local substance=iuclid.getDocumentForKey(item.Substance)/>
+					<#if substance?has_content>
+						<@com.text substance.ChemicalName/>
+					</#if>
+					<#if item.ParentMetabolite?has_content>
+						(<@com.picklist item.ParentMetabolite/>)
+					</#if>
+				</td>
+				<td><@com.text item.Tier/></td>
+				<td><@com.picklist item.Model/></td>
+				<td><@com.picklist item.Scenario/></td>
+				<td><@com.range item.Pecgw/></td>
+			</tr>
+		</#list>
+		</tbody>
+	</table>
+
+	</#compress>
+</#macro>
+
+<#macro pecSurfaceWaterSedimentSummaryTable path>
+
+	<#compress>
+
+		<table border="1">
+
+<#--			<col width="20%" />-->
+<#--			<col width="20%" />-->
+<#--			<col width="15%" />-->
+<#--			<col width="15%" />-->
+<#--			<col width="15%" />-->
+<#--			<col width="15%" />-->
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<#if path[0].hasElement("Step")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Step</emphasis></th></#if>
+				<#if path[0].hasElement("FocusScenario")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Focus scenario</emphasis></th></#if>
+				<#if path[0].hasElement("DominantRouteOfEntry")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Dominant route entry</emphasis></th></#if>
+				<#if path[0].hasElement("WaterBody")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Water body</emphasis></th></#if>
+				<#if path[0].hasElement("RiskMitigationMeasures")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Risk mitigation meas.</emphasis></th></#if>
+				<#if path[0].hasElement("DayAfterOverallMaximum")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Day after ov. max.</emphasis></th></#if>
+				<th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">PEC</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+
+
+			</tr>
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Surface water</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Sediment</emphasis></th>
+			</tr>
+			</thead>
+			<tbody valign="middle">
+			<#list path as item>
+				<tr>
+					<td>
+						<#list item.UseDescription as gaplink>
+							<#if gaplink?has_content>
+								<#local gap=iuclid.getDocumentForKey(gaplink)/>
+								<para><@com.text gap.name/></para>
+							</#if>
+						</#list>
+					</td>
+					<td>
+						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
+						<#if substance?has_content>
+							<@com.text substance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+					</td>
+					<#if path[0].hasElement("Step")><td><@com.picklist item.Step/></td></#if>
+					<#if path[0].hasElement("DayAfterOverallMaximum")><td><@com.quantity item.DayAfterOverallMaximum/></td></#if>
+					<#if path[0].hasElement("FocusScenario")><td><@com.picklist item.FocusScenario/></td></#if>
+					<#if path[0].hasElement("DominantRouteOfEntry")><td><@com.picklist item.DominantRouteOfEntry/></td></#if>
+					<#if path[0].hasElement("WaterBody")><td><@com.picklist item.WaterBody/></td></#if>
+					<#if path[0].hasElement("RiskMitigationMeasures")><td><@com.picklist item.RiskMitigationMeasures/></td></#if>
+					<td>
+						<#if item.MaxPecsw?has_content><para>Max: <@com.range item.MaxPecsw/></para></#if>
+						<#if item.TwaPecsw?has_content><para>TWA: <@com.range item.TwaPecsw/></para></#if>
+					</td>
+					<td>
+						<#if item.MaxPecsw?has_content><para>Max: <@com.range item.ActualPecsed/></para></#if>
+						<#if item.TwaPecsw?has_content><para>TWA: <@com.range item.TwaPecsed/></para></#if>
+					</td>
+					<td><@com.text item.Remarks/></td>
+				</tr>
+			</#list>
 			</tbody>
 		</table>
 
