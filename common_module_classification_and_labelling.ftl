@@ -1,4 +1,3 @@
-
 <!-- Classification and labelling information -->
 <#macro classificationAndLabellingTable _subject>
 <#compress>
@@ -205,6 +204,16 @@
 							<!-- Hazard category -->
 							<td>
 								<@com.picklist block.HazardCategory/>
+								<#if block.hasElement("SpecificEffect") && block.SpecificEffect?has_content>
+									<para>
+										Specific effect: <@com.text block.SpecificEffect/>
+									</para>
+								</#if>
+								<#if block.hasElement("RouteExposure") && block.RouteExposure?has_content>
+									<para>
+										Route of exposure: <@com.picklistMultiple block.RouteExposure/>
+									</para>
+								</#if>
 							</td>
 							<!-- Hazard statement -->
 							<td>
@@ -261,7 +270,6 @@
 							<para>
 								<@com.picklist item.Toxicity.HazardCategory/> 
 							</para>
-							<#if !nzEPArelevant??>
 							<para>
 								<#if item.Toxicity.AffectedOrgans?has_content>
 								Affected organs: <@com.picklistMultiple item.Toxicity.AffectedOrgans/>
@@ -272,7 +280,6 @@
 								Route of exposure: <@com.picklistMultiple item.Toxicity.RouteExposure/> 
 								</#if>
 							</para>
-							</#if>
 						</td>
 						<!-- Hazard statement -->
 						<td>
@@ -302,7 +309,6 @@
 							<para>
 								<@com.picklist item.Toxicity.HazardCategory/> 
 							</para>
-							<#if !nzEPArelevant??>
 							<para>
 								<#if item.Toxicity.AffectedOrgans?has_content>
 								Affected organs: <@com.picklistMultiple item.Toxicity.AffectedOrgans/>
@@ -313,7 +319,6 @@
 								Route of exposure: <@com.picklistMultiple item.Toxicity.RouteExposure/> 
 								</#if>
 							</para>
-							</#if>
 						</td>
 						<!-- Hazard statement -->
 						<td>
@@ -470,20 +475,28 @@
 				</#if>
 				
 				<!-- M-Factor acute -->
-				<#if !nzEPArelevant??>
 				<tr>
+					<#if nzEPArelevant??>
+					<td colspan="3">
+					<#else>
 					<td colspan="4">
+					</#if>
 						M-Factor acute: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorAcute/>
 					</td>
 				</tr>
 			
 				<!-- M-Factor chronic -->
 				<tr>
+					<#if nzEPArelevant??>
+					<td colspan="3">
+					<#else>
 					<td colspan="4">
+					</#if>
 						M-Factor chronic: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorChronic/>
 					</td>
 				</tr>
-
+				
+				<#if !nzEPArelevant??>
 				<#if isNotEmptyClassificationBlock(record.Classification.EnvironmentalHazards.OzoneLayer.HazardousOzone)>
 					<tr>
 						<!-- Hazard class -->
@@ -762,4 +775,3 @@
   	</#if>
 </#compress>
 </#macro>
-
