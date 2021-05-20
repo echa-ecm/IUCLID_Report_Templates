@@ -475,26 +475,40 @@
 				</#if>
 				
 				<!-- M-Factor acute -->
-				<tr>
-					<#if nzEPArelevant??>
-					<td colspan="3">
-					<#else>
-					<td colspan="4">
+				<#if nzEPArelevant??>
+					<#if record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorAcute?has_content>
+					<tr>
+						<td colspan="3">
+							M-Factor acute: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorAcute/>
+						</td>
+					</tr>
 					</#if>
+					
+				<#else>
+				<tr>
+					<td colspan="4">
 						M-Factor acute: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorAcute/>
 					</td>
 				</tr>
-			
+				</#if>
+				
 				<!-- M-Factor chronic -->
-				<tr>
-					<#if nzEPArelevant??>
-					<td colspan="3">
-					<#else>
-					<td colspan="4">
+				<#if nzEPArelevant??>
+					<#if record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorChronic?has_content>
+					<tr>
+						<td colspan="3">
+							M-Factor chronic: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorChronic/>
+						</td>
+					</tr>
 					</#if>
+						
+				<#else>
+				<tr>
+					<td colspan="4">
 						M-Factor chronic: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorChronic/>
 					</td>
 				</tr>
+				</#if>
 				
 				<#if !nzEPArelevant??>
 				<#if isNotEmptyClassificationBlock(record.Classification.EnvironmentalHazards.OzoneLayer.HazardousOzone)>
@@ -523,9 +537,23 @@
 		
 	<#if nzEPArelevant??>
 		<#if record.Classification.AdditionalHazard.Classes?has_content>
-			<para>
-				<emphasis role="bold">Additional hazard classes: </emphasis><@com.text record.Classification.AdditionalHazard.Classes/>
-			</para>
+			<@com.emptyLine/>
+			<table border="1">
+				<title>Classification according to GHS for additional hazard classes</title>
+				<col width="30%" />
+				<col width="70%" />
+				<tbody>						
+					<tr>
+						<!-- Additional hazard classes -->
+						<td><?dbfo bgcolor="#FBDDA6" ?>
+							Additional hazard classes:
+						</td>
+						<td>
+							<@com.text record.Classification.AdditionalHazard.Classes/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</#if>
 	<#else>	
 		<#if (record.Classification.AdditionalHazard.Classes?has_content) && (record.Classification.AdditionalHazard.Statements?has_content)>
