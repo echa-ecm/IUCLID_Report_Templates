@@ -1272,8 +1272,6 @@
 	<#compress>
 		<#if analyticalDeterminationRepeatableBlock?has_content>
 			<#list analyticalDeterminationRepeatableBlock as blockItem>
-				<#if blockItem.PurposeOfAnalysis?has_content || blockItem.AnalysisType?has_content || blockItem.TypeOfInformationProvided?has_content || blockItem.AttachedMethodsResults?has_content ||
-				blockItem.RationaleForNoResults?has_content || blockItem.Justification?has_content || blockItem.Remarks?has_content>
 					<para role="indent">
 						<#if blockItem.PurposeOfAnalysis?has_content>
 							Purpose of analysis: <@com.picklist blockItem.PurposeOfAnalysis/>.
@@ -1294,13 +1292,12 @@
 							Rationale for no results : <@com.picklist blockItem.RationaleForNoResults/>.
 						</#if>
 						<#if blockItem.Justification?has_content>
-							Justification : <@com.picklist blockItem.Justification/>.
+							Justification : <@com.text blockItem.Justification/>.
 						</#if>
 						<#if blockItem.Remarks?has_content>
-							(<@com.picklist blockItem.Remarks/>)
+							(<@com.text blockItem.Remarks/>)
 						</#if>
 					</para>
-				</#if>
 			</#list>
 		</#if>
 	</#compress>
