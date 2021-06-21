@@ -165,7 +165,7 @@
 <#macro number numberValue>
 <#compress>
 	<#if numberValue?has_content>
-		${numberValue?string["0.###"]}
+		${numberValue?string["0.#########"]}
   	</#if>
 </#compress>
 </#macro>
