@@ -39,9 +39,9 @@
     <#compress>
 
         <#--General-->
-        <#if study.MaterialsAndMethods.OtherQualityAssurance?has_content>
+        <#if study.MaterialsAndMethods.MatrixMedium?has_content>
             <para><emphasis role='bold'>Matrix / medium:</emphasis></para>
-            <para><@com.picklistMultiple study.MaterialsAndMethods.OtherQualityAssurance/></para>
+            <para role="indent"><@com.picklistMultiple study.MaterialsAndMethods.MatrixMedium/></para>
         </#if>
 
         <#--Analytical methods-->
