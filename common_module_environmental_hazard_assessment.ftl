@@ -3267,26 +3267,25 @@
 			<#local allSummaryList = allSummaryList + summaryList/>
 		</#list>
 
-		<#--Need to iterate in every section, so that all Discussions, Key Information, Endpoints, etc appear together-->
+		<#--Iterate through summaries and create section lists-->
+		<#assign keyInfo=[]/>
+		<#assign endpointsHash={}/>
+		<#assign higherTier=[]/>
+		<#assign discussion=[]/>
+
 		<#if allSummaryList?has_content>
 			<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-			<#-- Key information-->
 			<#list allSummaryList as summary>
+
+				<#-- Key information-->
 				<#if summary.KeyInformation.KeyInformation?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Key information: </emphasis></para></#if>
-					<para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para>
+					<#local summaryKeyInfo><para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para></#local>
+					<#assign keyInfo = keyInfo + [summaryKeyInfo]/>
 				</#if>
-			</#list>
-			<@com.emptyLine/>
 
-			<#--Linked studies (not included)-->
 
-			<#--CSA value -->
-			<#assign endpointsHash={}/>
-			<#list allSummaryList as summary>
-				<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
-
+				<#--CSA value -->
 				<#-- 1.Get hashmap-->
 				<#local summarySeq = getEcotoxSummarySeq(summary)/>
 
@@ -3299,31 +3298,44 @@
 					</#if>
 				</#list>
 
-				<#--2. At last item, print in table format and ordering endpoints-->
-				<#if !summary_has_next && endpointsHash?has_content>
-					<@getEcotoxSummaryFromHash endpointsHash/>
-				</#if>
-			</#list>
-
-			<#--Hier tier testing-->
-			<#list allSummaryList as summary>
+				<#--Hier tier testing-->
 				<#if summary.hasElement("HigherTierTesting.field1350") && summary.HigherTierTesting.field1350?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Higher tier testing for safety assessment:</emphasis></para></#if>
-					<para role="indent"><@com.richText summary.HigherTierTesting.field1350/></para>
+					<#local summaryHigherTier><para role="indent"><@com.richText summary.HigherTierTesting.field1350/></para></#local>
+					<#assign higherTier = higherTier + [summaryHigherTier]/>
+				</#if>
+
+				<#--Discussion-->
+				<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
+					<#local summaryDiscussion><para role="indent"><@com.richText summary.Discussion.Discussion/></para></#local>
+					<#assign discussion =  discussion + [summaryDiscussion]/>
 				</#if>
 			</#list>
 
-			<#--Discussion-->
-			<#list allSummaryList as summary>
-				<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Discussion:</emphasis></para></#if>
-					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
-				</#if>
-			</#list>
+			<#if keyInfo?has_content>
+				<para><emphasis role="bold">Key information: </emphasis></para>
+				${keyInfo?join("")}
+			</#if>
+
+			<#if endpointsHash?has_content>
+				<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+				<@getEcotoxSummaryFromHash endpointsHash/>
+			</#if>
+
+			<#if higherTier?has_content>
+				<para><emphasis role="bold">Higher tier testing for safety assessment:</emphasis></para>
+				${higherTier?join("")}
+			</#if>
+
+			<#if discussion?has_content>
+				<para><emphasis role="bold">Discussion:</emphasis></para>
+				${discussion?join("")}
+			</#if>
+
 
 		</#if>
 	</#compress>
 </#macro>
+
 
 <#--Function to crete a hashmap with CSA info from ecotox summaries-->
 <#function getEcotoxSummarySeq summary>
