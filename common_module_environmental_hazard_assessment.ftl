@@ -3095,10 +3095,14 @@
 						<@com.picklist to.TestOrganismsInoculum/>
 					</#if>
 
+					<#if to.hasElement("AnimalGroup") && to.AnimalGroup?has_content>
+						(<@com.value to.AnimalGroup/>)
+					</#if>
+
 					<#if to.hasElement("DetailsOnTestOrganisms") && to.DetailsOnTestOrganisms?has_content>
-						<span role="indent">
+						<para role="indent">
 							(<@com.text to.DetailsOnTestOrganisms/>)
-						</span>
+						</para>
 					</#if>
 				</#if>
 			</para>
