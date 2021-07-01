@@ -2985,11 +2985,11 @@
 				<para role="indent">
 
 					<#if blockItem.SoilNo?has_content>
-						<@com.range blockItem.SoilNo/>:
+						<@com.picklist blockItem.SoilNo/>:
 					</#if>
 
 					<#if blockItem.Temp?has_content>
-						. Temperature: <@com.text blockItem.Temp/>
+						Temperature: <@com.text blockItem.Temp/>
 					</#if>
 
 					<#if blockItem.Humidity?has_content>
@@ -3465,8 +3465,8 @@
 		<#local stdes=study.MaterialsAndMethods.StudyDesign/>
 
 		<#if stdes.OxygenConditions?has_content>
-			<para role="indent">Oxygen conditions:</para>
-			<para><@com.picklist stdes.OxygenConditions/></para>
+			<para>Oxygen conditions:</para>
+			<para role="indent"><@com.picklist stdes.OxygenConditions/></para>
 		</#if>
 
 		<#if stdes.InoculumOrTestSystem?has_content || stdes.DetailsOnInoculum>
