@@ -8,13 +8,13 @@
 <#compress>
 
 <!-- Assessment of PBT/vPvB Properties -->
-<#if !csrRelevant??>
+<#if !csrRelevant?? && !pppRelevant??>
 <@com.emptyLine/>
 	<para><emphasis role="bold">Assessment of PBT/vPvB Properties</emphasis></para>
 </#if>
 
 <!-- PBT/vPvB criteria and justification -->
-<#if !csrRelevant??>
+<#if !csrRelevant?? && !pppRelevant??>
 <@com.emptyLine/>
 	<para><emphasis role="bold">PBT/vPvB criteria and justification</emphasis></para>
 </#if>
@@ -32,10 +32,12 @@
 			<!-- CSR: 8.1.1.n -->
 			<@com.emptyLine/>
 			<#if csrRelevant??>
-			<section>
+				<section>
+			<#elseif  pppRelevant??>
+				<sect3>
 			</#if>
 					
-				<#if csrRelevant??>
+			<#if csrRelevant?? || pppRelevant??>
 					<title>Assessed substance:
 					<#if record.AssessedSubstance.AssessedSubstance?has_content>
 					 <@com.picklist record.AssessedSubstance.AssessedSubstance/>
@@ -74,12 +76,14 @@
 				<!-- Persistence assessment -->
 				<!-- CSR 8.1.1.n.1 -->
 				<@com.emptyLine/>
-				<#if csrRelevant??>
-				<section>
+				<#if csrRelevant?? >
+					<section>
+				<#elseif pppRelevant??>
+					<sect4>
 				</#if>
 				
 				<@com.emptyLine/>
-				<#if csrRelevant??>
+				<#if csrRelevant?? || pppRelevant??>
 					<title>Persistence assessment</title>
 					<#else>
 					<para>Persistence assessment</para>
@@ -333,18 +337,22 @@
 					</#if>
 					
 				<#if csrRelevant??>	
-				</section>
+					</section>
+				<#elseif pppRelevant??>
+					</sect4>
 				</#if>
 				
 				<!-- Bioaccumulation assessment -->	
 				<!-- CSR 8.1.1.n.2 -->
 				<@com.emptyLine/>
 				<#if csrRelevant??>	
-				<section>
+					<section>
+				<#elseif pppRelevant??>
+					<sect4>
 				</#if>
 				
 				<@com.emptyLine/>
-				<#if csrRelevant??>	
+				<#if csrRelevant?? || pppRelevant??>
 				<title>Bioaccumulation assessment</title>
 				<#else>
 					<para>Bioaccumulation assessment</para>
@@ -468,18 +476,22 @@
 					<@com.emptyLine/>
 				
 				<#if csrRelevant??>
-				</section>
+					</section>
+				<#elseif pppRelevant??>
+					</sect4>
 				</#if>
 				
 				<!-- Toxicity assessment -->
 				<!-- CSR 8.1.1.n.3 -->
 				<@com.emptyLine/>
 				<#if csrRelevant??>
-				<section>
+					<section>
+				<#elseif pppRelevant??>
+					<sect4>
 				</#if>
 				
 				<@com.emptyLine/>
-				<#if csrRelevant??>	
+				<#if csrRelevant?? || pppRelevant??>
 					<title>Toxicity assessment</title>
 					<#else>
 					<para>Toxicity assessment</para>
@@ -633,11 +645,17 @@
 					<@com.emptyLine/>
 					
 					<#if csrRelevant??>
-					</section>
+						</section>
+					<#elseif pppRelevant??>
+						</sect4>
+					</#if>
 					</#if>
 				
 			<#if csrRelevant??>				
-			</section>
+				</section>
+			<#elseif pppRelevant??>
+				</sect3>
+			</#if>
 			</#if>
 				
 		</#list>
