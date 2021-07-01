@@ -11,16 +11,23 @@
 		<@com.emptyLine/>
 		<#list recordList as record>			
 			
-			<#if csrRelevant??>
+			<#if csrRelevant?? || pppRelevant??>
 				<para>
 					<@com.emptyLine/>
-					<emphasis role="bold"><emphasis role="underline">Substance: <@classificationSubstanceName record _subject/></emphasis></emphasis>
+
+					<emphasis role="bold"><emphasis role="underline"><#if pppRelevant?? && (recordList?size>1)>#${record_index+1} - </#if>Substance: <@classificationSubstanceName record _subject/></emphasis></emphasis>
 				</para>
 				
 				<para>
 					<emphasis role="bold">Implementation:</emphasis> <@com.picklist record.GeneralInformation.Implementation/>
 				</para>
-				
+
+				<#if pppRelevant?? && record.GeneralInformation.TypeClassification?has_content>
+					<para>
+						<emphasis role="bold">Type of classification:</emphasis> <@com.picklist record.GeneralInformation.TypeClassification/>
+					</para>
+				</#if>
+
 				<#if record.GeneralInformation.Remarks?has_content>
 					<para>
 						<emphasis role="bold">Remarks:</emphasis> <@com.richText record.GeneralInformation.Remarks/>
@@ -29,24 +36,41 @@
 				
 				<#if record.GeneralInformation.RelatedCompositions.Composition?has_content>
 					<para>
-						<emphasis role="underline">Related composition: <@com.documentReferenceMultiple record.GeneralInformation.RelatedCompositions.Composition/></emphasis>
+						<#if pppRelevant??>
+							<emphasis role="bold">Related composition: </emphasis><emphasis role="underline"><@com.documentReferenceMultiple record.GeneralInformation.RelatedCompositions.Composition/></emphasis>
+						<#else>
+							<emphasis role="underline">Related composition: <@com.documentReferenceMultiple record.GeneralInformation.RelatedCompositions.Composition/></emphasis>
+						</#if>
 					</para>
 				</#if>
+
+				<#--NOTE: is this elseif correct? csfRelevant is repeated here...-->
+			<#elseif csrRelevant?? || genericRelevant??>
 				
-				<#elseif csrRelevant?? || genericRelevant??>
-				
-					<#if record.GeneralInformation.NotClassified>
-						<para>					
-							The substance is not classified
-						</para>
-					<#else/>
-						<#if !nzEPArelevant??>	
-						<para>
-							The substance is classified as follows: 
-						</para>
-						</#if>
+				<#if record.GeneralInformation.NotClassified>
+					<para>
+						The substance is not classified
+					</para>
+				<#else/>
+					<#if !nzEPArelevant??>
+					<para>
+						The substance is classified as follows:
+					</para>
 					</#if>
-			</#if>		
+				</#if>
+			</#if>
+
+			<#if pppRelevant??>
+
+				<#if record.GeneralInformation.NotClassified>
+					<para>
+						The substance is not classified
+					</para>
+				<#else>
+					<para><emphasis role="bold">Classification</emphasis></para>
+					<para>The substance is classified as follows:</para>
+				</#if>
+			</#if>
 	
 		<@com.emptyLine/>
 		<table border="1">			
@@ -63,7 +87,7 @@
         <col width="25%" />
     	</#if>
       
-			<tbody>
+			<tbody valign="middle">
 			<#if nzEPArelevant??>
 				<tr>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
