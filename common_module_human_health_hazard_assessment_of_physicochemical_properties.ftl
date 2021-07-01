@@ -1234,19 +1234,19 @@
 				<#local sd=study.MaterialsAndMethods.StudyDesign/>
 
 				<#if sd.hasElement("ContactWith") && sd.ContactWith?has_content>
-					<span role="indent">Contact with <@com.picklist sd.ContactWith/></span>
+					<para role="indent">Contact with <@com.picklist sd.ContactWith/></para>
 				</#if>
 				<#if sd.hasElement("DurationOfTest") && sd.DurationOfTest?has_content>
-					<span role="indent">Duration: <@com.range sd.DurationOfTest/></span>
+					<para role="indent">Duration: <@com.range sd.DurationOfTest/></para>
 				</#if>
 				<#if sd.hasElement("AnalyticalMethod") && sd.AnalyticalMethod?has_content>
-					<span role="indent">Analytical method: <@com.picklistMultiple sd.AnalyticalMethod/></span>
+					<para role="indent">Analytical method: <@com.picklistMultiple sd.AnalyticalMethod/></para>
 				</#if>
 				<#if sd.hasElement("ContainerMaterial") && sd.ContainerMaterial?has_content>
-					<span role="indent"><@com.picklist sd.ContainerMaterial/></span>
+					<para role="indent"><@com.picklist sd.ContainerMaterial/></para>
 				</#if>
 				<#if sd.hasElement("DetailsOnMethods") && sd.DetailsOnMethods?has_content>
-					<span role="indent"><@com.text sd.DetailsOnMethods/></span>
+					<para role="indent"><@com.text sd.DetailsOnMethods/></para>
 				</#if>
 			</para>
 		</#if>
