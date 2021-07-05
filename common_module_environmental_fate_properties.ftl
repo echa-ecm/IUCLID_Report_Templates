@@ -1687,7 +1687,7 @@
 					for reaction with <@com.picklist blockItem.ReactionWith/>
 				</#if>
 				<#if pppRelevant?? && blockItem.RemarksOnResults?has_content>
-					(<@com.text blockItem.RemarksOnResults/>)
+					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 		</#list>
