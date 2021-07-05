@@ -24,7 +24,7 @@
 					
 	<#if !recordList?has_content>
 	No relevant information available.		
-	<#else/>
+	<#else>
 		
 		<#list recordList as record>
 			
@@ -41,7 +41,7 @@
 					<title>Assessed substance:
 					<#if record.AssessedSubstance.AssessedSubstance?has_content>
 					 <@com.picklist record.AssessedSubstance.AssessedSubstance/>
-					<#else/>
+					<#else>
 						not specified
 						<@com.emptyLine/>
 					</#if>
@@ -51,7 +51,7 @@
 				</#if>
 				
 				<para>
-					<@com.documentReference record.AssessedSubstance.ReferenceSubstance/>
+					<#if pppRelevant??>Reference substance: </#if><@com.documentReference record.AssessedSubstance.ReferenceSubstance/>
 				</para>
 				
 				<para>
@@ -649,13 +649,11 @@
 					<#elseif pppRelevant??>
 						</sect4>
 					</#if>
-					</#if>
 				
 			<#if csrRelevant??>				
 				</section>
 			<#elseif pppRelevant??>
 				</sect3>
-			</#if>
 			</#if>
 				
 		</#list>
@@ -676,7 +674,7 @@
 		
 		<#if !summaryList?has_content>
 			No relevant information available.
-		<#else/>
+		<#else>
 			<#assign printSummaryName = summaryList?size gt 1 />
 			<#list summaryList as summary>
 				
@@ -758,7 +756,7 @@
 		
 		<#if !(summaryList?has_content)>		
 		No relevant information available.			
-		<#else/>
+		<#else>
 
 		<#list summaryList as summary>
 			
