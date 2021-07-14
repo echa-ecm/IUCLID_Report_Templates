@@ -115,15 +115,23 @@
 	</#if>
 </#macro>
 
-<#macro referenceSubstanceInfo referenceSubstance includeMolecularInfo=true>
+<#macro referenceSubstanceInfo referenceSubstance includeMolecularInfo=true title='Substance identity'>
 	<#compress>
 		<#if referenceSubstanceHasContent(referenceSubstance)>
 			<@com.emptyLine/>
 			<table border="1">
-				<title>Substance identity</title>
+				<title>${title}</title>
 				<col width="35%" />
 				<col width="65%" />
 				<tbody>
+					<#if pppRelevant?? && referenceSubstance.ReferenceSubstanceName?has_content>
+						<tr>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Name:</emphasis></th>
+							<td>
+								<@com.text referenceSubstance.ReferenceSubstanceName/>
+							</td>
+						</tr>
+					</#if>
 					<#if referenceSubstance.IupacName?has_content>
 						<tr>
 							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">IUPAC name:</emphasis></th>
@@ -244,7 +252,7 @@
 		<#else>
 			<@com.emptyLine/>
 			<table border="0">
-				<title>Substance identity</title>
+				<title>${title}</title>
 				<col width="100%" />
 				<tbody><tr><td>No information available</td></tr></tbody>
 			</table>
