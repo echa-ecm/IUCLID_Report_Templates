@@ -232,10 +232,6 @@
 					<#local roles=roles+[childName]/>
 				</#if>
 			</#list>
-<#--			<#if rolePath.Manufacturer><#local roles=roles+["manufacturer"]/></#if>-->
-<#--			<#if rolePath.Importer><#local roles=roles+["importer"]/></#if>-->
-<#--			<#if rolePath.OnlyRepresentative><#local roles=roles+["only representative"]/></#if>-->
-<#--			<#if rolePath.DownstreamUser><#local roles=roles+["downstream user"]/></#if>-->
 
 			<#if roles?has_content>
 				<#local roles=roles?join(", ")/>
@@ -422,6 +418,76 @@
 				</para>
 			</#list>
 		</#if>
+	</#compress>
+</#macro>
+
+<#macro manufacturer _subject>
+	<#compress>
+		<#local recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "Manufacturer_EU_PPP") />
+
+		<#if !(recordList?has_content)>
+			No relevant information on manufacturer available.
+		<#else>
+			<#list recordList as record>
+
+				<#if (recordList?size>1) ><para><emphasis role="HEAD-WoutNo">Manufacturer #${record_index+1}</emphasis></para></#if>
+
+				<#--Key info-->
+				<#if record.KeyInformation.field4764?has_content>
+					<@com.emptyLine/>
+					<para><emphasis role="bold">Key information: </emphasis></para>
+					<para role="indent"><@com.richText record.KeyInformation.field4764/></para>
+				</#if>
+
+				<#--Related compositions-->
+				<#if record.AdministrativeDataSummary.RelatedCompositions?has_content>
+					<@com.emptyLine/>
+					<para ><emphasis role="bold">Related compositions: </emphasis></para>
+					<#list record.AdministrativeDataSummary.RelatedCompositions as compLink>
+						<#local comp = iuclid.getDocumentForKey(compLink) />
+						<para role="indent">
+							<#if comp.GeneralInformation.Name?has_content>
+								<@com.text comp.GeneralInformation.Name/>
+							<#else>
+								<@com.text comp.name/>
+							</#if>
+						</para>
+					</#list>
+				</#if>
+
+				<#if record.AdditionalInformation?has_content>
+					<@com.emptyLine/>
+					<para><emphasis role="bold">Additional information and confidentiality:</emphasis></para>
+
+					<#if record.AdditionalInformation.field7821?has_content>
+						<para role="indent"><@com.richText record.AdditionalInformation.field7821/></para>
+					</#if>
+
+					<#if record.AdditionalInformation.GroundsForConfidentialFile?has_content>
+						<para role="indent">
+							<emphasis role="underline">Grounds for confidential file:</emphasis>
+							<@com.picklistMultiple record.AdditionalInformation.GroundsForConfidentialFile/>
+						</para>
+					</#if>
+
+					<#if record.AdditionalInformation.Justification?has_content>
+						<para role="indent">
+							<emphasis role="underline">Justification:</emphasis>
+							<@com.text record.AdditionalInformation.Justification/>
+						</para>
+					</#if>
+
+					<#if record.AdditionalInformation.Conditions?has_content>
+						<para role="indent">
+							<emphasis role="underline">Conditions:</emphasis>
+							<@com.picklistMultiple record.AdditionalInformation.Conditions/>
+						</para>
+					</#if>
+				</#if>
+				<@com.emptyLine/>
+			</#list>
+		</#if>
+
 	</#compress>
 </#macro>
 
