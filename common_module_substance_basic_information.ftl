@@ -11,7 +11,7 @@
 			<@substanceInfo _subject/>
 		</#if>
 
-		<#assign referenceSubstance = iuclid.getDocumentForKey(_subject.ReferenceSubstance.ReferenceSubstance) />
+		<#local referenceSubstance = iuclid.getDocumentForKey(_subject.ReferenceSubstance.ReferenceSubstance) />
 		<#if referenceSubstance?has_content>
 				<#if pppRelevant??><para><emphasis role="underline">Names and identifiers of reference substance</emphasis>: </para></#if>
 				<@referenceSubstanceInfo referenceSubstance/>
@@ -124,76 +124,82 @@
 				<col width="35%" />
 				<col width="65%" />
 				<tbody>
-					<#if referenceSubstance.Inventory?? && referenceSubstance.Inventory.InventoryEntry?has_content>
-					<tr>
-						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">EC number:</emphasis></th>
-						<td>
-							<@com.inventoryECNumber com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
-						</td>
-					</tr>
-					</#if>
-					<#if referenceSubstance.Inventory?? && referenceSubstance.Inventory.InventoryEntry?has_content>
-					<tr>
-						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">EC name:</emphasis></th>
-						<td>
-							<@com.inventoryECName com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) />
-						</td>
-					</tr>
-					</#if>
-					<#if referenceSubstance.Inventory?? && referenceSubstance.Inventory.InventoryEntry?has_content>
-					<tr>
-						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CAS number (EC inventory):</emphasis></th>
-						<td>
-							<@com.inventoryECCasNumber com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) />
-						</td>
-					</tr>
-					</#if>
-					<#if referenceSubstance?? && referenceSubstance.Inventory.CASNumber?has_content>
-						<tr>
-							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CAS number:</emphasis></th>
-							<td>
-								<@com.casNumber com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) />
-							</td>
-						</tr>
-					</#if>
-					<#if referenceSubstance?? && referenceSubstance.Inventory.CASName?has_content>
-						<tr>
-							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CAS name:</emphasis></th>
-							<td>
-								<@com.casName com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
-							</td>
-						</tr>
-					</#if>
-					<#if referenceSubstance?? && referenceSubstance.IupacName?has_content>
+					<#if referenceSubstance.IupacName?has_content>
 						<tr>
 							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">IUPAC name:</emphasis></th>
 							<td>
-								<@com.iupacName com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+								<@com.iupacName referenceSubstance/>
 							</td>
 						</tr>
 					</#if>
-					<#if referenceSubstance?? && referenceSubstance.Description?has_content>
+					<#if referenceSubstance.Description?has_content>
 						<tr>
 							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Description:</emphasis></th>
 							<td>
-								<@com.description com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+								<@com.description referenceSubstance/>
 							</td>
 						</tr>
 					</#if>
-					<#if referenceSubstance?? && referenceSubstance.Synonyms.Synonyms?has_content>
-					<tr>
-						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Synonyms:</emphasis></th>
-						<td>
-							<@synonyms com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
-						</td>
-					</tr>
+					<#if referenceSubstance.Synonyms.Synonyms?has_content>
+						<tr>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Synonyms:</emphasis></th>
+							<td>
+								<@synonyms referenceSubstance/>
+							</td>
+						</tr>
+					</#if>
+					<#if referenceSubstance.Inventory?? && referenceSubstance.Inventory.InventoryEntry?has_content>
+						<#local inventoryECNumber><@com.inventoryECNumber referenceSubstance/></#local>
+						<#local inventoryECName><@com.inventoryECName referenceSubstance/></#local>
+						<#local inventoryECCasNumber><@com.inventoryECCasNumber referenceSubstance/></#local>
+
+						<#if inventoryECNumber?has_content>
+							<tr>
+								<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">EC number:</emphasis></th>
+								<td>
+									${inventoryECNumber}
+								</td>
+							</tr>
+						</#if>
+						<#if inventoryECName?has_content>
+							<tr>
+								<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">EC name:</emphasis></th>
+								<td>
+									${inventoryECName}
+								</td>
+							</tr>
+						</#if>
+						<#if inventoryECCasNumber?has_content>
+							<tr>
+								<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CAS number (EC inventory):</emphasis></th>
+								<td>
+									${inventoryECCasNumber}
+								</td>
+							</tr>
+						</#if>
+					</#if>
+					<#if referenceSubstance.Inventory.CASNumber?has_content>
+						<tr>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CAS number:</emphasis></th>
+							<td>
+								<@com.casNumber referenceSubstance />
+							</td>
+						</tr>
+					</#if>
+					<#if referenceSubstance.Inventory.CASName?has_content>
+						<tr>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CAS name:</emphasis></th>
+							<td>
+								<@com.casName referenceSubstance/>
+							</td>
+						</tr>
 					</#if>
 					<#if includeMolecularInfo>
 						<#if referenceSubstance.MolecularStructuralInfo?? && referenceSubstance.MolecularStructuralInfo.MolecularFormula?has_content>
 							<tr>
 								<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Molecular formula:</emphasis></th>
 								<td>
-									<@com.molecularFormula com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+									<@com.molecularFormula referenceSubstance/>
 								</td>
 							</tr>
 						</#if>
@@ -201,7 +207,7 @@
 							<tr>
 								<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Molecular weight:</emphasis></th>
 								<td>
-									<@com.molecularWeight com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+									<@com.molecularWeight referenceSubstance/>
 								</td>
 							</tr>
 						</#if>
@@ -210,7 +216,7 @@
 								<tr>
 									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">SMILES:</emphasis></th>
 									<td>
-										<@com.smilesNotation com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+										<@com.smilesNotation referenceSubstance/>
 									</td>
 								</tr>
 							</#if>
@@ -218,7 +224,7 @@
 								<tr>
 									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">InChI:</emphasis></th>
 									<td>
-										<@inchi com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+										<@inchi referenceSubstance/>
 									</td>
 								</tr>
 							</#if>
@@ -226,7 +232,7 @@
 								<tr>
 									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Structural formula:</emphasis></th>
 									<td>
-										<@structuralFormula com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) />
+										<@structuralFormula referenceSubstance/>
 									</td>
 								</tr>
 							</#if>
