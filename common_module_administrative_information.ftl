@@ -371,6 +371,8 @@
 		<#if !(recordList?has_content)>
 			No relevant information on producer's development code numbers available.
 		<#else>
+			<para><emphasis role="bold">Development code numbers</emphasis></para>
+
 			<#list recordList as record>
 
 				<#if (recordList?size>1) ><para><emphasis role="HEAD-WoutNo">Development code numbers #${record_index+1}</emphasis></para></#if>
