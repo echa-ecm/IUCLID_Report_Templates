@@ -1,5 +1,6 @@
 
 <!-- Substance Name, Substance Identity, Other names of Substance -->
+<#--NOTE: this macro should be reviewed in order to better align PPP and other applications-->
 <#macro substanceIdentity _subject>
 	<#compress>
 
@@ -13,7 +14,7 @@
 		<#assign referenceSubstance = iuclid.getDocumentForKey(_subject.ReferenceSubstance.ReferenceSubstance) />
 		<#if referenceSubstance?has_content>
 				<#if pppRelevant??><para><emphasis role="underline">Names and identifiers of reference substance</emphasis>: </para></#if>
-				<@basicInfo referenceSubstance/>
+				<@referenceSubstanceInfo referenceSubstance/>
 			<#if !pppRelevant??>
 				<!-- Structural formula -->
 				<@com.structuralFormula com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) />
@@ -114,7 +115,7 @@
 	</#if>
 </#macro>
 
-<#macro basicInfo referenceSubstance>
+<#macro referenceSubstanceInfo referenceSubstance includeMolecularInfo=true>
 	<#compress>
 		<#if referenceSubstanceHasContent(referenceSubstance)>
 			<@com.emptyLine/>
@@ -187,7 +188,7 @@
 						</td>
 					</tr>
 					</#if>
-					<#if !pppRelevant??>
+					<#if includeMolecularInfo>
 						<#if referenceSubstance.MolecularStructuralInfo?? && referenceSubstance.MolecularStructuralInfo.MolecularFormula?has_content>
 							<tr>
 								<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Molecular formula:</emphasis></th>
@@ -198,11 +199,37 @@
 						</#if>
 						<#if referenceSubstance.MolecularStructuralInfo?? && referenceSubstance.MolecularStructuralInfo.MolecularWeightRange?has_content>
 							<tr>
-								<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Molecular weight range:</emphasis></th>
+								<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Molecular weight:</emphasis></th>
 								<td>
 									<@com.molecularWeight com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
 								</td>
 							</tr>
+						</#if>
+						<#if pppRelevant??>
+							<#if referenceSubstance.MolecularStructuralInfo?? && referenceSubstance.MolecularStructuralInfo.SmilesNotation?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">SMILES:</emphasis></th>
+									<td>
+										<@com.smilesNotation com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+									</td>
+								</tr>
+							</#if>
+							<#if referenceSubstance.MolecularStructuralInfo?? && referenceSubstance.MolecularStructuralInfo.InChl?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">InChI:</emphasis></th>
+									<td>
+										<@inchi com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+									</td>
+								</tr>
+							</#if>
+							<#if referenceSubstance.MolecularStructuralInfo?? && referenceSubstance.MolecularStructuralInfo.StructuralFormula?has_content>
+								<tr>
+									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Structural formula:</emphasis></th>
+									<td>
+										<@structuralFormula com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) />
+									</td>
+								</tr>
+							</#if>
 						</#if>
 					</#if>
 				</tbody>
