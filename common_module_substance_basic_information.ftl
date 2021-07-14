@@ -38,6 +38,7 @@
 	</#compress>
 </#macro>
 
+<#--NOTE: this function should be improved...-->
 <#function referenceSubstanceHasContent refSubstance>
 	<#if refSubstance.Inventory?? && refSubstance.Inventory.InventoryEntry?has_content>
 		<#return true>
