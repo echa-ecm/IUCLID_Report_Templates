@@ -188,15 +188,27 @@
 <#macro applicant _subject>
 	<#compress>
 
-		<#assign legalEntity = iuclid.getDocumentForKey(_subject.OwnerLegalEntity)/>
-		<#if legalEntity?has_content>
+		<#if _subject.OwnerLegalEntity?has_content>
 			<para><emphasis role="underline">Information of the applicant (legal entity):</emphasis></para>
-			<@legalEntityInfo legalEntity/>
-			<@roleInSupplyChain _subject/>
+			<#local legalEntity = iuclid.getDocumentForKey(_subject.OwnerLegalEntity)/>
+			<#if legalEntity?has_content>
+				<@legalEntityInfo legalEntity "applicant"/>
+			</#if>
 		<#else>
 <#--			NOTE: for some reason with the substance the path _subject.OwnerLegalEntity seems empty!-->
 			<para>No information of applicant available.</para>
 		</#if>
+
+		<#if _subject.ThirdParty?has_content>
+			<@com.emptyLine/>
+			<para><emphasis role="underline">Third party:</emphasis></para>
+			<#local thirdParty = iuclid.getDocumentForKey(_subject.ThirdParty)/>
+			<#if thirdParty?has_content>
+				<@legalEntityInfo thirdParty "third party"/>
+			</#if>
+		</#if>
+
+		<@roleInSupplyChain _subject/>
 
 		<#if _subject.ContactPersons?has_content>
 			<@com.emptyLine/>
@@ -206,17 +218,17 @@
 	</#compress>
 </#macro>
 
-<#macro legalEntityInfo legalEntity>
+<#macro legalEntityInfo legalEntity name="legal entity">
 	<#compress>
 		<@basicLegalEntityInformation _subject legalEntity/>
 	<#-- NOTE: missing IDENTIFIERS section-->
 
 		<#if legalEntity.GeneralInfo.ContactAddress?has_content>
-			<@contactInfoOfLegalEntity _subject legalEntity.GeneralInfo/>
+			<@contactInfoOfLegalEntity _subject legalEntity.GeneralInfo "Basic contact information of the ${name}"/>
 		</#if>
 
 		<#if legalEntity.ContactInfo.ContactPersons?has_content>
-			<@contactPersonsInfoOfLegalEntity _subject legalEntity "Contact persons (legal entity)"/>
+			<@contactPersonsInfoOfLegalEntity _subject legalEntity "Contact persons of the ${name}"/>
 		</#if>
 	</#compress>
 </#macro>
@@ -235,7 +247,11 @@
 
 			<#if roles?has_content>
 				<#local roles=roles?join(", ")/>
-				<para><emphasis role="bold">Role in the supply chain: </emphasis>${roles}</para>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="bold">Role in the supply chain: </emphasis>
+					${roles}
+				</para>
 			</#if>
 		</#if>
 	</#compress>
