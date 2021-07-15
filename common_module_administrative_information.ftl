@@ -511,6 +511,212 @@
 	</#compress>
 </#macro>
 
+<#macro packaging _subject>
+	<#compress>
+
+		<#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "Packaging") />
+
+		<#if !(recordList?has_content)>
+			No relevant information on packaging available.
+		<#else>
+			<#list recordList as record>
+
+				<#if (recordList?size>1)><para><emphasis role="HEAD-WoutNo">Packaging #${record_index+1}</emphasis></para></#if>
+
+				<#--Use-->
+				<#if record.Packaging.UseOrComposition?has_content>
+					<para><emphasis role="bold">Applied to: </emphasis></para>
+
+					<#list record.Packaging.UseOrComposition as useLink>
+						<#local use = iuclid.getDocumentForKey(useLink)>
+						<para role="indent"><@com.text use.GeneralInformation.Name/></para>
+					</#list>
+				</#if>
+
+				<#--Characteristics-->
+				<para><emphasis role="bold">Characteristics of the packaging: </emphasis></para>
+
+				<#if record.Packaging.TypeOfPackaging?has_content>
+					<para role="indent"><emphasis role="underline">Type:</emphasis> <@com.picklist record.Packaging.TypeOfPackaging/></para>
+				</#if>
+
+				<#if record.Packaging.SizeOfPackagingInContactWithTheProductContainerSize?has_content>
+					<para role="indent"><emphasis role="underline">Size:</emphasis>
+						<#list record.Packaging.SizeOfPackagingInContactWithTheProductContainerSize as size>
+							<@com.range size.SizeOfPackaging/><#if size_has_next>, </#if>
+						</#list>
+					</para>
+				</#if>
+
+				<#if record.Packaging.MaterialOfPackaging?has_content>
+					<para role="indent"><emphasis role="underline">Material:</emphasis> <@com.picklist record.Packaging.MaterialOfPackaging/></para>
+				</#if>
+
+				<#if record.Packaging.Compatibility?has_content>
+					<para role="indent"><emphasis role="underline">Compatibility of the product:</emphasis></para>
+					<para role="indent2"><@com.text record.Packaging.Compatibility/></para>
+				</#if>
+
+				<#if record.Packaging.FurtherDescription?has_content>
+					<para role="indent"><emphasis role="underline">Further description:</emphasis></para>
+					<para role="indent2"><@com.text record.Packaging.FurtherDescription/></para>
+				</#if>
+
+				<#if record.Packaging.SafetyFeaturesOfThePackaging?has_content>
+					<para role="indent"><emphasis role="underline">Safety features:</emphasis></para>
+					<para role="indent2"><@com.text record.Packaging.SafetyFeaturesOfThePackaging/></para>
+				</#if>
+
+				<#if record.Packaging.Description?has_content>
+					<para role="indent"><emphasis role="underline">Secondary packaging (not in contact with product):</emphasis></para>
+					<para role="indent2"><@com.text record.Packaging.Description/></para>
+				</#if>
+
+				<#--Additional info-->
+				<#if record.Packaging.AdditionalInfo?has_content>
+					<para><emphasis role="bold">Additional information:</emphasis></para>
+					<para role="indent"><@com.richText record.Packaging.AdditionalInfo/></para>
+				</#if>
+
+			</#list>
+		</#if>
+
+	</#compress>
+
+</#macro>
+
+<#macro protectionMeasures _subject>
+	<#compress>
+
+		<#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "ProtectionMeasures") />
+
+		<#if !(recordList?has_content)>
+			No relevant information on protection measures available.
+		<#else>
+			<#list recordList as record>
+
+				<#if (recordList?size>1)><para><emphasis role="HEAD-WoutNo">Protection measures #${record_index+1}</emphasis></para></#if>
+
+				<#--Instructions-->
+				<#if record.InstructionsForUse.InstructionsForUse?has_content>
+					<para><emphasis role="bold">Instructions of use: </emphasis></para>
+					<para role="indent"><@com.richText record.InstructionsForUse.InstructionsForUse/></para>
+				</#if>
+
+				<#--Measures to protect humans etc-->
+				<#if record.MeasuresToProtect?has_content>
+					<para><emphasis role="bold">Measures to protect humans, animals and the environment: </emphasis></para>
+
+					<#local measures=record.MeasuresToProtect/>
+
+					<#if measures.RecommendedMethodsAndPrecautionsConcerningStorage?has_content>
+						<para role="indent"><emphasis role="underline">Recommended methods and precautions concerning storage:</emphasis></para>
+						<para role="indent2"><@com.richText measures.RecommendedMethodsAndPrecautionsConcerningStorage/></para>
+					</#if>
+					<#if measures.RecommendedMethodsAndPrecautionsConcerningHandling?has_content>
+						<para role="indent"><emphasis role="underline">Recommended methods and precautions concerning handling and transport:</emphasis></para>
+						<para role="indent2"><@com.text measures.RecommendedMethodsAndPrecautionsConcerningHandling/></para>
+					</#if>
+					<#if measures.RecommendedMethodsAndPrecautionsConcerningFire?has_content>
+						<para role="indent"><emphasis role="underline">Recommended methods and precautions concerning fire:</emphasis></para>
+						<para role="indent2"><@com.text measures.RecommendedMethodsAndPrecautionsConcerningFire/></para>
+					</#if>
+					<#if measures.ParticularsOfLikelyDirect?has_content>
+						<para role="indent"><emphasis role="underline">Particulars of likely direct or indirect adverse effects:</emphasis></para>
+						<para role="indent2"><@com.richText measures.ParticularsOfLikelyDirect/></para>
+					</#if>
+					<#if measures.FirstAidInstructionsAntidotes?has_content>
+						<para role="indent"><emphasis role="underline">First aid instructions, antidotes:</emphasis></para>
+						<para role="indent2"><@com.text measures.FirstAidInstructionsAntidotes/></para>
+					</#if>
+					<#if measures.EmergencyMeasuresToProtectEnvironmentInCaseOfAccident?has_content>
+						<para role="indent"><emphasis role="underline">Emergency measures to protect the environment in case of accident:</emphasis></para>
+						<para role="indent2"><@com.text measures.EmergencyMeasuresToProtectEnvironmentInCaseOfAccident/></para>
+					</#if>
+					<#if measures.ControlMeasuresOfRepellents?has_content>
+						<para role="indent"><emphasis role="underline">Control measures of repellents or poison included in the product, to prevent action against non-target organisms:</emphasis></para>
+						<para role="indent2"><@com.richText measures.ControlMeasuresOfRepellents/></para>
+					</#if>
+					<#if measures.Procedures?has_content>
+						<para role="indent"><emphasis role="underline">Procedures for cleaning application equipment:</emphasis></para>
+						<para role="indent2"><@com.text measures.Procedures/></para>
+					</#if>
+				</#if>
+
+				<#--Destruction-->
+				<#if record.PossibilityOfDestructionOrDecontamination?has_content>
+					<para><emphasis role="bold">Possibility of destruction or decontamination following release in or on the following: </emphasis></para>
+
+					<#local dest=record.PossibilityOfDestructionOrDecontamination/>
+
+					<#if dest.Air?has_content>
+						<para role="indent"><emphasis role="underline">Air:</emphasis></para>
+						<para role="indent2"><@com.text dest.Air/></para>
+					</#if>
+
+					<#if dest.Water?has_content>
+						<para role="indent"><emphasis role="underline">Water:</emphasis></para>
+						<para role="indent2"><@com.text dest.Water/></para>
+					</#if>
+
+					<#if dest.Soil?has_content>
+						<para role="indent"><emphasis role="underline">Soil:</emphasis></para>
+						<para role="indent2"><@com.text dest.Soil/></para>
+					</#if>
+				</#if>
+
+				<#--Waste-->
+				<#if record.ProceduresForWasteManagement?has_content>
+					<para><emphasis role="bold">Procedures for waste management of active substance, product and packaging: </emphasis></para>
+
+					<#local waste=record.ProceduresForWasteManagement/>
+
+					<#if waste.PossibilityOfReuseOrRecycling?has_content>
+						<para role="indent"><emphasis role="underline">Possibility of reuse or recycling:</emphasis></para>
+						<para role="indent2"><@com.text waste.PossibilityOfReuseOrRecycling/></para>
+					</#if>
+
+					<#if waste.PossibilityOfNeutralisationOfEffects?has_content>
+						<para role="indent"><emphasis role="underline">Neutralisation procedure and possibility of neutralisation of effects:</emphasis></para>
+						<para role="indent2"><@com.text waste.PossibilityOfNeutralisationOfEffects/></para>
+					</#if>
+
+					<#if waste.ConditionsForControllerDischarge?has_content>
+						<para role="indent"><emphasis role="underline">Conditions for controlled discharge including leachate qualities on disposal:</emphasis></para>
+						<para role="indent2"><@com.text waste.ConditionsForControllerDischarge/></para>
+					</#if>
+
+					<#if waste.ConditionsForControllerIncineration?has_content>
+						<para role="indent"><emphasis role="underline">Conditions for controlled incineration:</emphasis></para>
+						<para role="indent2"><@com.text waste.ConditionsForControllerIncineration/></para>
+					</#if>
+
+					<#if waste.InstructionsForSafeDisposal?has_content>
+						<para role="indent"><emphasis role="underline">Instructions for safe disposal of the product and its packaging for different groups of users:</emphasis></para>
+						<para role="indent2"><@com.richText waste.InstructionsForSafeDisposal/></para>
+					</#if>
+				</#if>
+
+				<#--References-->
+				<#if record.AdditionalInformation.Reference?has_content>
+					<para><emphasis role="bold">References: </emphasis></para>
+
+					<#list record.AdditionalInformation.Reference as refLink>
+						<#local ref=iuclid.getDocumentForKey(refLink)>
+						<para role="indent">
+							<@com.text ref.GeneralInfo.Name/>, <@com.text ref.GeneralInfo.Author/>, <@com.text ref.GeneralInfo.ReferenceYear/>
+							<#if ref.GeneralInfo.ReportNo?has_content>(<@com.text ref.GeneralInfo.ReportNo/>)</#if>
+							<#if ref.GeneralInfo.LiteratureType?has_content>[<@com.picklist ref.GeneralInfo.LiteratureType/>]</#if>
+						</para>
+					</#list>
+				</#if>
+
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+
 <#--Macros to move to macros_common_general-->
 <#macro mixtureName _subject>
 	<#compress>
