@@ -373,7 +373,7 @@
 		<#if !(recordList?has_content)>
 			No relevant information on producer's development code numbers available.
 		<#else>
-			<para><emphasis role="bold">Development code numbers</emphasis></para>
+			<para><emphasis role="underline">Development code numbers:</emphasis></para>
 
 			<#list recordList as record>
 
@@ -381,14 +381,14 @@
 
 				<#--Regulatory programme identifiers-->
 				<#if record.RegulatoryProgrammeIdentifiers.RegulatoryProgrammeIdentifiers?has_content>
-					<para><emphasis role="underline">Regulatory programme identifiers:</emphasis></para>
+					<para>Regulatory programme identifiers:</para>
 					<@regProgIdsList record.RegulatoryProgrammeIdentifiers.RegulatoryProgrammeIdentifiers "indent"/>
 					<@com.emptyLine/>
 				</#if>
 
 				<#--Other IT system identifiers-->
 				<#if record.ExternalSystemIdentifiers.ExternalSystemIdentifiers?has_content>
-					<para><emphasis role="underline">Other IT system identifiers:</emphasis></para>
+					<para>Other IT system identifiers:</para>
 					<@itSystemIdsList record.ExternalSystemIdentifiers.ExternalSystemIdentifiers "indent"/>
 					<@com.emptyLine/>
 				</#if>
