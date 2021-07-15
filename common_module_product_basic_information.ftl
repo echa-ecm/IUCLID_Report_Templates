@@ -131,3 +131,82 @@
   	</#if>
 </#compress>
 </#macro>
+
+
+<#-------------PPP additions---------------->
+<#macro productIdentity _subject includeTradeNames=true>
+	<#compress>
+
+		<#assign docUrl=iuclid.webUrl.entityView(_subject.documentKey)/>
+		<para><emphasis role="underline">Name</emphasis>:
+			<#if docUrl?has_content>
+				<ulink url="${docUrl}"><@com.text _subject.MixtureName/></ulink>
+			<#else>
+				<@com.text _subject.MixtureName/>
+			</#if>
+		</para>
+
+
+		<#if _subject.PublicName?has_content>
+			<para><emphasis role="underline">Public name</emphasis>: <@com.text _subject.PublicName/></para>
+		</#if>
+
+		<#if _subject.OtherNames?has_content>
+			<para><emphasis role="underline">Other identifiers:</emphasis></para>
+			<@otherIdentifiersList _subject.OtherNames 'indent'/>
+		</#if>
+
+		<#if includeTradeNames>
+			<para><emphasis role="underline">Trade names:</emphasis></para>
+			<@tradeNames _subject/>
+		</#if>
+
+	</#compress>
+</#macro>
+
+<#macro tradeNames _subject mixtureComposition=[]>
+	<#compress>
+
+		<#if !mixtureComposition?has_content>
+			<#local mixtureComposition = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "MixtureComposition") />
+		</#if>
+
+		<#if mixtureComposition?has_content>
+			<#list mixtureComposition as mixtureComp>
+				<#if (mixtureComposition?size>1)><para><emphasis role="bold">Product #{mixtureComp_index+1} - <@com.text mixtureComp.GeneralInformation.Name/></emphasis></para></#if>
+
+				<#if mixtureComp.GeneralInformation.TradeNames?has_content>
+					<#list mixtureComp.GeneralInformation.TradeNames as tradeName>
+						<para role="indent">
+							<@com.text tradeName.TradeName/>
+							<#if tradeName.Country?has_content>(<@com.picklistMultiple tradeName.Country/>)</#if>
+						</para>
+					</#list>
+				<#else>
+					<para role="indent">No trade names available for this product.</para>
+				</#if>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#--macros to be moved to macros_common_general.ftl-->
+<#--This macro is the same as in substance_basic_information-->
+<#macro otherIdentifiersList otherNamesRepeatableBlock role="">
+	<#compress>
+		<#if otherNamesRepeatableBlock?has_content>
+			<#list otherNamesRepeatableBlock as blockItem>
+				<para role="${role}">
+					<@com.picklist blockItem.NameType/>: <@com.text blockItem.Name/>
+					<#if blockItem.hasElement('Relation') && blockItem.Relation?has_content>
+						(<@com.picklist blockItem.Relation/>)
+					</#if>
+					<@com.picklistMultiple blockItem.Country/>
+					<#if blockItem.Remarks?has_content>
+						(<@com.text blockItem.Remarks/>)
+					</#if>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
