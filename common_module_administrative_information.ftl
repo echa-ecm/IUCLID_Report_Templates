@@ -299,9 +299,11 @@
 
 				<#if (recordList?size>1) ><para><emphasis role="HEAD-WoutNo">Manufacturing plant #${record_index+1}</emphasis></para></#if>
 
+				<@com.emptyLine/>
+
 				<#--Mixture/Product-->
 				<#if _subject.documentType=="MIXTURE" && record.RelatedMixtureProduct.SpecifyToWhichMixtureProductSItApplies?has_content>
-					<para>Applicable to mixture/product:
+					<para><emphasis role="underline">Applicable to mixture/product:</emphasis>
 						<#local product=iuclid.getDocumentForKey(record.RelatedMixtureProduct.SpecifyToWhichMixtureProductSItApplies)/>
 						<@mixtureName _subject/>
 					</para>
