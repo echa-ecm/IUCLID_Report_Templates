@@ -24,12 +24,28 @@
 
 <#global relevance = {
 	'relevant' : 'csr',
+	'relevant' : 'nzEPAclassification',
 	'relevant' : 'ppp',
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
 	'relevant' : 'generic'
+	
 } />
+
+<#macro initiateRelevanceNZ relevance>
+	
+	<#global nzEPArelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign nzEPArelevant>
+				<#if prop=="nzEPAclassification">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
 
 <#macro initiRelevanceForCSR relevance>
 	
@@ -149,7 +165,7 @@
 <#macro number numberValue>
 <#compress>
 	<#if numberValue?has_content>
-		${numberValue?string["0.###"]}
+		${numberValue?string["0.#########"]}
   	</#if>
 </#compress>
 </#macro>
@@ -663,3 +679,46 @@
     <#local params={"key": [key]}>
     <#return iuclid.query("web.ReferencingQuery", params, 0, 100)>
 </#function>
+
+<#--Macro to print any value type of a field-->
+<#macro value valuePath>
+	<#compress>
+		<#assign valueType=valuePath?node_type/>
+
+		<#if valueType=="range">
+			<@com.range valuePath/>
+		<#elseif valueType=="picklist_single">
+			<@com.picklist  valuePath/>
+		<#elseif valueType=="picklist_multi">
+			<@com.picklistMultiple valuePath/>
+		<#elseif valueType=="quantity">
+			<@com.quantity valuePath/>
+		<#elseif valueType=="decimal">
+			<@com.number valuePath/>
+		<#elseif valueType=="multilingual_text_html">
+			<@com.richText valuePath/>
+		<#elseif valueType?contains("multilingual_text")>
+			<@com.text valuePath/>
+		<#--multilingual_text_medium; multilingual_text_large-->
+		</#if>
+	</#compress>
+</#macro>
+
+<#--Macro to interatively print all children fields of an element-->
+<#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
+	<#compress>
+		<#list path?children as child>
+			<#if child?node_type!="repeatable" && child?node_type!="block" && !(exclude?seq_contains(child?node_name)) && child?has_content>
+				<#assign childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+
+				<para role="${role1}">
+					<#if titleEmphasis><emphasis role="bold"></#if>
+						${childName}:
+					<#if titleEmphasis></emphasis></#if>
+					<span role="${role2}"><@value child/></span>
+				</para>
+
+			</#if>
+		</#list>
+	</#compress>
+</#macro>

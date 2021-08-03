@@ -1228,35 +1228,40 @@
 <#--1. Methods-->
 <#macro physchemMethod study>
 	<#compress>
-		<#if study.hasElement("MaterialsAndMethods.StudyDesign")>
+		<#if study.hasElement("MaterialsAndMethods.StudyDesign") && study.MaterialsAndMethods.StudyDesign?has_content>
+			<para><emphasis role="bold">Study design:</emphasis></para>
 			<para>
-				<emphasis role="bold">Study design:</emphasis>
 				<#local sd=study.MaterialsAndMethods.StudyDesign/>
 
 				<#if sd.hasElement("ContactWith") && sd.ContactWith?has_content>
-					<span role="indent">Contact with <@com.picklist sd.ContactWith/></span>
+					<para role="indent">Contact with <@com.picklist sd.ContactWith/></para>
 				</#if>
 				<#if sd.hasElement("DurationOfTest") && sd.DurationOfTest?has_content>
-					<span role="indent">Duration: <@com.range sd.DurationOfTest/></span>
+					<para role="indent">Duration: <@com.range sd.DurationOfTest/></para>
 				</#if>
 				<#if sd.hasElement("AnalyticalMethod") && sd.AnalyticalMethod?has_content>
-					<span role="indent">Analytical method: <@com.picklistMultiple sd.AnalyticalMethod/></span>
+					<para role="indent">Analytical method: <@com.picklistMultiple sd.AnalyticalMethod/></para>
 				</#if>
 				<#if sd.hasElement("ContainerMaterial") && sd.ContainerMaterial?has_content>
-					<span role="indent"><@com.picklist sd.ContainerMaterial/></span>
+					<para role="indent"><@com.picklist sd.ContainerMaterial/></para>
 				</#if>
 				<#if sd.hasElement("DetailsOnMethods") && sd.DetailsOnMethods?has_content>
-					<span role="indent"><@com.text sd.DetailsOnMethods/></span>
+					<para role="indent"><@com.text sd.DetailsOnMethods/></para>
 				</#if>
 			</para>
 		</#if>
 
-		<#if study.hasElement("Reagents.Reagent") && study.Reagents.Reagent?has_content>
-			<para><emphasis role="bold">Reagents: </emphasis><@com.picklist study.Reagents.Reagent/></para>
+		<#if study.hasElement("MaterialsAndMethods.Reagents.Reagent") && study.MaterialsAndMethods.Reagents.Reagent?has_content>
+			<para><emphasis role="bold">Reagents: </emphasis><@com.picklist study.MaterialsAndMethods.Reagents.Reagent/></para>
 		</#if>
 
-		<#if study.hasElement("TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed") && study.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed?has_content>
-			<para><emphasis role="bold">Titration of acidity / alkalinity: </emphasis><@com.text study.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed/></para>
+		<#if study.hasElement("MaterialsAndMethods.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed") && study.MaterialsAndMethods.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed?has_content>
+			<para><emphasis role="bold">Titration of acidity / alkalinity: </emphasis><@com.text study.MaterialsAndMethods.TitrationOfAcidityAndAlkalinity.DetailsOnTitrantUsed/></para>
+		</#if>
+
+		<#-- Type of compatibility-->
+		<#if study.hasElement("DataSource.TypeOfCompatibility.TypeOfCompatibilityLabel") && study.DataSource.TypeOfCompatibility.TypeOfCompatibilityLabel?has_content>
+			<para><emphasis role="bold">Type of compatibility: </emphasis><@com.picklist study.DataSource.TypeOfCompatibility.TypeOfCompatibilityLabel/></para>
 		</#if>
 
 	</#compress>
@@ -1267,8 +1272,6 @@
 	<#compress>
 		<#if analyticalDeterminationRepeatableBlock?has_content>
 			<#list analyticalDeterminationRepeatableBlock as blockItem>
-				<#if blockItem.PurposeOfAnalysis?has_content || blockItem.AnalysisType?has_content || blockItem.TypeOfInformationProvided?has_content || blockItem.AttachedMethodsResults?has_content ||
-				blockItem.RationaleForNoResults?has_content || blockItem.Justification?has_content || blockItem.Remarks?has_content>
 					<para role="indent">
 						<#if blockItem.PurposeOfAnalysis?has_content>
 							Purpose of analysis: <@com.picklist blockItem.PurposeOfAnalysis/>.
@@ -1289,13 +1292,12 @@
 							Rationale for no results : <@com.picklist blockItem.RationaleForNoResults/>.
 						</#if>
 						<#if blockItem.Justification?has_content>
-							Justification : <@com.picklist blockItem.Justification/>.
+							Justification : <@com.text blockItem.Justification/>.
 						</#if>
 						<#if blockItem.Remarks?has_content>
-							(<@com.picklist blockItem.Remarks/>)
+							(<@com.text blockItem.Remarks/>)
 						</#if>
 					</para>
-				</#if>
 			</#list>
 		</#if>
 	</#compress>

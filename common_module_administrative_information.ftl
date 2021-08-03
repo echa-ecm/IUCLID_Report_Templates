@@ -1,6 +1,8 @@
+
 <!-- Legal entity information from a Legal entity  -->
 <#macro basicLegalEntityInformation _subject legalEntity="">
 	<#compress>
+
 
 		<#if !legalEntity?has_content><#assign legalEntity = iuclid.getDocumentForKey(_subject.OwnerLegalEntity)/></#if>
 		<#if legalEntity?has_content>
