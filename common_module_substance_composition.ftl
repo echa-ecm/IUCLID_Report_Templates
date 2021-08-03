@@ -6,13 +6,18 @@
 	<#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "SubstanceComposition") />
 	<#if !(recordList?has_content)>
 		No relevant information available.		
-	<#else/>
+	<#else>
 		
 		<#list recordList as record>
 		
 			<para>
-			<emphasis role="HEAD-WoutNo">Name: <#if record.GeneralInformation.Name?has_content><@com.text record.GeneralInformation.Name/><#else> 
-			<@com.text record.name/></#if>
+			<emphasis role="HEAD-WoutNo">
+				<#if pppRelevant??>
+					<#if (recordList?size>1)>Composition #{record_index+1}:</#if>
+				<#else>
+					Name:
+				</#if>
+				<#if record.GeneralInformation.Name?has_content><@com.text record.GeneralInformation.Name/><#else><@com.text record.name/></#if>
 			</emphasis>			
 				<#if record.GeneralInformation.TypeOfComposition?has_content>
 				(<@com.picklist record.GeneralInformation.TypeOfComposition/>)
@@ -20,15 +25,15 @@
 			</para>
 			
 			<#if record.GeneralInformation.StateForm?has_content>
-			<para>State/form: <@com.picklist record.GeneralInformation.StateForm/></para>
+				<para><emphasis role="underline">State/form:</emphasis> <@com.picklist record.GeneralInformation.StateForm/></para>
 			</#if>
 			
 			<#if record.DegreeOfPurity.Purity?has_content>
-			<para>Degree of purity: <@com.range record.DegreeOfPurity.Purity/></para>
+				<para><emphasis role="underline">Degree of purity:</emphasis> <@com.range record.DegreeOfPurity.Purity/></para>
 			</#if>
 			
 			<#if record.GeneralInformation.DescriptionOfComposition?has_content>
-			<para>Description: <@com.text record.GeneralInformation.DescriptionOfComposition/></para>
+				<para><emphasis role="underline">Description:</emphasis> <@com.text record.GeneralInformation.DescriptionOfComposition/></para>
 			</#if>		
 				
 				<!-- Constituents -->
@@ -153,7 +158,7 @@
 						</tbody>
 					</table>
 				</#if>
-				
+			<@com.emptyLine/>
 		</#list>
 	</#if>
 		
@@ -270,12 +275,19 @@
 	<#return false />
 </#function>
 
+<#assign referenceSubstancesInformation = [] />
+
 <#macro referenceSubstanceData referenceSubstanceKey >
 <#compress>
 	<#local refSubst = iuclid.getDocumentForKey(referenceSubstanceKey) />
 	<#if refSubst?has_content>
-		<@com.text refSubst.ReferenceSubstanceName/>
-		EC no.: <@com.inventoryECNumber com.getReferenceSubstanceKey(referenceSubstanceKey)/>
+		<#if pppRelevant??>
+			<command linkend="${refSubst.documentKey.uuid!}"><@com.text refSubst.ReferenceSubstanceName/></command>
+			<#assign referenceSubstancesInformation = com.addDocumentToSequenceAsUnique(refSubst, referenceSubstancesInformation) />
+		<#else>
+			<@com.text refSubst.ReferenceSubstanceName/>
+			EC no.: <@com.inventoryECNumber com.getReferenceSubstanceKey(referenceSubstanceKey)/>
+		</#if>
   	</#if>
 </#compress>
 </#macro>
