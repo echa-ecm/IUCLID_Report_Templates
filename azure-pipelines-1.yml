@@ -13,7 +13,6 @@ steps:
   lfs: true
   path: \github.com/echa-ecm\IUCLID_Report_Templates.git\
 
-container:
 trigger:
 - main
 
