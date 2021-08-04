@@ -16,7 +16,6 @@ resources:
   containers:
   - container: windows
     image: ubuntu-latest
-    endpoint: Mark-R-R
 
     ports: 
     - 8080:80 # bind container port 80 to 8080 on the host machine
@@ -29,6 +28,7 @@ resources:
     type: github
     name: echa-ecm/IUCLID_Report_Templates
     ref: main
+    endpoint: Mark-R-R
    
  
     trigger:  # CI trigger for this repository, no CI trigger if skipped (only works for Azure Repos)
