@@ -5,20 +5,13 @@
 
 name: string  # build numbering format
 
-resources:
-  pipelines: [ IUCLID_Report_Templates ]
-  containers: [ containerResource ]
-  repositories: [ IUCLID_Report_Templates ]
-
 trigger:
 - main
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+jobs: [ job | templateReference ]
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
