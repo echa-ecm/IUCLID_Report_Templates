@@ -13,5 +13,3 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
-
-- script: echo Hello world!
