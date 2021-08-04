@@ -3,7 +3,10 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-name: string  # build numbering format
+steps:
+- publish: */IUCLID_Report_Templates/_git/IUCLID_report_common_modules
+  artifact: IUCLID_report_common_modules
+  displayName: STRING
 
 trigger:
 - main
@@ -11,7 +14,9 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-jobs: [ job | templateReference ]
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
