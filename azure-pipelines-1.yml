@@ -6,7 +6,7 @@
 
 resources:
   pipelines:
-  - pipeline: self
+  - pipeline: Mark-R-R
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
