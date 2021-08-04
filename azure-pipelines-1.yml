@@ -6,10 +6,8 @@
 
 resources:
 
-
-
   pipelines:
-  - pipeline: pipeline
+  - pipeline: self
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
