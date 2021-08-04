@@ -5,6 +5,7 @@
 
 trigger:
 - main
+- common_module_branch/*
 
 pool:
   vmImage: ubuntu-latest
