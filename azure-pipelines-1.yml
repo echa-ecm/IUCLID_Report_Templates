@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 steps:
-- publish: */IUCLID_Report_Templates/_git/IUCLID_report_common_modules
+- publish: */IUCLID_report_common_modules
   artifact: IUCLID_report_common_modules
   displayName: STRING
 
