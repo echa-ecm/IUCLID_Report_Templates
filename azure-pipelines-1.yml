@@ -38,15 +38,6 @@ resources:
       branches:
         include: [ main ] # branch names which will trigger a build
 
-steps:
-- publish: /https://echa-ecm@dev.azure.com/echa-ecm/IUCLID_Report_Templates/_git/IUCLID_report_common_modules
-  artifact: IUCLID_report_common_modules
-  displayName: STRING
-- checkout: self
-  clean: true
-  fetchDepth: 5
-  lfs: true
-  path: /home/vsts/work/1/s
 
 trigger:
 - main
