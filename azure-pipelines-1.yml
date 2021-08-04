@@ -15,6 +15,7 @@ resources:
 
   containers:
   - container: Windows
+    pipeline: self
     image: ubuntu-latest
     endpoint: Mark-R-R
 
@@ -34,17 +35,6 @@ resources:
     trigger:  # CI trigger for this repository, no CI trigger if skipped (only works for Azure Repos)
       branches:
         include: [ main ] # branch names which will trigger a build
-
-resources:
-  containers:
-  - container: windows
-    pipeline: self
-    image: ubuntu-latest
-    ports:
-    - 8080:80 # bind container port 80 to 8080 on the host machine
-    - 6379 # bind container port 6379 to a random available port on the host machine
-    volumes:
-    - /src/dir:/dst/dir # mount /src/dir on the host into /dst/dir in the container
 
 trigger:
 - main
