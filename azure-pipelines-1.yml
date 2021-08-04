@@ -28,7 +28,15 @@ resources:
     - 6379 # bind container port 6379 to a random available port on the host machine
     volumes:
     - /src/dir:/dst/dir
- 
+
+  repositories:
+  - repository: common
+    type: guthub
+    name: echa-ecm/IUCLID_Report_Templates
+    ref: main
+    trigger:  # CI trigger for this repository, no CI trigger if skipped (only works for Azure Repos)
+      branches:
+        include: [ main ] # branch names which will trigger a build
 
 steps:
 - publish: /https://echa-ecm@dev.azure.com/echa-ecm/IUCLID_Report_Templates/_git/IUCLID_report_common_modules
