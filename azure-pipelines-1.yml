@@ -11,7 +11,7 @@ resources:
     branch: main
 
 
-containers:
+
   - container: windows
     pipeline: self
     image: ubuntu-latest
@@ -23,7 +23,7 @@ containers:
     volumes:
     - /src/dir:/dst/dir
 
-repositories:
+
   - repository: IUCLID_Report_Templates
     type: github
     name: echa-ecm/IUCLID_Report_Templates
