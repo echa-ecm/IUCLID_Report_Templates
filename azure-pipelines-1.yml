@@ -3,10 +3,16 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+parameters:
+- name: succeed
+  displayName: Succeed or fail
+  type: boolean
+  default: false
 
 resources:
   pipelines:
-  - project: echa-ecm
+  - pipeline: succeed
+    project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
 
