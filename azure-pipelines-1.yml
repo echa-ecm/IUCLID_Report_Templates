@@ -5,15 +5,14 @@
 
 
 resources:
-
   - pipelines: pipeline
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
 
 
-  containers:
-  - container: Windows
+containers:
+  - container: windows
     pipeline: self
     image: ubuntu-latest
     endpoint: Mark-R-R
@@ -24,7 +23,7 @@ resources:
     volumes:
     - /src/dir:/dst/dir
 
-  repositories:
+repositories:
   - repository: IUCLID_Report_Templates
     type: github
     name: echa-ecm/IUCLID_Report_Templates
