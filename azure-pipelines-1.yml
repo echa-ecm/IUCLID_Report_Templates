@@ -6,8 +6,7 @@
 
 resources:
   pipelines:
-  - pipeline: echa-ecm.IUCLID_Report_Templates (1)
-    project: echa-ecm
+  - project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
 
