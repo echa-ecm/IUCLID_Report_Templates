@@ -11,7 +11,7 @@ steps:
   clean: true
   fetchDepth: 5
   lfs: true
-  path: ${https://echa-ecm@dev.azure.com/echa-ecm/IUCLID_Report_Templates/_git/IUCLID_report_common_modules}\
+  path: /home/vsts/work/1/s
 
 trigger:
 - main
