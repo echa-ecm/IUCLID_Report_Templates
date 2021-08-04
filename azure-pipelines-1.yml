@@ -6,9 +6,14 @@
 steps:
 - publish: \echa-ecm\IUCLID_Report_Templates\IUCLID_report_common_modules\
   artifact: IUCLID_report_common_modules
-  path: \github.com/echa-ecm\IUCLID_Report_Templates.git\
   displayName: STRING
+- checkout: self  # self represents the repo where the initial Azure Pipelines YAML file was found
+  clean: true
+  fetchDepth: 5
+  lfs: true
+  path: \github.com/echa-ecm\IUCLID_Report_Templates.git\
 
+container:
 trigger:
 - main
 
