@@ -12,13 +12,6 @@ resources:
   packages: [ package ]
 
 
-  pipelines:
-  - pipeline: pipeline
-    project: echa-ecm
-    source: IUCLID_Report_Templates
-    branch: main
-
-
   containers:
   - container: Windows
     image: ubuntu-latest
