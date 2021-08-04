@@ -4,9 +4,9 @@
 # https://aka.ms/yaml
 
 steps:
-- publish: #*/IUCLID_report_common_modules
-  artifact: #IUCLID_report_common_modules
-  displayName: #STRING
+- publish: https://echa-ecm@dev.azure.com/echa-ecm/IUCLID_Report_Templates/_git/IUCLID_report_common_modules
+  artifact: IUCLID_report_common_modules
+  displayName: STRING
 
 trigger:
 - main
@@ -14,9 +14,8 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+steps:
+- script: echo Hello world!
+  displayName: Say hello
+  name: WORLD_WORLD
+  workingDirectory: IUCLID_report_common_modules
