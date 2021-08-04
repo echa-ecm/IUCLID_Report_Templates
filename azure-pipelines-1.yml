@@ -5,14 +5,14 @@
 
 
 resources:
-  - pipelines: pipeline
+    pipelines: pipeline
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
 
 
 
-  - container: windows
+    container: windows
     pipeline: self
     image: ubuntu-latest
     endpoint: Mark-R-R
