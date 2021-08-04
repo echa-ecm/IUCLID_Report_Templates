@@ -8,7 +8,7 @@
 # Publish (upload) a file or directory as a named artifact for the current run
 
 steps:
-- publish: $(https://github.com/echa-ecm/IUCLID_Report_Templates.git)/build 
+- publish: /home/vsts/work/1/s
   artifact: IUCLID_report_common_modules
   displayName: STRING
 - checkout: self
