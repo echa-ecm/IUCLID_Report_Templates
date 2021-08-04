@@ -22,9 +22,7 @@ resources:
   containers:
   - container: Windows
     image: ubuntu-latest
-    options: string  # arguments to pass to container at startup
-    endpoint: string  # reference to a service connection for the private registry
-    env: { string: string }  # list of environment variables to add
+    endpoint: my_acr_connection
     ports: 
     - 8080:80 # bind container port 80 to 8080 on the host machine
     - 6379 # bind container port 6379 to a random available port on the host machine
