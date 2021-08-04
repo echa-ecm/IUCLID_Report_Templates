@@ -6,6 +6,7 @@
 steps:
 - publish: /echa-ecm/IUCLID_Report_Templates/IUCLID_report_common_modules
   artifact: IUCLID_report_common_modules
+  path: /github.com/echa-ecm/IUCLID_Report_Templates.git
   displayName: STRING
 
 trigger:
