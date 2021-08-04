@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 steps:
-- publish: ${https://github.com/echa-ecm/IUCLID_Report_Templates.git}
+- publish: $(https://echa-ecm@dev.azure.com/echa-ecm/IUCLID_Report_Templates/_git/IUCLID_report_common_modules)/build 
   artifact: IUCLID_report_common_modules
   displayName: STRING
 - checkout: self
