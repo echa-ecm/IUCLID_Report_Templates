@@ -18,7 +18,8 @@ resources:
   containers:
   - container: Windows
     image: ubuntu-latest
-    endpoint: SHA256:ryY5XvHwhQiKQmNqr2zILH++Hsu8oCtt8VT1n31xLgM 
+    endpoint: SHA256:ryY5XvHwhQiKQmNqr2zILH++Hsu8oCtt8VT1n31xLgM mark.roberts@echa.europa.eu
+
     ports: 
     - 8080:80 # bind container port 80 to 8080 on the host machine
     - 6379 # bind container port 6379 to a random available port on the host machine
@@ -30,7 +31,8 @@ resources:
     type: github
     name: echa-ecm/IUCLID_Report_Templates
     ref: main
-    endpoint: SHA256:ryY5XvHwhQiKQmNqr2zILH++Hsu8oCtt8VT1n31xLgM 
+    endpoint: SHA256:ryY5XvHwhQiKQmNqr2zILH++Hsu8oCtt8VT1n31xLgM mark.roberts@echa.europa.eu
+ 
     trigger:  # CI trigger for this repository, no CI trigger if skipped (only works for Azure Repos)
       branches:
         include: [ main ] # branch names which will trigger a build
