@@ -14,8 +14,4 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
 - script: echo Hello world!
-  displayName: Say hello
-  name: WORLD_WORLD
-  workingDirectory: IUCLID_report_common_modules
