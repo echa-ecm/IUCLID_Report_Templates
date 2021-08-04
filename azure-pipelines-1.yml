@@ -4,8 +4,33 @@
 # https://aka.ms/yaml
 
 
-# Publish pipeline artifacts
-# Publish (upload) a file or directory as a named artifact for the current run
+resources:
+  pipelines: [ pipeline ]  
+  builds: [ build ]
+  repositories: [ repository ]
+  containers: [ container ]
+  packages: [ package ]
+
+
+  pipelines:
+  - pipeline: pipeline
+    project: echa-ecm
+    source: IUCLID_Report_Templates
+    branch: main
+
+
+  containers:
+  - container: Windows
+    image: ubuntu-latest
+    options: string  # arguments to pass to container at startup
+    endpoint: string  # reference to a service connection for the private registry
+    env: { string: string }  # list of environment variables to add
+    ports: 
+    - 8080:80 # bind container port 80 to 8080 on the host machine
+    - 6379 # bind container port 6379 to a random available port on the host machine
+    volumes:
+    - /src/dir:/dst/dir
+ 
 
 steps:
 - publish: /https://echa-ecm@dev.azure.com/echa-ecm/IUCLID_Report_Templates/_git/IUCLID_report_common_modules
