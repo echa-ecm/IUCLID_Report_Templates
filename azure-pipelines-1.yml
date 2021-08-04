@@ -30,7 +30,7 @@ resources:
     type: github
     name: echa-ecm/IUCLID_Report_Templates
     ref: main
-    endpoint: mygithubconnection
+    endpoint: GitHub
     trigger:  # CI trigger for this repository, no CI trigger if skipped (only works for Azure Repos)
       branches:
         include: [ main ] # branch names which will trigger a build
