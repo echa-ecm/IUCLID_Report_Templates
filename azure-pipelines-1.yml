@@ -11,13 +11,13 @@ resources:
     branch: main
 
 
-
-    container: windows
+containers:
+    - container: windows
     pipeline: self
     image: ubuntu-latest
     endpoint: Mark-R-R
 
-    ports: 
+    ports:
     - 8080:80 # bind container port 80 to 8080 on the host machine
     - 6379 # bind container port 6379 to a random available port on the host machine
     volumes:
