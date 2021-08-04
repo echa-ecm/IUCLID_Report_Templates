@@ -11,7 +11,7 @@ parameters:
 
 resources:
   pipelines:
-  - pipeline: succeed
+  - pipeline: azure-pipelines.yaml
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
