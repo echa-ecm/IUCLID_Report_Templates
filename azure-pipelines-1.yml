@@ -26,7 +26,7 @@ resources:
     repository: IUCLID_Report_Templates
     type: github
     name: echa-ecm/IUCLID_Report_Templates
-   ref: main
+    ref: main
     endpoint: Mark-R-R
  
     trigger:  # CI trigger for this repository, no CI trigger if skipped (only works for Azure Repos)
