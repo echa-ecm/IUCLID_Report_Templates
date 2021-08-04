@@ -4,14 +4,14 @@
 # https://aka.ms/yaml
 
 steps:
-- publish: /echa-ecm/IUCLID_Report_Templates.git
+- publish: ${https://github.com/echa-ecm/IUCLID_Report_Templates.git}
   artifact: IUCLID_report_common_modules
   displayName: STRING
 - checkout: self
   clean: true
   fetchDepth: 5
   lfs: true
-  path: \echa-ecm\IUCLID_Report_Templates\IUCLID_report_common_modules\
+  path: ${https://echa-ecm@dev.azure.com/echa-ecm/IUCLID_Report_Templates/_git/IUCLID_report_common_modules}\
 
 trigger:
 - main
