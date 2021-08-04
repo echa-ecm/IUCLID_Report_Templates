@@ -4,9 +4,9 @@
 # https://aka.ms/yaml
 
 steps:
-- publish: */IUCLID_report_common_modules
-  artifact: IUCLID_report_common_modules
-  displayName: STRING
+- publish: #*/IUCLID_report_common_modules
+  artifact: #IUCLID_report_common_modules
+  displayName: #STRING
 
 trigger:
 - main
