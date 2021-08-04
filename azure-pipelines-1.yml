@@ -3,10 +3,9 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-# Publish (upload) a file or directory as a named artifact for the current run
 - task: PublishPipelineArtifact@1
   inputs:
-    #targetPath: '$(echa-ecm@dev.azure.com/echa-ecm/)' 
+    #targetPath: $(echa-ecm@dev.azure.com/echa-ecm/)
     #artifactType: 'pipeline'
 
 steps:
