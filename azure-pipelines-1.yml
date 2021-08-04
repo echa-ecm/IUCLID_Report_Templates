@@ -26,7 +26,7 @@ resources:
     - /src/dir:/dst/dir
 
   repositories:
-  - repository: common
+  - repository: IUCLID_Report_Templates
     type: github
     name: echa-ecm/IUCLID_Report_Templates
     ref: main
