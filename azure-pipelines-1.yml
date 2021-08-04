@@ -14,7 +14,6 @@ resources:
 
 
     container: windows
-    pipeline: self
     image: ubuntu-latest
     endpoint: Mark-R-R
 
