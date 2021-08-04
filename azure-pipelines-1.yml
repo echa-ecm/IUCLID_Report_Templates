@@ -13,7 +13,8 @@ resources:
 
 
 
-    container: windows
+ containers:
+  - container: windows
     image: ubuntu-latest
     endpoint: Mark-R-R
 
@@ -23,7 +24,8 @@ resources:
     volumes:
     - /src/dir:/dst/dir
 
-    repository: IUCLID_Report_Templates
+  repositories:
+  - repository: IUCLID_Report_Templates
     type: github
     name: echa-ecm/IUCLID_Report_Templates
     ref: main
