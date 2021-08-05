@@ -17,10 +17,9 @@ resources:
 
 
 
-  containers:
-  - container: windows
+  - containers:
+    container: windows
     image: ubuntu-latest
-
     ports: 
     - 8080:80 # bind container port 80 to 8080 on the host machine
     - 6379 # bind container port 6379 to a random available port on the host machine
