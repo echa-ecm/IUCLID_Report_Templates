@@ -14,6 +14,13 @@ trigger:
     exclude:
     - README.md/*
 
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - script: echo hello from Windows
+  
 pr:
 - main
 - releases/*
@@ -27,9 +34,3 @@ steps:
   path: C:\agent\_work\1\s\echa-ecm\IUCLID_Report_Templates  # path to check out source code, relative to the agent's build directory (e.g. \_work\1)
   persistCredentials: true  # set to 'true' to leave the OAuth token in the Git config after the initial fetch
 
-jobs:
-- job: Windows
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-  - script: echo hello from Windows
