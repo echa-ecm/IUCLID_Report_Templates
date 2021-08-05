@@ -13,18 +13,16 @@ resources:
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
-
-containers:
-  - container: windows
+    container: windows
     image: ubuntu-latest
 
-ports: 
+    ports: 
     - 8080:80 # bind container port 80 to 8080 on the host machine
     - 6379 # bind container port 6379 to a random available port on the host machine
-volumes:
+    volumes:
     - /src/dir:/dst/dir
 
-repositories:
+  repositories:
   - repository: IUCLID_Report_Templates
     type: github
     name: echa-ecm/IUCLID_Report_Templates
