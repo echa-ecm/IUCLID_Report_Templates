@@ -10,8 +10,8 @@ parameters:
   default: false
 
 resources:
-  pipelines:  
-  - project: echa-ecm
+  - pipelines:  
+    project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
 
