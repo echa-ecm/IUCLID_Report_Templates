@@ -10,7 +10,7 @@ trigger:
     - main
   paths:
     include:
-    - '*' # same as '/' for the repository root
+    - IUCLID_Report_Templates/* # same as '/' for the repository root
     exclude:
     - README.md/*
 
