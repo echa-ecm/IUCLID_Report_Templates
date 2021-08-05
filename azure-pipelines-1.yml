@@ -9,15 +9,14 @@ parameters:
   type: boolean
   default: false
 
-resources:
-  - pipelines:  
+  resources:  
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
 
 
 
-  - containers:
+  containers:
     container: windows
     image: ubuntu-latest
     ports: 
@@ -26,7 +25,7 @@ resources:
     volumes:
     - /src/dir:/dst/dir
 
-  - repositories:
+  repositories:
     repository: IUCLID_Report_Templates
     type: github
     name: echa-ecm/IUCLID_Report_Templates
