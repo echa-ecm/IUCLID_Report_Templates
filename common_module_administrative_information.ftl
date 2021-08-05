@@ -1,5 +1,5 @@
 
-<!-- Legal entity information from a Legal entity    -->
+<!-- Legal entity information from a Legal entity  -->
 <#macro basicLegalEntityInformation _subject legalEntity="">
 	<#compress>
 
