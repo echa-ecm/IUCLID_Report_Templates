@@ -10,8 +10,6 @@ parameters:
   default: false
 
 resources:
-  pipelines:
-  - pipeline: azure-pipelines.yaml
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
