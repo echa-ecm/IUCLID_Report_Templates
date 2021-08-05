@@ -9,7 +9,9 @@ parameters:
   type: boolean
   default: false
 
-  resources:  
+resources:
+  pipelines:
+  - pipeline: azure-pipelines.yaml
     project: echa-ecm
     source: IUCLID_Report_Templates
     branch: main
@@ -17,8 +19,9 @@ parameters:
 
 
   containers:
-    container: windows
+  - container: windows
     image: ubuntu-latest
+
     ports: 
     - 8080:80 # bind container port 80 to 8080 on the host machine
     - 6379 # bind container port 6379 to a random available port on the host machine
@@ -26,7 +29,7 @@ parameters:
     - /src/dir:/dst/dir
 
   repositories:
-    repository: IUCLID_Report_Templates
+  - repository: IUCLID_Report_Templates
     type: github
     name: echa-ecm/IUCLID_Report_Templates
     ref: main
