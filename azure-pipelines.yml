@@ -18,9 +18,8 @@ jobs:
 - job: Windows
   pool:
     vmImage: 'windows-latest'
-  steps:
-  - script: echo hello from Windows
-  
+
+
 pr:
 - main
 - releases/*
