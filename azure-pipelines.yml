@@ -26,6 +26,10 @@ steps:
   submodules: true | recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules
   path: C:\agent\_work\1\s\echa-ecm\IUCLID_Report_Templates  # path to check out source code, relative to the agent's build directory (e.g. \_work\1)
   persistCredentials: true  # set to 'true' to leave the OAuth token in the Git config after the initial fetch
-  job: Windows
-- pool:
-    vmImage: 'ubuntu-latest'
+
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - script: echo hello from Windows
