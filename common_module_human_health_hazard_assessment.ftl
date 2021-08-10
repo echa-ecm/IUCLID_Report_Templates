@@ -8625,7 +8625,7 @@
 		</#if>
 
 		<#if study.ResultsAndDiscussion.PharmacokineticStudies.ToxicokineticParameters?has_content>
-			<para>Toxicokinetic parameters: </para><@toxicokineticParametersList study.ResultsAndDiscussion.PharmacokineticStudies.ToxicokineticParameters/>
+			<para>Toxicokinetic parameters: </para><@ToxicokineticParametersList study.ResultsAndDiscussion.PharmacokineticStudies.ToxicokineticParameters/>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.MetabolitesIdentified?has_content || study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.DetailsOnMetabolites?has_content >
