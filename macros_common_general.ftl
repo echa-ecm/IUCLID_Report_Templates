@@ -760,7 +760,10 @@
 	is not wanted, indicate "recursive=false".
 	If a type is specified, only components flagged with such specific function are retrieved
 -->
-<#function getComponents mixture type="" recursive=true>
+<#function getComponents mixture type="" recursive=true getRefSubstances=false getSubstanceConstituents=false>
+
+	<#local documentTypes=['MIXTURE', 'SUBSTANCE']/>
+	<#if getRefSubstances><#local documentTypes=documentTypes+['REFERENCE_SUBSTANCE']/></#if>
 
 	<#local componentsList = [] />
 
@@ -772,12 +775,17 @@
 			<#if component.Reference?has_content>
 				<#if type=="" || isComponentType(component, type)>
 					<#local substance = iuclid.getDocumentForKey(component.Reference)/>
-					<#if substance?has_content && (substance.documentType=="SUBSTANCE" || substance.documentType=="MIXTURE")>
-						<#local componentsList = com.addDocumentToSequenceAsUnique(substance, componentsList)/>
+					<#if substance?has_content && documentTypes?seq_contains(substance.documentType)>
+						<#local componentsList = addDocumentToSequenceAsUnique(substance, componentsList)/>
 
-						<#-- if mixture, call function again-->
+						<#-- if substance and getSubstanceConstituents is true, get constituents of substance -->
+						<#if substance.documentType=="SUBSTANCE" && getSubstanceConstituents && getRefSubstances>
+							<#local componentsList = componentsList + getConstituents(substance)/>
+						</#if>
+
+						<#-- if mixture and recursive is true, call function again-->
 						<#if substance.documentType=="MIXTURE" && recursive>
-							<#local componentsList = componentsList + getComponents(substance, type)/>
+							<#local componentsList = componentsList + getComponents(substance, type, recursive, getRefSubstances, getSubstanceConstituents)/>
 						</#if>
 					</#if>
 
@@ -792,6 +800,34 @@
 <#--Function to check if a component from a mixture composition documents is of a certain function e.g. 'active substance'-->
 <#function isComponentType component type>
 	<#return component.Function?has_content && com.picklistValueMatchesPhrases(component.Function, [type]) />
+</#function>
+
+<!--Function to get a list of all SUBSTANCE constituents from the SubstanceComposition records of a substance.
+	Type can be specified to retrieve Constituents, Additives and/or Impurities.
+-->
+<#function getConstituents substance type=['Constituents', 'Additives', 'Impurities']>
+
+	<#local constituentsList = [] />
+
+	<#local compositionList = iuclid.getSectionDocumentsForParentKey(substance.documentKey, "FLEXIBLE_RECORD", "SubstanceComposition") />
+
+	<#list compositionList as composition>
+
+		<#list type as tp>
+
+			<#local path='composition.'+tp+'.'+tp>
+
+			<#list path?eval as constituent>
+
+				<#if constituent.ReferenceSubstance?has_content>
+					<#local substance = iuclid.getDocumentForKey(constituent.ReferenceSubstance)/>
+					<#local constituentsList = addDocumentToSequenceAsUnique(substance, constituentsList)/>
+				</#if>
+			</#list>
+		</#list>
+	</#list>
+
+	<#return constituentsList />
 </#function>
 
 <#--Function to retrieve all metabolites from the Metabolites records of a mixture.
@@ -817,7 +853,7 @@
 			<#if metabolite.LinkMetaboliteDataset?has_content>
 				<#local substance = iuclid.getDocumentForKey(metabolite.LinkMetaboliteDataset)/>
 				<#if substance?has_content && substance.documentType=="SUBSTANCE">
-					<#local metabolitesList = com.addDocumentToSequenceAsUnique(substance, metabolitesList)/>
+					<#local metabolitesList = addDocumentToSequenceAsUnique(substance, metabolitesList)/>
 				</#if>
 			</#if>
 		</#list>
