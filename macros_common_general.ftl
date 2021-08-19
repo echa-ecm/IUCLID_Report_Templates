@@ -510,7 +510,7 @@
 							</#if>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="${imageWidth}%" scalefit="1" fileref="data:${structuralFormula.mediaType};base64,${iuclid.getContentForAttachment(attachmentKey)}" />
+									<imagedata width="${imageWidthPerc}%" scalefit="1" fileref="data:${structuralFormula.mediaType};base64,${iuclid.getContentForAttachment(attachmentKey)}" />
 								</imageobject>
 							</mediaobject>
 						</figure>
