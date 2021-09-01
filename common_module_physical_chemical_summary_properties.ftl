@@ -186,10 +186,18 @@
 				<col width="15%" />
 			</#if>
 		<#elseif pppRelevant??>
-			<col width="15%" />
-			<col width="20%" />
-			<col width="33%" />
-			<col width="32%" />
+			<#if _metabolites??>
+				<col width="15%" />
+				<col width="10%" />
+				<col width="15%" />
+				<col width="30%" />
+				<col width="30%" />
+			<#else>
+				<col width="15%" />
+				<col width="20%" />
+				<col width="33%" />
+				<col width="32%" />
+			</#if>
 		<#else>
 			<col width="20%" />
 			<col width="40%" />
@@ -200,6 +208,7 @@
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
 				<#--ACR: new column for PPP-->
 				<#if pppRelevant??>
+					<#if metabolites??><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th></#if>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
 				</#if>
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA / Discussion</emphasis></th>
@@ -218,6 +227,26 @@
 				<#assign propertyData = propertyToDataMap[property] />
 
 				<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", propertyData["subType"]) />
+
+				<#if pppRelevant?? && _metabolites?? && _metabolites?has_content>
+
+					<#-- get a list of entities of same size as summaryList-->
+					<#assign entityList =[]/>
+					<#list summaryList as summary>
+						<#assign entityList = entityList + [_subject.ChemicalName]/>
+					</#list>
+
+					<#-- add metabolites-->
+					<#list _metabolites as metab>
+						<#local metabSummaryList =  iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", propertyData["subType"]) />
+						<#if metabSummaryList?has_content>
+							<#assign summaryList = summaryList + metabSummaryList/>
+							<#list metabSummaryList as metabSummary>
+								<#assign entityList = entityList + [_metab.ChemicalName]/>
+							</#list>
+						</#if>
+					</#list>
+				</#if>
 
 				<#assign usespan = true />
 				
@@ -246,6 +275,11 @@
 
 						<#--ACR: added Link to individual studies-->
 						<#if pppRelevant??>
+							<#if _metabolites??>
+								<td>
+									<@com.text entityList[summary_index]/>
+								</td>
+							</#if>
 							<td>
 								<#if summary.LinkToRelevantStudyRecord.Link?has_content>
 									<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
