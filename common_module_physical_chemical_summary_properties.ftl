@@ -163,179 +163,170 @@
 	</#if>
 
 	<#if properties?has_content>
-	
-	<table border="1">
-		<title>Physicochemical properties</title>
-		<#if studyandsummaryCom.assessmentEntitiesExist && csrRelevant??>
-			<col width="18%" />
-			<col width="34%" />
-			<col width="33%" />
-			<col width="15%" />
-		<#-- ACR: ADDED. It was missing and caused crashing if flags were true.-->
-		<#elseif darRelevant?? && rarRelevant??>
-			<#if pppRelevant??>
-				<col width="10%" />
-				<col width="15%" />
-				<col width="30%" />
-				<col width="30%" />
-				<col width="15%" />
-			<#else>
+
+		<#if pppRelevant??><para role="small"></#if>
+		<table border="1">
+			<title>Physicochemical properties</title>
+			<#if studyandsummaryCom.assessmentEntitiesExist && csrRelevant??>
 				<col width="18%" />
 				<col width="34%" />
 				<col width="33%" />
 				<col width="15%" />
-			</#if>
-		<#elseif pppRelevant??>
-			<#if _metabolites??>
-				<col width="15%" />
-				<col width="10%" />
-				<col width="15%" />
-				<col width="30%" />
-				<col width="30%" />
-			<#else>
-				<col width="15%" />
-				<col width="20%" />
+			<#elseif darRelevant?? && rarRelevant?? && !pppRelevant??>
+				<col width="18%" />
+				<col width="34%" />
 				<col width="33%" />
-				<col width="32%" />
+				<col width="15%" />
+			<#elseif pppRelevant??>
+				<#if _metabolites??>
+					<col width="12%" />
+					<col width="14%" />
+					<col width="18%" />
+					<col width="28%" />
+					<col width="28%" />
+				<#else>
+					<col width="15%" />
+					<col width="20%" />
+					<col width="33%" />
+					<col width="32%" />
+				</#if>
+			<#else>
+				<col width="20%" />
+				<col width="40%" />
+				<col width="40%" />
 			</#if>
-		<#else>
-			<col width="20%" />
-			<col width="40%" />
-			<col width="40%" />
-		</#if>
-		<tbody>
-			<tr>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
-				<#--ACR: new column for PPP-->
-				<#if pppRelevant??>
-					<#if metabolites??><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th></#if>
-					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
-				</#if>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA / Discussion</emphasis></th>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Description of key information</emphasis></th>
+			<thead valign="middle" align="center">
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
+					<#if pppRelevant??>
+						<#if _metabolites??><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th></#if>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
+					</#if>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA / Discussion</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Description of key information</emphasis></th>
 
-				<#if darRelevant?? && rarRelevant??>
-					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Literature references of studies linked ot summary</emphasis></th>
-				</#if>
-				<#if studyandsummaryCom.assessmentEntitiesExist && csrRelevant??>
-					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Assessment entity linked</emphasis></th>
-				</#if>
-			</tr>
-			
-			<#list properties as property>
-		
-				<#assign propertyData = propertyToDataMap[property] />
+					<#if darRelevant?? && rarRelevant??>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Literature references of studies linked ot summary</emphasis></th>
+					</#if>
+					<#if studyandsummaryCom.assessmentEntitiesExist && csrRelevant??>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Assessment entity linked</emphasis></th>
+					</#if>
+				</tr>
+			</thead>
+			<tbody valign="middle">
+				<#list properties as property>
 
-				<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", propertyData["subType"]) />
+					<#assign propertyData = propertyToDataMap[property] />
 
-				<#if pppRelevant?? && _metabolites?? && _metabolites?has_content>
+					<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", propertyData["subType"]) />
 
-					<#-- get a list of entities of same size as summaryList-->
-					<#assign entityList =[]/>
+					<#if pppRelevant?? && _metabolites??>
+
+						<#-- get a list of entities of same size as summaryList-->
+						<#assign entityList = []/>
+						<#list summaryList as summary>
+							<#assign entityList = entityList + [_subject.ChemicalName]/>
+						</#list>
+
+						<#-- add metabolites-->
+						<#list _metabolites as metab>
+							<#local metabSummaryList =  iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", propertyData["subType"]) />
+							<#if metabSummaryList?has_content>
+								<#assign summaryList = summaryList + metabSummaryList/>
+								<#list metabSummaryList as metabSummary>
+									<#assign entityList = entityList + [metab.ChemicalName]/>
+								</#list>
+							</#if>
+						</#list>
+					</#if>
+
+					<#assign usespan = true />
+
 					<#list summaryList as summary>
-						<#assign entityList = entityList + [_subject.ChemicalName]/>
-					</#list>
-
-					<#-- add metabolites-->
-					<#list _metabolites as metab>
-						<#local metabSummaryList =  iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", propertyData["subType"]) />
-						<#if metabSummaryList?has_content>
-							<#assign summaryList = summaryList + metabSummaryList/>
-							<#list metabSummaryList as metabSummary>
-								<#assign entityList = entityList + [_metab.ChemicalName]/>
-							</#list>
-						</#if>
-					</#list>
-				</#if>
-
-				<#assign usespan = true />
-				
-				<#list summaryList as summary>
-					<tr>
-						<!-- Property -->
-						<#if usespan>
-							<td  rowspan="${summaryList?size}">
-								<#assign docUrl=iuclid.webUrl.documentView(summary.documentKey) />
-								<#if pppRelevant??>
-									<#if propertyData.pppName??>
-										${propertyData.pppName!}
+						<tr>
+							<!-- Property -->
+							<#if usespan>
+								<td  rowspan="${summaryList?size}">
+									<#assign docUrl=iuclid.webUrl.documentView(summary.documentKey) />
+									<#if pppRelevant??>
+										<#if propertyData.pppName??>
+											${propertyData.pppName!}
+										<#else>
+											${property!}
+										</#if>
 									<#else>
-										${property!}
+										<#if docUrl?has_content>
+											<ulink url="${docUrl}">${property!}</ulink>
+										<#else>
+											${property!}
+										</#if>
 									</#if>
-								<#else>
-									<#if docUrl?has_content>
-										<ulink url="${docUrl}">${property!}</ulink>
-									<#else>
-										${property!}
-									</#if>
+								</td>
+								<#assign usespan = false />
+							</#if>
+
+							<#--substance name and link to individual studies for PPP-->
+							<#if pppRelevant??>
+								<#if _metabolites??>
+									<td>
+										<@com.text entityList[summary_index]/>
+									</td>
 								</#if>
-							</td>
-							<#assign usespan = false />
-						</#if>
-
-						<#--ACR: added Link to individual studies-->
-						<#if pppRelevant??>
-							<#if _metabolites??>
 								<td>
-									<@com.text entityList[summary_index]/>
+									<#if summary.LinkToRelevantStudyRecord.Link?has_content>
+										<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
+											<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
+											<para>
+												<command  linkend="${studyReference.documentKey.uuid!}">
+													<@com.text studyReference.name/>
+												</command>
+											</para>
+										</#list>
+									</#if>
 								</td>
 							</#if>
+
+							<!-- Value used for CSA / Discussion -->
 							<td>
-								<#if summary.LinkToRelevantStudyRecord.Link?has_content>
-									<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
-										<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
-										<para>
-											<command  linkend="${studyReference.documentKey.uuid!}">
-												<@com.text studyReference.name/>
-											</command>
-										</para>
+								<para><emphasis role="bold"><@valueForCSA summary propertyData/></emphasis></para>
+								<#compress>
+									<@com.richText summary.Discussion.Discussion/>
+								</#compress>
+
+							</td>
+							<!-- Description of key information -->
+							<td>
+								<#compress>
+									<@com.richText summary.KeyInformation.KeyInformation/>
+								</#compress>
+							</td>
+
+							<!-- Reference from summary to endpoint study record's literature references -->
+							<#if darRelevant?? && rarRelevant??>
+								<td>
+									<@literatureReferencesLinkedToSummary summary />
+								</td>
+							</#if>
+							<#if studyandsummaryCom.assessmentEntitiesExist && csrRelevant??>
+								<!-- Assessment entity linked -->
+								<td>
+									<#assign aeList = studyandsummaryCom.getAssessmentEntitiesLinkedToSummary(summary)/>
+									<#list aeList as ae>
+									<#if ae.AssessmentEntityName?has_content>
+										<para><@com.text ae.AssessmentEntityName/></para>
+										<#else>
+										<para>--</para>
+										</#if>
 									</#list>
-								</#if>
-							</td>
-						</#if>
-
-						<!-- Value used for CSA / Discussion -->
-						<td>
-							<#-- ACR: I removed this if statement, what was its purpose???? And the macro to be used is new (valueForCSA instead of valueForCSA)-->
-							<#-- <#if isValueForCSARelevant(summary, propertyData)>-->
-							<para><emphasis role="bold"><@valueForCSA summary propertyData/></emphasis></para>
-							<#--</#if>	-->
-							<#compress>
-							<@com.richText summary.Discussion.Discussion/>
-							</#compress>
-
-						</td>
-						<!-- Description of key information -->
-						<td>
-							<#compress>
-							<@com.richText summary.KeyInformation.KeyInformation/>
-							</#compress>
-						</td>
-
-						<!-- Reference from summary to endpoint study record's literature references -->
-						<#if darRelevant?? && rarRelevant??>
-							<td>
-								<@literatureReferencesLinkedToSummary summary />
-							</td>
-						</#if>
-						<#if studyandsummaryCom.assessmentEntitiesExist && csrRelevant??>
-							<!-- Assessment entity linked -->
-							<td>
-								<#assign aeList = studyandsummaryCom.getAssessmentEntitiesLinkedToSummary(summary)/>
-								<#list aeList as ae>
-								<#if ae.AssessmentEntityName?has_content>
-									<para><@com.text ae.AssessmentEntityName/></para>
-									<#else>
-									<para>--</para>
-									</#if>
-								</#list>
-							</td>
-						</#if>
-					</tr>
+								</td>
+							</#if>
+						</tr>
+					</#list>
 				</#list>
-			</#list>
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+		<#if pppRelevant??></para></#if>
+
 	</#if>	
 	
 	<!-- Additional physicochemical properties table -->
@@ -469,18 +460,46 @@
 	<#compress>
 
 		<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "PhysicalChemicalProperties") />
+		<#if pppRelevant?? && _metabolites??>
 
-			<#if summaryList?has_content>
-				<para><emphasis role="HEAD-WoutNo">Discussion of physicochemical properties</emphasis></para>
-			</#if>
+			<#-- get a list of entities of same size as summaryList-->
+			<#assign entityList = []/>
+			<#list summaryList as summary>
+				<#assign entityList = entityList + [_subject.ChemicalName]/>
+			</#list>
 
-			<#if summaryList?has_content>
-				<#assign printSummaryName = summaryList?size gt 1 />
-				<#list summaryList as summary>
+			<#-- add metabolites-->
+			<#list _metabolites as metab>
+				<#local metabSummaryList =  iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", "PhysicalChemicalProperties") />
+				<#if metabSummaryList?has_content>
+					<#assign summaryList = summaryList + metabSummaryList/>
+					<#list metabSummaryList as metabSummary>
+						<#assign entityList = entityList + [metab.ChemicalName]/>
+					</#list>
+				</#if>
+			</#list>
+		</#if>
+
+		<#if summaryList?has_content>
+			<@com.emptyLine/>
+			<para><emphasis role="HEAD-WoutNo">Discussion of physicochemical properties</emphasis></para>
+		</#if>
+
+		<#if summaryList?has_content>
+			<#assign printSummaryName = summaryList?size gt 1 />
+			<#list summaryList as summary>
+				<@com.emptyLine/>
+				<#if pppRelevant?? && _metabolites??
+					&& _subject.documentType=="SUBSTANCE"
+					&& _subject.ChemicalName!=entityList[summary_index]
+					&& entityList[summary_index]!=entityList[summary_index-1]!>
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
 					<@com.emptyLine/>
-					<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
-				</#list>
-			</#if>
+				</#if>
+				<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+			</#list>
+		</#if>
+
 		</#compress>
 	</#macro>
 						
