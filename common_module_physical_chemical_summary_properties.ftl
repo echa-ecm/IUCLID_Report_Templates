@@ -195,8 +195,8 @@
 				<col width="40%" />
 				<col width="40%" />
 			</#if>
-			<thead valign="middle" align="center">
-				<tr>
+			<tbody valign="middle">
+				<tr align="center">
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
 					<#if pppRelevant??>
 						<#if _metabolites??><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th></#if>
@@ -212,8 +212,7 @@
 						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Assessment entity linked</emphasis></th>
 					</#if>
 				</tr>
-			</thead>
-			<tbody valign="middle">
+
 				<#list properties as property>
 
 					<#assign propertyData = propertyToDataMap[property] />
@@ -391,7 +390,7 @@
 					<col width="40%" />
 					<col width="40%" />
 				</#if>
-				<tbody>
+				<tbody >
 					<tr>
 						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
 						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Description of key information</emphasis></th>
