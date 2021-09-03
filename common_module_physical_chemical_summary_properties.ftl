@@ -491,7 +491,7 @@
 				<#if pppRelevant?? && _metabolites??
 					&& _subject.documentType=="SUBSTANCE"
 					&& _subject.ChemicalName!=entityList[summary_index]
-					&& entityList[summary_index]!=entityList[summary_index-1]!>
+					&& entityList?seq_index_of(entityList[summary_index]) == summary_index>
 					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
 					<@com.emptyLine/>
 				</#if>
