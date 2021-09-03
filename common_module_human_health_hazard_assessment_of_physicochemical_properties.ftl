@@ -1956,24 +1956,57 @@
 	</#compress>
 </#macro>
 
-<#--3. Macro for Spectra - it's a flexible record and not an endpoint summary. Has a totally differnt layout than appendixE-->
-<#macro opticalStudies _subject>
+<#--3. Macro for Spectra - it's a flexible record and not an endpoint summary. Has a totally different layout than appendixE-->
+<#macro opticalStudies subject>
 	<#compress>
-		<#local studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "AnalyticalInformation") />
 
-	<#-- Study results-->
-		<@com.emptyLine/>
+		<#local studyList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_RECORD", "AnalyticalInformation") />
 
-		<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Studies</emphasis></para>
+		<#-- add metabolites-->
+		<#if _metabolites?? && _metabolites?has_content>
+
+			<#local entityList = []/>
+			<#list studyList as study>
+				<#local entityList = entityList + [subject.ChemicalName]/>
+			</#list>
+
+			<#list _metabolites as metab>
+				<#local metabStudyList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_RECORD", "AnalyticalInformation") />
+				<#if metabStudyList?has_content>
+					<#local studyList = studyList + metabStudyList>
+					<#list metabStudyList as metabStudy>
+						<#local entityList = entityList + [metab.ChemicalName]/>
+					</#list>
+				</#if>
+			</#list>
+		</#if>
+
+		<#-- Study results-->
 		<@com.emptyLine/>
+		<para><emphasis role="HEAD-WoutNo">Studies</emphasis></para>
 
 		<#if !studyList?has_content>
-			No relevant information available.
+			<para>No relevant studies for spectra, molar extinction and/or optical purity available.</para>
 		<#else>
 			${studyList?size} individual <#if studyList?size==1>study<#else>studies</#if> for spectra, molar extinction and/or optical purity <#if studyList?size==1>is<#else>are</#if> summarised below:
+			<#list entityList as entity>
+				<#if entityList?seq_index_of(entity) == entity_index>
+					<#local filtEntityList = entityList?filter(x -> x == entity)/>
+					<para role="indent">-
+						${filtEntityList?size} for
+						<#if entity!=subject.ChemicalName>metabolite ${entity}<#else>active substance</#if>
+					</para>
+				</#if>
+			</#list>
 			<@com.emptyLine/>
 
 			<#list studyList as study>
+
+				<#if entityList[study_index] != subject.ChemicalName &&
+						entityList?seq_index_of(entityList[study_index]) == study_index>
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[study_index]}</emphasis> -----</emphasis></para>
+				</#if>
+
 				<sect4 xml:id="${study.documentKey.uuid!}" label="/${study_index+1}"><title  role="HEAD-5" >${study.name}</title>
 
 					<para><emphasis role="HEAD-WoutNo">Methods and results of analysis</emphasis></para>
@@ -1996,6 +2029,9 @@
 						<para role="indent"><@com.text study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks/></para>
 					</#if>
 				</sect4>
+
+				<@com.emptyLine/>
+
 			</#list>
 		</#if>
 
