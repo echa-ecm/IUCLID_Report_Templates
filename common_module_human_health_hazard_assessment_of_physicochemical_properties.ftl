@@ -1988,22 +1988,26 @@
 		<#if !studyList?has_content>
 			<para>No relevant studies for spectra, molar extinction and/or optical purity available.</para>
 		<#else>
-			${studyList?size} individual <#if studyList?size==1>study<#else>studies</#if> for spectra, molar extinction and/or optical purity <#if studyList?size==1>is<#else>are</#if> summarised below:
-			<#list entityList as entity>
-				<#if entityList?seq_index_of(entity) == entity_index>
-					<#local filtEntityList = entityList?filter(x -> x == entity)/>
-					<para role="indent">-
-						${filtEntityList?size} for
-						<#if entity!=subject.ChemicalName>metabolite ${entity}<#else>active substance</#if>
-					</para>
-				</#if>
-			</#list>
+			<para>${studyList?size} individual <#if studyList?size==1>study<#else>studies</#if> for spectra, molar extinction and/or optical purity <#if studyList?size==1>is<#else>are</#if> summarised below:
+			<#if _metabolites?? && _metabolites?has_content>
+				<#list entityList as entity>
+					<#if entityList?seq_index_of(entity) == entity_index>
+						<#local filtEntityList = entityList?filter(x -> x == entity)/>
+						<para role="indent">-
+							${filtEntityList?size} for
+							<#if entity!=subject.ChemicalName>metabolite ${entity}<#else>active substance</#if>
+						</para>
+					</#if>
+				</#list>
+			</#if>
+			</para>
 			<@com.emptyLine/>
 
 			<#list studyList as study>
 
-				<#if entityList[study_index] != subject.ChemicalName &&
-						entityList?seq_index_of(entityList[study_index]) == study_index>
+				<#if _metabolites?? &&
+					 subject.ChemicalName!=entityList[study_index] &&
+					 entityList[study_index]!=entityList[study_index-1]>
 					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[study_index]}</emphasis> -----</emphasis></para>
 				</#if>
 
