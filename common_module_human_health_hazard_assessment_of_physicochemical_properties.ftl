@@ -2005,9 +2005,9 @@
 
 			<#list studyList as study>
 
-				<#if _metabolites?? &&
+				<#if _metabolites?? && _metabolites?has_content &&
 					 subject.ChemicalName!=entityList[study_index] &&
-					 entityList[study_index]!=entityList[study_index-1]>
+				     entityList?seq_index_of(entityList[study_index]) == study_index>
 					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[study_index]}</emphasis> -----</emphasis></para>
 				</#if>
 
