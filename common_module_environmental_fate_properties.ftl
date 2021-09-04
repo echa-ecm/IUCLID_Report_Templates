@@ -3550,31 +3550,31 @@
 
 		<#-- Get doc-->
 		<#if docSubType=="DefinitionResidueFate">
-			<#assign summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
 		<#else>
-			<#assign summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
 		</#if>
 
 		<#-- Get metabolites-->
 		<#if _metabolites?? && _metabolites?has_content>
 
 			<#-- get a list of entities of same size as summaryList-->
-			<#assign entityList = []/>
+			<#local entityList = []/>
 			<#list summaryList as summary>
-				<#assign entityList = entityList + [subject.ChemicalName]/>
+				<#local entityList = entityList + [subject.ChemicalName]/>
 			</#list>
 
 			<#-- add metabolites-->
 			<#list _metabolites as metab>
 				<#if docSubType=="DefinitionResidueFate">
-					<#assign metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
 				<#else>
-					<#assign metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", docSubType) />
 				</#if>
 				<#if metabSummaryList?has_content>
-					<#assign summaryList = summaryList + metabSummaryList/>
+					<#local summaryList = summaryList + metabSummaryList/>
 					<#list metabSummaryList as metabSummary>
-						<#assign entityList = entityList + [metab.ChemicalName]/>
+						<#local entityList = entityList + [metab.ChemicalName]/>
 					</#list>
 				</#if>
 			</#list>
@@ -3585,7 +3585,7 @@
 			<@com.emptyLine/>
 			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-			<#assign printSummaryName = summaryList?size gt 1 />
+			<#local printSummaryName = summaryList?size gt 1 />
 
 			<#list summaryList as summary>
 				<@com.emptyLine/>
