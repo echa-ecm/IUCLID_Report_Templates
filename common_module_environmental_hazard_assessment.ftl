@@ -3155,7 +3155,7 @@
 
 <#--3. summaries-->
 <#--General macro to print individual ecotox summaries, with CSA data in table format-->
-<#macro ecotoxPPPsummary _subject docSubType>
+<#macro ecotoxPPPsummary subject docSubType>
 	<#compress>
 
 		<#-- Get doc-->
@@ -3165,15 +3165,48 @@
 			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
 		</#if>
 
+		<#-- Get metabolites-->
+		<#if _metabolites?? && _metabolites?has_content>
+
+			<#-- get a list of entities of same size as summaryList-->
+			<#local entityList = []/>
+			<#list summaryList as summary>
+				<#local entityList = entityList + [subject.ChemicalName]/>
+			</#list>
+
+			<#-- add metabolites-->
+			<#list _metabolites as metab>
+				<#if docSubType=="AquaticToxicityRacReporting">
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+				<#else>
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+				</#if>
+				<#if metabSummaryList?has_content>
+					<#local summaryList = summaryList + metabSummaryList/>
+					<#list metabSummaryList as metabSummary>
+						<#local entityList = entityList + [metab.ChemicalName]/>
+					</#list>
+				</#if>
+			</#list>
+		</#if>
+
 		<#-- Iterate-->
 		<#if summaryList?has_content>
 			<@com.emptyLine/>
 			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-			<#assign printSummaryName = summaryList?size gt 1 />
+			<#local printSummaryName = summaryList?size gt 1 />
 
 			<#list summaryList as summary>
 				<@com.emptyLine/>
+
+				<#if _metabolites?? && _metabolites?has_content &&
+				subject.ChemicalName!=entityList[summary_index] &&
+				entityList?seq_index_of(entityList[summary_index]) == summary_index>
+
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
+					<@com.emptyLine/>
+				</#if>
 
 				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
 
@@ -3253,7 +3286,7 @@
 
 <#--This macro merges all summaries of the indicated types, including all endpoints in one single table-->
 <#--NOTE: does not work for RAC, or BioAccummulation (aquatic and terrestrial) since they have different format-->
-<#macro ecotoxPPPsummary_merged _subject docSubTypes>
+<#macro ecotoxPPPsummary_merged subject docSubTypes>
 	<#compress>
 
 		<#--Get all documents, from same or different type-->
@@ -3264,9 +3297,9 @@
 		<#local allSummaryList=[]/>
 		<#list docSubTypes as docSubType>
 			<#if docSubType=="AquaticToxicityRacReporting">
-				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+				<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
 			<#else>
-				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+				<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
 			</#if>
 			<#local allSummaryList = allSummaryList + summaryList/>
 		</#list>
@@ -3334,8 +3367,6 @@
 				<para><emphasis role="bold">Discussion:</emphasis></para>
 				${discussion?join("")}
 			</#if>
-
-
 		</#if>
 	</#compress>
 </#macro>
