@@ -951,11 +951,6 @@
     <#compress>
 
         <#-- Get doc-->
-<#--        <#if docSubType=="MRLProposal" || docSubType=="ExpectedExposure">-->
-<#--            <#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />-->
-<#--        <#else>-->
-<#--            <#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />-->
-<#--        </#if>-->
         <#local summaryList = getResiduesSummary(subject, docSubType, selection)/>
 
         <#-- Get metabolites-->
@@ -979,50 +974,14 @@
             </#list>
         </#if>
 
-        <#-- Filter selection for metabolism and magnitude docs-->
-<#--        <#assign summaryListFilt=[]/>-->
-<#--        <#if docSubType=="MagnitudeResiduesPlants" && selection?has_content>-->
-<#--            <#list summaryList as summary>-->
-<#--                &lt;#&ndash; if it doesn't have specific content, add&ndash;&gt;-->
-<#--                <#if !summary.KeyInformation.SummaryResiduesData?has_content>-->
-<#--                    <#assign summaryListFilt = summaryListFilt + [summary] />-->
-<#--                &lt;#&ndash; if it does, iterate and if it corresponds to selection, add&ndash;&gt;-->
-<#--                <#else>-->
-<#--                    <#list summary.KeyInformation.SummaryResiduesData as resData>-->
-<#--                    <#local applicableTo><@com.picklistMultiple resData.ResultsApplicableTo/></#local>-->
-<#--                    <#if !(applicableTo?has_content) || applicableTo?contains(selection)>-->
-<#--                        <#assign summaryListFilt = summaryListFilt + [summary] />-->
-<#--                        <#break>-->
-<#--                    </#if>-->
-<#--                    </#list>-->
-<#--                </#if>-->
-<#--            </#list>-->
-<#--        <#elseif docSubType=="MetabolismPlants" && selection?has_content>-->
-<#--            <#list summaryList as summary>-->
-<#--                &lt;#&ndash; if it doesn't have specific content, or if it does and it corresponds to selection, add&ndash;&gt;-->
-<#--                <#list selection as sel>-->
-<#--                    <#if summary.KeyInformation[sel]?has_content ||-->
-<#--                        (!summary.KeyInformation.PrimaryCrops?has_content && !summary.KeyInformation.RotationalCrops?has_content)>-->
-<#--                        <#assign summaryListFilt = summaryListFilt + [summary] />-->
-<#--                        <#break>-->
-<#--                    </#if>-->
-<#--                </#list>-->
-<#--            </#list>-->
-<#--        <#else>-->
-<#--            <#assign summaryListFilt=summaryList/>-->
-<#--        </#if>-->
-
         <#-- Iterate-->
-<#--        <#if summaryListFilt?has_content>-->
         <#if summaryList?has_content>
 
             <@com.emptyLine/>
             <para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-<#--            <#local printSummaryName = summaryListFilt?size gt 1 />-->
             <#local printSummaryName = summaryList?size gt 1 />
 
-<#--            <#list summaryListFilt as summary>-->
             <#list summaryList as summary>
 
                 <@com.emptyLine/>
