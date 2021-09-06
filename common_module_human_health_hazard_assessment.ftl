@@ -7672,7 +7672,7 @@
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("TestType") && study.MaterialsAndMethods.TestType?has_content>
-			<para><emphasis role="bold">Test type: </emphasis><@com.picklist study.MaterialsAndMethods.TestType/></para>
+			<para><emphasis role="bold">Test type: </emphasis><@com.value study.MaterialsAndMethods.TestType/></para>
 		</#if>
 
 
