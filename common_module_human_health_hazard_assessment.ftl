@@ -9360,7 +9360,7 @@
 						<tr>
 							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Report type: </emphasis></th>
 							<td>
-								<@com.picklist reference.GeneralInfo.LiteratureType/>
+								<#if reference.GeneralInfo.LiteratureType?has_content><@com.picklist reference.GeneralInfo.LiteratureType/></#if>
 							</td>
 						</tr>
 						<tr>
@@ -10156,17 +10156,20 @@
 
 	<#list csaPath?children as csaField>
 
-	<#--Name (higher-level)-->
+
+		<#--Name (higher-level)-->
 		<#local propName>
 			${csaField?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}
 		</#local>
 
 		<#if csaField?node_type=="block">
 
-		<#--Endpoints-->
+			<#--Endpoints-->
+			<#local links=""/>
+			<#local endpoint=""/>
 			<#list csaField?children as child>
 
-			<#--Links-->
+				<#--Links-->
 				<#if child?node_name=="LinkToRelevantStudyRecords" || child?node_name=="RelevantRecords">
 					<#local links><#compress>
 						<#if child.StudyNameType?has_content>
@@ -10182,18 +10185,18 @@
 					</#compress></#local>
 				</#if>
 
-			<#--Endpoints block-->
-			<#--case with simple block-->
+				<#--Endpoints block-->
+				<#--case with simple block-->
 				<#if isEndpointsBlock(child)>
 
-				<#--Name (lower-level)-->
+					<#--Name (lower-level)-->
 					<#local propName><@detailedEndpointName child propName/></#local>
 
-				<#--Endpoints-->
+					<#--Endpoints-->
 					<#local endpoint><#compress><@endpointBlock child/>
 					</#compress></#local>
 
-				<#--append-->
+					<#--append-->
 					<#if links?has_content || endpoint?has_content>
 						<#local mySeq = mySeq + [{'name': propName, "links" : links!, "endpoint":endpoint}]/>
 					</#if>
@@ -10304,7 +10307,9 @@
 		</#list>
 
 		<#--Iterate through summaries and create section lists for each entity-->
-		<#list entity2summaryHash as entityName, allSummaryList>
+<#--		<#list entity2summaryHash as entityName, allSummaryList>-->
+		<#list entity2summaryHash?keys as entityName>
+			<#local allSummaryList=entity2summaryHash[entityName]/>
 
 			<#--In some cases it's necesary to iterate on the subsection block instead of the whole summary doc-->
 			<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP" || docSubTypes[0]=="GeneticToxicity">
