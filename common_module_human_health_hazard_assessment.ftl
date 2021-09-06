@@ -10258,7 +10258,7 @@
 <#--Macro for summaries in TOX. Considerations:-->
 <#--- more than one summary could be present-->
 <#--- more than one summary doc type could be present (for acute toxicity, at least)-->
-<#macro summaryAll _subject docSubTypes resultFormat="flat">
+<#macro summaryAll subject docSubTypes resultFormat="flat" includeMetabolites=true>
 	<#compress>
 
 		<#local summaryDocToCSAMap = {
@@ -10270,185 +10270,216 @@
 		"Phototoxicity" : {"path":"KeyValueCsa", "values":[{"type":"listValue", "field":"Results", "preText":"Results: "}]}
 		}/>
 
-	<#--Get all documents, from same or different type-->
+		<#--Get all documents, from same or different type-->
 		<#if !docSubTypes?is_sequence>
 			<#local docSubTypes=[docSubTypes]/>
 		</#if>
 
-		<#local allSummaryList=[]/>
-		<#list docSubTypes as docSubType>
-			<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
-				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
-			<#else>
-				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+		<#-- Get all entities (subject and metabolites, if they exist)-->
+		<#local entities=[subject]/>
+		<#if includeMetabolites && _metabolites?? && _metabolites?has_content>
+			<#local entities = entities + _metabolites/>
+		</#if>
+
+		<#-- Get all summaries for each entity-->
+		<#local entity2summaryHash = {}/>
+		<#list entities as entity>
+			<#local entitySummaryList=[]/>
+			<#list docSubTypes as docSubType>
+				<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
+					<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+				<#else>
+					<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+				</#if>
+				<#local entitySummaryList = entitySummaryList + summaryList/>
+			</#list>
+			<#if entitySummaryList?has_content>
+				<#if entity.documentType=="MIXTURE">
+					<#local entityName=entity.MixtureName/>
+				<#elseif entity.documentType=="SUBSTANCE">
+					<#local entityName=entity.ChemicalName/>
+				</#if>
+				<#local entity2summaryHash = entity2summaryHash + { entityName : entitySummaryList}/>
 			</#if>
-			<#local allSummaryList = allSummaryList + summaryList/>
 		</#list>
 
-	<#--In some cases it's necesary to iterate on the subsection block instead of the whole summary doc-->
-		<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP" || docSubTypes[0]=="GeneticToxicity">
-			<#local csaEntryList = []/>
-			<#list allSummaryList as summ>
-				<#list summ.KeyValueForChemicalSafetyAssessment?children as csaEntry>
-					<#if csaEntry?node_type=="block" && csaEntry?node_name!="MoAAnalysisHumanRelevanceFramework">
-						<#local csaEntryList = csaEntryList + [csaEntry]/>
-					</#if>
-				</#list>
-			</#list>
-			<#assign allSummaryBlockList=csaEntryList/>
-		<#else>
-			<#assign allSummaryBlockList=allSummaryList/>
-		</#if>
+		<#--Iterate through summaries and create section lists for each entity-->
+		<#list entity2summaryHash as entityName, allSummaryList>
 
-	<#--Need to iterate in every section, so that all Discussions, Key Information, Endpoints, etc appear together-->
-		<#if allSummaryList?has_content || allSummaryBlockList?has_content>
-			<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
-
-		<#-- Key information-->
-			<#list allSummaryBlockList as summary>
-				<#local keyInfoPath><#compress>
-					<#if summary.hasElement("DescriptionOfKeyInformation.KeyInfo")>
-						summary.DescriptionOfKeyInformation.KeyInfo
-					<#elseif summary.hasElement("KeyInformation.KeyInformation")>
-						summary.KeyInformation.KeyInformation
-					</#if>
-				</#compress></#local>
-				<#if keyInfoPath?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Key information: </emphasis></para></#if>
-					<para role="indent"><@com.richText keyInfoPath?eval/></para>
-				</#if>
-			</#list>
-			<@com.emptyLine/>
-
-		<#--Linked studies-->
-			<#list allSummaryBlockList as summary>
-				<#local links><#compress>
-					<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
-						<#if summary_index==0><para ><emphasis role="bold">Linked studies: </emphasis></para></#if>
-						<para role="indent">
-							<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
-								<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
-								<command  linkend="${studyReference.documentKey.uuid!}">
-									<@com.text studyReference.name/>
-								</command>
-
-								<#if studyReferenceLinkedToSummary_has_next> | </#if>
-							</#list>
-						</para>
-					</#if>
-					<?linebreak?>
-				</#compress></#local>
-				<#if resultFormat!="table">${links}</#if>
-			</#list>
-			<@com.emptyLine/>
-
-		<#--CSA value:
-        3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
-			<#assign endpointsHash={}/>
-			<#list allSummaryList as summary>
-
-				<#if summary.documentSubType=="ToxRefValues">
-					<#if summary_index==0><para><emphasis role="bold">Toxicological reference values: </emphasis></para></#if>
-					<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-					<@toxRefValuesTable summary/>
-
-				<#elseif summary.documentSubType=="EndocrineDisruptingPropertiesAssessmentPest">
-					<#if summary_index==0><para><emphasis role="bold">ED assessment: </emphasis></para></#if>
-					<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-					<@endocrineDisruptingPropertiesTable summary/>
-
-				<#elseif summary.documentSubType=="NonDietaryExpo">
-					<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-					<@nonDietaryExpoSummary summary/>
-
-				<#elseif summary.documentSubType=="DermalAbsorption">
-					<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
-					<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-					<para role="indent">
-						<@dermalAbsorptionSummary summary/>
-					</para>
-
-				<#else>
-					<#if resultFormat=="flat">
-						<#--In this case it goes sequentially-->
-						<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
-						<#if summary_has_next || (summary_index>0)><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-						<para role="indent"><@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/></para>
-
-					<#elseif resultFormat=="table">
-					<#--In this case it first creates a hash, and then prints it ordered in table format-->
-					<#--1. Get sequence of hashes and populate hash-->
-
-						<#if summary.documentSubType=="Phototoxicity">
-						<#--special case for Phototox-->
-							<#local photoEndpoint><@com.picklist summary.KeyValueCsa.Results/></#local>
-							<#local photoLinks = links?replace("\\|", "<\\?linebreak\\?>", "r")/>
-							<#local summarySeq = [{"name":"Phototoxicity", "links": photoLinks, "endpoint": photoEndpoint}]/>
-						<#elseif summary.documentSubType=="SpecificInvestigationsOtherStudies">
-							<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":links?replace("\\|", "<\\?linebreak\\?>", "r"), "endpoint": ""}]/>
-						<#else>
-							<#local summarySeq = getSummarySeq(summary)/>
-						</#if>
-
-						<#list summarySeq as seqEntry>
-							<#if endpointsHash[seqEntry["name"]]??>
-								<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
-								<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
-							<#else>
-								<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
-							</#if>
-						</#list>
-
-					<#--2. At last item, print in table format and ordering endpoints-->
-						<#if !summary_has_next && endpointsHash?has_content>
-							<para><emphasis role="bold">Endpoints: </emphasis></para>
-							<@getSummaryFromHash endpointsHash/>
-						</#if>
-					</#if>
-				</#if>
-			</#list>
-
-		<#--Discussion-->
-			<#list allSummaryBlockList as summary>
-				<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Discussion:</emphasis></para></#if>
-					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
-				</#if>
-			</#list>
-
-		<#--Additional Info-->
-			<#list allSummaryBlockList as summary>
-				<#if summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Additional information:</emphasis></para></#if>
-					<para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para>
-				</#if>
-			</#list>
-
-		<#--Justification-->
-			<#list allSummaryBlockList  as summary>
-				<#if summary.hasElement("JustificationForClassificationOrNonClassification") && summary.JustificationForClassificationOrNonClassification?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Justification for classification or non-classification:</emphasis></para></#if>
-					<#list summary.JustificationForClassificationOrNonClassification?children as justification>
-						<#if justification?has_content>
-							<para role="indent">
-								<#if justification_has_next>${justification?node_name}:</#if>
-								<@com.richText justification/>
-							</para>
+			<#--In some cases it's necesary to iterate on the subsection block instead of the whole summary doc-->
+			<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP" || docSubTypes[0]=="GeneticToxicity">
+				<#local csaEntryList = []/>
+				<#list allSummaryList as summ>
+					<#list summ.KeyValueForChemicalSafetyAssessment?children as csaEntry>
+						<#if csaEntry?node_type=="block" && csaEntry?node_name!="MoAAnalysisHumanRelevanceFramework">
+							<#local csaEntryList = csaEntryList + [csaEntry]/>
 						</#if>
 					</#list>
-				</#if>
-			</#list>
-			<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP">
-			<#--#this is wrong-->
-				<para role="indent"><emphasis role="bold">Justification for classification or non-classification:</emphasis></para>
-				<@com.richText allSummaryBlockList[0]?parent?parent.JustificationForClassificationOrNonClassification.JustificationForClassificationOrNonClassification/>
+				</#list>
+				<#assign allSummaryBlockList=csaEntryList/>
+			<#else>
+				<#assign allSummaryBlockList=allSummaryList/>
 			</#if>
-		</#if>
+
+			<#--Need to iterate in every section, so that all Discussions, Key Information, Endpoints, etc appear together-->
+			<#if allSummaryList?has_content || allSummaryBlockList?has_content>
+
+				<#if entity2summaryHash?keys?seq_index_of(entityName)==0>
+					<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+				</#if>
+
+				<#if includeMetabolites && _metabolites?? && _metabolites?has_content && entityName!=subject.ChemicalName>
+					<@com.emptyLine/>
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityName}</emphasis> -----</emphasis></para>
+					<@com.emptyLine/>
+				</#if>
+
+				<#-- Key information-->
+				<#list allSummaryBlockList as summary>
+					<#local keyInfoPath><#compress>
+						<#if summary.hasElement("DescriptionOfKeyInformation.KeyInfo")>
+							summary.DescriptionOfKeyInformation.KeyInfo
+						<#elseif summary.hasElement("KeyInformation.KeyInformation")>
+							summary.KeyInformation.KeyInformation
+						</#if>
+					</#compress></#local>
+					<#if keyInfoPath?has_content>
+						<#if summary_index==0><para><emphasis role="bold">Key information: </emphasis></para></#if>
+						<para role="indent"><@com.richText keyInfoPath?eval/></para>
+					</#if>
+				</#list>
+				<@com.emptyLine/>
+
+				<#--Linked studies-->
+				<#list allSummaryBlockList as summary>
+					<#local links><#compress>
+						<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
+							<#if summary_index==0><para ><emphasis role="bold">Linked studies: </emphasis></para></#if>
+							<para role="indent">
+								<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
+									<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
+									<command  linkend="${studyReference.documentKey.uuid!}">
+										<@com.text studyReference.name/>
+									</command>
+
+									<#if studyReferenceLinkedToSummary_has_next> | </#if>
+								</#list>
+							</para>
+						</#if>
+						<?linebreak?>
+					</#compress></#local>
+					<#if resultFormat!="table">${links}</#if>
+				</#list>
+				<@com.emptyLine/>
+
+				<#--CSA value:
+				3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
+				<#assign endpointsHash={}/>
+				<#list allSummaryList as summary>
+
+					<#if summary.documentSubType=="ToxRefValues">
+						<#if summary_index==0><para><emphasis role="bold">Toxicological reference values: </emphasis></para></#if>
+						<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
+						<@toxRefValuesTable summary/>
+
+					<#elseif summary.documentSubType=="EndocrineDisruptingPropertiesAssessmentPest">
+						<#if summary_index==0><para><emphasis role="bold">ED assessment: </emphasis></para></#if>
+						<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
+						<@endocrineDisruptingPropertiesTable summary/>
+
+					<#elseif summary.documentSubType=="NonDietaryExpo">
+						<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
+						<@nonDietaryExpoSummary summary/>
+
+					<#elseif summary.documentSubType=="DermalAbsorption">
+						<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
+						<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
+						<para role="indent">
+							<@dermalAbsorptionSummary summary/>
+						</para>
+
+					<#else>
+						<#if resultFormat=="flat">
+							<#--In this case it goes sequentially-->
+							<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
+							<#if summary_has_next || (summary_index>0)><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
+							<para role="indent"><@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/></para>
+
+						<#elseif resultFormat=="table">
+							<#--In this case it first creates a hash, and then prints it ordered in table format-->
+							<#--1. Get sequence of hashes and populate hash-->
+
+							<#if summary.documentSubType=="Phototoxicity">
+								<#--special case for Phototox-->
+								<#local photoEndpoint><@com.picklist summary.KeyValueCsa.Results/></#local>
+								<#local photoLinks = links?replace("\\|", "<\\?linebreak\\?>", "r")/>
+								<#local summarySeq = [{"name":"Phototoxicity", "links": photoLinks, "endpoint": photoEndpoint}]/>
+							<#elseif summary.documentSubType=="SpecificInvestigationsOtherStudies">
+								<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":links?replace("\\|", "<\\?linebreak\\?>", "r"), "endpoint": ""}]/>
+							<#else>
+								<#local summarySeq = getSummarySeq(summary)/>
+							</#if>
+
+							<#list summarySeq as seqEntry>
+								<#if endpointsHash[seqEntry["name"]]??>
+									<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
+									<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
+								<#else>
+									<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
+								</#if>
+							</#list>
+
+							<#--2. At last item, print in table format and ordering endpoints-->
+							<#if !summary_has_next && endpointsHash?has_content>
+								<para><emphasis role="bold">Endpoints: </emphasis></para>
+								<@getSummaryFromHash endpointsHash/>
+							</#if>
+						</#if>
+					</#if>
+				</#list>
+
+				<#--Discussion-->
+				<#list allSummaryBlockList as summary>
+					<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
+						<#if summary_index==0><para><emphasis role="bold">Discussion:</emphasis></para></#if>
+						<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
+					</#if>
+				</#list>
+
+				<#--Additional Info-->
+				<#list allSummaryBlockList as summary>
+					<#if summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
+						<#if summary_index==0><para><emphasis role="bold">Additional information:</emphasis></para></#if>
+						<para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para>
+					</#if>
+				</#list>
+
+				<#--Justification-->
+				<#list allSummaryBlockList  as summary>
+					<#if summary.hasElement("JustificationForClassificationOrNonClassification") && summary.JustificationForClassificationOrNonClassification?has_content>
+						<#if summary_index==0><para><emphasis role="bold">Justification for classification or non-classification:</emphasis></para></#if>
+						<#list summary.JustificationForClassificationOrNonClassification?children as justification>
+							<#if justification?has_content>
+								<para role="indent">
+									<#if justification_has_next>${justification?node_name}:</#if>
+									<@com.richText justification/>
+								</para>
+							</#if>
+						</#list>
+					</#if>
+				</#list>
+				<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP">
+					<#--#this is wrong-->
+					<para role="indent"><emphasis role="bold">Justification for classification or non-classification:</emphasis></para>
+					<@com.richText allSummaryBlockList[0]?parent?parent.JustificationForClassificationOrNonClassification.JustificationForClassificationOrNonClassification/>
+				</#if>
+			</#if>
+		</#list>
 	</#compress>
 </#macro>
 
-<#--flat format for study summaries: TO CHECK-->
-<#macro summarySingle _subject docSubType resultFormat="flat">
+<#--macro for individual summaries-->
+<#macro summarySingle subject docSubType resultFormat="flat" includeMetabolites=true>
 	<#compress>
 
 		<#local summaryDocToCSAMap = {
@@ -10461,9 +10492,34 @@
 		}/>
 
 		<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
-			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
 		<#else>
-			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+		</#if>
+
+		<#-- Get metabolites-->
+		<#if _metabolites?? && _metabolites?has_content>
+
+			<#-- get a list of entities of same size as summaryList-->
+			<#local entityList = []/>
+			<#list summaryList as summary>
+				<#local entityList = entityList + [subject.ChemicalName]/>
+			</#list>
+
+			<#-- add metabolites-->
+			<#list _metabolites as metab>
+				<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+				<#else>
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+				</#if>
+				<#if metabSummaryList?has_content>
+					<#local summaryList = summaryList + metabSummaryList/>
+					<#list metabSummaryList as metabSummary>
+						<#local entityList = entityList + [metab.ChemicalName]/>
+					</#list>
+				</#if>
+			</#list>
 		</#if>
 
 		<#if summaryList?has_content>
@@ -10474,6 +10530,14 @@
 
 			<#list summaryList as summary>
 				<@com.emptyLine/>
+
+				<#if includeMetabolites && _metabolites?? && _metabolites?has_content &&
+					subject.ChemicalName!=entityList[summary_index] &&
+					entityList?seq_index_of(entityList[summary_index]) == summary_index>
+
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
+					<@com.emptyLine/>
+				</#if>
 
 				<#if printSummaryName><para><emphasis role="bold">#{summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
 
@@ -10621,102 +10685,6 @@
 <#--				<#if value_has_next>-->
 <#--					<?linebreak?>-->
 <#--				</#if>-->
-			</#list>
-		</#if>
-	</#compress>
-</#macro>
-
-<#macro metabolitesTox mixture activeSubstance>
-	<#compress>
-
-		<#local metabCompList = iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_SUMMARY", "Metabolites") />
-		<#local metabList=[]/>
-
-		<#-- get list of metabolites-->
-		<#if metabCompList?has_content>
-
-			<#list metabCompList as metabComp>
-
-				<#local parentLink=metabComp.MetabolitesInfo.ParentOfMetabolites/>
-				<#if parentLink?has_content>
-					<#local parent=iuclid.getDocumentForKey(parentLink)/>
-					<#local asReference=iuclid.getDocumentForKey(activeSubstance.ReferenceSubstance.ReferenceSubstance)/>
-
-					<#-- Consider case where parent of metabolite is substance or reference substance-->
-					<#if (parent.documentType=="SUBSTANCE" && parent.documentKey.uuid==activeSubstance.documentKey.uuid) ||
-					(parent.documentType=="REFERENCE_SUBSTANCE" && parent.documentKey.uuid==asReference.documentKey.uuid)>
-						<#list metabComp.ListMetabolites.Metabolites as metabolite>
-							<#if metabolite.LinkMetaboliteDataset?has_content>
-								<#local metaboliteDataset=iuclid.getDocumentForKey(metabolite.LinkMetaboliteDataset)/>
-								<#if metaboliteDataset.documentType=="SUBSTANCE">
-									<#local metabList = com.addDocumentToSequenceAsUnique(metaboliteDataset, metabList)/>
-								</#if>
-							</#if>
-						</#list>
-					</#if>
-				</#if>
-			</#list>
-		</#if>
-
-		<#-- iterate over the list of metabolites and get all tox studies-->
-		<#if metabList?has_content>
-
-			<para>${metabList?size} metabolite dataset<#if metabList?size gt 1>s are<#else> is</#if> present for ${activeSubstance.ChemicalName}
-
-				<#if metabList?size gt 1>
-					:
-					<#list metabList as metab>
-						<command linkend="${metab.documentKey.uuid!}">${metab.ChemicalName}</command>
-						<#if metab_has_next><#if metab_index==(metabList?size-2)> and <#else>, </#if></#if>
-					</#list>
-				</#if>
-			</para>
-			<@com.emptyLine/>
-
-			<#list metabList as metab>
-
-				<sect3 xml:id="${metab.documentKey.uuid!}" role="NotInToc">
-					<title  role="HEAD-4" >Metabolite<#if metabList?size gt 1>#${metab_index+1}</#if>: ${metab.ChemicalName}</title>
-					<@com.emptyLine/>
-
-					<#--Get all summaries: iterate over list and output one by one-->
-					<#local summaryDocNames=[
-					"Toxicokinetics","AcuteToxicity", "IrritationCorrosion", "Sensitisation","Phototoxicity"
-					,"RepeatedDoseToxicity", "GeneticToxicity","Carcinogenicity_EU_PPP", "ToxicityToReproduction_EU_PPP"
-					,"Neurotoxicity", "AdditionalToxicologicalInformation", "Immunotoxicity", "ToxicEffectsLivestockPets"
-					,"ExposureRelatedObservationsHumans", "DermalAbsorption", "SpecificInvestigationsOtherStudies"
-					,"ToxRefValues", "EndocrineDisruptingPropertiesAssessmentPest", "NonDietaryExpo"]/>
-					<#local summaryFirst=true/>
-					<#list summaryDocNames as summaryDocName>
-						<#local summary><@summarySingle metab summaryDocName "table"/></#local>
-						<#if summary?has_content>
-							<#if summaryFirst>
-								<#local summaryFirst=false/>
-								<para><emphasis role="HEAD-WoutNo">Summaries</emphasis></para>
-								<para>Summaries for toxicological studies on metabolite ${metab.ChemicalName} are provided below:</para>
-							</#if>
-							<#local summaryDocFullName=summaryDocName?replace("_EU_PPP", "")?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
-							${summary?replace('<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>',
-							'<para>-- for <emphasis role="HEAD-WoutNo">${summaryDocFullName}</emphasis>:</para>')}
-						</#if>
-					</#list>
-
-					<@com.emptyLine/>
-
-					<#--Get all studies-->
-					<@keyAppendixE.appendixEstudies _subject=metab
-					docSubTypes=["BasicToxicokinetics", "AcuteToxicityOral", "AcuteToxicityDermal", "AcuteToxicityInhalation",
-					"SkinIrritationCorrosion","EyeIrritation","SkinSensitisation","PhototoxicityVitro",
-					"AcuteToxicityOtherRoutes", "RepeatedDoseToxicityOral", "RepeatedDoseToxicityInhalation",
-					"RepeatedDoseToxicityDermal", "RepeatedDoseToxicityOther", "GeneticToxicityVitro", "GeneticToxicityVivo",
-					"Carcinogenicity", "ToxicityReproduction", "ToxicityReproductionOther", "DevelopmentalToxicityTeratogenicity",
-					"Neurotoxicity", "Immunotoxicity", "ToxicEffectsLivestock","EndocrineDisrupterMammalianScreening",
-					"AdditionalToxicologicalInformation", "DermalAbsorption", "ExposureRelatedObservationsOther","SensitisationData",
-					"DirectObservationsClinicalCases","EpidemiologicalData","HealthSurveillanceData"]
-					name="toxicity of metabolite ${metab.ChemicalName}"/>
-
-					<#--NOTE: missing "IntermediateEffects"-->
-				</sect3>
 			</#list>
 		</#if>
 	</#compress>
