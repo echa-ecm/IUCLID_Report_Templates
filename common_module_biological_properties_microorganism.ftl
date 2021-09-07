@@ -276,7 +276,7 @@
 <#macro effectivenessTargetOrgSummary subject includeMetabolites=true >
     <#compress>
 
-        <#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY",  "EffectivenessAgainstTargetOrganisms") />
+        <#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY",  "EffectivenessAgainstTargetOrganisms") />
 
         <#if includeMetabolites && _metabolites??>
 
@@ -321,10 +321,10 @@
     </#compress>
 </#macro>
 
-<#macro toxicityToOtherAboveGroundOrganismsSummary _subject includeMetabolites=true>
+<#macro toxicityToOtherAboveGroundOrganismsSummary subject includeMetabolites=true>
     <#compress>
 
-        <#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "ToxicityToOtherAboveGroundOrganisms") />
+        <#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", "ToxicityToOtherAboveGroundOrganisms") />
         <#if includeMetabolites && _metabolites??>
 
             <#-- get a list of entities of same size as summaryList-->
