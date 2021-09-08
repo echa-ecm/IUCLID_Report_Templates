@@ -2549,7 +2549,7 @@
 
 		<#if res.MeanTotalRecovery?has_content>
 			<para>Mean total recovery:</para>
-			<para role="indent"><@massBalanceRepeatableBlock res.MeanTotalRecovery/></para>
+			<para role="indent"><@massBalanceList res.MeanTotalRecovery/></para>
 		</#if>
 
 		<#if res.Degradation?has_content>
@@ -2564,6 +2564,10 @@
 
 		<#if res.MineralizationRateInCO2?has_content>
 			<para>Mineralization rate (in CO2): <@com.quantity study.ResultsAndDiscussion.MineralizationRateInCO2/></para>
+		</#if>
+
+		<#if res.OtherKineticParameters?has_content>
+			<para>Other kinetic parameters: <@com.picklistMultiple res.OtherKineticParameters/></para>
 		</#if>
 
 		<#if res.TransformationProducts?has_content || res.IdentityTransformation?has_content>
@@ -3522,7 +3526,7 @@
 </#macro>
 
 <#--3. summaries-->
-<#macro fatePPPsummary _subject docSubType endpoint="">
+<#macro fatePPPsummary subject docSubType endpoint="">
 	<#compress>
 
 		<#local summaryDocToCSAMap = {"PhototransformationInSoil" : [{"field": "HalflifeInSoil", "preText" : "Half-life in soil: "}],
@@ -3546,9 +3550,34 @@
 
 		<#-- Get doc-->
 		<#if docSubType=="DefinitionResidueFate">
-			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
 		<#else>
-			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+		</#if>
+
+		<#-- Get metabolites-->
+		<#if _metabolites?? && _metabolites?has_content>
+
+			<#-- get a list of entities of same size as summaryList-->
+			<#local entityList = []/>
+			<#list summaryList as summary>
+				<#local entityList = entityList + [subject.ChemicalName]/>
+			</#list>
+
+			<#-- add metabolites-->
+			<#list _metabolites as metab>
+				<#if docSubType=="DefinitionResidueFate">
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+				<#else>
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+				</#if>
+				<#if metabSummaryList?has_content>
+					<#local summaryList = summaryList + metabSummaryList/>
+					<#list metabSummaryList as metabSummary>
+						<#local entityList = entityList + [metab.ChemicalName]/>
+					</#list>
+				</#if>
+			</#list>
 		</#if>
 
 		<#-- Iterate-->
@@ -3556,10 +3585,18 @@
 			<@com.emptyLine/>
 			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-			<#assign printSummaryName = summaryList?size gt 1 />
+			<#local printSummaryName = summaryList?size gt 1 />
 
 			<#list summaryList as summary>
 				<@com.emptyLine/>
+
+				<#if _metabolites?? && _metabolites?has_content &&
+					 subject.ChemicalName!=entityList[summary_index] &&
+				     entityList?seq_index_of(entityList[summary_index]) == summary_index>
+
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
+					<@com.emptyLine/>
+				</#if>
 
 				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
 
