@@ -3154,8 +3154,209 @@
 </#macro>
 
 <#--3. summaries-->
-<#--General macro to print individual ecotox summaries, with CSA data in table format-->
-<#macro ecotoxPPPsummary _subject docSubType>
+<#--General macro to print ecotox summaries, with CSA data in table format
+	If merge=true, then all summaries are merged.
+	If _metabolites exist, the corresponding summaries are shown.
+-->
+<#macro ecotoxPPPsummary subject docSubTypes merge=false>
+	<#compress>
+
+		<#--Get all documents, from same or different type-->
+		<#if !docSubTypes?is_sequence>
+			<#local docSubTypes=[docSubTypes]/>
+		</#if>
+
+		<#--Ensure merge=false for non compatible summary types-->
+		<#if docSubTypes?seq_contains("AquaticToxicityRacReporting") ||
+			docSubTypes?seq_contains("BioaccumulationTerrestrial") ||
+			docSubTypes?seq_contains("BioaccumulationAquaticSediment_EU_PPP")>
+			<#local merge=false>
+		</#if>
+
+		<#-- Get all entities (subject and metabolites, if they exist)-->
+		<#local entities=[subject]/>
+		<#if _metabolites?? && _metabolites?has_content>
+			<#local entities = entities + _metabolites/>
+		</#if>
+
+		<#-- Get all summaries for each entity-->
+		<#local entity2summaryHash = {}/>
+		<#list entities as entity>
+			<#local entitySummaryList=[]/>
+			<#list docSubTypes as docSubType>
+				<#if docSubType=="AquaticToxicityRacReporting">
+					<#local summaryList = iuclid.getSectionDocumentsForParentKey(entity.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+				<#else>
+					<#local summaryList = iuclid.getSectionDocumentsForParentKey(entity.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+				</#if>
+				<#local entitySummaryList = entitySummaryList + summaryList/>
+			</#list>
+			<#if entitySummaryList?has_content>
+				<#if entity.documentType=="MIXTURE">
+					<#local entityName=entity.MixtureName/>
+				<#elseif entity.documentType=="SUBSTANCE">
+					<#local entityName=entity.ChemicalName/>
+				</#if>
+				<#local entity2summaryHash = entity2summaryHash + { entityName : entitySummaryList}/>
+			</#if>
+		</#list>
+
+		<#--Iterate through summaries and create section lists for each entity-->
+		<#list entity2summaryHash as entityName, allSummaryList>
+
+			<#local keyInfo=[]/>
+			<#local endpointsHash={}/>
+			<#local higherTier=[]/>
+			<#local discussion=[]/>
+
+			<#local printSummaryName = allSummaryList?size gt 1 />
+
+			<#if allSummaryList?has_content>
+
+				<#if entity2summaryHash?keys?seq_index_of(entityName)==0>
+					<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+				</#if>
+
+				<#if _metabolites?? && _metabolites?has_content && entityName!=subject.ChemicalName>
+					<@com.emptyLine/>
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityName}</emphasis> -----</emphasis></para>
+					<@com.emptyLine/>
+				</#if>
+
+				<#if (!merge) && printSummaryName>
+					<para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para>
+				</#if>
+
+				<#list allSummaryList as summary>
+
+					<#-- consider different path names (missing RAC, and bioterrestrial)-->
+					<#if summary.hasElement("KeyValueForCsa")>
+						<#local csaPath=summary["KeyValueForCsa"]>
+					<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment")>
+						<#local csaPath=summary["KeyValueForChemicalSafetyAssessment"]>
+					<#elseif summary.hasElement("KeyValueCsa")>
+						<#local csaPath=summary["KeyValueCsa"]>
+					<#else>
+						<#local csaPath="">
+					</#if>
+
+					<#-- Key information-->
+					<#if summary.KeyInformation.KeyInformation?has_content>
+						<#local summaryKeyInfo><para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para></#local>
+						<#if merge>
+							<#local keyInfo = keyInfo + [summaryKeyInfo]/>
+						<#else>
+							<para><emphasis role="bold">Key information: </emphasis></para>${summaryKeyInfo}
+						</#if>
+					</#if>
+
+					<#--Links (only for cases with no standard table)-->
+					<#if (!(csaPath?has_content) || summary.documentSubType=="BioaccumulationAquaticSediment_EU_PPP")
+						&& (!merge)
+						&& summary.hasElement("LinkToRelevantStudyRecord.Link") && summary.LinkToRelevantStudyRecord.Link?has_content>
+						<para><emphasis role="bold">Link to relevant study records: </emphasis></para>
+						<para role="indent">
+							<#list summary.LinkToRelevantStudyRecord.Link as link>
+								<#if link?has_content>
+									<#local studyReference = iuclid.getDocumentForKey(link) />
+									<para>
+										<command  linkend="${studyReference.documentKey.uuid!}">
+											<@com.text studyReference.name/>
+										</command>
+									</para>
+								</#if>
+							</#list>
+						</para>
+					</#if>
+
+					<#--CSA value -->
+					<#if summary.documentSubType=="AquaticToxicityRacReporting" && summary.KeyInformation.RACValues?has_content>
+						<para><emphasis role="bold">RAC values: </emphasis></para>
+						<para role="small"><@RACvaluesTable summary.KeyInformation.RACValues/></para>
+
+					<#elseif summary.documentSubType=="BioaccumulationTerrestrial" && summary.KeyValueForChemicalSafetyAssessment.BcfTerrestrialSpecies?has_content>
+						<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+						<para>
+							BCF (terrestrial species): <@com.quantity summary.KeyValueForChemicalSafetyAssessment.BcfTerrestrialSpecies/>
+						</para>
+
+					<#elseif summary.documentSubType=="BioaccumulationAquaticSediment_EU_PPP" && summary.KeyValueCsa?has_content>
+						<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+						<#if summary.KeyValueCsa.BioconcentrationFish?has_content>
+							<para role="small"><@bioconcentrationFishTable summary.KeyValueCsa/></para>
+						</#if>
+						<#if summary.KeyValueCsa.FishBmf?has_content>
+							<para>BMF (fish) = <@com.number summary.KeyValueCsa.FishBmf/></para>
+						</#if>
+					<#else>
+						<#local summarySeq = getEcotoxSummarySeq(summary, csaPath)/>
+
+						<#if !merge><#local endpointsHash={}/></#if>
+
+						<#list summarySeq as seqEntry>
+							<#if endpointsHash[seqEntry["name"]]??>
+								<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
+								<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
+							<#else>
+								<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
+							</#if>
+						</#list>
+
+						<#if !merge && endpointsHash?has_content>
+							<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+							<@getEcotoxSummaryFromHash endpointsHash/>
+						</#if>
+					</#if>
+
+					<#--Hier tier testing-->
+					<#if summary.hasElement("HigherTierTesting.field1350") && summary.HigherTierTesting.field1350?has_content>
+						<#local summaryHigherTier><para role="indent"><@com.richText summary.HigherTierTesting.field1350/></para></#local>
+						<#if merge>
+							<#local higherTier = higherTier + [summaryHigherTier]/>
+						<#else>
+							<para><emphasis role="bold">Higher tier testing for safety assessment: </emphasis></para>${summaryHigherTier}
+						</#if>
+					</#if>
+
+					<#--Discussion-->
+					<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
+						<#local summaryDiscussion><para role="indent"><@com.richText summary.Discussion.Discussion/></para></#local>
+						<#if merge>
+							<#local discussion =  discussion + [summaryDiscussion]/>
+						<#else>
+							<para><emphasis role="bold">Discussion: </emphasis></para>${summaryDiscussion}
+						</#if>
+					</#if>
+				</#list>
+
+				<#if merge>
+					<#if keyInfo?has_content>
+						<para><emphasis role="bold">Key information: </emphasis></para>
+						${keyInfo?join("")}
+					</#if>
+
+					<#if endpointsHash?has_content>
+						<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+						<@getEcotoxSummaryFromHash endpointsHash/>
+					</#if>
+
+					<#if higherTier?has_content>
+						<para><emphasis role="bold">Higher tier testing for safety assessment:</emphasis></para>
+						${higherTier?join("")}
+					</#if>
+
+					<#if discussion?has_content>
+						<para><emphasis role="bold">Discussion:</emphasis></para>
+						${discussion?join("")}
+					</#if>
+				</#if>
+			</#if>
+		</#list>
+	</#compress>
+</#macro>
+
+<#--General macro to print individual ecotox summaries, with CSA data in table format. DEPRECATED.-->
+<#macro ecotoxPPPsummary_single subject docSubType>
 	<#compress>
 
 		<#-- Get doc-->
@@ -3165,15 +3366,48 @@
 			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
 		</#if>
 
+		<#-- Get metabolites-->
+		<#if _metabolites?? && _metabolites?has_content>
+
+			<#-- get a list of entities of same size as summaryList-->
+			<#local entityList = []/>
+			<#list summaryList as summary>
+				<#local entityList = entityList + [subject.ChemicalName]/>
+			</#list>
+
+			<#-- add metabolites-->
+			<#list _metabolites as metab>
+				<#if docSubType=="AquaticToxicityRacReporting">
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+				<#else>
+					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+				</#if>
+				<#if metabSummaryList?has_content>
+					<#local summaryList = summaryList + metabSummaryList/>
+					<#list metabSummaryList as metabSummary>
+						<#local entityList = entityList + [metab.ChemicalName]/>
+					</#list>
+				</#if>
+			</#list>
+		</#if>
+
 		<#-- Iterate-->
 		<#if summaryList?has_content>
 			<@com.emptyLine/>
 			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-			<#assign printSummaryName = summaryList?size gt 1 />
+			<#local printSummaryName = summaryList?size gt 1 />
 
 			<#list summaryList as summary>
 				<@com.emptyLine/>
+
+				<#if _metabolites?? && _metabolites?has_content &&
+				subject.ChemicalName!=entityList[summary_index] &&
+				entityList?seq_index_of(entityList[summary_index]) == summary_index>
+
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
+					<@com.emptyLine/>
+				</#if>
 
 				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
 
@@ -3251,213 +3485,128 @@
 	</#compress>
 </#macro>
 
-<#--This macro merges all summaries of the indicated types, including all endpoints in one single table-->
-<#--NOTE: does not work for RAC, or BioAccummulation (aquatic and terrestrial) since they have different format-->
-<#macro ecotoxPPPsummary_merged _subject docSubTypes>
-	<#compress>
-
-		<#--Get all documents, from same or different type-->
-		<#if !docSubTypes?is_sequence>
-			<#local docSubTypes=[docSubTypes]/>
-		</#if>
-
-		<#local allSummaryList=[]/>
-		<#list docSubTypes as docSubType>
-			<#if docSubType=="AquaticToxicityRacReporting">
-				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
-			<#else>
-				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
-			</#if>
-			<#local allSummaryList = allSummaryList + summaryList/>
-		</#list>
-
-		<#--Iterate through summaries and create section lists-->
-		<#assign keyInfo=[]/>
-		<#assign endpointsHash={}/>
-		<#assign higherTier=[]/>
-		<#assign discussion=[]/>
-
-		<#if allSummaryList?has_content>
-			<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
-
-			<#list allSummaryList as summary>
-
-				<#-- Key information-->
-				<#if summary.KeyInformation.KeyInformation?has_content>
-					<#local summaryKeyInfo><para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para></#local>
-					<#assign keyInfo = keyInfo + [summaryKeyInfo]/>
-				</#if>
-
-
-				<#--CSA value -->
-				<#-- 1.Get hashmap-->
-				<#local summarySeq = getEcotoxSummarySeq(summary)/>
-
-				<#list summarySeq as seqEntry>
-					<#if endpointsHash[seqEntry["name"]]??>
-						<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
-						<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
-					<#else>
-						<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
-					</#if>
-				</#list>
-
-				<#--Hier tier testing-->
-				<#if summary.hasElement("HigherTierTesting.field1350") && summary.HigherTierTesting.field1350?has_content>
-					<#local summaryHigherTier><para role="indent"><@com.richText summary.HigherTierTesting.field1350/></para></#local>
-					<#assign higherTier = higherTier + [summaryHigherTier]/>
-				</#if>
-
-				<#--Discussion-->
-				<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
-					<#local summaryDiscussion><para role="indent"><@com.richText summary.Discussion.Discussion/></para></#local>
-					<#assign discussion =  discussion + [summaryDiscussion]/>
-				</#if>
-			</#list>
-
-			<#if keyInfo?has_content>
-				<para><emphasis role="bold">Key information: </emphasis></para>
-				${keyInfo?join("")}
-			</#if>
-
-			<#if endpointsHash?has_content>
-				<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
-				<@getEcotoxSummaryFromHash endpointsHash/>
-			</#if>
-
-			<#if higherTier?has_content>
-				<para><emphasis role="bold">Higher tier testing for safety assessment:</emphasis></para>
-				${higherTier?join("")}
-			</#if>
-
-			<#if discussion?has_content>
-				<para><emphasis role="bold">Discussion:</emphasis></para>
-				${discussion?join("")}
-			</#if>
-
-
-		</#if>
-	</#compress>
-</#macro>
-
-
 <#--Function to crete a hashmap with CSA info from ecotox summaries-->
-<#function getEcotoxSummarySeq summary>
+<#function getEcotoxSummarySeq summary csaPath="">
 
 	<#local mySeq=[]/>
 
-	<#-- consider different path names (missing RAC, and bioterrestrial)-->
-	<#if summary.hasElement("KeyValueForCsa")>
-		<#local csaPath=summary["KeyValueForCsa"]>
-	<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment")>
-		<#local csaPath=summary["KeyValueForChemicalSafetyAssessment"]>
-	<#elseif summary.hasElement("KeyValueCsa")>
-		<#local csaPath=summary["KeyValueCsa"]>
-	</#if>
-
-	<#-- consider case where links are outside of the table-->
-	<#local generalLinks=""/>
-	<#if summary.hasElement("LinkToRelevantStudyRecord.Link") && summary.LinkToRelevantStudyRecord.Link?has_content>
-		<#local generalLinks><#compress>
-			<#list summary.LinkToRelevantStudyRecord.Link as link>
-				<#if link?has_content>
-					<#local studyReference = iuclid.getDocumentForKey(link) />
-					<command  linkend="${studyReference.documentKey.uuid!}">
-						<@com.text studyReference.name/>
-					</command>
-					<#if link_has_next><?linebreak?></#if>
-				</#if>
-			</#list>
-		</#compress></#local>
+	<#-- consider different path names, if not provided (missing RAC, and bioterrestrial)-->
+	<#if !csaPath?has_content>
+		<#if summary.hasElement("KeyValueForCsa")>
+			<#local csaPath=summary["KeyValueForCsa"]>
+		<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment")>
+			<#local csaPath=summary["KeyValueForChemicalSafetyAssessment"]>
+		<#elseif summary.hasElement("KeyValueCsa")>
+			<#local csaPath=summary["KeyValueCsa"]>
+		</#if>
 	</#if>
 
 	<#-- iterate CSA blocks-->
-	<#list csaPath?children as block>
-		<#if block?node_type=="repeatable" && block?has_content>
-			<#local testType=block?node_name?replace("([A-Z]{1})", " $1", "r")?replace("_list", "")?lower_case?cap_first/>
+	<#if csaPath?has_content>
 
-			<#list block as item>
-				<#--Test type-->
-				<#local testType><#compress>
-					${testType}
-					<#if item.hasElement("TypeOfStudy") && item.TypeOfStudy?has_content>
-						<?linebreak?>(<@com.picklist item.TypeOfStudy/>)
+		<#-- consider case where links are outside of the table-->
+		<#local generalLinks=""/>
+		<#if summary.hasElement("LinkToRelevantStudyRecord.Link") && summary.LinkToRelevantStudyRecord.Link?has_content>
+			<#local generalLinks><#compress>
+				<#list summary.LinkToRelevantStudyRecord.Link as link>
+					<#if link?has_content>
+						<#local studyReference = iuclid.getDocumentForKey(link) />
+						<command  linkend="${studyReference.documentKey.uuid!}">
+							<@com.text studyReference.name/>
+						</command>
+						<#if link_has_next><?linebreak?></#if>
 					</#if>
-				</#compress></#local>
-
-				<#--Links-->
-				<#local links><#compress>
-					<#if item.hasElement("Link")>
-						<#if item.Link?has_content>
-							<#local studyReference = iuclid.getDocumentForKey(item.Link) />
-							<command  linkend="${studyReference.documentKey.uuid!}">
-								<@com.text studyReference.name/>
-							</command>
-						</#if>
-					<#elseif generalLinks?has_content>
-						${generalLinks}
-					</#if>
-				</#compress></#local>
-
-				<#-- Organisms-->
-				<#local orgs><#compress>
-					<#if item.hasElement("AnimalGroup") && item.AnimalGroup?has_content>
-						<#if item.AnimalGroup?node_type=="picklist_multi">
-							<@com.picklistMultiple item.AnimalGroup/>
-						<#else>
-							<@com.text item.AnimalGroup/>
-						</#if>
-						<#if item.TestOrganismsSpecies?has_content>: </#if>
-					</#if>
-					<#if item.hasElement("TestOrganismsSpecies") && item.TestOrganismsSpecies?has_content>
-						<@com.picklistMultiple item.TestOrganismsSpecies/>
-					</#if>
-				</#compress></#local>
-
-				<#-- Substance-->
-				<#local substance><#compress>
-					<#if item.Substance?has_content>
-						<#local refSubstance=iuclid.getDocumentForKey(item.Substance)/>
-						<@com.text refSubstance.ChemicalName/>
-					</#if>
-					<#if item.ParentMetabolite?has_content>
-						<?linebreak?>(<@com.picklist item.ParentMetabolite/>)
-					</#if>
-				<#--								PreparationApplicationTestSubstance (richText) details preparation/application substance-->
-				</#compress></#local>
-
-				<#-- Endpoint -->
-				<#local endpoint><#compress>
-					<#if item.DoseDescriptor?has_content>
-						<@com.picklist item.DoseDescriptor/>:
-						<#if item.hasElement("EffectConcentration")><@com.range item.EffectConcentration/>
-						<#elseif item.hasElement("EffectConc")><@com.range item.EffectConc/>
-						<#elseif item.hasElement("EffectValue")><@com.range item.EffectValue/>
-						</#if>
-					</#if>
-					<#if item.hasElement("NominalMeasured") && item.NominalMeasured?has_content>
-						<?linebreak?>(<@com.picklist item.NominalMeasured/>)
-					</#if>
-					<#if item.BasisForEffect?has_content>
-						<?linebreak?>(basis: <@com.picklistMultiple item.BasisForEffect/>)
-					</#if>
-				</#compress></#local>
-
-				<#--append-->
-				<#if links?has_content || endpoint?has_content || orgs?has_content || substance?has_content>
-					<#local mySeq = mySeq + [{'name': testType!, "links" : links!, "endpoint":endpoint!, "substance":substance!, "organisms":orgs!}]/>
-				</#if>
-
-			</#list>
+				</#list>
+			</#compress></#local>
 		</#if>
-	</#list>
 
+		<#list csaPath?children as block>
+			<#if block?node_type=="repeatable" && block?has_content>
+				<#local testType=block?node_name?replace("([A-Z]{1})", " $1", "r")?replace("_list", "")?lower_case?cap_first/>
 
-	<#--special cases-->
-	<#if csaPath.hasElement("EcTenLcTenNoecMarineWaterFish") && csaPath.EcTenLcTenNoecMarineWaterFish?has_content>
-		<#local endpoint>EC10 / LC10 / NOEC: <@com.range csaPath.EcTenLcTenNoecMarineWaterFish/></#local>
-		<#local mySeq = mySeq + [{'name': "Long-term toxicity to marine fish", "links" : generalLinks!, "endpoint":endpoint, "substance":"",
-		"organisms":"Marine fish"}]/>
+				<#list block as item>
+					<#--Test type-->
+					<#local testType><#compress>
+						${testType}
+						<#if item.hasElement("TypeOfStudy") && item.TypeOfStudy?has_content>
+							<?linebreak?>(<@com.picklist item.TypeOfStudy/>)
+						</#if>
+					</#compress></#local>
+
+					<#--Links-->
+					<#local links><#compress>
+						<#if item.hasElement("Link")>
+							<#if item.Link?has_content>
+								<#local studyReference = iuclid.getDocumentForKey(item.Link) />
+								<command  linkend="${studyReference.documentKey.uuid!}">
+									<@com.text studyReference.name/>
+								</command>
+							</#if>
+						<#elseif generalLinks?has_content>
+							${generalLinks}
+						</#if>
+					</#compress></#local>
+
+					<#-- Organisms-->
+					<#local orgs><#compress>
+						<#if item.hasElement("AnimalGroup") && item.AnimalGroup?has_content>
+							<#if item.AnimalGroup?node_type=="picklist_multi">
+								<@com.picklistMultiple item.AnimalGroup/>
+							<#else>
+								<@com.text item.AnimalGroup/>
+							</#if>
+							<#if item.TestOrganismsSpecies?has_content>: </#if>
+						</#if>
+						<#if item.hasElement("TestOrganismsSpecies") && item.TestOrganismsSpecies?has_content>
+							<@com.picklistMultiple item.TestOrganismsSpecies/>
+						</#if>
+					</#compress></#local>
+
+					<#-- Substance-->
+					<#local substance><#compress>
+						<#if item.Substance?has_content>
+							<#local refSubstance=iuclid.getDocumentForKey(item.Substance)/>
+							<@com.text refSubstance.ChemicalName/>
+						</#if>
+						<#if item.ParentMetabolite?has_content>
+							<?linebreak?>(<@com.picklist item.ParentMetabolite/>)
+						</#if>
+					<#--								PreparationApplicationTestSubstance (richText) details preparation/application substance-->
+					</#compress></#local>
+
+					<#-- Endpoint -->
+					<#local endpoint><#compress>
+						<#if item.DoseDescriptor?has_content>
+							<@com.picklist item.DoseDescriptor/>:
+							<#if item.hasElement("EffectConcentration")><@com.range item.EffectConcentration/>
+							<#elseif item.hasElement("EffectConc")><@com.range item.EffectConc/>
+							<#elseif item.hasElement("EffectValue")><@com.range item.EffectValue/>
+							</#if>
+						</#if>
+						<#if item.hasElement("NominalMeasured") && item.NominalMeasured?has_content>
+							<?linebreak?>(<@com.picklist item.NominalMeasured/>)
+						</#if>
+						<#if item.BasisForEffect?has_content>
+							<?linebreak?>(basis: <@com.picklistMultiple item.BasisForEffect/>)
+						</#if>
+					</#compress></#local>
+
+					<#--append-->
+					<#if links?has_content || endpoint?has_content || orgs?has_content || substance?has_content>
+						<#local mySeq = mySeq + [{'name': testType!, "links" : links!, "endpoint":endpoint!, "substance":substance!, "organisms":orgs!}]/>
+					</#if>
+
+				</#list>
+			</#if>
+		</#list>
+
+		<#--special cases-->
+		<#if csaPath.hasElement("EcTenLcTenNoecMarineWaterFish") && csaPath.EcTenLcTenNoecMarineWaterFish?has_content>
+			<#local endpoint>EC10 / LC10 / NOEC: <@com.range csaPath.EcTenLcTenNoecMarineWaterFish/></#local>
+			<#local mySeq = mySeq + [{'name': "Long-term toxicity to marine fish", "links" : generalLinks!, "endpoint":endpoint, "substance":"",
+			"organisms":"Marine fish"}]/>
+		</#if>
+
 	</#if>
 
 	<#return mySeq/>
