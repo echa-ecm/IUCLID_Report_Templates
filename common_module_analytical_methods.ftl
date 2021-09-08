@@ -89,11 +89,30 @@
 </#macro>
 
 <#--Summary-->
-<#macro analyticalMethodsSummary _subject>
+<#macro analyticalMethodsSummary subject includeMetabolites=true>
     <#compress>
 
         <#-- Get doc-->
         <#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "AnalyticalMethods") />
+        <#if includeMetabolites && _metabolites??>
+
+            <#-- get a list of entities of same size as summaryList-->
+            <#assign entityList = []/>
+            <#list summaryList as summary>
+                <#assign entityList = entityList + [subject.ChemicalName]/>
+            </#list>
+
+            <#-- add metabolites-->
+            <#list _metabolites as metab>
+                <#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", "AnalyticalMethods") />
+                <#if metabSummaryList?has_content>
+                    <#local summaryList = summaryList + metabSummaryList/>
+                    <#list metabSummaryList as metabSummary>
+                        <#local entityList = entityList + [metab.ChemicalName]/>
+                    </#list>
+                </#if>
+            </#list>
+        </#if>
 
         <#-- Iterate-->
         <#if summaryList?has_content>
@@ -104,6 +123,13 @@
 
             <#list summaryList as summary>
                 <@com.emptyLine/>
+                <#if includeMetabolites && _metabolites??
+                    && subject.documentType=="SUBSTANCE"
+                    && subject.ChemicalName!=entityList[summary_index]
+                    && entityList?seq_index_of(entityList[summary_index]) == summary_index>
+                    <para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
+                    <@com.emptyLine/>
+                </#if>
 
                 <#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
 
