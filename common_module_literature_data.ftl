@@ -1,7 +1,27 @@
-<#macro literatureData _subject>
+<#macro literatureData subject includeMetabolites=true>
     <#compress>
 
-        <#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "LiteratureSearch") />
+        <#local recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "LiteratureSearch") />
+
+        <#if includeMetabolites && _metabolites?? && _metabolites?has_content>
+
+            <#-- get a list of entities of same size as summaryList-->
+            <#local entityList = []/>
+            <#list recordList as record>
+                <#local entityList = entityList + [subject.ChemicalName]/>
+            </#list>
+
+            <#-- add metabolites-->
+            <#list _metabolites as metab>
+                <#local metabRecordList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_RECORD", "LiteratureSearch") />
+                <#if metabRecordList?has_content>
+                    <#local metabRecordList = recordList + metabRecordList/>
+                    <#list metabRecordList as metabRecord>
+                        <#local entityList = entityList + [metab.ChemicalName]/>
+                    </#list>
+                </#if>
+            </#list>
+        </#if>
 
         <#if !recordList?has_content>
 		    No relevant information available.
@@ -12,6 +32,14 @@
 		    <@com.emptyLine/>
 
             <#list recordList as record>
+
+                <#if includeMetabolites && _metabolites?? && _metabolites?has_content &&
+                    subject.ChemicalName!=entityList[record_index] &&
+                    entityList?seq_index_of(entityList[record_index]) == record_index>
+
+                    <para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[record_index]}</emphasis> -----</emphasis></para>
+                    <@com.emptyLine/>
+                </#if>
 
                 <sect3 label="/${record_index+1}" role="NotInToc">
 
