@@ -1,5 +1,5 @@
 
-<!-- ENVIRONMENTAL HAZARD ASSESSMENT template file -->
+<!-- ENVIRONMENTAL HAZARD ASSESSMENT template file  -->
 
 <!-- Summary discussion Aquatic compartment (including sediment) -->
 <#macro aquaticToxicitySummary _subject>
