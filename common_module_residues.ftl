@@ -21,6 +21,12 @@
             <#if study.MaterialsAndMethods.hasElement("AdministrationExposure") && study.MaterialsAndMethods.AdministrationExposure?has_content>
                 <para><emphasis role='bold'>Administration / exposure:</emphasis></para>
                 <@com.children study.MaterialsAndMethods.AdministrationExposure/>
+
+                <#if study.MaterialsAndMethods.AdministrationExposure.hasElement("DosesConcentrations") &&
+                        study.MaterialsAndMethods.AdministrationExposure.DosesConcentrations?node_type=="repeatable">
+                    <para>Doses / concentrations: </para>
+                    <para><@dosesConcentrationsList study.MaterialsAndMethods.AdministrationExposure.DosesConcentrations/></para>
+                </#if>
             </#if>
 
             <#--Study Design-->
@@ -71,7 +77,6 @@
 
 <#macro results_residuesInLivestock study>
     <#compress>
-
         <#if study.ResultsAndDiscussion.ResidueData?has_content>
             <para>Residue data</para>
             <para role="small"><@feedingStudiesResidueDataTable study.ResultsAndDiscussion.ResidueData/></para>
@@ -90,10 +95,11 @@
             <para role="small"><@totalRadioactiveResiduesTable study.ResultsAndDiscussion.TotalRadioactiveResiduesTRR/></para>
         </#if>
 
-        <#if study.ResultsAndDiscussion.StorageStability?has_content>
-            <para>Storage stability (sample integrity):</para>
-            <para role="indent"><@com.text study.ResultsAndDiscussion.StorageStability/></para>
-        </#if>
+<#--        NOTE: removed IUCLID6.6-->
+<#--        <#if study.ResultsAndDiscussion.StorageStability?has_content>-->
+<#--            <para>Storage stability (sample integrity):</para>-->
+<#--            <para role="indent"><@com.text study.ResultsAndDiscussion.StorageStability/></para>-->
+<#--        </#if>-->
 
         <#if study.ResultsAndDiscussion.OtherDetailsOnTRRs?has_content>
             <para>Other details on TRRs:</para>
@@ -203,11 +209,11 @@
 </#macro>
 
 <#--Results lists-->
-<#macro migrationFoodFeedingstuffsList block>
+<#macro migrationFoodFeedingstuffsList block role="indent">
     <#compress>
         <#if block?has_content>
             <#list block as blockItem>
-                <para role="indent">
+                <para role="${role}">
                     <#if blockItem.TestNo?has_content>
                         <@com.picklist blockItem.TestNo/>.
                     </#if>
@@ -225,11 +231,11 @@
     </#compress>
 </#macro>
 
-<#macro idTransformationProductsList block>
+<#macro idTransformationProductsList block role='indent'>
     <#compress>
         <#if block?has_content>
             <#list block as blockItem>
-                <para role="indent">
+                <para role="${role}">
                     <#if blockItem.No?has_content>
                         <@com.picklist blockItem.No/>:
                     </#if>
@@ -245,94 +251,181 @@
     </#compress>
 </#macro>
 
+<#macro dosesConcentrationsList block role="indent">
+    <#compress>
+        <#if block?has_content>
+            <#list block as blockItem>
+                <para role="${role}">
+                    <@com.quantity blockItem.DoseConc/>
+
+                    <#if blockItem.Remarks?has_content>
+                         - <@com.text blockItem.Remarks/>
+                    </#if>
+                </para>
+            </#list>
+        </#if>
+    </#compress>
+</#macro>
+
 <#--    Results tables-->
 <#macro storageResidueLevelsTable path>
     <#compress>
 
-    <#--            Missing: -->
-    <#--                method id for analyte MethodID (text)-->
-    <#--                date of sample for commodity : DateOfSample (date)-->
-    <#--                analysis sample ID and description: AnalysisSampleID (text) AnalysisSampleDescription (text)-->
+    <#--NOTE: Missing individual procedural recovery control results-->
 
         <table border="1">
 
-            <col width="20%" />
-            <col width="20%" />
-            <col width="15%" />
-            <col width="15%" />
-            <col width="15%" />
-            <col width="15%"/>
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="12%"/>
+            <col width="8%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
 
 
             <thead align="center" valign="middle">
-                <tr>
+                <tr><?dbfo bgcolor="#d3d3d3" ?>
                     <th><emphasis role="bold">Commodity</emphasis></th>
+                    <th><emphasis role="bold">Sample</emphasis></th>
+                    <th><emphasis role="bold">Fortification rate</emphasis></th>
+                    <th><emphasis role="bold">Storage period</emphasis></th>
                     <th><emphasis role="bold">Analyte</emphasis></th>
-                    <th><emphasis role="bold">Date of extraction / analysis</emphasis></th>
-                    <th><emphasis role="bold">Residue level [mean]</emphasis></th>
-                    <th><emphasis role="bold">Residue level (% of nominal spiking level) [mean]</emphasis></th>
-                    <th><emphasis role="bold">Procedural recovery control (%) [mean]</emphasis></th>
+                    <th><emphasis role="bold">Process. details</emphasis></th>
+                    <th><emphasis role="bold">An. samp. id</emphasis></th>
+                    <th><emphasis role="bold">Res. level</emphasis></th>
+                    <th><emphasis role="bold">Mean res. level</emphasis></th>
+                    <th><emphasis role="bold">Mean proc. recovery control</emphasis></th>
                 </tr>
             </thead>
 
             <tbody valign="middle">
-            <#list path as residue>
-                <#assign usespan = true />
-                <tr>
-                <td rowspan="${residue.AnalyteMeasured?size}">
-                    <@com.picklist residue.TestCommodity/>
-                    <#if residue.OtherDetailsOnTestCommodity?has_content>
-                        (<@com.text residue.OtherDetailsOnTestCommodity/>)
+
+            <#list path as sample>
+
+                <#local usespan = true />
+
+                <#-- Get sample size -->
+                <#local sampleSize=0/>
+                <#list sample.AnalyteMeasured as analyte>
+                    <#local sampleSize = sampleSize + [1, analyte.ResidueLevel?size]?max/>
+                </#list>
+
+                <#if !sample.AnalyteMeasured?has_content>
+                    <#local analytes = [{'AnalyteIdentity':'', 'ExtractionDate':'', 'AnalysisDate':'',
+                                            'MethodID':'', 'ResidueLevel':[], 'MeanResidueLevel':'',
+                                            'MeanResidueLevelOfNominalSpikingLevel':'', 'MeanProceduralRecoveryControl':''}]>
+                <#else>
+                    <#local analytes=sample.AnalyteMeasured/>
+                </#if>
+
+                <#list analytes as analyte>
+
+                    <#local usespan2=true>
+
+                    <#local analyteSize = [1, analyte.ResidueLevel?size]?max/>
+
+                    <#if !analyte.ResidueLevel?has_content>
+                        <#local resLevels=[{'AnalysedSampleID':'', 'ResidueLevel':'', 'ResidueLevelOfNominalSpikingLevel':''}]>
+                    <#else>
+                        <#local resLevels=analyte.ResidueLevel/>
                     </#if>
-                    <#assign usespan=false/>
-                </td>
 
-                <#if residue.AnalyteMeasured?has_content>
-                    <#list residue.AnalyteMeasured as analyte>
+                    <#list resLevels as resLevel>
 
-                        <#if analyte_index!=0><tr></#if>
+                        <tr>
 
-                            <td>
+                        <#if usespan>
+                            <td rowspan="${sampleSize}">
+                                <@com.picklist sample.TestCommodity/>
+                                <#if sample.OtherDetailsOnTestCommodity?has_content>
+                                    <para>(<@com.text sample.OtherDetailsOnTestCommodity/>)</para>
+                                </#if>
+                            </td>
+
+                            <td rowspan="${sampleSize}">
+                                <#if sample.AnalysisSampleID?has_content>
+                                    <@com.text sample.AnalysisSampleID/><#if sample.AnalysisSampleDescription?has_content> - </#if>
+                                </#if>
+                                <#if sample.AnalysisSampleDescription?has_content>
+                                    <@com.text sample.AnalysisSampleDescription/>
+                                </#if>
+                            </td>
+
+                            <td rowspan="${sampleSize}">
+                                <@com.quantity sample.FortifRateStoredSample/>
+                                <#if sample.FortificationDateDay0?has_content>
+                                    <para>Date (day 0):<@com.text sample.FortificationDateDay0/></para>
+                                </#if>
+                            </td>
+
+                            <td rowspan="${sampleSize}">
+                                <@com.quantity sample.StoragePeriod/>
+                                <#if sample.StorageRemovalDateDayX?has_content>
+                                    <para>Removal date (day X):<@com.text sample.StorageRemovalDateDayX/></para>
+                                </#if>
+                            </td>
+
+                            <#local usespan=false/>
+                        </#if>
+
+                        <#if usespan2>
+                            <td rowspan="${analyteSize}">
                                 <#if analyte.AnalyteIdentity?has_content>
                                     <#local reference=iuclid.getDocumentForKey(analyte.AnalyteIdentity)/>
                                     <@com.text reference.ReferenceSubstanceName/>
                                 </#if>
                             </td>
 
-                            <td>
-                                <@com.text analyte.ExtractionDate/> / <@com.text analyte.AnalysisDate/>
-                            </td>
-
-                            <td>
-                                <@com.range analyte.ResidueLevel/>
-                                <#if analyte.MeanResidueLevel?has_content>
-                                    [<@com.range analyte.MeanResidueLevel/>]
+                            <td rowspan="${analyteSize}">
+                                <#if analyte.ExtractionDate?has_content>
+                                    <para>Extraction: <@com.text analyte.ExtractionDate/></para>
+                                </#if>
+                                <#if analyte.AnalysisDate?has_content>
+                                    <para>Analysis: <@com.text analyte.AnalysisDate/></para>
+                                </#if>
+                                <#if analyte.MethodID?has_content>
+                                    <para>Method: <@com.text analyte.MethodID/></para>
                                 </#if>
                             </td>
+                        </#if>
 
-                            <td>
-                                <@com.range analyte.ResidueLevelOfNominalSpikingLevel/>
+                        <td>
+                            <@com.text resLevel.AnalysedSampleID/>
+                        </td>
+
+                        <td>
+                            <@com.quantity resLevel.ResidueLevel/>
+                            <#if resLevel.ResidueLevelOfNominalSpikingLevel?has_content>
+                                <#if resLevel.ResidueLevel?has_content>(</#if><@com.number resLevel.ResidueLevelOfNominalSpikingLevel/>% spik.<#if resLevel.ResidueLevel?has_content>)</#if>
+                            </#if>
+                        </td>
+
+                        <#if usespan2>
+                            <td rowspan="${analyteSize}">
+                                <@com.quantity analyte.MeanResidueLevel/>
                                 <#if analyte.MeanResidueLevelOfNominalSpikingLevel?has_content>
-                                    [<@com.number analyte.MeanResidueLevelOfNominalSpikingLevel/>]
+                                    <#if analyte.MeanResidueLevel?has_content>(</#if><@com.number analyte.MeanResidueLevelOfNominalSpikingLevel/>% spik.<#if analyte.MeanResidueLevel?has_content>)</#if>
                                 </#if>
                             </td>
 
-                            <td>
-                                <@com.range analyte.ProceduralRecoveryControl/>
+                            <td rowspan="${analyteSize}">
                                 <#if analyte.MeanProceduralRecoveryControl?has_content>
-                                    [<@com.number analyte.MeanProceduralRecoveryControl/>]
+                                    <@com.number analyte.MeanProceduralRecoveryControl/>% spik.
                                 </#if>
                             </td>
-                        </tr>
+
+                            <#local usespan2=false/>
+                        </#if>
+
+                       </tr>
                     </#list>
-                <#else>
-                    <td></td><td></td><td></td><td></td><td></td>
-                    </tr>
-                </#if>
+                </#list>
             </#list>
-
             </tbody>
-
         </table>
 
     </#compress>
@@ -344,84 +437,133 @@
 
         <table border="1">
 
+<#--            <col width="3%" />-->
+            <col width="15%" />
+            <col width="10%" />
             <col width="20%" />
             <col width="15%" />
-            <col width="15%" />
-            <col width="20%" />
-            <col width="15%" />
-            <col width="15%"/>
+            <col width="10%"/>
+            <col width="10%"/>
+            <col width="10%"/>
+            <col width="10%"/>
 
 
             <thead align="center" valign="middle">
-            <tr>
-                <th><emphasis role="bold">Matrix</emphasis></th>
-                <th><emphasis role="bold">Feeding level</emphasis></th>
-                <th><emphasis role="bold">Sampling time</emphasis></th>
-                <th><emphasis role="bold">Analyte</emphasis></th>
-                <th><emphasis role="bold">Residue level</emphasis></th>
-                <th><emphasis role="bold">Total / mean</emphasis></th>
-            </tr>
+                <tr><?dbfo bgcolor="#d3d3d3" ?>
+    <#--                <th><emphasis role="bold">#</emphasis></th>-->
+                    <th><emphasis role="bold">Matrix</emphasis></th>
+                    <th><emphasis role="bold">Dose / feeding level</emphasis></th>
+                    <th><emphasis role="bold">Sampling</emphasis></th>
+                    <th><emphasis role="bold">Analyte</emphasis></th>
+                    <th><emphasis role="bold">An. sample</emphasis></th>
+                    <th><emphasis role="bold">Res. level</emphasis></th>
+                    <th><emphasis role="bold">Mean res. level</emphasis></th>
+                    <th><emphasis role="bold">Total / mean</emphasis></th>
+                </tr>
             </thead>
 
             <tbody valign="middle">
-            <#list path as residue>
 
-                <#assign usespan = true />
+                <#list path as sample>
 
-                <tr>
-                    <td rowspan="${residue.ResidueLevels?size}">
-                        <@com.picklist residue.MatrixTissueSampled/>
-                    </td>
-                    <td rowspan="${residue.ResidueLevels?size}">
-                        <@com.text residue.DoseFeedingLevel/>
-                    </td>
-                    <td rowspan="${residue.ResidueLevels?size}">
-                        <@com.text residue.SamplingTime/>
-                    </td>
+                    <#local usespan = true />
 
-                    <#if residue.ResidueLevels?has_content>
-                        <#list residue.ResidueLevels as analyte>
+                    <#-- Get sample size -->
+                    <#local sampleSize=0/>
+                    <#list sample.AnalyteMeasured as analyte>
+                        <#local sampleSize = sampleSize + [1, analyte.ResidueLevel?size]?max/>
+                    </#list>
 
-                            <#if analyte_index!=0><tr></#if>
+
+                    <#if !sample.AnalyteMeasured?has_content>
+                        <#local analytes = [{'AnalyteIdentity':'', 'MeanResidueLevel':'', 'Remarks':'', 'ResidueLevel':[]}]>
+                    <#else>
+                        <#local analytes=sample.AnalyteMeasured/>
+                    </#if>
+
+                    <#list analytes as analyte>
+
+                        <#local usespan2=true>
+
+                        <#local analyteSize = [1, analyte.ResidueLevel?size]?max/>
+
+                        <#if !analyte.ResidueLevel?has_content>
+                            <#local resLevels=[{'AnalysedSampleID':'', 'ResidueLevel':''}]>
+                        <#else>
+                            <#local resLevels=analyte.ResidueLevel/>
+                        </#if>
+
+                        <#list resLevels as resLevel>
+
+                            <tr>
+
+            <#--                <td rowspan="${sampleSize}">-->
+            <#--                    <@com.value sample.SamplingNo/>-->
+            <#--                </td>-->
+                            <#if usespan>
+                                <td rowspan="${sampleSize}">
+                                    <@com.picklist sample.MatrixTissueSampled/>
+                                </td>
+
+                                <td rowspan="${sampleSize}">
+                                    <#if sample.FeedingLevel?has_content>
+                                        Level <@com.number sample.FeedingLevel/><#if sample.DoseFeedingLevel?has_content>:</#if>
+                                    </#if>
+                                    <#if sample.DoseFeedingLevel?has_content><@com.number sample.DoseFeedingLevel/>mg/kg bw</#if>
+                                </td>
+
+                                <td rowspan="${sampleSize}">
+                                    <#if sample.SamplingDate?has_content || sample.SamplingTime?has_content>
+                                        <para>Date / time: <@com.text sample.SamplingDate/><#if sample.SamplingTime?has_content>, <@com.picklist sample.SamplingTime/></#if>
+                                        </para>
+                                    </#if>
+                                    <#if sample.SlaughterInterval?has_content>
+                                        <para>Slaughter interval: <@com.quantity sample.SlaughterInterval/></para>
+                                    </#if>
+                                    <#if sample.AdditionalInformationOnTheSamplingProcedure?has_content>
+                                        <para>Procedure: <@com.text sample.AdditionalInformationOnTheSamplingProcedure/></para>
+                                    </#if>
+                                </td>
+                            </#if>
+
+                            <#if usespan2>
+                                <td rowspan="${analyteSize}">
+                                    <#if analyte.AnalyteIdentity?has_content>
+                                        <#local reference=iuclid.getDocumentForKey(analyte.AnalyteIdentity)/>
+                                        <@com.text reference.ReferenceSubstanceName/>
+                                    </#if>
+                                </td>
+                            </#if>
 
                             <td>
-                                <#if analyte.AnalyteIdentity?has_content>
-                                    <#local reference=iuclid.getDocumentForKey(analyte.AnalyteIdentity)/>
-                                    <@com.text reference.ReferenceSubstanceName/>
-                                </#if>
+                                <@com.text resLevel.AnalysedSampleID/>
                             </td>
 
                             <td>
-                                <#if analyte.ResidueLevelMeasured?has_content>
-                                    <@com.range analyte.ResidueLevelMeasured/> (measured)<?linebreak?>
-                                </#if>
-                                <#if analyte.ResidueLevelCalculated?has_content>
-                                    <@com.range analyte.ResidueLevelCalculated/> (calculated)<?linebreak?>
-                                </#if>
-                                <#if analyte.ResidueLevelCorrected?has_content>
-                                    <@com.range analyte.ResidueLevelCorrected/> (calculated and corrected)
-                                </#if>
+                                <#if resLevel.ResidueLevel?has_content><@com.range resLevel.ResidueLevel/></#if>
                             </td>
+
+                            <#if usespan2>
+                                <td rowspan="${analyteSize}">
+                                    <@com.quantity analyte.MeanResidueLevel/>
+                                </td>
+    <#--                                    <td rowspan="${analyteSize}">-->
+    <#--                                        <@com.text analyte.Remarks/>-->
+    <#--                                    </td>-->
+                                <#local usespan2=false>
+                            </#if>
 
                             <#if usespan>
-                                <td rowspan="${residue.ResidueLevels?size}">
-                                    <@com.quantity residue.TotalMean/>
+                                <td rowspan="${sampleSize}">
+                                    <@com.quantity sample.TotalMean/>
                                 </td>
-                                <#assign usespan=false>
+                                <#local usespan=false>
                             </#if>
 
                             </tr>
                         </#list>
-                    <#else>
-                        <td></td>
-                        <td></td>
-                        <td rowspan="${residue.ResidueLevels?size}">
-                            <@com.quantity residue.TotalMean/>
-                        </td>
-                        </tr>
-                    </#if>
-            </#list>
-
+                    </#list>
+                </#list>
             </tbody>
 
         </table>
@@ -436,18 +578,26 @@
 
         <table border="1">
 
-            <col width="35%" />
-            <col width="35%" />
+            <col width="10%" />
+            <col width="20%" />
+            <col width="25%" />
+            <col width="15%" />
             <col width="15%" />
             <col width="15%" />
 
 
             <thead align="center" valign="middle">
-                <tr>
-                    <th><emphasis role="bold">Test conditions</emphasis></th>
-                    <th><emphasis role="bold">TRR component</emphasis></th>
-                    <th><emphasis role="bold">TRR concentration</emphasis></th>
-                    <th><emphasis role="bold">TRR percentage</emphasis></th>
+                <tr><?dbfo bgcolor="#d3d3d3" ?>
+                    <th colspan="2"><emphasis role="bold">Sample</emphasis></th>
+                    <th rowspan="2"><emphasis role="bold">Test conditions</emphasis></th>
+                    <th colspan="3"><emphasis role="bold">TRR</emphasis></th>
+                </tr>
+                <tr><?dbfo bgcolor="#d3d3d3" ?>
+                    <th><emphasis role="bold">Identity</emphasis></th>
+                    <th><emphasis role="bold">Stability</emphasis></th>
+                    <th><emphasis role="bold">Identity</emphasis></th>
+                    <th><emphasis role="bold">Prior hydrolysis</emphasis></th>
+                    <th><emphasis role="bold">After hydrolysis</emphasis></th>
                 </tr>
             </thead>
 
@@ -456,11 +606,16 @@
             <#list path as residue>
 
                 <tr>
+                    <td>
+                        <@com.text residue.SampleID/>
+                    </td>
 
                     <td>
-                        <#if residue.TestConditions?has_content>
-                            <@com.text residue.TestConditions/>
-                        </#if>
+                        <@com.text residue.StorageStability/>
+                    </td>
+
+                    <td>
+                        <@com.picklist residue.TestConditions/>
                     </td>
 
                     <td>
@@ -471,14 +626,24 @@
                     </td>
 
                     <td>
-                        <#if residue.TRRConcentration?has_content>
-                            <@com.range residue.TRRConcentration/>
+                        <#local fortLev=false>
+                        <#if residue.FortificationLevel?has_content>
+                            <@com.quantity residue.FortificationLevel/>
+                            <#local fortLev=true>
+                        </#if>
+                        <#if residue.TRRPriorHydrolysis?has_content>
+                            <#if fortLev>(</#if><@com.number residue.TRRPriorHydrolysis/>%<#if fortLev>)</#if>
                         </#if>
                     </td>
 
                     <td>
+                        <#local conc=false>
+                        <#if residue.TRRConcentration?has_content>
+                            <@com.quantity residue.TRRConcentration/>
+                            <#local conc=true>
+                        </#if>
                         <#if residue.TRRPercentage?has_content>
-                            <@com.range residue.TRRPercentage/>%
+                            <#if conc>(</#if><@com.number residue.TRRPercentage/>%<#if conc>)</#if>
                         </#if>
                     </td>
                 </tr>
@@ -521,20 +686,20 @@
             <col width="9%" />
 
             <thead align="center" valign="middle">
-                <tr>
+                <tr><?dbfo bgcolor="#d3d3d3" ?>
                     <th rowspan="2"><emphasis role="bold">Trial ID</emphasis></th>
                     <th colspan="5"><emphasis role="bold">Sampling</emphasis></th>
                     <th colspan="2"><emphasis role="bold">Residue levels</emphasis> </th>
                     <th rowspan="2"><emphasis role="bold">Total / mean</emphasis></th>
                 </tr>
 
-                <tr>
+                <tr><?dbfo bgcolor="#d3d3d3" ?>
                     <td><emphasis role="bold" >RAC</emphasis></td>
                     <td><emphasis role="bold" >Sample ID</emphasis></td>
                     <td><emphasis role="bold" >Date</emphasis></td>
                     <td><emphasis role="bold" >Timing</emphasis></td>
                     <td><emphasis role="bold" >Crop growth stage (BBCH)</emphasis></td>
-<#--                    TODO methods when possible to retrieve section-->
+<#--                     methods when possible to retrieve section-->
 <#--                    <td><emphasis role="bold" >Method ID</emphasis></td>-->
                     <td><emphasis role="bold" >Residue</emphasis></td>
                     <td><emphasis role="bold" >Level</emphasis></td>
@@ -636,7 +801,7 @@
 
             <thead align="center" valign="middle">
 
-            <tr>
+            <tr><?dbfo bgcolor="#d3d3d3" ?>
                 <td><emphasis role="bold" >Sample</emphasis></td>
                 <td><emphasis role="bold" >Date of sub-sample</emphasis></td>
                 <td><emphasis role="bold" >Analyte</emphasis></td>
@@ -697,7 +862,7 @@
             <thead align="center" valign="middle">
 
 
-            <tr>
+            <tr><?dbfo bgcolor="#d3d3d3" ?>
                 <td><emphasis role="bold" >PF sample</emphasis></td>
                 <td><emphasis role="bold" >Date of processing</emphasis></td>
                 <td><emphasis role="bold" >Analysis sample</emphasis></td>
@@ -763,7 +928,7 @@
 
             <thead align="center" valign="middle">
 
-            <tr>
+            <tr><?dbfo bgcolor="#d3d3d3" ?>
                 <td><emphasis role="bold" >AGF sample</emphasis></td>
                 <td><emphasis role="bold" >Date of AGF sample</emphasis></td>
                 <td><emphasis role="bold" >Analysis sample</emphasis></td>
@@ -852,7 +1017,7 @@
             <col width="15%" />
 
             <thead align="center" valign="middle">
-                <tr>
+                <tr><?dbfo bgcolor="#d3d3d3" ?>
                     <th><emphasis role="bold">Method ID</emphasis></th>
                     <th><emphasis role="bold">Document</emphasis></th>
                     <th><emphasis role="bold">Details</emphasis> </th>
@@ -1001,15 +1166,17 @@
                     <para><emphasis role="bold">Key information: </emphasis></para>
                     <para><@com.richText summary.KeyInformation.KeyInformation/></para>
 
-                    <#if docSubType=="ResiduesLivestock">
+                    <#if docSubType=="ResiduesInLivestock">
+                        <#-- IUCLID 6.6: check if this is needed-->
                         <para>[Copy/paste here the following tables as given by the Animal Model calculator: “Dietary burden table” and “MRL calculations table”.
                         Please also report the input values used for the animal burden calculations.]</para>
                     <#elseif docSubType=="MetabolismPlants">
                         <para>[Please, note that the full text of the end point summary on metabolism studies is reported here.
                                 Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>
-                    <#elseif docSubType=="MagnitudeResiduesPlants" >
-                        <para>[Please, note that the full text of the end point summary on magnitude of residues is reported here.
-                                Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>
+<#--                    <#elseif docSubType=="MagnitudeResiduesPlants" >-->
+<#--                        NOTE: not needed in IUCLID6.6-->
+<#--                        <para>[Please, note that the full text of the end point summary on magnitude of residues is reported here.-->
+<#--                                Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>-->
                     </#if>
                 </#if>
 
@@ -1032,7 +1199,7 @@
                     </#if>
                 <#elseif summary.documentSubType=="MagnitudeResiduesPlants">
                     <#if summary.KeyInformation.SummaryResiduesData?has_content>
-                        <para role="small"><@summaryResiduesDataSummaryTable summary.KeyInformation.SummaryResiduesData selection/></para>
+                        <para role="small"><@summaryResiduesDataSummaryTable summary.KeyInformation.SummaryResiduesData/></para>
                     </#if>
                 <#elseif summary.documentSubType=="NatureMagnitudeResiduesProcessedCommodities">
                     <#if summary.KeyInformation.ResidueNatureProcessedCommodities?has_content>
@@ -1056,35 +1223,71 @@
                     </#if>
 
                  <#elseif summary.documentSubType=='ExpectedExposure'>
-                    <#if summary.KeyInformation.ExposureDietarySources.field3689?has_content>
+                    <#if summary.KeyInformation.ExposureDietarySources?has_content>
+                        <@com.emptyLine/>
                         <para><emphasis role="bold">Exposure from dietary sources:</emphasis></para>
-                        <para><@com.richText summary.KeyInformation.ExposureDietarySources.field3689/></para>
+                        <#if summary.KeyInformation.ExposureDietarySources.Model?has_content>
+                            <para>Model: <@com.picklist summary.KeyInformation.ExposureDietarySources.Model/></para>
+                        </#if>
+                        <#if summary.KeyInformation.ExposureDietarySources.ResidueDefinitionSForRiskAssessment?has_content>
+                            <para>Residue definitions for risk assessment:
+                                <@com.text summary.KeyInformation.ExposureDietarySources.ResidueDefinitionSForRiskAssessment/>
+                            </para>
+                        </#if>
+                        <#if summary.KeyInformation.ExposureDietarySources.ToxicologicalReferenceValues?has_content>
+                            <#local toxRef = iuclid.getDocumentForKey(summary.KeyInformation.ExposureDietarySources.ToxicologicalReferenceValues) />
+                            <para>Toxicological reference values: <@com.text toxRef.name/></para>
+                        </#if>
+                        <#if summary.KeyInformation.ExposureDietarySources.ChronicExposure?has_content>
+                            <para><emphasis role="underline">Chronic exposure:</emphasis></para>
+                            <para role="small"><@expectedExposureCommodityContributionSummaryTable summary.KeyInformation.ExposureDietarySources.ChronicExposure/></para>
+                        </#if>
+                        <#if summary.KeyInformation.ExposureDietarySources.AcuteExposure?has_content>
+                            <para><emphasis role="underline">Acute exposure:</emphasis></para>
+                            <para role="small"><@expectedExposureCommodityContributionSummaryTable summary.KeyInformation.ExposureDietarySources.AcuteExposure/></para>
+                        </#if>
                     </#if>
+
                     <#if summary.KeyInformation.ExposureOtherSources.field4124?has_content>
+                        <@com.emptyLine/>
                         <para><emphasis role="bold">Exposure from other sources (drinking water):</emphasis></para>
                         <para><@com.richText summary.KeyInformation.ExposureOtherSources.field4124/></para>
+                    </#if>
+
+                <#elseif summary.documentSubType=='ResiduesInLivestock'>
+                    <#if summary.KeyValueForChemicalSafetyAssessment.DietaryBurden?has_content>
+                        <@com.emptyLine/>
+                        <para><emphasis role="bold">Dietary burden:</emphasis></para>
+                        <para><@dietaryBurdenSummaryTable summary.KeyValueForChemicalSafetyAssessment.DietaryBurden/></para>
+                    </#if>
+                    <#if summary.KeyValueForChemicalSafetyAssessment.SummaryOfResiduesDataFromFeedingStudies?has_content>
+                        <@com.emptyLine/>
+                        <para><emphasis role="bold">Summary of residues data from feeding studies:</emphasis></para>
+                        <para><@feedingStudiesSummaryTable summary.KeyValueForChemicalSafetyAssessment.SummaryOfResiduesDataFromFeedingStudies/></para>
                     </#if>
                 </#if>
 
                 <#--Links-->
                 <#if summary.hasElement("LinkToRelevantStudyRecord.Link") && summary.LinkToRelevantStudyRecord.Link?has_content>
-                <para><emphasis role="bold">Link to relevant study records: </emphasis></para>
-                <para role="indent">
-                    <#list summary.LinkToRelevantStudyRecord.Link as link>
-                        <#if link?has_content>
-                            <#local studyReference = iuclid.getDocumentForKey(link) />
-                            <para><command  linkend="${studyReference.documentKey.uuid!}">
-                                <@com.text studyReference.name/>
-                            </command>
-                                </para>
-<#--                            <#if link_has_next> | </#if>-->
-                        </#if>
-                    </#list>
-                </para>
+                    <@com.emptyLine/>
+                    <para><emphasis role="bold">Link to relevant study records: </emphasis></para>
+                    <para role="indent">
+                        <#list summary.LinkToRelevantStudyRecord.Link as link>
+                            <#if link?has_content>
+                                <#local studyReference = iuclid.getDocumentForKey(link) />
+                                <para><command  linkend="${studyReference.documentKey.uuid!}">
+                                    <@com.text studyReference.name/>
+                                </command>
+                                    </para>
+    <#--                            <#if link_has_next> | </#if>-->
+                            </#if>
+                        </#list>
+                    </para>
                 </#if>
 
                 <#--Discussion-->
                 <#if summary.hasElement("Discussion") && summary.Discussion.Discussion?has_content>
+                    <@com.emptyLine/>
                     <para><emphasis role="bold">Discussion:</emphasis></para>
                     <para><@com.richText summary.Discussion.Discussion/></para>
 
@@ -1111,18 +1314,9 @@
 
         <#if docSubType=="MagnitudeResiduesPlants">
             <#list summaryList as summary>
-                <#-- if it doesn't have specific content, add-->
-                <#if !summary.KeyInformation.SummaryResiduesData?has_content>
+                <#local endpoint><@com.picklist summary.KeyInformation.Endpoint/></#local>
+                <#if endpoint?contains(selection)>
                     <#local summaryListFilt = summaryListFilt + [summary] />
-                <#-- if it does, iterate and if it corresponds to selection, add-->
-                <#else>
-                    <#list summary.KeyInformation.SummaryResiduesData as resData>
-                        <#local applicableTo><@com.picklistMultiple resData.ResultsApplicableTo/></#local>
-                        <#if !(applicableTo?has_content) || applicableTo?contains(selection)>
-                            <#local summaryListFilt = summaryListFilt + [summary] />
-                            <#break>
-                        </#if>
-                    </#list>
                 </#if>
             </#list>
 
@@ -1150,7 +1344,7 @@
 <#function getResiduesSummary subject docSubType selection>
 
     <#-- Get document-->
-    <#if docSubType=="MRLProposal" || docSubType=="ExpectedExposure">
+    <#if docSubType=="MRLProposal" || docSubType=="ExpectedExposure" || docSubType=="ResiduesInLivestock">
         <#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
     <#else>
         <#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
@@ -1281,71 +1475,95 @@
     </#compress>
 </#macro>
 
-<#macro summaryResiduesDataSummaryTable path sel="">
+<#macro summaryResiduesDataSummaryTable path>
     <#compress>
 
         <table border="1">
 
-            <col width="20%" />
 <#--            <col width="10%" />-->
-            <col width="12%" />
-            <col width="12%" />
-            <col width="8%" />
-            <col width="8%" />
-            <col width="6%" />
-            <col width="7%" />
-            <col width="7%" />
-            <col width="7%"/>
-            <col width="13%"/>
+            <col width="15%" />
+            <col width="15%" />
+            <col width="15%" />
+            <col width="15%" />
+            <col width="10%" />
+            <col width="15%" />
+            <col width="15%"/>
 
 
 <#--            <thead align="center" valign="middle">-->
             <tbody>
                 <tr align="center" valign="middle">
-                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Study</emphasis></th>
 <#--                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">GAP</emphasis></th>-->
-                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Commodity for MRL</emphasis></th>
-                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Commodity used</emphasis></th>
-                    <th colspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Residue levels</emphasis></th>
-                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">HRV</emphasis></th>
-                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">STMR</emphasis></th>
-                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">MRL</emphasis></th>
+                    <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Commodity</emphasis></th>
+                    <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Residue levels</emphasis></th>
+                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">MRL derived</emphasis></th>
+                    <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Study</emphasis></th>
                     <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
                 </tr>
                 <tr align="center" valign="middle">
-                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RA</emphasis></th>
-                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">MO</emphasis></th>
-                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CF</emphasis></th>
+                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">For MRL / RA</emphasis></th>
+                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Used in trials</emphasis></th>
+                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD-RA</emphasis></th>
+                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD-Ro</emphasis></th>
                 </tr>
 <#--            </thead>-->
 <#--            <tbody>-->
             <#list path as item>
-                <#local applicableTo><@com.picklistMultiple item.ResultsApplicableTo/></#local>
-                <#if !(sel?has_content) || applicableTo?contains(sel) || !(applicableTo?has_content)>
-                    <tr>
-                        <td>
-                            <#list item.Link as link>
-                                <#if link?has_content>
-                                    <#local study = iuclid.getDocumentForKey(link) />
+                <tr>
+<#--                        <td>GAP link NA?</td>-->
+                    <td><@com.picklistMultiple item.CommodityForMrl/></td>
+                    <td><@com.picklistMultiple item.Commodity/></td>
+                    <td>
+                        <#if item.ResidueLevelsRiskAssessment?has_content>
+                            <para>Levels: <@com.text item.ResidueLevelsRiskAssessment/></para>
+                        </#if>
+                        <#if item.HighestResidue?has_content>
+                            <para>Max: <@com.quantity item.HighestResidue/></para>
+                        </#if>
+                        <#if item.Stmr?has_content>
+                            <para>STMR: <@com.quantity item.Stmr/></para>
+                        </#if>
+                    </td>
+                    <td>
+                        <#if item.ResidueLevelsMonitoring?has_content>
+                            <para>Levels: <@com.text item.ResidueLevelsMonitoring/></para>
+                        </#if>
+                        <#if item.HighestResidueRDMo?has_content>
+                            <para>Max: <@com.quantity item.HighestResidueRDMo/></para>
+                        </#if>
+                        <#if item.STMRRDMo?has_content>
+                            <para>STMR: <@com.quantity item.STMRRDMo/></para>
+                        </#if>
+                    </td>
+                    <td>
+                        <#if item.MrlDerived?has_content>
+                            <para><@com.quantity item.MrlDerived/></para>
+                        </#if>
+                        <#if item.MeanConversionFactor?has_content>
+                            <para>CF: <@com.number item.MeanConversionFactor/></para>
+                        </#if>
+                        </td>
+                    <td>
+                        <#list item.Link as link>
+                            <#if link?has_content>
+                                <#local study = iuclid.getDocumentForKey(link) />
+                                <para>
                                     <command  linkend="${study.documentKey.uuid!}">
                                         <@com.text study.name/>
                                     </command>
-                                    <#if link_has_next> | </#if>
-                                </#if>
-                            </#list>
-                        </td>
-<#--                        <td>GAP link NA?</td>-->
-                        <td><@com.picklistMultiple item.CommodityForMrl/></td>
-                        <td><@com.picklistMultiple item.Commodity/></td>
-                        <td><@com.text item.ResidueLevelsRiskAssessment/></td>
-                        <td><@com.text item.ResidueLevelsMonitoring/></td>
-                        <td><@com.number item.MeanConversionFactor/></td>
-                        <td><@com.quantity item.HighestResidue/></td>
-                        <td><@com.quantity item.Stmr/></td>
-                        <td><@com.quantity item.MrlDerived/></td>
-                        <td><@com.text item.Remarks/></td>
-                    </tr>
-                </#if>
+                                </para>
+                            </#if>
+                        </#list>
+                    </td>
+                    <td>
+                        <#local provisional><@com.picklist item.Provisional/></#local>
+                        <#if provisional=="yes"><para><emphasis role="bold">Provisional</emphasis></para></#if>
+                        <#if item.hasElement("PlantBackIntervalPBI") && item.PlantBackIntervalPBI?has_content>
+                            <para>PBI: <@com.quantity item.PlantBackIntervalPBI/></para>
+                        </#if>
+                        <#if item.Remarks?has_content><para><@com.text item.Remarks/></para></#if>
+                    </td>
+                </tr>
             </#list>
             </tbody>
         </table>
@@ -1577,12 +1795,11 @@
 
         <table border="1">
 
-            <col width="20%" />
+            <col width="25%" />
             <col width="20%" />
             <col width="10%" />
             <col width="20%" />
-            <col width="18%" />
-            <col width="12%" />
+            <col width="25%" />
 
             <thead align="center" valign="middle">
             <tr>
@@ -1590,8 +1807,8 @@
                 <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Residue definition monitoring</emphasis></th>
                 <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">MRL proposal</emphasis></th>
                 <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Rationale</emphasis></th>
-                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Critical GAP</emphasis></th>
-                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Comments</emphasis></th>
+<#--                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Critical GAP</emphasis></th>-->
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
             </tr>
             </thead>
 
@@ -1603,22 +1820,25 @@
                     <td><@com.text item.ResidueDefinitionMonitoring/></td>
                     <td>
                         <@com.quantity item.MrlProposal/>
-                        <#if item.MrlLoq><?linebreak?>(at LOQ)</#if>
+<#--                        <#if item.MrlLoq><?linebreak?>(at LOQ)</#if>-->
                     </td>
                     <td><@com.picklist item.RationaleForMrl/></td>
+<#--                    <td>-->
+<#--                        <#list item.CriticalGap as link>-->
+<#--                            <#if link?has_content>-->
+<#--                                <#local gap = iuclid.getDocumentForKey(link) />-->
+<#--                                <para>-->
+<#--                                    <command linkend="${gap.documentKey.uuid!}">-->
+<#--                                        <@com.text gap.name/>-->
+<#--                                    </command>-->
+<#--                                </para>-->
+<#--                            </#if>-->
+<#--                        </#list>-->
+<#--                    </td>-->
                     <td>
-                        <#list item.CriticalGap as link>
-                            <#if link?has_content>
-                                <#local gap = iuclid.getDocumentForKey(link) />
-                                <para>
-                                    <command linkend="${gap.documentKey.uuid!}">
-                                        <@com.text gap.name/>
-                                    </command>
-                                </para>
-                            </#if>
-                        </#list>
+                        <#if item.MrlLoq><para>MRL at LOQ</para></#if>
+                        <#if item.Remarks?has_content><para><@com.text item.Remarks/></para></#if>
                     </td>
-                    <td> </td>
                 </tr>
             </#list>
             </tbody>
@@ -1626,3 +1846,407 @@
 
     </#compress>
 </#macro>
+
+<#macro dietaryBurdenSummaryTable path>
+    <#compress>
+
+        <table border="1">
+
+            <col width="20%" />
+            <col width="20%" />
+            <col width="15%" />
+            <col width="15%" />
+            <col width="30%" />
+
+            <thead align="center" valign="middle">
+            <tr>
+                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD RA (plant / feed)</emphasis></th>
+                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Animal species</emphasis></th>
+                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Dietary burden</emphasis></th>
+                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+            </tr>
+            <tr>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Median</emphasis></th>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Max</emphasis></th>
+            </tr>
+            </thead>
+
+            <tbody valign="middle">
+
+            <#list path as item>
+                <tr>
+                    <td><@com.text item.RDRAPlantFeed/></td>
+                    <td><@com.picklist item.AnimalSpecies/></td>
+                    <td>
+                        <#if item.MedianDietaryBurdenMgKgBwPerDay?has_content>
+                            <para><@com.quantity item.MedianDietaryBurdenMgKgBwPerDay/></para>
+                        </#if>
+                        <#if item.MedianDietaryBurdenMgKgDM?has_content>
+                            <para><@com.quantity item.MedianDietaryBurdenMgKgDM/></para>
+                        </#if>
+                    </td>
+                    <td>
+                        <#if item.MaximalDietaryBurdenMgKgBwPerDay?has_content>
+                            <para><@com.quantity item.MaximalDietaryBurdenMgKgBwPerDay/></para>
+                        </#if>
+                        <#if item.MaximalDietaryBurdenMgKgDM?has_content>
+                            <para><@com.quantity item.MaximalDietaryBurdenMgKgDM/></para>
+                        </#if>
+                    </td>
+                    <td>
+                        <#local trigger><@com.picklist item.TriggerExceeded/></#local>
+                        <#if trigger=="yes"><para><emphasis role="bold">Trigger exceded</emphasis></para></#if>
+                        <#if item.Remarks?has_content><@com.text item.Remarks/></#if>
+                    </td>
+                </tr>
+            </#list>
+            </tbody>
+        </table>
+
+    </#compress>
+</#macro>
+
+<#macro feedingStudiesSummaryTable path>
+    <#compress>
+
+        <table border="1">
+
+            <col width="9%" />
+            <col width="9%" />
+            <col width="9%" />
+            <col width="9%" />
+            <col width="9%" />
+            <col width="10%" />
+            <col width="20%" />
+            <col width="25%" />
+
+            <thead align="center" valign="middle">
+            <tr>
+                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD-RA</emphasis></th>
+                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD-Mo</emphasis></th>
+                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CF</emphasis></th>
+                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">MRL derived</emphasis></th>
+                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
+                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+            </tr>
+            <tr>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Max</emphasis></th>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">STMR</emphasis></th>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Max</emphasis></th>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">STMR</emphasis></th>
+            </tr>
+            </thead>
+
+            <tbody valign="middle">
+
+            <#list path as item>
+                <tr>
+                    <td><@com.quantity item.HighestResidueRDRA/></td>
+                    <td><@com.quantity item.STMRRDRA/></td>
+                    <td><@com.quantity item.HighestResidueRDMo/></td>
+                    <td><@com.quantity item.STMRRDMo/></td>
+                    <td><@com.number item.ConversionFactorCF/></td>
+                    <td><@com.quantity item.MRLDerived/></td>
+                    <td>
+                        <#list item.LinkToRelevantStudyRecordS as link>
+                            <#if link?has_content>
+                                <#local studyReference = iuclid.getDocumentForKey(link) />
+                                <para>
+                                    <command  linkend="${studyReference.documentKey.uuid!}">
+                                        <@com.text studyReference.name/>
+                                    </command>
+                                </para>
+                            </#if>
+                        </#list>
+                    </td>
+                    <td>
+                        <#local provisional><@com.picklist item.Provisional/></#local>
+                        <#if provisional=="yes"><para><emphasis role="bold">Provisional</emphasis></para></#if>
+                        <#if item.Remarks?has_content><@com.text item.Remarks/></#if>
+                    </td>
+                </tr>
+            </#list>
+            </tbody>
+        </table>
+
+    </#compress>
+</#macro>
+
+<#macro expectedExposureCommodityContributionSummaryTable chronex>
+    <#compress>
+
+        <table border="1">
+
+            <col width="30%" />
+            <col width="35%" />
+            <col width="35%" />
+
+            <tbody valign="middle">
+
+            <#if chronex.hasElement("TMDIOrIEDI")>
+                <tr>
+                    <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Type</emphasis></td>
+                    <td colspan="2"><@com.picklist chronex.TMDIOrIEDI/></td>
+                </tr>
+            </#if>
+
+            <tr>
+                <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Assumptions</emphasis></td>
+                <td colspan="2"><@com.text chronex.Assumptions/></td>
+            </tr>
+
+            <#if chronex.hasElement("PopulationSurvey")>
+                <tr>
+                    <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Population / survey</emphasis></td>
+                    <td colspan="2"><@com.picklist chronex.PopulationSurvey/></td>
+                </tr>
+            </#if>
+
+            <#if chronex.hasElement("ToxicologicalReferenceValueADIConverted")>
+                <tr>
+                    <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Toxicological reference value (ADI)</emphasis></td>
+                    <td colspan="2"><@com.quantity chronex.ToxicologicalReferenceValueADIConverted/></td>
+                </tr>
+            <#elseif chronex.hasElement("ToxicologicalReferenceValueARfDConverted")>
+                <tr>
+                    <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Toxicological reference value (ARfD)</emphasis></td>
+                    <td colspan="2"><@com.quantity chronex.ToxicologicalReferenceValueARfDConverted/></td>
+                </tr>
+            </#if>
+
+            <#if chronex.hasElement("TotalExposureAbsoluteValue")>
+                <tr>
+                    <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Total exposure</emphasis></td>
+                    <td colspan="2"><@com.quantity chronex.TotalExposureAbsoluteValue/>
+                        <#if chronex.TotalExposureOfADI?has_content>
+                            <#if chronex.TotalExposureAbsoluteValue?has_content>(</#if><@com.number chronex.TotalExposureOfADI/>% of ADI<#if chronex.TotalExposureAbsoluteValue?has_content>)</#if>
+                        </#if>
+                    </td>
+                </tr>
+            </#if>
+
+            <#if chronex.hasElement("ContributionOfCommodities")>
+                <#local commPath=chronex.ContributionOfCommodities/>
+            <#elseif chronex.hasElement("AcuteExposure")>
+                <#local commPath=chronex.AcuteExposure/>
+            </#if>
+
+            <#if !commPath?has_content>
+                <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Contribution of commodities</emphasis></td>
+                <td></td>
+                <td></td>
+            <#else>
+                <#local commodityNb=commPath?size />
+
+                <#list commPath as comm>
+                    <tr>
+                        <#if comm_index==0>
+                            <td rowspan="${commodityNb}"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Contribution of commodities</emphasis></td>
+                        </#if>
+
+                        <td>
+                            <@com.picklist comm.Commodity/>
+                            <#if comm.hasElement("PopulationSurvey") && comm.PopulationSurvey?has_content>
+                                (<@com.picklist comm.PopulationSurvey/>)
+                            </#if>
+                        </td>
+
+                        <td>
+                            <#if comm.hasElement("ChronicExposureFromThisCommodityAbsoluteValue")>
+                                <@com.quantity comm.ChronicExposureFromThisCommodityAbsoluteValue/>
+                                <#if comm.ChronicExposureFromThisCommodityOfADI?has_content>
+                                    <#if comm.ChronicExposureFromThisCommodityAbsoluteValue?has_content>(</#if><@com.number comm.ChronicExposureFromThisCommodityOfADI/>% of ADI<#if comm.ChronicExposureFromThisCommodityAbsoluteValue?has_content>)</#if>
+                                </#if>
+                            <#elseif comm.hasElement("ExposureAbsoluteValue")>
+                                <@com.quantity comm.ExposureAbsoluteValue/>
+                                <#if comm.ExposureOfARfD?has_content>
+                                    <#if comm.ExposureAbsoluteValue?has_content>(</#if><@com.number comm.ExposureOfARfD/>% of ARfD<#if comm.ExposureAbsoluteValue?has_content>)</#if>
+                                </#if>
+                            </#if>
+                        </td>
+                    </tr>
+                </#list>
+            </#if>
+        </tbody>
+    </table>
+
+    </#compress>
+</#macro>
+
+
+<#--<#macro expectedChronicExposureSummaryTable2 item>-->
+<#--    <#compress>-->
+
+<#--        <table border="1">-->
+
+<#--            <col width="10%" />-->
+<#--            <col width="15%" />-->
+<#--            <col width="15%" />-->
+<#--            <col width="10%" />-->
+<#--            <col width="10%" />-->
+<#--            <col width="15%" />-->
+<#--            <col width="15%" />-->
+<#--            <col width="10%" />-->
+
+<#--            <thead align="center" valign="middle">-->
+<#--            <tr>-->
+<#--                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Type</emphasis></th>-->
+<#--                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Assumptions</emphasis></th>-->
+<#--                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Population / survey</emphasis></th>-->
+<#--                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Toxicological reference value (AD)</emphasis></th>-->
+<#--                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Total exposure</emphasis></th>-->
+<#--                <th colspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Contribution of commodities</emphasis></th>-->
+<#--            </tr>-->
+<#--            <tr>-->
+<#--                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Commodity</emphasis></th>-->
+<#--                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Population / survey</emphasis></th>-->
+<#--                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Exposure</emphasis></th>-->
+<#--            </tr>-->
+<#--            </thead>-->
+
+<#--            <tbody valign="middle">-->
+
+<#--            <#local usespan=true/>-->
+
+<#--            <#if !item.ContributionOfCommodities?has_content>-->
+<#--                <#local commodities=[{'Commodity':'','ChronicExposureFromThisCommodityAbsoluteValue':'',-->
+<#--                                        'ChronicExposureFromThisCommodityOfADI':'','PopulationSurvey':''}]/>-->
+<#--            <#else>-->
+<#--                <#local commodities=item.ContributionOfCommodities/>-->
+<#--            </#if>-->
+
+<#--            <#list commodities as comm>-->
+<#--                <tr>-->
+<#--                    <#if usespan>-->
+<#--                        <td rowspan="${commodities?size}"><@com.picklist item.TMDIOrIEDI/></td>-->
+<#--                        <td rowspan="${commodities?size}"><@com.text item.Assumptions/></td>-->
+<#--                        <td rowspan="${commodities?size}"><@com.quantity item.ToxicologicalReferenceValueADIConverted/></td>-->
+<#--                        <td rowspan="${commodities?size}">-->
+<#--                            <@com.quantity item.TotalExposureAbsoluteValue/>-->
+<#--                            <#if item.TotalExposureOfADI>-->
+<#--                                <#if item.TotalExposureAbsoluteValue?has_content>(</#if><@com.number item.TotalExposureOfADI/>% of ADI<#if item.TotalExposureAbsoluteValue?has_content>)</#if>-->
+<#--                            </#if>-->
+<#--                        </td>-->
+<#--                        <td rowspan="${commodities?size}"><@com.picklist item.PopulationSurvey/></td>-->
+
+<#--                        <#local usespan=false/>-->
+<#--                    </#if>-->
+
+<#--                    <td><@com.picklist comm.Commodity/></td>-->
+<#--                    <td><@com.picklist comm.PopulationSurvey/></td>-->
+<#--                    <td>-->
+<#--                        <@com.quantity comm.ChronicExposureFromThisCommodityAbsoluteValue/>-->
+<#--                        <#if comm.ChronicExposureFromThisCommodityOfADI?has_content>-->
+<#--                            <#if comm.ChronicExposureFromThisCommodityAbsoluteValue?has_content>(</#if><@com.number comm.ChronicExposureFromThisCommodityOfADI/>% of ADI<#if comm.ChronicExposureFromThisCommodityAbsoluteValue?has_content>)</#if>-->
+<#--                        </#if>-->
+<#--                    </td>-->
+<#--                </tr>-->
+<#--            </#list>-->
+<#--            </tbody>-->
+<#--        </table>-->
+
+<#--    </#compress>-->
+<#--</#macro>-->
+
+<#--<#macro expectedAcuteExposureSummaryTable item>-->
+<#--    <#compress>-->
+
+<#--        <table border="1">-->
+
+<#--            <col width="30%" />-->
+<#--            <col width="20%" />-->
+<#--            <col width="25%" />-->
+<#--            <col width="25%" />-->
+
+<#--            <thead align="center" valign="middle">-->
+<#--            <tr>-->
+<#--                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Assumptions</emphasis></th>-->
+<#--                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Toxicological reference value (ARfD)</emphasis></th>-->
+<#--                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Contribution of commodities</emphasis></th>-->
+<#--            </tr>-->
+<#--            <tr>-->
+<#--                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Commodity</emphasis></th>-->
+<#--                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Exposure</emphasis></th>-->
+<#--            </tr>-->
+<#--            </thead>-->
+
+<#--            <tbody valign="middle">-->
+
+
+<#--            <#local usespan=true/>-->
+
+<#--            <#if item.hasElement("ContributionOfCommodities")>-->
+<#--                <#local commPath=item.ContributionOfCommodities/>-->
+<#--            <#elseif item.hasElement("AcuteExposure")>-->
+<#--                <#local commPath=item.AcuteExposure/>-->
+<#--            </#if>-->
+
+<#--            <#if !commPath?has_content>-->
+<#--                <#local commodities=[{'Commodity':'','ExposureAbsoluteValue':'','ExposureOfARfD':''}]/>-->
+<#--            <#else>-->
+<#--                <#local commodities=item.AcuteExposure/>-->
+<#--            </#if>-->
+
+<#--            <#list commodities as comm>-->
+<#--                <tr>-->
+<#--                    <#if usespan>-->
+<#--                        <td rowspan="${commodities?size}"><@com.text item.Assumptions/></td>-->
+<#--                        <td rowspan="${commodities?size}"><@com.quantity item.ToxicologicalReferenceValueARfDConverted/></td>-->
+
+<#--                        <#local usespan=false/>-->
+<#--                    </#if>-->
+<#--                    <td><@com.picklist comm.Commodity/></td>-->
+<#--                    <td>-->
+<#--                        <@com.quantity comm.ExposureAbsoluteValue/>-->
+<#--                        <#if comm.ExposureOfARfD?has_content>-->
+<#--                            <#if comm.ExposureAbsoluteValue?has_content>(</#if><@com.number comm.ExposureOfARfD/>% of ARfD<#if comm.ExposureAbsoluteValue?has_content>)</#if>-->
+<#--                        </#if>-->
+<#--                    </td>-->
+<#--                </tr>-->
+<#--            </#list>-->
+<#--            </tbody>-->
+<#--        </table>-->
+<#--    </#compress>-->
+<#--</#macro>-->
+
+<#--<#macro expectedExposureCommodityContributionSummaryTable2 path>-->
+<#--    <#compress>-->
+<#--    &lt;#&ndash;        <table border="1">&ndash;&gt;-->
+<#--    &lt;#&ndash;            <thead align="center" valign="middle">&ndash;&gt;-->
+<#--    &lt;#&ndash;                <tr>&ndash;&gt;-->
+<#--    &lt;#&ndash;                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Commodity</emphasis></th>&ndash;&gt;-->
+<#--    &lt;#&ndash;                    <#if path[0].hasElement("PopulationSurvey")>&ndash;&gt;-->
+<#--    &lt;#&ndash;                        <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Population / survey</emphasis></th>&ndash;&gt;-->
+<#--    &lt;#&ndash;                    </#if>&ndash;&gt;-->
+<#--    &lt;#&ndash;                    <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Exposure</emphasis></th>&ndash;&gt;-->
+<#--    &lt;#&ndash;                </tr>&ndash;&gt;-->
+<#--    &lt;#&ndash;            </thead>&ndash;&gt;-->
+
+<#--    &lt;#&ndash;            <tbody valign="middle">&ndash;&gt;-->
+
+<#--        <#list path as comm>-->
+<#--            <tr>-->
+<#--                <td><@com.picklist comm.Commodity/></td>-->
+<#--                <#if comm.hasElement("PopulationSurvey")>-->
+<#--                    <td><@com.picklist comm.PopulationSurvey/></td>-->
+<#--                </#if>-->
+<#--                <td>-->
+<#--                    <#if comm.hasElement("ChronicExposureFromThisCommodityAbsoluteValue")>-->
+<#--                        <@com.quantity comm.ChronicExposureFromThisCommodityAbsoluteValue/>-->
+<#--                        <#if comm.ChronicExposureFromThisCommodityOfADI?has_content>-->
+<#--                            <#if comm.ChronicExposureFromThisCommodityAbsoluteValue?has_content>(</#if><@com.number comm.ChronicExposureFromThisCommodityOfADI/>% of ADI<#if comm.ChronicExposureFromThisCommodityAbsoluteValue?has_content>)</#if>-->
+<#--                        </#if>-->
+<#--                    <#elseif comm.hasElement("ExposureAbsoluteValue")>-->
+<#--                        <@com.quantity comm.ExposureAbsoluteValue/>-->
+<#--                        <#if comm.ExposureOfARfD?has_content>-->
+<#--                            <#if comm.ExposureAbsoluteValue?has_content>(</#if><@com.number comm.ExposureOfARfD/>% of ARfD<#if comm.ExposureAbsoluteValue?has_content>)</#if>-->
+<#--                        </#if>-->
+<#--                    </#if>-->
+<#--                </td>-->
+<#--            </tr>-->
+<#--        </#list>-->
+<#--    &lt;#&ndash;            </tbody>&ndash;&gt;-->
+<#--    &lt;#&ndash;        </table>&ndash;&gt;-->
+
+<#--    </#compress>-->
+<#--</#macro>-->
