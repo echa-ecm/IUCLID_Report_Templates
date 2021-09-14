@@ -5986,14 +5986,22 @@
 		<#list PercutaneousRepeatableBlock as blockItem>
 			<para role="indent">
 				<#if blockItem.Absorption?has_content>
-					<@com.range blockItem.Absorption/>(%) 
+					<@com.range blockItem.Absorption/>
+<#--					(%) -->
 				</#if>	
 				<#if blockItem.TimePoint?has_content>
 					at <@com.quantity blockItem.TimePoint/>
 				</#if>
 				<#if blockItem.Dose?has_content>
-					(<@com.text blockItem.Dose/>) 
-				</#if>	
+					<#if pppRelevant??>
+						for dose <@com.text blockItem.Dose/>
+						<#if blockItem.ConcentrateDilution?has_content>
+							(<@com.picklist blockItem.ConcentrateDilution/>)
+						<#else>
+							(<@com.text blockItem.Dose/>)
+						</#if>
+					</#if>
+				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
 					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
@@ -8662,16 +8670,12 @@
 		<#if study.ResultsAndDiscussion.ClinicalSigns?has_content>
 			<para>Clinical signs: </para>
 			<para role="indent">
-				<#if study.ResultsAndDiscussion.ClinicalSigns?node_type=="picklist_single">
-					<@com.picklist study.ResultsAndDiscussion.ClinicalSigns/>
-				<#else>
-					<@com.text study.ResultsAndDiscussion.ClinicalSigns/>
-				</#if>
+				<@com.value study.ResultsAndDiscussion.ClinicalSigns/>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.BodyWeight?has_content>
-			<para>Body weight: </para><para role="indent"><@com.text study.ResultsAndDiscussion.BodyWeight/></para>
+			<para>Body weight: </para><para role="indent"><@com.value study.ResultsAndDiscussion.BodyWeight/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.GrossPathology?has_content>
