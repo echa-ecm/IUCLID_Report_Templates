@@ -731,6 +731,8 @@
 			<@com.text valuePath/>
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
+		<#else>
+			value type ${valueType} not supported!
 		</#if>
 	</#compress>
 </#macro>
@@ -761,7 +763,6 @@
 		</#list>
 	</#compress>
 </#macro>
-
 
 <!--Function to get a list of all SUBSTANCE / MIXTURE components from the MixtureComposition records of a mixture.
 	The function is by default recursive: in case of MIXTURE components, it also checks its compositions. If recursivity
