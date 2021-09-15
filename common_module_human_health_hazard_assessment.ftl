@@ -9267,7 +9267,7 @@
 		<#--iterate over the children, but need the actual value of the text in IUCLID section-->
 		<para>
 			<#list study.ResultsAndDiscussion?children as child>
-				<#if child?node_name != "ResultsDetails" && child?has_content>
+				<#if child?node_type=="picklist_single">
 					<para>${livestockField2Text[child?node_name]}<@com.picklist child/></para>
 				</#if>
 			</#list>
