@@ -219,20 +219,7 @@
 				</#if>
 
 				<#-- Technical Spec-->
-				<#if summary.DescriptionOfKeyInformation.TechnicalSpecification?has_content>
-					<#local techSpec=iuclid.getDocumentForKey(summary.DescriptionOfKeyInformation.TechnicalSpecification)/>
-					<#if techSpec?has_content>
-						<para><emphasis role="bold">Technical specification: </emphasis>
-							<emphasis role="underline"><command linkend="${techSpec.documentKey.uuid!}">
-								<#if techSpec.GeneralInformation.Name?has_content>
-									<@com.text techSpec.GeneralInformation.Name/>
-								<#else>
-									<@com.text techSpec.name/>
-								</#if>
-							</command></emphasis>
-						</para>
-					</#if>
-				</#if>
+				<#local techSpec=iuclid.getDocumentForKey(summary.DescriptionOfKeyInformation.TechnicalSpecification)/>
 
 				<#--5-batch analysis-->
 				<#if summary.AdministrativeDataSummary.BatchAnalysis?has_content>
@@ -244,7 +231,26 @@
 							<para><emphasis role="underline">Batch analysis #${batchAn_index+1}</emphasis></para>
 						</#if>
 
-						<para role="small"><@batchAnalysisTable batchAn/></para>
+						<para role="small"><@batchAnalysisTable batchAn techSpec/></para>
+
+						<#if batchAn.Remarks?has_content>
+							<para>Remarks:</para>
+							<para role="indent"><@com.text batchAn.Remarks/></para>
+						</#if>
+
+						<#if batchAn.Reference?has_content>
+							<para>Reference:</para>
+							<#list batchAn.Reference as refKey>
+								<#local ref=iuclid.getDocumentForKey(refKey)/>
+
+								<para role="indent">
+									<@com.text ref.GeneralInfo.Name/><#if ref.GeneralInfo.LiteratureType?has_content> (<@com.picklist ref.GeneralInfo.LiteratureType/>)</#if>,
+									<@com.text ref.GeneralInfo.Author/>, <@com.number ref.GeneralInfo.ReferenceYear/><#if ref.GeneralInfo.ReportNo?has_content>,<@com.text ref.GeneralInfo.ReportNo/></#if>
+								</para>
+							</#list>
+							<para role="indent"><@com.text batchAn.Remarks/></para>
+						</#if>
+						<@com.emptyLine/>
 
 					</#list>
 				</#if>
@@ -262,39 +268,50 @@
 	</#compress>
 </#macro>
 
-<#macro batchAnalysisTable batchPath>
+<#macro batchAnalysisTable batchPath techSpec="">
 	<#compress>
 
-
+	<#--set variables-->
 	<#local nBatch=batchPath.SubstanceCompositionAnalysis?size/>
 	<#local batchCompHash={}/>
 	<#local compTypes=["Constituents", "Impurities", "Additives"]/>
+	<#local techSpecExists=techSpec?has_content/>
+	<#local from=1/>
 
+	<#--get list of batches and add techical specification if exists-->
+	<#local batchCompList=[]/>
+	<#if techSpecExists>
+		<#local batchCompList = batchCompList + [techSpec]/>
+		<#local from=0>
+	</#if>
 	<#list batchPath.SubstanceCompositionAnalysis as batch>
 		<#local batchComp=iuclid.getDocumentForKey(batch)/>
-		<#local batchNo>batch${batch_index+1}</#local>
+		<#local batchCompList = batchCompList + [batchComp]/>
+	</#list>
+
+	<#--iterate list-->
+	<#list batchCompList as batchComp>
+
+		<#local batchNo>batch${batchComp_index+from}</#local>
+
 		<#list compTypes as compType>
 			<#local batchCompPath='batchComp.'+compType+'.'+compType>
 			<#local batchCompPath=batchCompPath?eval/>
 			<#if batchCompPath?has_content>
 				<#list batchCompPath as comp>
-<#--			<#if batchComp.Constituents.Constituents?has_content>-->
-<#--				<#list batchComp.Constituents.Constituents as comp>-->
 					<#if comp.ReferenceSubstance?has_content>
 						<#local refSub=iuclid.getDocumentForKey(comp.ReferenceSubstance)/>
-
 						<#local refSubUuid=refSub.documentKey.uuid/>
 						<#local refSubName=refSub.ReferenceSubstanceName/>
-<#--						<#local refSubType>-->
-<#--							<#if compPath?contains("consti")>-->
-<#--							constituent-->
-<#--							<#elseif compPath?contains("add")>additive-->
-<#--							<#else>impurity-->
-<#--							</#if>-->
-<#--						</#local>-->
-<#--						<#local refSubFunction>-->
-<#--							<#if comp.hasElement('Function')><@com.picklist comp.Function/></#if>-->
-<#--						</#local>-->
+						<#local refSubType>
+							<#if compType?contains("Consti")>constituent
+							<#elseif compType?contains("Add")>additive
+							<#else>impurity
+							</#if>
+						</#local>
+						<#local refSubFunction>
+							<#if comp.hasElement('Function')><@com.picklist comp.Function/></#if>
+						</#local>
 						<#local conc><@com.range comp.ProportionTypical/></#local>
 						<#local concRange><@com.range comp.Concentration/></#local>
 
@@ -302,10 +319,23 @@
 
 						<#if batchCompHash?keys?seq_contains(refSubUuid)>
 							<#local refSubHashEntry = batchCompHash[refSubUuid] + {batchNo:batchHash}/>
+
+							<#if !batchCompHash[refSubUuid]['type']?seq_contains(refSubType)>
+								<#local refSubType = batchCompHash[refSubUuid]['type'] + [refSubType]/>
+								<#local refSubHashEntry = batchCompHash[refSubUuid] + {'type': refSubType}/>
+							</#if>
+							<#if refSubFunction?has_content && !batchCompHash[refSubUuid]['function']?seq_contains(refSubFunction)>
+								<#if batchCompHash[refSubUuid]['function']?join("")?has_content>
+									<#local refSubFunction = batchCompHash[refSubUuid]['function'] + [refSubFunction]/>
+								<#else>
+									<#local refSubFunction = [refSubFunction]/>
+								</#if>
+								<#local refSubHashEntry = batchCompHash[refSubUuid] + {'function': refSubFunction}/>
+							</#if>
 						<#else>
-							<#local refSubHashEntry = {'name': refSubName,
-<#--							'type': refSubType, 'function': refSubFunction, -->
-							batchNo:batchHash}/>
+							<#local refSubHashEntry = {'ref': refSub,
+								'type': [refSubType], 'function': [refSubFunction],
+								batchNo:batchHash}/>
 						</#if>
 
 						<#local refSubHash = { refSubUuid : refSubHashEntry}/>
@@ -322,25 +352,53 @@
 		<tbody>
 			<tr>
 				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Component</emphasis></th>
+				<#if techSpecExists>
+					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?>
+						<emphasis role="bold">
+							<command linkend="${batchCompList[0].documentKey.uuid!}">Technical specification
+<#--								<?linebreak?><@com.text batchCompList[0].GeneralInformation.Name/>-->
+							</command>
+						</emphasis>
+					</th>
+				</#if>
 				<th colspan="${nBatch}"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Batches</emphasis></th>
 			</tr>
 			<tr>
 				<#list 1..nBatch as i>
-					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">#{i}</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">#${i}: <@com.text batchCompList[i].GeneralInformation.Name/></emphasis></th>
 				</#list>
 			</tr>
 
 			<#list batchCompHash as refSubUuid, refSubData>
 				<tr>
-					<td>${refSubData['name']}</td>
+					<td>
+						<command linkend="${refSubUuid}"><@com.text refSubData['ref'].ReferenceSubstanceName/></command>
+						<#assign referenceSubstancesInformation = com.addDocumentToSequenceAsUnique(refSubData['ref'], referenceSubstancesInformation) />
+						<?linebreak?>
+						<#local refTypes=""/>
+						<#list refSubData['type'] as refType>
+							<#local refTypes = refTypes + refType/>
+							<#if refType?contains("additive")>
+							 	<#local refFunction=refSubData['function']?join(', ')/>
+							 	<#if refFunction?has_content>
+							 		<#local refTypes = refTypes + " (" + refFunction + ")"/>
+							 	</#if>
+							</#if>
+							<#if refType_has_next><#local refTypes = refTypes + ", "/></#if>
+						</#list>
+						${refTypes}
+					</td>
 
-					<#list 1..nBatch as i>
+					<#list from..nBatch as i>
 						<#local batchNo>batch${i}</#local>
 						<td>
 							<#if refSubData?keys?seq_contains(batchNo)>
-								${refSubData[batchNo]['conc']}
-								<?linebreak?>
-								${refSubData[batchNo]['range']}
+								<#if refSubData[batchNo]['conc']?has_content>
+									<para>${refSubData[batchNo]['conc']}</para>
+								</#if>
+								<#if refSubData[batchNo]['range']?has_content>
+									<para>[${refSubData[batchNo]['range']}]</para>
+								</#if>
 							</#if>
 						</td>
 					</#list>
@@ -349,8 +407,6 @@
 		</tbody>
 	</table>
 
-<#--		Add reference-->
-	<#--.Reference-->
 	</#compress>
 </#macro>
 
@@ -382,6 +438,7 @@
 
 	<#return batchCompositions/>
 </#function>
+
 
 
 <!-- Overall substance composition information -->
@@ -496,9 +553,11 @@
 
 <#assign referenceSubstancesInformation = [] />
 
-<#macro referenceSubstanceData referenceSubstanceKey >
+<#macro referenceSubstanceData referenceSubstanceKey>
 <#compress>
+
 	<#local refSubst = iuclid.getDocumentForKey(referenceSubstanceKey) />
+
 	<#if refSubst?has_content>
 		<#if pppRelevant??>
 			<command linkend="${refSubst.documentKey.uuid!}"><@com.text refSubst.ReferenceSubstanceName/></command>
