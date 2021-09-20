@@ -3124,29 +3124,32 @@
 <#macro fateMethod study>
 	<#compress>
 
-	<#--General-->
-		<#if study.hasElement("TestType") && study.MaterialsAndMethods.TestType?has_content>
+		<#--General-->
+		<#if study.MaterialsAndMethods.hasElement("TestType") && study.MaterialsAndMethods.TestType?has_content>
 			<para><emphasis role='bold'>Test type:</emphasis><@com.picklist study.MaterialsAndMethods.TestType/></para>
 		</#if>
 
-		<#if study.hasElement("TypeOfMeasurement") && study.MaterialsAndMethods.TypeOfMeasurement?has_content>
+		<#if study.MaterialsAndMethods.hasElement("TypeOfMeasurement") && study.MaterialsAndMethods.TypeOfMeasurement?has_content>
 			<para><emphasis role='bold'>Type of measurement:</emphasis><@com.value study.MaterialsAndMethods.TypeOfMeasurement/></para>
 		</#if>
 
-		<#if study.hasElement("TypeOfStudy") && study.MaterialsAndMethods.TypeOfStudy?has_content>
-			<para><emphasis role='bold'>Type of study:</emphasis><@com.picklist study.MaterialsAndMethods.TypeOfStudy/></para>
+		<#if study.MaterialsAndMethods.hasElement("TypeOfStudy") && study.MaterialsAndMethods.TypeOfStudy?has_content>
+			<para><emphasis role='bold'>Type of study: </emphasis><@com.picklist study.MaterialsAndMethods.TypeOfStudy/></para>
+		</#if>
+		<#if study.MaterialsAndMethods.hasElement("StudyType") && study.MaterialsAndMethods.StudyType?has_content>
+			<para><emphasis role='bold'>Study type: </emphasis><@com.picklist study.MaterialsAndMethods.StudyType/></para>
 		</#if>
 
-		<#if study.hasElement("TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
-			<para><emphasis role='bold'>Type of study / information:</emphasis><@com.text study.MaterialsAndMethods.TypeOfStudyInformation/></para>
+		<#if study.MaterialsAndMethods.hasElement("TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
+			<para><emphasis role='bold'>Type of study / information: </emphasis><@com.text study.MaterialsAndMethods.TypeOfStudyInformation/></para>
 		</#if>
 
-		<#if study.hasElement("MethodType") && study.MaterialsAndMethods.MethodType?has_content>
-			<para><emphasis role='bold'>Type of method:</emphasis><@com.picklist study.MaterialsAndMethods.MethodType/></para>
+		<#if study.MaterialsAndMethods.hasElement("MethodType") && study.MaterialsAndMethods.MethodType?has_content>
+			<para><emphasis role='bold'>Type of method: </emphasis><@com.picklist study.MaterialsAndMethods.MethodType/></para>
 		</#if>
 
-		<#if study.hasElement("Media") && study.MaterialsAndMethods.Media?has_content>
-			<para><emphasis role='bold'>Media:</emphasis><@com.value study.MaterialsAndMethods.Media/></para>
+		<#if study.MaterialsAndMethods.hasElement("Media") && study.MaterialsAndMethods.Media?has_content>
+			<para><emphasis role='bold'>Media: </emphasis><@com.value study.MaterialsAndMethods.Media/></para>
 		</#if>
 
 	<#--Study Design-->
@@ -3238,11 +3241,11 @@
 		<#local stdes=study.MaterialsAndMethods.StudyDesign/>
 
 		<#if stdes.hasElement("Radiolabelling") && stdes.Radiolabelling?has_content>
-			<para role="indent">Radiolabelling: <@com.picklist stdes.Radiolabelling/></para>
+			<para>Radiolabelling: <@com.picklist stdes.Radiolabelling/></para>
 		</#if>
 
 		<#if stdes.hasElement("EstimationMethodIfUsed") && stdes.EstimationMethodIfUsed?has_content>
-			<para role="indent">Estimation method: <@com.text stdes.EstimationMethodIfUsed/></para>
+			<para>Estimation method: <@com.text stdes.EstimationMethodIfUsed/></para>
 		</#if>
 
 		<#if (stdes.hasElement("AnalyticalMonitoring") && stdes.AnalyticalMonitoring?has_content) ||
