@@ -63,7 +63,7 @@
 	<#if study?has_content>
 
 		<#if pppRelevant??>
-			<para><emphasis role="bold">${study.name}</emphasis>:</para>
+			<para><emphasis role="bold"><@com.text study.name/></emphasis>:</para>
 			<para xml:id="${study.documentKey.uuid!}" role="indent"><emphasis role="bold">Information requirement: </emphasis>
 			 	<#if study.AdministrativeData.Endpoint?has_content>
 			 		<@com.picklist study.AdministrativeData.Endpoint/>
