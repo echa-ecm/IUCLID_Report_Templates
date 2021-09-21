@@ -295,7 +295,7 @@
 		<emphasis role="bold">Test material</emphasis>
 		<?linebreak?>
 		<#if !(study.MaterialsAndMethods.TestMaterials.TestMaterialInformation)?has_content && !(study.MaterialsAndMethods.TestMaterials.AdditionalTestMaterialInformation)?has_content>
-			Information not available in IUCLID
+			Information not provided in IUCLID
 			<#else>
 				<!-- main test material information -->
 				<@testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/>
