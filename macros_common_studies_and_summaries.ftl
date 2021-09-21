@@ -259,7 +259,7 @@
 
 		</#if>
 	<#else>
-		Information not available in IUCLID
+		
 	</#if>
 </#compress>
 </#macro>
@@ -294,7 +294,19 @@
 	<@com.emptyLine/>
 		<emphasis role="bold">Test material</emphasis>
 		<?linebreak?>
-		<@testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/>
+		<#if !(study.MaterialsAndMethods.TestMaterials.TestMaterialInformation)?has_content && !(study.MaterialsAndMethods.TestMaterials.AdditionalTestMaterialInformation)?has_content>
+			Information not available in IUCLID
+			<#else>
+				<!-- main test material information -->
+				<@testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/>
+				<!-- additional test material information -->
+				<#assign additionalTestMaterials = study.MaterialsAndMethods.TestMaterials.AdditionalTestMaterialInformation/>
+				<#list additionalTestMaterials as additionalTestMaterial>
+					<#if additionalTestMaterial?has_content>
+					<para><@testMaterialInformation additionalTestMaterial/></para>
+					</#if>
+				</#list>
+		</#if>
 	</para>
 	<para>
 	<@com.emptyLine/>
