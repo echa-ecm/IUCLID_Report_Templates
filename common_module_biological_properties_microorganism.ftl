@@ -132,12 +132,12 @@
         </#if>
     </#if>
 
-    <#if gen.InformationOnApplicationOfBiocidalProduct?has_content>
+    <#if gen.InformationOnApplicationOfProduct?has_content>
         <para><emphasis role="bold">Information on application of biocidal product:</emphasis></para>
-        <#if gen.InformationOnApplicationOfBiocidalProduct.MethodOfApplication?has_content>
-            <para>Method of application: <@com.picklistMultiple gen.InformationOnApplicationOfBiocidalProduct.MethodOfApplication/>
-                <#if gen.InformationOnApplicationOfBiocidalProduct.DetailsOnApplication?has_content>
-                    <span role="indent"><@com.text gen.InformationOnApplicationOfBiocidalProduct.DetailsOnApplication/></span>
+        <#if gen.InformationOnApplicationOfProduct.MethodOfApplication?has_content>
+            <para>Method of application: <@com.picklistMultiple gen.InformationOnApplicationOfProduct.MethodOfApplication/>
+                <#if gen.InformationOnApplicationOfProduct.DetailsOnApplication?has_content>
+                    <para role="indent"><@com.text gen.InformationOnApplicationOfProduct.DetailsOnApplication/></para>
                 </#if>
             </para>
         </#if>

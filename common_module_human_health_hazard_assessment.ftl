@@ -5986,14 +5986,22 @@
 		<#list PercutaneousRepeatableBlock as blockItem>
 			<para role="indent">
 				<#if blockItem.Absorption?has_content>
-					<@com.range blockItem.Absorption/>(%) 
+					<@com.range blockItem.Absorption/>
+<#--					(%) -->
 				</#if>	
 				<#if blockItem.TimePoint?has_content>
 					at <@com.quantity blockItem.TimePoint/>
 				</#if>
 				<#if blockItem.Dose?has_content>
-					(<@com.text blockItem.Dose/>) 
-				</#if>	
+					<#if pppRelevant??>
+						for dose <@com.text blockItem.Dose/>
+						<#if blockItem.ConcentrateDilution?has_content>
+							(<@com.picklist blockItem.ConcentrateDilution/>)
+						<#else>
+							(<@com.text blockItem.Dose/>)
+						</#if>
+					</#if>
+				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
 					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
@@ -6724,6 +6732,59 @@
   	</#if>
 </#compress>
 </#macro>
+
+<#macro resultsOfAssaysList block role='indent'>
+	<#compress>
+		<#if block?has_content>
+			<#list block as blockItem>
+				<para role="${role}">
+
+					<@com.picklist blockItem.MaterialDetected/>
+					<#if blockItem.Detected>detected<#else>NOT detected</#if>
+
+					<#if blockItem.SampleType?has_content>
+						in <@com.picklist blockItem.SampleType/>
+					</#if>
+
+					<#if blockItem.TimePoint?has_content>
+						at <@com.quantity blockItem.TimePoint/>
+					</#if>
+
+					<#if blockItem.Quantity?has_content>
+						: <@com.range blockItem.Quantity/>
+					</#if>
+
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+
+<#macro assaysList block role='indent'>
+	<#compress>
+		<#if block?has_content>
+			<#list block as blockItem>
+				<para role="${role}">
+
+					<@com.picklist blockItem.AssayType/>:
+					<#if blockItem.LinkAnalyticalMethod?has_content>
+						analytical method(s):
+						<#list blockItem.LinkAnalyticalMethod as anmethlink>
+							<#local anmeth = iuclid.getDocumentForKey(anmethlink)/>
+							<@com.text anmeth.name/>
+							<#if anmethlink_has_next>, </#if>
+						</#list>
+					</#if>
+					<#if blockItem.Remarks?has_content>
+						(<@com.text blockItem.Remarks/>)
+					</#if>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
 
 <#macro endpointSummary summary valueCsa="" valueForCsaText="" printName=false>
 	<para>
@@ -7664,7 +7725,7 @@
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("EndpointAddressed") && study.MaterialsAndMethods.EndpointAddressed?has_content>
-			<para><emphasis role='bold'>Endpoint adressed: </emphasis><@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/></para>
+			<para><emphasis role='bold'>Endpoint addressed: </emphasis><@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("MethodType") && study.MaterialsAndMethods.MethodType?has_content>
@@ -7834,6 +7895,17 @@
 			<para>Type of inhalation exposure: <@com.picklist admExp.TypeOfInhalationExposure/></para>
 		</#if>
 
+		<#--Cell culture conditions-->
+		<#if admExp.hasElement("CellCultures") && admExp.CellCultures?has_content>
+			<para>Cell culture: <@com.picklistMultiple admExp.CellCultures/></para>
+		</#if>
+		<#if admExp.hasElement("PlatingConditions") && admExp.PlatingConditions?has_content>
+			<para>Plating conditions: <@com.text admExp.PlatingConditions/></para>
+		</#if>
+		<#if admExp.hasElement("IncubationConditions") && admExp.IncubationConditions?has_content>
+			<para>Incubation conditions: <@com.text admExp.IncubationConditions/></para>
+		</#if>
+
 		<#--Vehicle-->
 		<#if admExp.hasElement("Vehicle") && admExp.Vehicle?has_content>
 			<para>Vehicle:
@@ -7928,8 +8000,13 @@
 			</#if>
 		</#if>
 
-		<#-- Animals -->
+		<#--Assays-->
+		<#if admExp.hasElement("Assays") && admExp.Assays?has_content>
+			<para>Assays:</para>
+			<@assaysList admExp.Assays/>
+		</#if>
 
+		<#-- Animals -->
 		<#if admExp.hasElement("NoOfAnimalsPerSexPerDose") && admExp.NoOfAnimalsPerSexPerDose?has_content>
 			<para>No. of animals per sex per dose / concentration:</para><para role="indent"><@com.text admExp.NoOfAnimalsPerSexPerDose/></para>
 		</#if>
@@ -7943,12 +8020,18 @@
 			<para>Control animals:</para><para role="indent"><@com.value admExp.ControlAnimal/></para>
 		<#elseif admExp.hasElement("ControlAnimals") && admExp.ControlAnimals?has_content>
 			<para>Control animals:</para><para role="indent"><@com.value admExp.ControlAnimals/></para>
+		<#elseif admExp.hasElement("Controls") && admExp.Controls?has_content>
+			<para>Controls:</para><para role="indent"><@com.text admExp.Controls/></para>
 		</#if>
 		<#if admExp.hasElement("PositiveControl") && admExp.PositiveControl?has_content>
 			<para>Positive control:</para><para role="indent"><@com.text admExp.PositiveControl/></para>
 		</#if>
 
 		<#-- Details-->
+		<#if admExp.hasElement("OtherTreatments") && admExp.OtherTreatments?has_content>
+			<para>Other treatments:</para><para role="indent"><@com.text admExp.OtherTreatments/></para>
+		</#if>
+
 		<#if admExp.hasElement("DetailsOnStudyDesign") && admExp.DetailsOnStudyDesign?has_content>
 			<para>Study design:</para><para role="indent"><@com.text admExp.DetailsOnStudyDesign/></para>
 		</#if>
@@ -8662,16 +8745,12 @@
 		<#if study.ResultsAndDiscussion.ClinicalSigns?has_content>
 			<para>Clinical signs: </para>
 			<para role="indent">
-				<#if study.ResultsAndDiscussion.ClinicalSigns?node_type=="picklist_single">
-					<@com.picklist study.ResultsAndDiscussion.ClinicalSigns/>
-				<#else>
-					<@com.text study.ResultsAndDiscussion.ClinicalSigns/>
-				</#if>
+				<@com.value study.ResultsAndDiscussion.ClinicalSigns/>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.BodyWeight?has_content>
-			<para>Body weight: </para><para role="indent"><@com.text study.ResultsAndDiscussion.BodyWeight/></para>
+			<para>Body weight: </para><para role="indent"><@com.value study.ResultsAndDiscussion.BodyWeight/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.GrossPathology?has_content>
@@ -9188,7 +9267,7 @@
 		<#--iterate over the children, but need the actual value of the text in IUCLID section-->
 		<para>
 			<#list study.ResultsAndDiscussion?children as child>
-				<#if child?node_name != "ResultsDetails" && child?has_content>
+				<#if child?node_type=="picklist_single">
 					<para>${livestockField2Text[child?node_name]}<@com.picklist child/></para>
 				</#if>
 			</#list>
@@ -9306,6 +9385,29 @@
 				<para role="indent"><@com.text study.ResultsAndDiscussion.ConversionFactor/>.</para>
 			</para>
 		</#if>
+	</#compress>
+</#macro>
+
+<#macro results_cellCulture study>
+	<#compress>
+		<#if study.ResultsAndDiscussion.CytopathicEffects?has_content>
+			<para>Cytopathic effects: <@com.picklist study.ResultsAndDiscussion.CytopathicEffects/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.TCID50?has_content>
+			<para>TCID50:<@com.quantity study.ResultsAndDiscussion.TCID50/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.ResultsOfAssays?has_content>
+			<para>Results of assays:</para>
+			<para><@resultsOfAssaysList study.ResultsAndDiscussion.ResultsOfAssays/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.Statistics?has_content>
+			<para>Statistics: <para role="indent"><@com.text study.ResultsAndDiscussion.Statistics/></para></para>
+		</#if>
+
+
 	</#compress>
 </#macro>
 

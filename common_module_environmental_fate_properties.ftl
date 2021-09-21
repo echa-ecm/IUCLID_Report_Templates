@@ -3124,29 +3124,32 @@
 <#macro fateMethod study>
 	<#compress>
 
-	<#--General-->
-		<#if study.hasElement("TestType") && study.MaterialsAndMethods.TestType?has_content>
+		<#--General-->
+		<#if study.MaterialsAndMethods.hasElement("TestType") && study.MaterialsAndMethods.TestType?has_content>
 			<para><emphasis role='bold'>Test type:</emphasis><@com.picklist study.MaterialsAndMethods.TestType/></para>
 		</#if>
 
-		<#if study.hasElement("TypeOfMeasurement") && study.MaterialsAndMethods.TypeOfMeasurement?has_content>
+		<#if study.MaterialsAndMethods.hasElement("TypeOfMeasurement") && study.MaterialsAndMethods.TypeOfMeasurement?has_content>
 			<para><emphasis role='bold'>Type of measurement:</emphasis><@com.value study.MaterialsAndMethods.TypeOfMeasurement/></para>
 		</#if>
 
-		<#if study.hasElement("TypeOfStudy") && study.MaterialsAndMethods.TypeOfStudy?has_content>
-			<para><emphasis role='bold'>Type of study:</emphasis><@com.picklist study.MaterialsAndMethods.TypeOfStudy/></para>
+		<#if study.MaterialsAndMethods.hasElement("TypeOfStudy") && study.MaterialsAndMethods.TypeOfStudy?has_content>
+			<para><emphasis role='bold'>Type of study: </emphasis><@com.picklist study.MaterialsAndMethods.TypeOfStudy/></para>
+		</#if>
+		<#if study.MaterialsAndMethods.hasElement("StudyType") && study.MaterialsAndMethods.StudyType?has_content>
+			<para><emphasis role='bold'>Study type: </emphasis><@com.picklist study.MaterialsAndMethods.StudyType/></para>
 		</#if>
 
-		<#if study.hasElement("TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
-			<para><emphasis role='bold'>Type of study / information:</emphasis><@com.text study.MaterialsAndMethods.TypeOfStudyInformation/></para>
+		<#if study.MaterialsAndMethods.hasElement("TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
+			<para><emphasis role='bold'>Type of study / information: </emphasis><@com.text study.MaterialsAndMethods.TypeOfStudyInformation/></para>
 		</#if>
 
-		<#if study.hasElement("MethodType") && study.MaterialsAndMethods.MethodType?has_content>
-			<para><emphasis role='bold'>Type of method:</emphasis><@com.picklist study.MaterialsAndMethods.MethodType/></para>
+		<#if study.MaterialsAndMethods.hasElement("MethodType") && study.MaterialsAndMethods.MethodType?has_content>
+			<para><emphasis role='bold'>Type of method: </emphasis><@com.picklist study.MaterialsAndMethods.MethodType/></para>
 		</#if>
 
-		<#if study.hasElement("Media") && study.MaterialsAndMethods.Media?has_content>
-			<para><emphasis role='bold'>Media:</emphasis><@com.value study.MaterialsAndMethods.Media/></para>
+		<#if study.MaterialsAndMethods.hasElement("Media") && study.MaterialsAndMethods.Media?has_content>
+			<para><emphasis role='bold'>Media: </emphasis><@com.value study.MaterialsAndMethods.Media/></para>
 		</#if>
 
 	<#--Study Design-->
@@ -3238,11 +3241,11 @@
 		<#local stdes=study.MaterialsAndMethods.StudyDesign/>
 
 		<#if stdes.hasElement("Radiolabelling") && stdes.Radiolabelling?has_content>
-			<para role="indent">Radiolabelling: <@com.picklist stdes.Radiolabelling/></para>
+			<para>Radiolabelling: <@com.picklist stdes.Radiolabelling/></para>
 		</#if>
 
 		<#if stdes.hasElement("EstimationMethodIfUsed") && stdes.EstimationMethodIfUsed?has_content>
-			<para role="indent">Estimation method: <@com.text stdes.EstimationMethodIfUsed/></para>
+			<para>Estimation method: <@com.text stdes.EstimationMethodIfUsed/></para>
 		</#if>
 
 		<#if (stdes.hasElement("AnalyticalMonitoring") && stdes.AnalyticalMonitoring?has_content) ||
@@ -3807,7 +3810,7 @@
 							(<@com.text item.MeasuredIn/>)
 						</#if>
 					</td>
-					<#if item.hasElement("SoilMoisture")><td><#if item.SoilMoisture?has_content><@com.number item.SoilMoisture/>%</#if></td></#if>
+					<#if item.hasElement("SoilMoisture")><td><#if item.SoilMoisture?has_content><@com.quantity item.SoilMoisture/></#if></td></#if>
 					<td><#if item.hasElement("Temperature")><@com.quantity item.Temperature/><#elseif item.hasElement("Teperature")><@com.quantity item.Teperature/></#if></td>
 					<td>
 						<#if item.hasElement("HalfLifeFreshWater")>
@@ -4198,11 +4201,11 @@
 	</#compress>
 </#macro>
 
-<#macro estConcSummary _subject docSubType>
+<#macro estConcSummary subject docSubType>
 	<#compress>
 
 		<#-- Get doc-->
-		<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+		<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
 
 
 		<#-- Iterate-->
@@ -4300,8 +4303,8 @@
 
 		<table border="1">
 
-			<col width="25%" />
-			<col width="21%" />
+			<col width="23%" />
+			<col width="23%" />
 			<col width="22%" />
 			<col width="22%" />
 			<col width="10%" />
@@ -4309,8 +4312,8 @@
 
 			<thead align="center" valign="middle">
 			<tr>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Route of exposure</emphasis></th>
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Method of calculation</emphasis></th>
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">PEC</emphasis></th>
@@ -4321,14 +4324,6 @@
 			<#list path as item>
 				<tr>
 					<td>
-						<#list item.UseDescription as gaplink>
-							<#if gaplink?has_content>
-								<#local gap=iuclid.getDocumentForKey(gaplink)/>
-								<para><@com.text gap.name/></para>
-							</#if>
-						</#list>
-					</td>
-					<td>
 						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 						<#if substance?has_content>
 							<@com.text substance.ChemicalName/>
@@ -4336,6 +4331,14 @@
 						<#if item.ParentMetabolite?has_content>
 							(<@com.picklist item.ParentMetabolite/>)
 						</#if>
+					</td>
+					<td>
+						<#list item.UseDescription as gaplink>
+							<#if gaplink?has_content>
+								<#local gap=iuclid.getDocumentForKey(gaplink)/>
+								<para><@com.text gap.name/></para>
+							</#if>
+						</#list>
 					</td>
 					<td><@com.text item.RouteOfExposure/></td>
 					<td><@com.text item.MethodOfCalculation/></td>
@@ -4354,19 +4357,21 @@
 
 		<table border="1">
 
+			<col width="18%" />
 			<col width="20%" />
-			<col width="20%" />
-			<col width="20%" />
-			<col width="20%" />
-			<col width="20%" />
+			<col width="15%" />
+			<col width="16%" />
+			<col width="16%" />
+			<col width="15%" />
 
 
 			<thead align="center" valign="middle">
 			<tr>
-				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
 				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
 				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Timing</emphasis></th>
 				<th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Application</emphasis></th>
+				<th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
 			</tr>
 			<tr>
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Single</emphasis></th>
@@ -4378,14 +4383,6 @@
 			<#list path as item>
 				<tr>
 					<td>
-						<#list item.UseDescription as gaplink>
-							<#if gaplink?has_content>
-								<#local gap=iuclid.getDocumentForKey(gaplink)/>
-								<para><@com.text gap.name/></para>
-							</#if>
-						</#list>
-					</td>
-					<td>
 						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 						<#if substance?has_content>
 							<@com.text substance.ReferenceSubstanceName/>
@@ -4393,6 +4390,14 @@
 						<#if item.ParentMetabolite?has_content>
 							(<@com.picklist item.ParentMetabolite/>)
 						</#if>
+					</td>
+					<td>
+						<#list item.UseDescription as gaplink>
+							<#if gaplink?has_content>
+								<#local gap=iuclid.getDocumentForKey(gaplink)/>
+								<para><@com.text gap.name/></para>
+							</#if>
+						</#list>
 					</td>
 					<td><@com.picklist item.Timing/></td>
 					<td>
@@ -4402,6 +4407,9 @@
 					<td>
 						<para><#if item.MultipleApplicationActual?has_content><@com.range item.MultipleApplicationActual/> (actual)</#if></para>
 						<para><#if item.MultipleApplicationTimeWa?has_content><@com.range item.MultipleApplicationTimeWa/> (time weighted average)</#if></para>
+					</td>
+					<td>
+						<@com.text item.Remarks/>
 					</td>
 				</tr>
 			</#list>
@@ -4417,35 +4425,28 @@
 
 	<table border="1">
 
-		<col width="20%" />
-		<col width="20%" />
-		<col width="15%" />
-		<col width="15%" />
-		<col width="15%" />
-		<col width="15%" />
+		<col width="18%" />
+		<col width="17%" />
+		<col width="13%" />
+		<col width="13%" />
+		<col width="13%" />
+		<col width="13%" />
+		<col width="13%" />
 
 		<thead align="center" valign="middle">
 		<tr>
-			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
 			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
 			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Tier</emphasis></th>
 			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Model</emphasis></th>
 			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Scenario</emphasis></th>
 			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">PEC</emphasis></th>
-
+			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
 		</tr>
 		</thead>
 		<tbody valign="middle">
 		<#list path as item>
 			<tr>
-				<td>
-					<#list item.UseDescription as gaplink>
-						<#if gaplink?has_content>
-							<#local gap=iuclid.getDocumentForKey(gaplink)/>
-							<para><@com.text gap.name/></para>
-						</#if>
-					</#list>
-				</td>
 				<td>
 					<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 					<#if substance?has_content>
@@ -4455,10 +4456,19 @@
 						(<@com.picklist item.ParentMetabolite/>)
 					</#if>
 				</td>
+				<td>
+					<#list item.UseDescription as gaplink>
+						<#if gaplink?has_content>
+							<#local gap=iuclid.getDocumentForKey(gaplink)/>
+							<para><@com.text gap.name/></para>
+						</#if>
+					</#list>
+				</td>
 				<td><@com.text item.Tier/></td>
 				<td><@com.picklist item.Model/></td>
 				<td><@com.picklist item.Scenario/></td>
 				<td><@com.range item.Pecgw/></td>
+				<td><@com.text item.Remarks/></td>
 			</tr>
 		</#list>
 		</tbody>
@@ -4482,8 +4492,8 @@
 
 			<thead align="center" valign="middle">
 			<tr>
-				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
-				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?>Substance<emphasis role="bold"></emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?>Uses<emphasis role="bold"></emphasis></th>
 				<#if path[0].hasElement("Step")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Step</emphasis></th></#if>
 				<#if path[0].hasElement("FocusScenario")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Focus scenario</emphasis></th></#if>
 				<#if path[0].hasElement("DominantRouteOfEntry")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Dominant route entry</emphasis></th></#if>
@@ -4504,14 +4514,6 @@
 			<#list path as item>
 				<tr>
 					<td>
-						<#list item.UseDescription as gaplink>
-							<#if gaplink?has_content>
-								<#local gap=iuclid.getDocumentForKey(gaplink)/>
-								<para><@com.text gap.name/></para>
-							</#if>
-						</#list>
-					</td>
-					<td>
 						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 						<#if substance?has_content>
 							<@com.text substance.ChemicalName/>
@@ -4519,6 +4521,14 @@
 						<#if item.ParentMetabolite?has_content>
 							(<@com.picklist item.ParentMetabolite/>)
 						</#if>
+					</td>
+					<td>
+						<#list item.UseDescription as gaplink>
+							<#if gaplink?has_content>
+								<#local gap=iuclid.getDocumentForKey(gaplink)/>
+								<para><@com.text gap.name/></para>
+							</#if>
+						</#list>
 					</td>
 					<#if path[0].hasElement("Step")><td><@com.picklist item.Step/></td></#if>
 					<#if path[0].hasElement("DayAfterOverallMaximum")><td><@com.quantity item.DayAfterOverallMaximum/></td></#if>
