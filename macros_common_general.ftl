@@ -733,7 +733,11 @@
 			<@com.richText valuePath/>
 		<#elseif valueType?contains("multilingual_text")>
 			<@com.text valuePath/>
-		<#--multilingual_text_medium; multilingual_text_large-->
+    
+		<#elseif valueType=="date">
+			<@com.text valuePath/>
+		<#else>
+			value type ${valueType} not supported!
 		</#if>
 	</#compress>
 </#macro>
@@ -743,13 +747,21 @@
 	<#compress>
 		<#list path?children as child>
 			<#if child?node_type!="repeatable" && child?node_type!="block" && !(exclude?seq_contains(child?node_name)) && child?has_content>
-				<#assign childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+				<#local childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+				<#local childType=child?node_type/>
+				<#local childValue><@value child/></#local>
 
 				<para role="${role1}">
 					<#if titleEmphasis><emphasis role="bold"></#if>
 						${childName}:
-					<#if titleEmphasis></emphasis></#if>
-					<span role="${role2}"><@value child/></span>
+						<#--<@iuclid.label for=child var="fieldLabel"/>:-->
+						<#if titleEmphasis></emphasis></#if>
+
+					<#if (childValue?length > 75)>
+						<para role="${role2}">${childValue}</para>
+					<#else>
+						${childValue}
+					</#if>
 				</para>
 
 			</#if>
