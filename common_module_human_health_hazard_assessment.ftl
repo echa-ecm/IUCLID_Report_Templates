@@ -7265,7 +7265,7 @@
 	<#assign skinIrritation = getSortedSkinIrritationNonHumanStudy(study, ["skin irritation: in vitro / ex vivo", "skin irritation: in vivo", "skin irritation / corrosion, other"] ) />
 	<#assign skinCorrosion = getSortedSkinCorrosionNonHumanStudy(study, ["skin corrosion: in vitro / ex vivo", "skin irritation / corrosion.*"]) />
 
-	<#if csrRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
+	<#if csrRelevant?? || svhcRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
 
 	<#--	NOTE: PPP: interim solution - to be changed-->
 	<#if !pppRelevant??>

@@ -29,9 +29,24 @@
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
-	'relevant' : 'generic'
+	'relevant' : 'svhc'
 	
 } />
+
+
+<#macro initiateRelevanceSVHC relevance>
+	
+	<#global svhcRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign svhcRelevant>
+				<#if prop=="svhc">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
 
 <#macro initiateRelevanceNZ relevance>
 	
