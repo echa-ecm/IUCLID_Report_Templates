@@ -1234,19 +1234,19 @@
 				<#local sd=study.MaterialsAndMethods.StudyDesign/>
 
 				<#if sd.hasElement("ContactWith") && sd.ContactWith?has_content>
-					<span role="indent">Contact with <@com.picklist sd.ContactWith/></span>
+					<para role="indent">Contact with <@com.picklist sd.ContactWith/></para>
 				</#if>
 				<#if sd.hasElement("DurationOfTest") && sd.DurationOfTest?has_content>
-					<span role="indent">Duration: <@com.range sd.DurationOfTest/></span>
+					<para role="indent">Duration: <@com.range sd.DurationOfTest/></para>
 				</#if>
 				<#if sd.hasElement("AnalyticalMethod") && sd.AnalyticalMethod?has_content>
-					<span role="indent">Analytical method: <@com.picklistMultiple sd.AnalyticalMethod/></span>
+					<para role="indent">Analytical method: <@com.picklistMultiple sd.AnalyticalMethod/></para>
 				</#if>
 				<#if sd.hasElement("ContainerMaterial") && sd.ContainerMaterial?has_content>
-					<span role="indent"><@com.picklist sd.ContainerMaterial/></span>
+					<para role="indent"><@com.picklist sd.ContainerMaterial/></para>
 				</#if>
 				<#if sd.hasElement("DetailsOnMethods") && sd.DetailsOnMethods?has_content>
-					<span role="indent"><@com.text sd.DetailsOnMethods/></span>
+					<para role="indent"><@com.text sd.DetailsOnMethods/></para>
 				</#if>
 			</para>
 		</#if>
@@ -1272,8 +1272,6 @@
 	<#compress>
 		<#if analyticalDeterminationRepeatableBlock?has_content>
 			<#list analyticalDeterminationRepeatableBlock as blockItem>
-				<#if blockItem.PurposeOfAnalysis?has_content || blockItem.AnalysisType?has_content || blockItem.TypeOfInformationProvided?has_content || blockItem.AttachedMethodsResults?has_content ||
-				blockItem.RationaleForNoResults?has_content || blockItem.Justification?has_content || blockItem.Remarks?has_content>
 					<para role="indent">
 						<#if blockItem.PurposeOfAnalysis?has_content>
 							Purpose of analysis: <@com.picklist blockItem.PurposeOfAnalysis/>.
@@ -1294,13 +1292,12 @@
 							Rationale for no results : <@com.picklist blockItem.RationaleForNoResults/>.
 						</#if>
 						<#if blockItem.Justification?has_content>
-							Justification : <@com.picklist blockItem.Justification/>.
+							Justification : <@com.text blockItem.Justification/>.
 						</#if>
 						<#if blockItem.Remarks?has_content>
-							(<@com.picklist blockItem.Remarks/>)
+							(<@com.text blockItem.Remarks/>)
 						</#if>
 					</para>
-				</#if>
 			</#list>
 		</#if>
 	</#compress>
@@ -1959,24 +1956,61 @@
 	</#compress>
 </#macro>
 
-<#--3. Macro for Spectra - it's a flexible record and not an endpoint summary. Has a totally differnt layout than appendixE-->
-<#macro opticalStudies _subject>
+<#--3. Macro for Spectra - it's a flexible record and not an endpoint summary. Has a totally different layout than appendixE-->
+<#macro opticalStudies subject>
 	<#compress>
-		<#local studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "AnalyticalInformation") />
 
-	<#-- Study results-->
-		<@com.emptyLine/>
+		<#local studyList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_RECORD", "AnalyticalInformation") />
 
-		<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Studies</emphasis></para>
+		<#-- add metabolites-->
+		<#if _metabolites?? && _metabolites?has_content>
+
+			<#local entityList = []/>
+			<#list studyList as study>
+				<#local entityList = entityList + [subject.ChemicalName]/>
+			</#list>
+
+			<#list _metabolites as metab>
+				<#local metabStudyList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_RECORD", "AnalyticalInformation") />
+				<#if metabStudyList?has_content>
+					<#local studyList = studyList + metabStudyList>
+					<#list metabStudyList as metabStudy>
+						<#local entityList = entityList + [metab.ChemicalName]/>
+					</#list>
+				</#if>
+			</#list>
+		</#if>
+
+		<#-- Study results-->
 		<@com.emptyLine/>
+		<para><emphasis role="HEAD-WoutNo">Studies</emphasis></para>
 
 		<#if !studyList?has_content>
-			No relevant information available.
+			<para>No relevant studies for spectra, molar extinction and/or optical purity available.</para>
 		<#else>
-			${studyList?size} individual <#if studyList?size==1>study<#else>studies</#if> for spectra, molar extinction and/or optical purity <#if studyList?size==1>is<#else>are</#if> summarised below:
+			<para>${studyList?size} individual <#if studyList?size==1>study<#else>studies</#if> for spectra, molar extinction and/or optical purity <#if studyList?size==1>is<#else>are</#if> summarised below:
+			<#if _metabolites?? && _metabolites?has_content>
+				<#list entityList as entity>
+					<#if entityList?seq_index_of(entity) == entity_index>
+						<#local filtEntityList = entityList?filter(x -> x == entity)/>
+						<para role="indent">-
+							${filtEntityList?size} for
+							<#if entity!=subject.ChemicalName>metabolite ${entity}<#else>active substance</#if>
+						</para>
+					</#if>
+				</#list>
+			</#if>
+			</para>
 			<@com.emptyLine/>
 
 			<#list studyList as study>
+
+				<#if _metabolites?? && _metabolites?has_content &&
+					 subject.ChemicalName!=entityList[study_index] &&
+				     entityList?seq_index_of(entityList[study_index]) == study_index>
+					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[study_index]}</emphasis> -----</emphasis></para>
+				</#if>
+
 				<sect4 xml:id="${study.documentKey.uuid!}" label="/${study_index+1}"><title  role="HEAD-5" >${study.name}</title>
 
 					<para><emphasis role="HEAD-WoutNo">Methods and results of analysis</emphasis></para>
@@ -1999,6 +2033,9 @@
 						<para role="indent"><@com.text study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks/></para>
 					</#if>
 				</sect4>
+
+				<@com.emptyLine/>
+
 			</#list>
 		</#if>
 

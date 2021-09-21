@@ -3,17 +3,30 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+# specific path build
 trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - IUCLID_Report_Templates/* # same as '/' for the repository root
+    exclude:
+    - README.md/*
+
+pr:
 - main
+- releases/*
+
+steps:
+- checkout: self  # self represents the repo where the initial Pipelines YAML file was found
+  clean: true  # whether to fetch clean each time
+  fetchDepth: 1  # the depth of commits to ask Git to fetch
+  lfs: false  # whether to download Git-LFS files
+  submodules: true | recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules
+  path: C:\agent\_work\1\s\echa-ecm\IUCLID_Report_Templates  # path to check out source code, relative to the agent's build directory (e.g. \_work\1)
+  persistCredentials: true  # set to 'true' to leave the OAuth token in the Git config after the initial fetch
 
 pool:
   vmImage: ubuntu-latest
-
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  job: Windows
