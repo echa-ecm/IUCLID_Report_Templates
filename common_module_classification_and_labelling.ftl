@@ -1,4 +1,3 @@
-
 <!-- Classification and labelling information -->
 <#macro classificationAndLabellingTable _subject>
 <#compress>
@@ -12,16 +11,23 @@
 		<@com.emptyLine/>
 		<#list recordList as record>			
 			
-			<#if csrRelevant??>
+			<#if csrRelevant?? || pppRelevant??>
 				<para>
 					<@com.emptyLine/>
-					<emphasis role="bold"><emphasis role="underline">Substance: <@classificationSubstanceName record _subject/></emphasis></emphasis>
+
+					<emphasis role="bold"><emphasis role="underline"><#if pppRelevant?? && (recordList?size>1)>#${record_index+1} - </#if>Substance: <@classificationSubstanceName record _subject/></emphasis></emphasis>
 				</para>
 				
 				<para>
 					<emphasis role="bold">Implementation:</emphasis> <@com.picklist record.GeneralInformation.Implementation/>
 				</para>
-				
+
+				<#if pppRelevant?? && record.GeneralInformation.TypeClassification?has_content>
+					<para>
+						<emphasis role="bold">Type of classification:</emphasis> <@com.picklist record.GeneralInformation.TypeClassification/>
+					</para>
+				</#if>
+
 				<#if record.GeneralInformation.Remarks?has_content>
 					<para>
 						<emphasis role="bold">Remarks:</emphasis> <@com.richText record.GeneralInformation.Remarks/>
@@ -30,39 +36,73 @@
 				
 				<#if record.GeneralInformation.RelatedCompositions.Composition?has_content>
 					<para>
-						<emphasis role="underline">Related composition: <@com.documentReferenceMultiple record.GeneralInformation.RelatedCompositions.Composition/></emphasis>
+						<#if pppRelevant??>
+							<emphasis role="bold">Related composition: </emphasis><emphasis role="underline"><@com.documentReferenceMultiple record.GeneralInformation.RelatedCompositions.Composition/></emphasis>
+						<#else>
+							<emphasis role="underline">Related composition: <@com.documentReferenceMultiple record.GeneralInformation.RelatedCompositions.Composition/></emphasis>
+						</#if>
 					</para>
 				</#if>
+
+				<#--NOTE: is this elseif correct? csfRelevant is repeated here...-->
+			<#elseif csrRelevant?? || genericRelevant??>
 				
-				<#elseif csrRelevant?? || genericRelevant??>
-				
-					<#if record.GeneralInformation.NotClassified>
-						<para>					
-							The substance is not classified
-						</para>
-					<#else/>
-						<para>
-							The substance is classified as follows: 
-						</para>
+				<#if record.GeneralInformation.NotClassified>
+					<para>
+						The substance is not classified
+					</para>
+				<#else/>
+					<#if !nzEPArelevant??>
+					<para>
+						The substance is classified as follows:
+					</para>
 					</#if>
-					
-			</#if>		
+				</#if>
+			</#if>
+
+			<#if pppRelevant??>
+
+				<#if record.GeneralInformation.NotClassified>
+					<para>
+						The substance is not classified
+					</para>
+				<#else>
+					<para><emphasis role="bold">Classification</emphasis></para>
+					<para>The substance is classified as follows:</para>
+				</#if>
+			</#if>
 	
 		<@com.emptyLine/>
-		<table border="1">
-			<title>Classification and labelling according to CLP / GHS for physicochemical properties</title>
-			<col width="20%" />
-			<col width="25%" />
-			<col width="30%" />
-			<col width="25%" />
-			<tbody>
+		<table border="1">			
+			<#if nzEPArelevant??>
+				<title>Classification according to GHS for physicochemical properties</title>
+        <col width="20%" />
+        <col width="25%" />
+        <col width="30%" />	  				  
+			<#else>
+				<title>Classification and labelling according to CLP / GHS for physicochemical properties</title>
+        <col width="20%" />
+        <col width="25%" />
+        <col width="30%" />
+        <col width="25%" />
+    	</#if>
+      
+			<tbody valign="middle">
+			<#if nzEPArelevant??>
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
+				</tr>
+			<#else>
 				<tr>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Reason for no classification</emphasis></th>
 				</tr>
-				
+			</#if>
+			
 				<#assign classToBlockMap = {
 					"Explosives:" : record.Classification.PhysicalHazards.Explosives,
 					"Desensitised explosives:" : record.Classification.PhysicalHazards.DesensitizedExplosives,
@@ -87,7 +127,24 @@
 				
 				<#list hazardClasses as hazardClass>
 					<#assign block = classToBlockMap[hazardClass] />
-					
+				<#if nzEPArelevant??>
+					<#if isNotEmptyClassificationBlockNZEPA(block)>
+						<tr>
+							<!-- Hazard class -->
+							<td>
+								${hazardClass!}
+							</td>
+							<!-- Hazard category -->
+							<td>
+								<@com.picklist block.HazardCategory/>
+							</td>
+							<!-- Hazard statement -->
+							<td>
+								<@com.picklist block.HazardStatement/>
+							</td>
+						</tr>
+					</#if>
+				<#else>	
 					<#if isNotEmptyClassificationBlock(block)>
 						<tr>
 							<!-- Hazard class -->
@@ -108,24 +165,40 @@
 							</td>
 						</tr>
 					</#if>
+				</#if>
 				</#list>
 			</tbody>
 		</table>
 				
 		<@com.emptyLine/>
 		<table border="1">
+		<#if nzEPArelevant??>
+			<title>Classification according to GHS for health hazards</title>
+			<col width="20%" />
+			<col width="25%" />
+			<col width="30%" />
+		<#else>			
 			<title>Classification and labelling according to CLP / GHS for health hazards</title>
 			<col width="20%" />
 			<col width="25%" />
 			<col width="30%" />
 			<col width="25%" />
+		</#if>		  
 			<tbody>
+			<#if nzEPArelevant??>
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
+				</tr>
+			<#else>
 				<tr>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Reason for no classification</emphasis></th>
 				</tr>
+			</#if>
 				
 				<#assign classToBlockMap = {
 					"Acute toxicity - oral:" : record.Classification.HealthHazards.AcuteToxicityOral,
@@ -145,6 +218,34 @@
 				
 				<#list hazardClasses as hazardClass>
 					<#assign block = classToBlockMap[hazardClass] />
+				<#if nzEPArelevant??>
+					<#if isNotEmptyClassificationBlockNZEPA(block)>
+						<tr>
+							<!-- Hazard class -->
+							<td>
+								${hazardClass!}
+							</td>
+							<!-- Hazard category -->
+							<td>
+								<@com.picklist block.HazardCategory/>
+								<#if block.hasElement("SpecificEffect") && block.SpecificEffect?has_content>
+									<para>
+										Specific effect: <@com.text block.SpecificEffect/>
+									</para>
+								</#if>
+								<#if block.hasElement("RouteExposure") && block.RouteExposure?has_content>
+									<para>
+										Route of exposure: <@com.picklistMultiple block.RouteExposure/>
+									</para>
+								</#if>
+							</td>
+							<!-- Hazard statement -->
+							<td>
+								<@com.picklist block.HazardStatement/>
+							</td>
+						</tr>
+					</#if>
+				<#else>	 
 					<#if isNotEmptyClassificationBlock(block)>
 						<tr>
 							<!-- Hazard class -->
@@ -175,6 +276,7 @@
 							</td>
 						</tr>
 					</#if>
+				</#if>
 				</#list>
 				
 				<#assign usespan = true />
@@ -208,9 +310,11 @@
 							<@com.picklist item.Toxicity.HazardStatement/>
 						</td>
 						<!-- Reason for no classification -->
+						<#if !nzEPArelevant??>
 						<td>
 							<@com.picklist item.Toxicity.ReasonForNoClassification/>
 						</td>
+						</#if>
 					</tr>
 				</#list>
 				
@@ -245,9 +349,11 @@
 							<@com.picklist item.Toxicity.HazardStatement/>
 						</td>
 						<!-- Reason for no classification -->
+						<#if !nzEPArelevant??>
 						<td>
 							<@com.picklist item.Toxicity.ReasonForNoClassification/>
 						</td>
+						</#if>
 					</tr>
 				</#list>
 			</tbody>
@@ -285,19 +391,51 @@
 		
 		<@com.emptyLine/>
 		<table border="1">
+		<#if nzEPArelevant??>
+			<title>Classification according to GHS for environmental hazards</title>
+			<col width="24%" />
+			<col width="21%" />
+			<col width="30%" />
+		<#else>
 			<title>Classification and labelling according to CLP / GHS for environmental hazards</title>
 			<col width="24%" />
 			<col width="21%" />
 			<col width="30%" />
 			<col width="25%" />
+		</#if>
 			<tbody>
+			<#if nzEPArelevant??>
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
+				</tr>
+			<#else>
 				<tr>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard class</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard category</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Hazard statement</emphasis></th>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Reason for no classification</emphasis></th>
 				</tr>
-				
+			</#if>
+				<#if nzEPArelevant??>
+					<#if isNotEmptyClassificationBlockNZEPA(record.Classification.EnvironmentalHazards.AquaticEnvironment.AcuteShortTerm)>
+						<tr>
+							<!-- Hazard class -->
+							<td>
+								Hazards to the aquatic environment (acute/short-term):
+							</td>
+							<!-- Hazard category -->
+							<td>
+								<@com.picklist record.Classification.EnvironmentalHazards.AquaticEnvironment.AcuteShortTerm.HazardCategory/>
+							</td>
+							<!-- Hazard statement -->
+							<td>
+								<@com.picklist record.Classification.EnvironmentalHazards.AquaticEnvironment.AcuteShortTerm.HazardStatement/>
+							</td>
+						</tr>
+					</#if>
+				<#else>
 				<#if isNotEmptyClassificationBlock(record.Classification.EnvironmentalHazards.AquaticEnvironment.AcuteShortTerm)>
 					<tr>
 						<!-- Hazard class -->
@@ -318,7 +456,26 @@
 						</td>
 					</tr>
 				</#if>
+				</#if>
 				
+				<#if nzEPArelevant??>
+				<#if isNotEmptyClassificationBlockNZEPA(record.Classification.EnvironmentalHazards.AquaticEnvironment.LongTerm)>
+					<tr>
+						<!-- Hazard class -->
+						<td>
+							Hazards to the aquatic environment (chronic/long-term):
+						</td>
+						<!-- Hazard category -->
+						<td>
+							<@com.picklist record.Classification.EnvironmentalHazards.AquaticEnvironment.LongTerm.HazardCategory/>
+						</td>
+						<!-- Hazard statement -->
+						<td>
+							<@com.picklist record.Classification.EnvironmentalHazards.AquaticEnvironment.LongTerm.HazardStatement/>
+						</td>
+					</tr>
+				</#if>
+				<#else>
 				<#if isNotEmptyClassificationBlock(record.Classification.EnvironmentalHazards.AquaticEnvironment.LongTerm)>
 					<tr>
 						<!-- Hazard class -->
@@ -339,21 +496,45 @@
 						</td>
 					</tr>
 				</#if>
+				</#if>
 				
 				<!-- M-Factor acute -->
+				<#if nzEPArelevant??>
+					<#if record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorAcute?has_content>
+					<tr>
+						<td colspan="3">
+							M-Factor acute: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorAcute/>
+						</td>
+					</tr>
+					</#if>
+					
+				<#else>
 				<tr>
 					<td colspan="4">
 						M-Factor acute: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorAcute/>
 					</td>
 				</tr>
-			
+				</#if>
+				
 				<!-- M-Factor chronic -->
+				<#if nzEPArelevant??>
+					<#if record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorChronic?has_content>
+					<tr>
+						<td colspan="3">
+							M-Factor chronic: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorChronic/>
+						</td>
+					</tr>
+					</#if>
+						
+				<#else>
 				<tr>
 					<td colspan="4">
 						M-Factor chronic: <@com.number record.Classification.EnvironmentalHazards.AquaticEnvironment.MFactor.MFactorChronic/>
 					</td>
 				</tr>
-
+				</#if>
+				
+				<#if !nzEPArelevant??>
 				<#if isNotEmptyClassificationBlock(record.Classification.EnvironmentalHazards.OzoneLayer.HazardousOzone)>
 					<tr>
 						<!-- Hazard class -->
@@ -374,9 +555,31 @@
 						</td>
 					</tr>
 				</#if>
+				</#if>
 			</tbody>
 		</table>
 		
+	<#if nzEPArelevant??>
+		<#if record.Classification.AdditionalHazard.Classes?has_content>
+			<@com.emptyLine/>
+			<table border="1">
+				<title>Classification according to GHS for additional hazard classes</title>
+				<col width="30%" />
+				<col width="70%" />
+				<tbody>						
+					<tr>
+						<!-- Additional hazard classes -->
+						<td><?dbfo bgcolor="#FBDDA6" ?>
+							Additional hazard classes:
+						</td>
+						<td>
+							<@com.text record.Classification.AdditionalHazard.Classes/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</#if>
+	<#else>	
 		<#if (record.Classification.AdditionalHazard.Classes?has_content) && (record.Classification.AdditionalHazard.Statements?has_content)>
 			<@com.emptyLine/>
 			<table border="1">
@@ -393,6 +596,7 @@
 							<@com.text record.Classification.AdditionalHazard.Classes/>
 						</td>
 					</tr>																
+					   
 					<tr>		
 						<!-- Additional hazard statements -->
 						<td><?dbfo bgcolor="#FBDDA6" ?>
@@ -402,68 +606,73 @@
 							<@com.text record.Classification.AdditionalHazard.Statements/>
 						</td>
 					</tr>
+					
 				</tbody>
 			</table>
 		</#if>
+	</#if>
 		
 		<!-- Labelling section -->
-		<@com.emptyLine/>
-		<para><emphasis role="bold">Labelling</emphasis></para>
-		
-		<#if record.Labelling.SignalWord?has_content>
+		<#if !nzEPArelevant??>
 			<@com.emptyLine/>
-			<para>
-				Signal word: <@com.picklist record.Labelling.SignalWord/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.HazardPictogramBlock.HazardPictogram?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Hazard pictogram:</emphasis>
+			<para><emphasis role="bold">Labelling</emphasis></para>
+			
+			<#if record.Labelling.SignalWord?has_content>
 				<@com.emptyLine/>
-				<@HazardPictogramList record.Labelling.HazardPictogramBlock.HazardPictogram/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.HazardStatementsBlock.HazardStatements?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Hazard statements:</emphasis>
-				<@HazardStatementList record.Labelling.HazardStatementsBlock.HazardStatements/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.PrecautionaryStatementsBlock.PrecautionaryStatements?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Precautionary statements:</emphasis>
-				<@PrecautionaryStatementsList record.Labelling.PrecautionaryStatementsBlock.PrecautionaryStatements/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.LabelingRequirementsBlock.LabelingRequirements?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Additional labelling requirements (CLP supplemental hazard statement):</emphasis>
-				<@SupplimentalHazardStatementList record.Labelling.LabelingRequirementsBlock.LabelingRequirements/>
-			</para>
-		</#if>
-		
-		<#if record.Labelling.LabelingRequirementsBlock.AdditionalLabelling?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Additional labelling:</emphasis>
-				<@AdditionalLabellingList record.Labelling.LabelingRequirementsBlock.AdditionalLabelling/>
-			</para>
-		</#if>
-		
-		<#if record.NotesBlock.Notes?has_content>
-			<@com.emptyLine/>
-			<para>
-				<emphasis role="underline">Notes:</emphasis>
-				<@NotesLabellingList record.NotesBlock.Notes/>
-			</para>
+				<para>
+					Signal word: <@com.picklist record.Labelling.SignalWord/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.HazardPictogramBlock.HazardPictogram?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Hazard pictogram:</emphasis>
+					<@com.emptyLine/>
+					<@HazardPictogramList record.Labelling.HazardPictogramBlock.HazardPictogram/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.HazardStatementsBlock.HazardStatements?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Hazard statements:</emphasis>
+					<@HazardStatementList record.Labelling.HazardStatementsBlock.HazardStatements/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.PrecautionaryStatementsBlock.PrecautionaryStatements?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Precautionary statements:</emphasis>
+					<@PrecautionaryStatementsList record.Labelling.PrecautionaryStatementsBlock.PrecautionaryStatements/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.LabelingRequirementsBlock.LabelingRequirements?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Additional labelling requirements (CLP supplemental hazard statement):</emphasis>
+					<@SupplimentalHazardStatementList record.Labelling.LabelingRequirementsBlock.LabelingRequirements/>
+				</para>
+			</#if>
+			
+			<#if record.Labelling.LabelingRequirementsBlock.AdditionalLabelling?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Additional labelling:</emphasis>
+					<@AdditionalLabellingList record.Labelling.LabelingRequirementsBlock.AdditionalLabelling/>
+				</para>
+			</#if>
+			
+			<#if record.NotesBlock.Notes?has_content>
+				<@com.emptyLine/>
+				<para>
+					<emphasis role="underline">Notes:</emphasis>
+					<@NotesLabellingList record.NotesBlock.Notes/>
+				</para>
+			</#if>
+			
 		</#if>
 		
 		
@@ -585,6 +794,16 @@
 	<#return false>
 </#function>
 
+<#function isNotEmptyClassificationBlockNZEPA block>
+	<#if !(block?has_content)>
+		<#return false>
+	</#if>
+	<#if block.HazardCategory?has_content>
+		<#return true>
+	</#if>
+	<#return false>
+</#function>
+
 <#function isNotEmptyConcentrationBlock record>
 	<#if !(record?has_content)>
 		<#return false>
@@ -608,4 +827,3 @@
   	</#if>
 </#compress>
 </#macro>
-	
