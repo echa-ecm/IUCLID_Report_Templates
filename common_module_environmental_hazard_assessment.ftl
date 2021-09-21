@@ -2329,7 +2329,10 @@
 					</#if>
 					
 					<#if blockItem.EffectLevel?has_content>
-						<@com.range blockItem.EffectLevel/> 
+						<@com.range blockItem.EffectLevel/>
+						<#if blockItem.ConfInterval?has_content && pppRelevant??>
+							[95% CI: <@com.range blockItem.ConfInterval/>]
+						</#if>
 					</#if>
 					
 					<#if blockItem.ConcDoseBasedOn?has_content>
