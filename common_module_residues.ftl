@@ -50,7 +50,7 @@
                     <para role="small"><@residuesInRotationalCropsAnalyticalMethodsTable study.MaterialsAndMethods.AnalyticalMethods.AnalyticalMethod/></para>
                 </#if>
                 <#if study.MaterialsAndMethods.StudyUsePattern?has_content>
-                    <para><emphasis role='bold'>Analytical methods:</emphasis></para>
+                    <para><emphasis role='bold'>Residue trials:</emphasis></para>
                     <para>[Please, provide this information as attachment (Excel file)]</para>
                 </#if>
             </#if>
