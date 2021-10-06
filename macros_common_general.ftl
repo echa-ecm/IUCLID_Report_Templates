@@ -912,3 +912,23 @@
 	<#return false>
 </#function>
 
+<#--Function to retrieve all products datasets in the Other representative products section of a PPP mixture.
+-->
+<#function getOtherRepresentativeProducts mixture>
+
+	<#local otherProdsSummaries=iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_SUMMARY", "OtherRepresentativeProducts") />
+	<#local otherProds=[]/>
+
+	<#list otherProdsSummaries as otherProdSummary>
+		<#if otherProdSummary.OtherRepresentativeProductS?has_content>
+			<#list otherProdSummary.OtherRepresentativeProductS as prodLink>
+				<#local prod=iuclid.getDocumentForKey(prodLink)/>
+				<#if prod?has_content>
+					<#local otherProds = com.addDocumentToSequenceAsUnique(prod, otherProds)/>
+				</#if>
+			</#list>
+		</#if>
+	</#list>
+	<#return otherProds/>
+</#function>
+
