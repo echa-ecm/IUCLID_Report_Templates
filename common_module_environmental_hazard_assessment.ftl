@@ -3226,11 +3226,11 @@
 					<@com.emptyLine/>
 				</#if>
 
-				<#if (!merge) && printSummaryName>
-					<para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para>
-				</#if>
-
 				<#list allSummaryList as summary>
+					
+					<#if (!merge) && printSummaryName>
+						<para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para>
+					</#if>
 
 					<#-- consider different path names (missing RAC, and bioterrestrial)-->
 					<#if summary.hasElement("KeyValueForCsa")>
