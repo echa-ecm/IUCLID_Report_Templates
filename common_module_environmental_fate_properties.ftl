@@ -4371,7 +4371,7 @@
 				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uses</emphasis></th>
 				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Timing</emphasis></th>
 				<th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Application</emphasis></th>
-				<th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
 			</tr>
 			<tr>
 				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Single</emphasis></th>
