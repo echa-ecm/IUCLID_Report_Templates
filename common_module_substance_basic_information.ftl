@@ -3,8 +3,9 @@
 <#--NOTE: this macro should be reviewed in order to better align PPP and other applications-->
 <#macro substanceIdentity _subject>
 	<#compress>
+	<@com.emptyLine />
 
-		<#if !csrRelevant?? && !pppRelevant??>
+		<#if !csrRelevant?? && !pppRelevant?? && !ghsRelevant??>
 			<@com.substanceName _subject/>
 			<@com.emptyLine/>
 		<#elseif pppRelevant??>
@@ -13,12 +14,14 @@
 
 		<#local referenceSubstance = iuclid.getDocumentForKey(_subject.ReferenceSubstance.ReferenceSubstance) />
 		<#if referenceSubstance?has_content>
+		<#compress>
 				<#if pppRelevant??><para><emphasis role="underline">Names and identifiers of reference substance</emphasis>: </para></#if>
 				<@referenceSubstanceInfo referenceSubstance/>
 			<#if !pppRelevant??>
 				<!-- Structural formula -->
 				<@com.structuralFormula com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) />
 			</#if>
+		</#compress>
 		</#if>
 
 		<#if !pppRelevant??>

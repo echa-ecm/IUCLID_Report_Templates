@@ -35,11 +35,14 @@
 					</#if>
 			</tr>
 			
-			<tr>
-				<td>Producer of the plant protection product</td>				
-				<td></td>					
-			</tr>
-			
+			<#if ghsRelevant??><para></para>
+			<#else>		
+				<tr>
+					<td>Producer of the plant protection product</td>				
+					<td></td>					
+				</tr>
+			</#if>
+
 			<tr><?dbfo bgcolor="#EEEEEE"?>
 				<td colspan="2">Quantitative and qualitative information on the composition of the plant protection product</td> 
 			</tr>
