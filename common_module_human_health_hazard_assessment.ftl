@@ -9579,13 +9579,15 @@
 					<para><emphasis role="HEAD-WoutNo"> 2. Full summary of the study according to OECD format </emphasis></para>
 
 					<#-- 2. Materials and methods-->
-					<@methods_intermediateEffects study/>
+					<para><emphasis role="bold">a) Materials and methods</emphasis></para>
+					<@methods_intermediateEffects study true/>
 					<@com.emptyLine/>
 					<@intermediateEffectIdentification study/>
 					<@com.emptyLine/>
 
 					<#--3.Results-->
-					<@results_intermediateEffects study/>
+					<para><emphasis role="bold">b) Results</emphasis></para>
+					<@results_intermediateEffects study true/>
 					<@com.emptyLine/>
 
 					<#--4.Assessment and conclusion-->
@@ -9638,10 +9640,8 @@
 	</#compress>
 </#macro>
 
-<#macro results_intermediateEffects study>
+<#macro results_intermediateEffects study printRemarks=false>
 	<#compress>
-
-		<para><emphasis role="bold">Results</emphasis></para>
 
 		<#list study.ResultsAndDiscussion.TestResults.TestResults as child>
 			<#if child_has_next || (child_index>0)><para><emphasis role="underline">Result #${child_index+1}</emphasis></para></#if>
@@ -9658,22 +9658,22 @@
 			</#if>
 
 			<#if child.ParameterAndResult?has_content>
-				<para role="indent">Parameter and result:
-					<#list child.ParameterAndResult as param>
+				<para role="indent">Parameter and result:</para>
+				<#list child.ParameterAndResult as param>
+					<para role="indent2">
 						<@com.picklist param.Parameter/> = <@com.quantity param.ParameterResult/>
-						<#if param_has_next>; </#if>
-					</#list>
-                </para>
+					</para>
+				</#list>
 			</#if>
 
 			<#if child.OtherObservation?has_content>
-				<para role="indent">Other observations:
-					<#list child.OtherObservation as obs>
+				<para role="indent">Other observations:</para>
+				<#list child.OtherObservation as obs>
+					<para role="indent2">
 						<@com.picklist obs.Observation/>
 						<#if obs.Concentration?has_content> - <@com.range obs.Concentration/></#if>
-						<#if obs_has_next>; </#if>
-					</#list>
-				</para>
+					</para>
+				</#list>
 			</#if>
 
 			<#if child.ResultsForTheTestMaterial?has_content>
@@ -9690,34 +9690,35 @@
 
 		</#list>
 
-	<#--2. Other information including tables (to include?) : doesn't exist here-->
+		<#--2. Other information including tables (to include?) : doesn't exist here-->
 
-	<#--3. Remarks on results-->
-		<#if study.OverallRemarksAttachments.RemarksOnResults?has_content>
-			<para>Overall remarks:</para><para role="indent"><@com.richText study.OverallRemarksAttachments.RemarksOnResults/></para>
+		<#--3. Remarks on results-->
+		<#if printRemarks>
+			<#if study.OverallRemarksAttachments.RemarksOnResults?has_content>
+				<para>Overall remarks:</para><para role="indent"><@com.richText study.OverallRemarksAttachments.RemarksOnResults/></para>
+			</#if>
 		</#if>
-
 	</#compress>
 </#macro>
 
-<#macro methods_intermediateEffects study>
+<#macro methods_intermediateEffects study printTestMat=false>
 	<#compress>
 
-		<para><emphasis role="bold">a) Materials and methods</emphasis></para>
+	    <#-- 1. Test material-->
+		<#if printTestMat>
+			<para>
+				<emphasis role="bold">Test material:</emphasis>
+				<para role="indent"><@studyandsummaryCom.testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/></para>
 
-	<#-- 1. Test material-->
-		<para>
-			<emphasis role="bold">Test material:</emphasis>
-			<para role="indent"><@studyandsummaryCom.testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/></para>
+				<#if study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy?has_content>
+					<para role="indent">
+						Specific details: <@com.text study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy/>
+					</para>
+				</#if>
+			</para>
+		</#if>
 
-			<#if study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy?has_content>
-				<para role="indent">
-					Specific details: <@com.text study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy/>
-				</para>
-			</#if>
-		</para>
-
-	<#-- 2. Test system-->
+		<#-- 2. Test system-->
 		<para>
 			<emphasis role="bold">Test system:</emphasis>
 
@@ -9826,12 +9827,11 @@
 
 		<para><emphasis role="bold">Effect identification:</emphasis></para>
 
-	<#-- 2. Test system-->
 		<#if study.EffectIdentification.Details?has_content>
-			<para>P/A/O:<?linebreak?>
+			<para role="indent">P/A/O:<?linebreak?>
 
 				<#list study.EffectIdentification.Details as pao>
-					<para role="indent">
+					<para role="indent2">
 					<#if pao.Process?has_content>
 						Process: <@com.picklist pao.Process/>.
 					</#if>
@@ -9847,14 +9847,14 @@
 		</#if>
 
 		<#if study.EffectIdentification.EffectDetails?has_content>
-			<para>Details: <@com.text  study.EffectIdentification.EffectDetails/></para>
+			<para role="indent">Details: <@com.text  study.EffectIdentification.EffectDetails/></para>
 		</#if>
 
 		<#if study.EffectIdentification.Context?has_content>
-			<para>Context:<?linebreak?>
+			<para role="indent">Context:<?linebreak?>
 
 				<#list study.EffectIdentification.Context as ctx>
-					<para role="indent">
+					<para role="indent2">
 						<#if ctx.System?has_content>
 							System: <@com.picklist ctx.System/>.
 						</#if>
