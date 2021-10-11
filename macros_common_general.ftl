@@ -740,8 +740,9 @@
 </#macro>
 
 <#-- Function to get inbound references for a key -->
+<#-- Function to get inbound references for a key -->
 <#function inboundReferences key>
-    <#local params={"key": [key]}>
+    <#local params={"key": [key], "exclude": ["CUSTOM_ENTITY,CUSTOM_SECTION"]}>
     <#return iuclid.query("web.ReferencingQuery", params, 0, 100)>
 </#function>
 
