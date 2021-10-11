@@ -3746,7 +3746,7 @@
 				<col width="6%" />
 				<col width="9%" />
 				<col width="10%" />
-			<#else>
+			<#elseif path[0].hasElement("Ph")>
 				<col width="25%" />
 				<col width="8%" />
 				<col width="8%" />
@@ -3756,6 +3756,14 @@
 				<col width="8%" />
 				<col width="12%" />
 				<col width="15%" />
+			<#else>
+				<col width="25%" />
+				<col width="9%" />
+				<col width="9%" />
+				<col width="9%" />
+				<col width="9%" />
+				<col width="20%" />
+				<col width="19%" />
 			</#if>
 
 			<thead align="center" valign="middle">
@@ -3764,7 +3772,7 @@
 				<#if path[0].hasElement("TestConditions")><th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Test cond.</emphasis></th></#if>
 				<#if path[0].hasElement("SoilType")>
 					<th colspan="4"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Soil characteristics</emphasis></th>
-				<#else>
+				<#elseif path[0].hasElement("Ph")>
 					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">pH</emphasis></th>
 					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Temp.</emphasis></th>
 				</#if>
@@ -3804,14 +3812,16 @@
 					</td>
 					<#if item.hasElement("TestConditions")><td><@com.picklist item.TestConditions/></td></#if>
 					<#if item.hasElement("SoilType")><td><@com.text item.SoilType/></td></#if>
-					<td>
-						<@com.number item.Ph/>
-						<#if item.MeasuredIn?has_content>
-							(<@com.text item.MeasuredIn/>)
-						</#if>
-					</td>
+					<#if item.hasElement("Ph")>
+						<td>
+							<@com.number item.Ph/>
+							<#if item.MeasuredIn?has_content>
+								(<@com.text item.MeasuredIn/>)
+							</#if>
+						</td>
+					</#if>
 					<#if item.hasElement("SoilMoisture")><td><#if item.SoilMoisture?has_content><@com.quantity item.SoilMoisture/></#if></td></#if>
-					<td><#if item.hasElement("Temperature")><@com.quantity item.Temperature/><#elseif item.hasElement("Teperature")><@com.quantity item.Teperature/></#if></td>
+					<#if item.hasElement("Temperature")><td><@com.quantity item.Temperature/></td><#elseif item.hasElement("Teperature")><td><@com.quantity item.Teperature/></td></#if>
 					<td>
 						<#if item.hasElement("HalfLifeFreshWater")>
 							<@com.quantity item.HalfLifeFreshWater/>
@@ -3864,7 +3874,7 @@
 			<col width="7%" />
 			<col width="12%" />
 			<col width="12%" />
-		<#else>
+		<#elseif path[0].hasElement("Ph")>
 			<col width="26%" />
 			<col width="12%" />
 			<col width="10%" />
@@ -3872,6 +3882,13 @@
 			<col width="10%" />
 			<col width="16%" />
 			<col width="16%" />
+		<#else>
+			<col width="26%" />
+			<col width="14%" />
+			<col width="10%" />
+			<col width="10%" />
+			<col width="20%" />
+			<col width="20%" />
 		</#if>
 
 			<thead align="center" valign="middle">
@@ -3882,7 +3899,7 @@
 				</#if>
 				<#if path[0].hasElement("SoilType")>
 					<th colspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Soil characteristics</emphasis></th>
-				<#else>
+				<#elseif path[0].hasElement("Ph")>
 					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">pH</emphasis></th>
 				</#if>
 				<th colspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Degradation results</emphasis></th>
@@ -3919,12 +3936,14 @@
 					</td>
 					<#if item.hasElement("TestConditions")><td><@com.picklist item.TestConditions/></td></#if>
 					<#if item.hasElement("SoilType")><td><@com.text item.SoilType/></td></#if>
-					<td>
+					<#if item.hasElement("Ph")>
+						<td>
 						<@com.number item.Ph/>
 						<#if item.MeasuredIn?has_content>
 							(<@com.text item.MeasuredIn/>)
 						</#if>
-					</td>
+						</td>
+					</#if>
 					<#if item.hasElement("SoilMoisture")><td><#if item.SoilMoisture?has_content><@com.number item.SoilMoisture/>%</#if></td></#if>
 					<td><@com.quantity item.NormalisedDtFifty/></td>
 					<td><@com.number item.KineticFormationFraction/></td>
