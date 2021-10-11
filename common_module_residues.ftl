@@ -275,13 +275,13 @@
 
         <table border="1">
 
+            <col width="15%" />
+            <col width="12%" />
             <col width="10%" />
             <col width="10%" />
+            <col width="13%" />
+<#--            <col width="12%"/>-->
             <col width="10%" />
-            <col width="10%" />
-            <col width="10%" />
-            <col width="12%"/>
-            <col width="8%" />
             <col width="10%" />
             <col width="10%" />
             <col width="10%" />
@@ -294,10 +294,10 @@
                     <th><emphasis role="bold">Fortification rate</emphasis></th>
                     <th><emphasis role="bold">Storage period</emphasis></th>
                     <th><emphasis role="bold">Analyte</emphasis></th>
-                    <th><emphasis role="bold">Process. details</emphasis></th>
+<#--                    <th><emphasis role="bold">Process. details</emphasis></th>-->
                     <th><emphasis role="bold">An. samp. id</emphasis></th>
-                    <th><emphasis role="bold">Res. level</emphasis></th>
-                    <th><emphasis role="bold">Mean res. level</emphasis></th>
+                    <th><emphasis role="bold">Res. level <?linebreak?>(% spiking)</emphasis></th>
+                    <th><emphasis role="bold">Mean res. level <?linebreak?>(% spiking)</emphasis></th>
                     <th><emphasis role="bold">Mean proc. recovery control</emphasis></th>
                 </tr>
             </thead>
@@ -316,7 +316,7 @@
 
                 <#if !sample.AnalyteMeasured?has_content>
                     <#local analytes = [{'AnalyteIdentity':'', 'ExtractionDate':'', 'AnalysisDate':'',
-                                            'MethodID':'', 'ResidueLevel':[], 'MeanResidueLevel':'',
+                                            'MethodID':'', 'ResidueLevel':[], 'ProceduralRecovery':[], 'MeanResidueLevel':'',
                                             'MeanResidueLevelOfNominalSpikingLevel':'', 'MeanProceduralRecoveryControl':''}]>
                 <#else>
                     <#local analytes=sample.AnalyteMeasured/>
@@ -327,6 +327,14 @@
                     <#local usespan2=true>
 
                     <#local analyteSize = [1, analyte.ResidueLevel?size]?max/>
+
+                    <#local procRecs=[]/>
+                    <#list analyte.ProceduralRecovery as procRec>
+                        <#if procRec.ProceduralRecoveryControl?has_content>
+                            <#local procRecVal><@com.number procRec.ProceduralRecoveryControl/></#local>
+                            <#local procRecs=procRecs+[procRecVal]/>
+                        </#if>
+                    </#list>
 
                     <#if !analyte.ResidueLevel?has_content>
                         <#local resLevels=[{'AnalysedSampleID':'', 'ResidueLevel':'', 'ResidueLevelOfNominalSpikingLevel':''}]>
@@ -357,16 +365,16 @@
 
                             <td rowspan="${sampleSize}">
                                 <@com.quantity sample.FortifRateStoredSample/>
-                                <#if sample.FortificationDateDay0?has_content>
-                                    <para>Date (day 0):<@com.text sample.FortificationDateDay0/></para>
-                                </#if>
+<#--                                <#if sample.FortificationDateDay0?has_content>-->
+<#--                                    <para>Date (day 0):<@com.text sample.FortificationDateDay0/></para>-->
+<#--                                </#if>-->
                             </td>
 
                             <td rowspan="${sampleSize}">
                                 <@com.quantity sample.StoragePeriod/>
-                                <#if sample.StorageRemovalDateDayX?has_content>
-                                    <para>Removal date (day X):<@com.text sample.StorageRemovalDateDayX/></para>
-                                </#if>
+<#--                                <#if sample.StorageRemovalDateDayX?has_content>-->
+<#--                                    <para>Removal date (day X):<@com.text sample.StorageRemovalDateDayX/></para>-->
+<#--                                </#if>-->
                             </td>
 
                             <#local usespan=false/>
@@ -380,17 +388,17 @@
                                 </#if>
                             </td>
 
-                            <td rowspan="${analyteSize}">
-                                <#if analyte.ExtractionDate?has_content>
-                                    <para>Extraction: <@com.text analyte.ExtractionDate/></para>
-                                </#if>
-                                <#if analyte.AnalysisDate?has_content>
-                                    <para>Analysis: <@com.text analyte.AnalysisDate/></para>
-                                </#if>
-                                <#if analyte.MethodID?has_content>
-                                    <para>Method: <@com.text analyte.MethodID/></para>
-                                </#if>
-                            </td>
+<#--                            <td rowspan="${analyteSize}">-->
+<#--                                <#if analyte.ExtractionDate?has_content>-->
+<#--                                    <para>Extraction: <@com.text analyte.ExtractionDate/></para>-->
+<#--                                </#if>-->
+<#--                                <#if analyte.AnalysisDate?has_content>-->
+<#--                                    <para>Analysis: <@com.text analyte.AnalysisDate/></para>-->
+<#--                                </#if>-->
+<#--                                <#if analyte.MethodID?has_content>-->
+<#--                                    <para>Method: <@com.text analyte.MethodID/></para>-->
+<#--                                </#if>-->
+<#--                            </td>-->
                         </#if>
 
                         <td>
@@ -400,7 +408,7 @@
                         <td>
                             <@com.quantity resLevel.ResidueLevel/>
                             <#if resLevel.ResidueLevelOfNominalSpikingLevel?has_content>
-                                <#if resLevel.ResidueLevel?has_content>(</#if><@com.number resLevel.ResidueLevelOfNominalSpikingLevel/>% spik.<#if resLevel.ResidueLevel?has_content>)</#if>
+                                <?linebreak?>(<@com.number resLevel.ResidueLevelOfNominalSpikingLevel/>%)
                             </#if>
                         </td>
 
@@ -408,14 +416,16 @@
                             <td rowspan="${analyteSize}">
                                 <@com.quantity analyte.MeanResidueLevel/>
                                 <#if analyte.MeanResidueLevelOfNominalSpikingLevel?has_content>
-                                    <#if analyte.MeanResidueLevel?has_content>(</#if><@com.number analyte.MeanResidueLevelOfNominalSpikingLevel/>% spik.<#if analyte.MeanResidueLevel?has_content>)</#if>
+                                    <?linebreak?>(<@com.number analyte.MeanResidueLevelOfNominalSpikingLevel/>%)
                                 </#if>
                             </td>
 
                             <td rowspan="${analyteSize}">
-                                <#if analyte.MeanProceduralRecoveryControl?has_content>
-                                    <@com.number analyte.MeanProceduralRecoveryControl/>% spik.
+                                <#if analyte.MeanProceduralRecoveryControl?has_content><@com.number analyte.MeanProceduralRecoveryControl/>%</#if>
+                                <#if procRecs?has_content>
+                                    <?linebreak?>(${procRecs?join(", ")})
                                 </#if>
+
                             </td>
 
                             <#local usespan2=false/>
@@ -1166,11 +1176,7 @@
                     <para><emphasis role="bold">Key information: </emphasis></para>
                     <para><@com.richText summary.KeyInformation.KeyInformation/></para>
 
-                    <#if docSubType=="ResiduesInLivestock">
-                        <#-- IUCLID 6.6: check if this is needed-->
-                        <para>[Copy/paste here the following tables as given by the Animal Model calculator: “Dietary burden table” and “MRL calculations table”.
-                        Please also report the input values used for the animal burden calculations.]</para>
-                    <#elseif docSubType=="MetabolismPlants">
+                    <#if docSubType=="MetabolismPlants">
                         <para>[Please, note that the full text of the end point summary on metabolism studies is reported here.
                                 Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>
 <#--                    <#elseif docSubType=="MagnitudeResiduesPlants" >-->
@@ -1255,6 +1261,9 @@
                     </#if>
 
                 <#elseif summary.documentSubType=='ResiduesInLivestock'>
+                    <@com.emptyLine/>
+                    <para>[Please report the input values used for the animal burden calculation in an additional table.]</para>
+
                     <#if summary.KeyValueForChemicalSafetyAssessment.DietaryBurden?has_content>
                         <@com.emptyLine/>
                         <para><emphasis role="bold">Dietary burden:</emphasis></para>
@@ -1848,24 +1857,35 @@
 </#macro>
 
 <#macro dietaryBurdenSummaryTable path>
+<#--    NOTE: ideally there should be one table per RDRA-->
     <#compress>
 
         <table border="1">
 
-            <col width="20%" />
-            <col width="20%" />
             <col width="15%" />
+            <col width="20%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
             <col width="15%" />
-            <col width="30%" />
 
             <thead align="center" valign="middle">
             <tr>
-                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD RA (plant / feed)</emphasis></th>
-                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Animal species</emphasis></th>
-                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Dietary burden</emphasis></th>
-                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+                <th rowspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD RA (plant / feed)</emphasis></th>
+                <th rowspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Animal species</emphasis></th>
+                <th colspan="4"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Dietary burden</emphasis></th>
+                <th rowspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Trigger exceeded</emphasis></th>
+                <th rowspan="3"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
             </tr>
             <tr>
+                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">mg/kg bw per day</emphasis></th>
+                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">mg/kg DM</emphasis></th>
+            </tr>
+            <tr>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Median</emphasis></th>
+                <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Max</emphasis></th>
                 <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Median</emphasis></th>
                 <th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Max</emphasis></th>
             </tr>
@@ -1879,24 +1899,29 @@
                     <td><@com.picklist item.AnimalSpecies/></td>
                     <td>
                         <#if item.MedianDietaryBurdenMgKgBwPerDay?has_content>
-                            <para><@com.quantity item.MedianDietaryBurdenMgKgBwPerDay/></para>
-                        </#if>
-                        <#if item.MedianDietaryBurdenMgKgDM?has_content>
-                            <para><@com.quantity item.MedianDietaryBurdenMgKgDM/></para>
+                            <para><@com.number item.MedianDietaryBurdenMgKgBwPerDay.value/></para>
                         </#if>
                     </td>
                     <td>
                         <#if item.MaximalDietaryBurdenMgKgBwPerDay?has_content>
-                            <para><@com.quantity item.MaximalDietaryBurdenMgKgBwPerDay/></para>
-                        </#if>
-                        <#if item.MaximalDietaryBurdenMgKgDM?has_content>
-                            <para><@com.quantity item.MaximalDietaryBurdenMgKgDM/></para>
+                            <para><@com.number item.MaximalDietaryBurdenMgKgBwPerDay.value/></para>
                         </#if>
                     </td>
                     <td>
-                        <#local trigger><@com.picklist item.TriggerExceeded/></#local>
-                        <#if trigger=="yes"><para><emphasis role="bold">Trigger exceded</emphasis></para></#if>
-                        <#if item.Remarks?has_content><@com.text item.Remarks/></#if>
+                        <#if item.MedianDietaryBurdenMgKgDM?has_content>
+                            <para><@com.number item.MedianDietaryBurdenMgKgDM.value/></para>
+                        </#if>
+                    </td>
+                    <td>
+                        <#if item.MaximalDietaryBurdenMgKgDM?has_content>
+                            <para><@com.number item.MaximalDietaryBurdenMgKgDM.value/></para>
+                        </#if>
+                    </td>
+                    <td>
+                        <@com.picklist item.TriggerExceeded/>
+                    </td>
+                    <td>
+                        <@com.text item.Remarks/>
                     </td>
                 </tr>
             </#list>
@@ -1922,10 +1947,10 @@
 
             <thead align="center" valign="middle">
             <tr>
-                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD-RA</emphasis></th>
-                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD-Mo</emphasis></th>
+                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD-RA (mg/kg)</emphasis></th>
+                <th colspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">RD-Mo (mg/kg)</emphasis></th>
                 <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">CF</emphasis></th>
-                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">MRL derived</emphasis></th>
+                <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">MRL derived (mg/kg)</emphasis></th>
                 <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
                 <th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
             </tr>
@@ -1941,12 +1966,12 @@
 
             <#list path as item>
                 <tr>
-                    <td><@com.quantity item.HighestResidueRDRA/></td>
-                    <td><@com.quantity item.STMRRDRA/></td>
-                    <td><@com.quantity item.HighestResidueRDMo/></td>
-                    <td><@com.quantity item.STMRRDMo/></td>
+                    <td><@com.number item.HighestResidueRDRA.value/></td>
+                    <td><@com.number item.STMRRDRA.value/></td>
+                    <td><@com.number item.HighestResidueRDMo.value/></td>
+                    <td><@com.number item.STMRRDMo.value/></td>
                     <td><@com.number item.ConversionFactorCF/></td>
-                    <td><@com.quantity item.MRLDerived/></td>
+                    <td><@com.number item.MRLDerived.value/></td>
                     <td>
                         <#list item.LinkToRelevantStudyRecordS as link>
                             <#if link?has_content>
