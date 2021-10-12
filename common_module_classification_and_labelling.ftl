@@ -11,7 +11,7 @@
 		<@com.emptyLine/>
 		<#list recordList as record>			
 			
-			<#if csrRelevant?? || pppRelevant?? || ghsRelevant??>
+			<#if csrRelevant?? || pppRelevant?? || !ghsRelevant??>
 				<para>
 					<@com.emptyLine/>
 
