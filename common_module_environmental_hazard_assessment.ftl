@@ -945,6 +945,11 @@
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
 			<@com.emptyLine/>
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue1")> 
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue2")>
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue3")>
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue4")>
+
 			<#if summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
 			summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.KeyValue3?has_content ||
@@ -956,6 +961,7 @@
 				EC10/LC10 or NOEC for marine water algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue4/>
 			</#assign>
 			</#if>
+			</#if></#if></#if></#if>
 			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToAquaticAlgae printSummaryName/>
 		</#list>
 	</#if>	
@@ -985,6 +991,12 @@
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
 			<@com.emptyLine/>
+
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue1")> 
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue2")>
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue3")>
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue4")>
+
 			<#if summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
 			summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content || 
 			summary.KeyValueForChemicalSafetyAssessment.KeyValue3?has_content || 
@@ -997,7 +1009,7 @@
 				EC10/LC10 or NOEC for marine water algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue4/>
 			</#assign>
 			</#if>
-			
+			</#if></#if></#if></#if>
 			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityPlants printSummaryName/>
 		</#list>
 	</#if>
@@ -1902,13 +1914,19 @@
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
 			<@com.emptyLine/>
+
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue1")> 
+			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue2")>
+
 			<#if summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content> 
+			
+			
 			<#assign valueForCsaTextToxicityMicroorganisms>
 			EC50/LC50 for aquatic micro-organisms: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue1/>
 			EC10/LC10 or NOEC for aquatic micro-organisms: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue2/>
 			</#assign>
 			</#if>
-			
+			</#if></#if>
 			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityMicroorganisms printSummaryName/>
 		</#list>
 	</#if>
@@ -2623,16 +2641,33 @@
 	</#if>
 	
 	<#list summaryList as summary>
-		<#if isCSAShortTermToxicityToAquaticInvertebrates(summary)>
+	<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.FreshWaterInvertebrates?has_content>
+	<#list summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.FreshWaterInvertebrates as freshWaterAquaticInvValue>
+		<#if isCSAShortTermToxicityToAquaticInvertebratesFresh(summary, freshWaterAquaticInvValue)>
 			<#local valuesCSA = valuesCSA + [summary]/>			
 		</#if>				
+	</#list>
+	</#if>
+
+
+			<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.MarineWaterInvertebrates?has_content>
+			<#list summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.MarineWaterInvertebrates as marineWaterAquaticInvValue>
+				<#if isCSAShortTermToxicityToAquaticInvertebratesMarine(summary, marineWaterAquaticInvValue)>
+					<#local valuesCSA = valuesCSA + [summary]/>			
+				</#if>				
+			</#list>
+			</#if>
+
+
 	</#list>
 	
 	<#return valuesCSA />	
 </#function>
-<#function isCSAShortTermToxicityToAquaticInvertebrates summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
+<#function isCSAShortTermToxicityToAquaticInvertebratesFresh summary freshWaterAquaticInvValue>
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || freshWaterAquaticInvValue.EffectConcentration?has_content />
+</#function>
+<#function isCSAShortTermToxicityToAquaticInvertebratesMarine summary marineWaterAquaticInvValue>
+	<#return marineWaterAquaticInvValue.EffectConcentration?has_content />
 </#function>
 
 <#function getValuesLongTermToxicityToFish summaryList>
@@ -2692,6 +2727,7 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSAToxicityToAquaticAlgae summary>
+
 	<#return summary.KeyInformation.KeyInformation?has_content || 
 	summary.Discussion.Discussion?has_content || 
 	summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
@@ -2707,16 +2743,29 @@
 	</#if>
 	
 	<#list summaryList as summary>
-		<#if isCSAShortTermToxicityToFish(summary)>
+	<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish?has_content>
+	<#list summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish as freshWaterFishValue>
+		<#if isCSAShortTermToxicityToFishfresh(summary, freshWaterFishValue)>
 			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
+		</#if>	
+	</#list>		
+	</#if>
+		<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish?has_content>
+		<#list summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish as marineWaterFishValue>
+			<#if isCSAShortTermToxicityToFishmarine(summary, marineWaterFishValue)>
+				<#local valuesCSA = valuesCSA + [summary]/>			
+			</#if>	
+		</#list>		
+		</#if>
 	</#list>
 	
 	<#return valuesCSA />	
 </#function>
-<#function isCSAShortTermToxicityToFish summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
-					summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
+<#function isCSAShortTermToxicityToFishfresh summary freshWaterFishValue>
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || freshWaterFishValue.EffectConcentration?has_content />
+</#function>
+<#function isCSAShortTermToxicityToFishmarine summary marineWaterFishValue>
+	<#return marineWaterFishValue.EffectConcentration?has_content />
 </#function>
 
 <#function getValuesForToxicityToSoilMacroorganismsExceptArthropods summaryList>
