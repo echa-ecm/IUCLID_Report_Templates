@@ -648,3 +648,99 @@
   	</#if>
 </#compress>
 </#macro>
+
+
+<#-- Macro to display basic information of the metabolites (coming from the active substance) included in a mixture dataset:
+	_subject should be a mixture dataset-->
+<#macro metabolitesInformation _subject>
+	<#compress>
+
+	<#local metabCompList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", "Metabolites") />
+
+	<#if !(metabCompList?has_content)>
+
+		No relevant information on metabolites available.
+
+	<#else>
+
+		<#list metabCompList as metabComp>
+
+			<#if (metabCompList?size > 1)><para><emphasis role="bold">Metabolites #${metabComp_index+1}: <@com.text metabComp.name/></emphasis></para></#if>
+
+			<#if metabComp.MetabolitesInfo.ParentOfMetabolites?has_content>
+				<para>
+					<emphasis role="underline">Parent of metabolites:</emphasis>
+					<#--NOTE: can be substance or reference substance-->
+					<#local parentSub=iuclid.getDocumentForKey(metabComp.MetabolitesInfo.ParentOfMetabolites)/>
+					<#if parentSub?has_content>
+						<#if parentSub.documentType=="SUBSTANCE">
+							<@com.substanceName parentSub/>
+							<#if parentSub.ReferenceSubstance.ReferenceSubstance?has_content>
+								<?linebreak?>(ref. <@referenceSubstanceData parentSub.ReferenceSubstance.ReferenceSubstance/>)
+							</#if>
+						<#elseif parentSub.documentType=="REFERENCE_SUBSTANCE">
+							<@referenceSubstanceData metabComp.MetabolitesInfo.ParentOfMetabolites/>
+						</#if>
+					</#if>
+				</para>
+			</#if>
+
+			<#if metabComp.MetabolitesInfo.MetabolitesInfoOverview?has_content>
+				<para>
+					<emphasis role="underline">Metabolites information overview: </emphasis>
+					<@com.richText metabComp.MetabolitesInfo.MetabolitesInfoOverview/>
+				<para>
+			</#if>
+
+			<#if metabComp.ListMetabolites?has_content>
+				<para><emphasis role="underline">List of metabolites: </emphasis></para>
+				<@metabolitesTable metabComp.ListMetabolites.Metabolites/>
+			</#if>
+
+		</#list>
+	</#if>
+
+	</#compress>
+</#macro>
+
+<#macro metabolitesTable metabList>
+	<#compress>
+		<#if metabList?has_content>
+
+			<table border="1">
+<#--				<title>Constituents-->
+
+				<col width="45%" />
+				<col width="55%" />
+
+				<tbody>
+					<tr>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Name</emphasis></th>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+					</tr>
+
+					<#list metabList as metab>
+						<tr>
+							<td>
+								<#local metabSub=iuclid.getDocumentForKey(metab.LinkMetaboliteDataset)/>
+								<#if metabSub?has_content>
+									<#if metabSub.documentType=="SUBSTANCE">
+										<@com.substanceName metabSub/>
+										<#if metabSub.ReferenceSubstance.ReferenceSubstance?has_content>
+											<?linebreak?>(ref. <@referenceSubstanceData metabSub.ReferenceSubstance.ReferenceSubstance/>)
+										</#if>
+									<#elseif metabSub.documentType=="REFERENCE_SUBSTANCE">
+										<@referenceSubstanceData metab.LinkMetaboliteDataset/>
+									</#if>
+								</#if>
+							</td>
+							<td>
+								<@com.text metab.Remarks/>
+							</td>
+						</tr>
+					</#list>
+				</tbody>
+			</table>
+		</#if>
+	</#compress>
+</#macro>
