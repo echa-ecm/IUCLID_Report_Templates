@@ -10627,14 +10627,14 @@
 			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
 		</#if>
 
-		<#-- Get metabolites-->
-		<#if _metabolites?? && _metabolites?has_content>
+		<#-- get a list of entities of same size as summaryList-->
+		<#local entityList = []/>
+		<#list summaryList as summary>
+			<#local entityList = entityList + [subject.ChemicalName]/>
+		</#list>
 
-			<#-- get a list of entities of same size as summaryList-->
-			<#local entityList = []/>
-			<#list summaryList as summary>
-				<#local entityList = entityList + [subject.ChemicalName]/>
-			</#list>
+		<#-- Get metabolites-->
+		<#if includeMetabolites && _metabolites?? && _metabolites?has_content>
 
 			<#-- add metabolites-->
 			<#list _metabolites as metab>
