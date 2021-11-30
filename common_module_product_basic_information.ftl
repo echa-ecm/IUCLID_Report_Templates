@@ -147,7 +147,7 @@
 	<#compress>
 
 		<para><emphasis role="underline">Name</emphasis>:
-			<@mixtureName _subject/>
+			<@com.mixtureName _subject/>
 		</para>
 
 		<#if _subject.PublicName?has_content>
@@ -156,7 +156,7 @@
 
 		<#if _subject.OtherNames?has_content>
 			<para><emphasis role="underline">Other identifiers:</emphasis></para>
-			<@otherIdentifiersList _subject.OtherNames 'indent'/>
+			<@com.otherIdentifiersList _subject.OtherNames 'indent'/>
 		</#if>
 
 		<#if includeTradeNames>
@@ -289,7 +289,7 @@
 			<#local component=iuclid.getDocumentForKey(link)/>
 			<#if component?has_content>
 				<#if component.documentType=="MIXTURE">
-					mixture <@mixtureName component/>
+					mixture <@com.mixtureName component/>
 				<#elseif component.documentType=="SUBSTANCE">
 					substance <@com.substanceName component/>
 					<#if component.ReferenceSubstance.ReferenceSubstance?has_content>
@@ -332,37 +332,4 @@
 	</#compress>
 
 </#macro>
-<#--macros to be moved to macros_common_general.ftl-->
 
-<#--This macro is the same as in substance_basic_information but with the "hasElement" clause-->
-<#macro otherIdentifiersList otherNamesRepeatableBlock role="">
-	<#compress>
-		<#if otherNamesRepeatableBlock?has_content>
-			<#list otherNamesRepeatableBlock as blockItem>
-				<para role="${role}">
-					<@com.picklist blockItem.NameType/>: <@com.text blockItem.Name/>
-					<#if blockItem.hasElement('Relation') && blockItem.Relation?has_content>
-						(<@com.picklist blockItem.Relation/>)
-					</#if>
-					<@com.picklistMultiple blockItem.Country/>
-					<#if blockItem.Remarks?has_content>
-						(<@com.text blockItem.Remarks/>)
-					</#if>
-				</para>
-			</#list>
-		</#if>
-	</#compress>
-</#macro>
-
-<#macro mixtureName _subject>
-	<#compress>
-		<#if _subject.documentType=="MIXTURE">
-			<#assign docUrl=iuclid.webUrl.entityView(_subject.documentKey)/>
-			<#if docUrl?has_content>
-				<ulink url="${docUrl}"><@com.text _subject.MixtureName/></ulink>
-			<#else>
-				<@com.text _subject.MixtureName/>
-			</#if>
-		</#if>
-	</#compress>
-</#macro>
