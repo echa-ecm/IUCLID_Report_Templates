@@ -177,7 +177,9 @@
 					</td>
 				</tr>
 				</#if>
-
+			<#else>
+				<#--NOTE: otherwise if empty block report crashes-->
+				<tr><td></td><td></td></tr>
 			</#if>
 
 		</#list>
