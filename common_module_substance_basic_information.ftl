@@ -236,7 +236,7 @@
 								<tr>
 									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">InChI:</emphasis></th>
 									<td>
-										<@inchi referenceSubstance/>
+										<@com.inchi referenceSubstance/>
 									</td>
 								</tr>
 							</#if>
@@ -244,7 +244,7 @@
 								<tr>
 									<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Structural formula:</emphasis></th>
 									<td>
-										<@structuralFormula referenceSubstance/>
+										<@com.structuralFormula referenceSubstanceID=referenceSubstance imageWidthPerc=100 printTitle=false/>
 									</td>
 								</tr>
 							</#if>
@@ -302,7 +302,7 @@
 						<tr>
 							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">InChI:</emphasis></th>
 							<td>
-								<@inchi com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
+								<@com.inchi com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance)/>
 							</td>
 						</tr>
 					</#if>
@@ -310,7 +310,7 @@
 						<tr>
 							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Structural formula:</emphasis></th>
 							<td>
-								<@structuralFormula com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) />
+								<@com.structuralFormula com.getReferenceSubstanceKey(_subject.ReferenceSubstance.ReferenceSubstance) 100 false/>
 							</td>
 						</tr>
 					</#if>
@@ -333,47 +333,7 @@
 	</#compress>
 </#macro>
 
-<#--macros to be moved to macros_common_general.ftl-->
-<#macro inchi referenceSubstanceID>
-	<#compress>
-		<#if referenceSubstanceID?has_content>
-			<#if referenceSubstanceID.MolecularStructuralInfo.InChl?has_content>
-				<@com.text referenceSubstanceID.MolecularStructuralInfo.InChl />
-			<#else>No SMILES notation provided
-			</#if>
-		</#if>
-	</#compress>
-</#macro>
-
-<#--Need to disable figure numbering-->
-<#macro structuralFormula referenceSubstanceID>
-	<#compress>
-		<#if referenceSubstanceID?has_content>
-			<#local attachmentKey = referenceSubstanceID.MolecularStructuralInfo.StructuralFormula />
-			<#if attachmentKey?has_content>
-				<#local structuralFormula = iuclid.getMetadataForAttachment(attachmentKey) />
-				<#if structuralFormula?has_content && structuralFormula.isImage>
-					<#if structuralFormula.exceedsLimit(10000000)>
-						<para><emphasis>Image size is too big (${structuralFormula.size} bytes) and cannot be displayed!</emphasis></para>
-					<#elseif !iuclid.imageMimeTypeSupported(structuralFormula.mediaType) >
-						<para><emphasis>Image type (${structuralFormula.mediaType}) is not yet supported!</emphasis></para>
-					<#else>
-						<figure>
-							<mediaobject>
-								<imageobject>
-									<imagedata scalefit="1" fileref="data:${structuralFormula.mediaType};base64,${iuclid.getContentForAttachment(attachmentKey)}" />
-								</imageobject>
-							</mediaobject>
-						</figure>
-					</#if>
-				</#if>
-			<#else>
-				<emphasis>No structural formula image attached to the Reference substance</emphasis>
-			</#if>
-		</#if>
-	</#compress>
-</#macro>
-
+<#--Macro still to be merged with macros_common_general-->
 <#macro synonyms referenceSubstanceID>
 	<#compress>
 
