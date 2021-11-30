@@ -3944,7 +3944,7 @@
 						</#if>
 						</td>
 					</#if>
-					<#if item.hasElement("SoilMoisture")><td><#if item.SoilMoisture?has_content><@com.number item.SoilMoisture/>%</#if></td></#if>
+					<#if item.hasElement("SoilMoisture")><td><#if item.SoilMoisture?has_content><@com.quantity item.SoilMoisture/>%</#if></td></#if>
 					<td><@com.quantity item.NormalisedDtFifty/></td>
 					<td><@com.number item.KineticFormationFraction/></td>
 					<td><@com.number item.ChiSquare/></td>
