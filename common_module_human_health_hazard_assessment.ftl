@@ -8763,15 +8763,13 @@
 	</#compress>
 </#macro>
 
-<#macro results_skinEyeIrritation study>
+<#macro results_skinIrritation study>
 	<#compress>
 
 	<#--In vitro
     NOTE: missing vehicle and negative controls of effect-->
-		<#if study.ResultsAndDiscussion.InVitro.hasElement("Results") && study.ResultsAndDiscussion.InVitro.Results?has_content>
+		<#if study.ResultsAndDiscussion.InVitro.Results?has_content>
 			<para><@inVitroList study.ResultsAndDiscussion.InVitro.Results/></para>
-		<#elseif study.ResultsAndDiscussion.InVitro.hasElement("ResultsOfExVivoInVitroStudy") && study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy?has_content>
-			<para><@inVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults?has_content>
@@ -8780,13 +8778,9 @@
 
 	<#--In vivo
     NOTE: missing "basis" of effect-->
-		<#if study.ResultsAndDiscussion.InVivo.hasElement("Results") && study.ResultsAndDiscussion.InVivo.Results?has_content>
+		<#if study.ResultsAndDiscussion.InVivo.Results?has_content>
 			<para>
 				<@inVivoList study.ResultsAndDiscussion.InVivo.Results/>
-			</para>
-		<#elseif study.ResultsAndDiscussion.InVivo.hasElement("IrritationCorrosionResults") && study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults?has_content>
-			<para>
-				<@inVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
 			</para>
 		</#if>
 
@@ -8798,10 +8792,39 @@
 			<para>Other effects:</para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.OtherEffects/></para>
 		</#if>
 
-	<#--NOTE: for Eye irritation there are specific macros, but very similar so not used
-        <@keyTox.EyeIrritationInVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/>
-        <@keyTox.EyeIrritationInVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
-    -->
+	</#compress>
+</#macro>
+
+
+<#macro results_eyeIrritation study>
+	<#compress>
+
+	<#--In vitro
+    NOTE: missing vehicle and negative controls of effect-->
+	<#if study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy?has_content>
+		<para><@EyeIrritationInVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/></para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults?has_content>
+		<para>Other effects / acceptance of results: </para><para role="indent"><@com.text study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults/></para>
+	</#if>
+
+	<#--In vivo
+    NOTE: missing "basis" of effect-->
+	<#if study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults?has_content>
+		<para>
+			<@EyeIrritationInVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
+		</para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData?has_content>
+		<para>Irritant/corrosive response: </para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData/></para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVivo.OtherEffects?has_content>
+		<para>Other effects:</para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.OtherEffects/></para>
+	</#if>
+
 	</#compress>
 </#macro>
 
@@ -10604,14 +10627,14 @@
 			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
 		</#if>
 
-		<#-- Get metabolites-->
-		<#if _metabolites?? && _metabolites?has_content>
+		<#-- get a list of entities of same size as summaryList-->
+		<#local entityList = []/>
+		<#list summaryList as summary>
+			<#local entityList = entityList + [subject.ChemicalName]/>
+		</#list>
 
-			<#-- get a list of entities of same size as summaryList-->
-			<#local entityList = []/>
-			<#list summaryList as summary>
-				<#local entityList = entityList + [subject.ChemicalName]/>
-			</#list>
+		<#-- Get metabolites-->
+		<#if includeMetabolites && _metabolites?? && _metabolites?has_content>
 
 			<#-- add metabolites-->
 			<#list _metabolites as metab>
