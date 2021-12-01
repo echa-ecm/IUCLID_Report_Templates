@@ -10630,7 +10630,11 @@
 		<#-- get a list of entities of same size as summaryList-->
 		<#local entityList = []/>
 		<#list summaryList as summary>
-			<#local entityList = entityList + [subject.ChemicalName]/>
+			<#if subject.documentType=="SUBSTANCE">
+				<#local entityList = entityList + [subject.ChemicalName]/>
+			<#elseif subject.documentType=="MIXTURE">
+				<#local entityList = entityList + [subject.MixtureName]/>
+			</#if>
 		</#list>
 
 		<#-- Get metabolites-->
