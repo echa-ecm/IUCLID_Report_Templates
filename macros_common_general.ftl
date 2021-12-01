@@ -538,13 +538,13 @@
 </#function>
 
 <!-- other identifiers in a Substance or mixture -->
-<#macro otherIdentifiersList otherNamesRepeatableBlock>
+<#macro otherIdentifiersList otherNamesRepeatableBlock role="">
 <#compress>
 	<#if otherNamesRepeatableBlock?has_content>
 		<#list otherNamesRepeatableBlock as blockItem>
-			<para>
-				<@com.picklist blockItem.NameType/> <@com.text blockItem.Name/> 
-				<#if blockItem.Relation?has_content>
+			<para role="${role}">
+				<@com.picklist blockItem.NameType/>: <@com.text blockItem.Name/>
+				<#if blockItem.hasElement('Relation') && blockItem.Relation?has_content>
 					(<@com.picklist blockItem.Relation/>)
 				</#if>
 				<@com.picklistMultiple blockItem.Country/> 
