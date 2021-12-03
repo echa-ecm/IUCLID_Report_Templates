@@ -689,7 +689,7 @@
 				<para>
 					<emphasis role="underline">Metabolites information overview: </emphasis>
 					<@com.richText metabComp.MetabolitesInfo.MetabolitesInfoOverview/>
-				<para>
+				</para>
 			</#if>
 
 			<#if metabComp.ListMetabolites?has_content>
