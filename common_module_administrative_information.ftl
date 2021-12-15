@@ -720,7 +720,7 @@
 	</#compress>
 </#macro>
 
-<#macro assessmentOtherAuthorities _subject>
+<#macro assessmentOtherAuthorities _subject addInfo=true>
 	<#compress>
 
 		<#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "AssessmentOtherAuthorities") />
@@ -797,7 +797,7 @@
 				</#if>
 
 				<#--Additional info-->
-				<#if study.AdditionalInformation?has_content>
+				<#if addInfo && study.AdditionalInformation?has_content>
 
 					<para><emphasis role="bold">Additional information:</emphasis></para>
 
@@ -811,7 +811,7 @@
 
 					<#if study.AdditionalInformation.LegislationInExportingCountry ||
 						study.AdditionalInformation.LegislationExportingCountryRemark?has_content>
-						<para><emphasis role="underline">Evidence of registration in the exporting country:</emphasis>
+						<para><emphasis role="underline">Legislation in the exporting country concerning the MRL:</emphasis>
 							<#if study.AdditionalInformation.LegislationInExportingCountry>yes (attached)<#else>no</#if>
 							<para role="indent"><@com.text study.AdditionalInformation.LegislationExportingCountryRemark/></para>
 						</para>
@@ -824,6 +824,72 @@
 				<@com.emptyLine/>
 
 			</#list>
+		</#if>
+
+	</#compress>
+</#macro>
+
+<#macro importTolerances subject>
+	<#compress>
+		<#local studyList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_RECORD", "AssessmentOtherAuthorities") />
+
+		<#local tolerances=[]/>
+		<#if studyList?has_content>
+			<#list studyList as study>
+				<#if study.AdditionalInformation?has_content>
+					<#local tolerances = tolerances + [study.AdditionalInformation]/>
+				</#if>
+			</#list>
+		</#if>
+
+		<#if tolerances?has_content>
+			<#list tolerances as tolerance>
+				<#if (tolerances?size>1) ><para><emphasis role="HEAD-WoutNo">#${tolerance_index+1}</emphasis></para></#if>
+
+				<#if tolerance.RegistrationInExportingCountry || tolerance.RegistrationInExportingCountryRemark?has_content>
+					<para><emphasis role="underline">Evidence of registration in the exporting country:</emphasis>
+						<#if tolerance.RegistrationInExportingCountry>yes<#else>no</#if>
+						<para role="indent"><@com.text tolerance.RegistrationInExportingCountryRemark/></para>
+
+						<#if tolerance.RegistrationInExportingCountryAttachment?has_content>
+							<para role="indent"><emphasis role="underline">Attached files (evidence of registration):</emphasis></para>
+							<#list tolerance.RegistrationInExportingCountryAttachment as attachment>
+								<#local attachmentData=iuclid.getMetadataForAttachment(attachment)/>
+								<para role="indent2"><@com.text attachmentData.filename/></para>
+							</#list>
+						</#if>
+
+						<#if tolerance.RegistrationInExportingCountryUsePattern?has_content>
+							<para role="indent"><emphasis role="underline">Attached files (registered uses)</emphasis>:</para>
+							<#list tolerance.RegistrationInExportingCountryUsePattern as attachment>
+								<#local attachmentData=iuclid.getMetadataForAttachment(attachment)/>
+								<para role="indent2"><@com.text attachmentData.filename/></para>
+							</#list>
+						</#if>
+					</para>
+				</#if>
+
+				<#if tolerance.LegislationInExportingCountry || tolerance.LegislationExportingCountryRemark?has_content>
+					<para><emphasis role="underline">Legislation in the exporting country concerning the MRL:</emphasis>
+						<#if tolerance.LegislationInExportingCountry>yes<#else>no</#if>
+						<para role="indent"><@com.text tolerance.LegislationExportingCountryRemark/></para>
+
+						<#if tolerance.LegislationExportingCountryAttachment?has_content>
+							<para role="indent"><emphasis role="underline">Attached files:</emphasis></para>
+							<#list tolerance.LegislationExportingCountryAttachment as attachment>
+								<#local attachmentData=iuclid.getMetadataForAttachment(attachment)/>
+								<para role="indent2"><@com.text attachmentData.filename/></para>
+							</#list>
+						</#if>
+					</para>
+				</#if>
+
+				<@com.emptyLine/>
+
+			</#list>
+
+		<#else>
+			<para>Not provided.</para>
 		</#if>
 
 	</#compress>
