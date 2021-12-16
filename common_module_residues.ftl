@@ -2057,9 +2057,11 @@
             </#if>
 
             <#if !commPath?has_content>
-                <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Contribution of commodities</emphasis></td>
-                <td></td>
-                <td></td>
+                <tr>
+                    <td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Contribution of commodities</emphasis></td>
+                    <td></td>
+                    <td></td>
+                </tr>
             <#else>
                 <#local commodityNb=commPath?size />
 
