@@ -774,7 +774,7 @@
 					study.AssessmentsOutsideEurope.VeterinaryMedicine?has_content ||
 					study.AssessmentsOutsideEurope.OtherProductSafetyAssessments?has_content>
 						<para><emphasis role="underline">Assessments:</emphasis></para>
-						<@assessmentsTable study.AssessmentsEurope/>
+						<@assessmentsTable study.AssessmentsOutsideEurope/>
 						<@com.emptyLine/>
 					</#if>
 
