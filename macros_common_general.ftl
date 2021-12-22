@@ -759,15 +759,16 @@
 			<@com.picklistMultiple valuePath/>
 		<#elseif valueType=="quantity">
 			<@com.quantity valuePath/>
-		<#elseif valueType=="decimal">
+		<#elseif valueType=="decimal" || valueType=="integer">
 			<@com.number valuePath/>
-		<#elseif valueType=="multilingual_text_html">
+		<#elseif valueType?contains("text_html")>
 			<@com.richText valuePath/>
-		<#elseif valueType?contains("multilingual_text")>
+		<#elseif valueType?contains("text")>
 			<@com.text valuePath/>
-    
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
+		<#elseif valueType=="boolean">
+			<#if valuePath>Y<#else>N</#if>
 		<#else>
 			value type ${valueType} not supported!
 		</#if>
