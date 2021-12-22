@@ -2629,8 +2629,7 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSALongTermToxicityToAquaticInvertebrates summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content />
 </#function>
 
 <#function getValuesShortTermToxicityToAquaticInvertebrates summaryList>
