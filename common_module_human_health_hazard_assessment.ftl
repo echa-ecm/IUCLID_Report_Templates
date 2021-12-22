@@ -10211,7 +10211,12 @@
 				<#else>
 					<@com.range endpointPath.EffectLevelValue/>
 				</#if>
+
 				<?linebreak?>
+
+				<#if endpointPath.hasElement("PhysicalForm") && endpointPath.PhysicalForm?has_content>
+					(<@com.value endpointPath.PhysicalForm/>)<?linebreak?>
+				</#if>
 			</#if>
 		</#if>
 
