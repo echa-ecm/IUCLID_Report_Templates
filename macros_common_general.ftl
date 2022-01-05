@@ -206,11 +206,11 @@
 	</#compress>
 </#macro>
 
-<#macro picklistMultiple picklistMultipleValue>
+<#macro picklistMultiple picklistMultipleValue locale="en" printOtherPhrase=false printDescription=true printRemarks=true>
 <#compress>
 	<#if picklistMultipleValue?has_content>
 		<#list picklistMultipleValue as item>
-			<@picklist item/>
+			<@picklist item locale printOtherPhrase printDescription printRemarks/>
 			<#if item_has_next>; </#if>
 		</#list>
 	</#if>
@@ -538,13 +538,13 @@
 </#function>
 
 <!-- other identifiers in a Substance or mixture -->
-<#macro otherIdentifiersList otherNamesRepeatableBlock>
+<#macro otherIdentifiersList otherNamesRepeatableBlock role="">
 <#compress>
 	<#if otherNamesRepeatableBlock?has_content>
 		<#list otherNamesRepeatableBlock as blockItem>
-			<para>
-				<@com.picklist blockItem.NameType/> <@com.text blockItem.Name/> 
-				<#if blockItem.Relation?has_content>
+			<para role="${role}">
+				<@com.picklist blockItem.NameType/>: <@com.text blockItem.Name/>
+				<#if blockItem.hasElement('Relation') && blockItem.Relation?has_content>
 					(<@com.picklist blockItem.Relation/>)
 				</#if>
 				<@com.picklistMultiple blockItem.Country/> 
@@ -740,6 +740,7 @@
 		<#else>
 			value type ${valueType} not supported!
 		</#if>
+		<#--NOTE: other types: address, document_reference, document_references, data_protection, inventory, attachment, attachments, section_types, repeatable-->
 	</#compress>
 </#macro>
 
