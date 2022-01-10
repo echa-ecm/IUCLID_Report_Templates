@@ -231,7 +231,11 @@
 							<para><emphasis role="underline">Batch analysis #${batchAn_index+1}</emphasis></para>
 						</#if>
 
-						<para role="small"><@batchAnalysisTable batchAn techSpec/></para>
+						<#if batchAn.SubstanceCompositionAnalysis?has_content>
+							<para role="small"><@batchAnalysisTable batchAn techSpec/></para>
+						<#else>
+							<para>No batch composition has been provided.</para>
+						</#if>
 
 						<#if batchAn.Remarks?has_content>
 							<para>Remarks:</para>
@@ -242,10 +246,13 @@
 							<para>Reference:</para>
 							<#list batchAn.Reference as refKey>
 								<#local ref=iuclid.getDocumentForKey(refKey)/>
+								<#local refUrl=iuclid.webUrl.documentView(ref.documentKey) />
 
 								<para role="indent">
-									<@com.text ref.GeneralInfo.Name/><#if ref.GeneralInfo.LiteratureType?has_content> (<@com.picklist ref.GeneralInfo.LiteratureType/>)</#if>,
-									<@com.text ref.GeneralInfo.Author/>, <@com.number ref.GeneralInfo.ReferenceYear/><#if ref.GeneralInfo.ReportNo?has_content>,<@com.text ref.GeneralInfo.ReportNo/></#if>
+									<ulink url="${refUrl}">
+										<@com.text ref.GeneralInfo.Name/><#if ref.GeneralInfo.LiteratureType?has_content> (<@com.picklist ref.GeneralInfo.LiteratureType/>)</#if>,
+										<@com.text ref.GeneralInfo.Author/>, <@com.number ref.GeneralInfo.ReferenceYear/><#if ref.GeneralInfo.ReportNo?has_content>,<@com.text ref.GeneralInfo.ReportNo/></#if>
+									</ulink>
 								</para>
 							</#list>
 							<para role="indent"><@com.text batchAn.Remarks/></para>
