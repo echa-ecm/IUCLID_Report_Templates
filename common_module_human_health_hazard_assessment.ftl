@@ -10519,18 +10519,17 @@
 					</#if>
 
 				<#--Linked studies-->
+					<#local summaryLinks=""/>
 					<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
 						<#local summaryLinks><#compress>
-							<para role="indent">
-								<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
-									<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
+							<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
+								<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
+								<para role="indent">
 									<command  linkend="${studyReference.documentKey.uuid!}">
 										<@com.text studyReference.name/>
 									</command>
-
-									<#if studyReferenceLinkedToSummary_has_next> | </#if>
-								</#list>
-							</para>
+								</para>
+							</#list>
 						</#compress></#local>
 						<#if merge>
 							<#local links = links + [summaryLinks]/>
