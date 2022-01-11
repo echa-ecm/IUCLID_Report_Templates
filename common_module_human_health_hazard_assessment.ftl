@@ -7326,7 +7326,7 @@
 	<#assign skinIrritation = getSortedSkinIrritationNonHumanStudy(study, ["skin irritation: in vitro / ex vivo", "skin irritation: in vivo", "skin irritation / corrosion, other"] ) />
 	<#assign skinCorrosion = getSortedSkinCorrosionNonHumanStudy(study, ["skin corrosion: in vitro / ex vivo", "skin irritation / corrosion.*"]) />
 
-	<#if csrRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
+	<#if csrRelevant?? || svhcRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
 
 	<#--	NOTE: PPP: interim solution - to be changed-->
 	<#if !pppRelevant??>
@@ -10100,7 +10100,7 @@
 	<#--Conclusion-->
 		<#local conclusion><#compress>
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet?has_content>
-				<para role="indent">ED criteria for humans met:<@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet/></para>
+				<para role="indent">ED criteria for humans met: <@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet/></para>
 			</#if>
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals?has_content>
 				<para role="indent">Adverse effect relevant for wild mammals: <@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals/></para>
@@ -10115,8 +10115,7 @@
 			</#if>
 		</#compress></#local>
 		<#if conclusion?has_content>
-		<#--			<para><emphasis role="bold">Conclusion:</emphasis></para>-->
-			Conclusion:<?linebreak?>
+			<@com.emptyLine/><para><emphasis role="bold">Overall conclusion:</emphasis></para>
 			${conclusion}
 		</#if>
 	</#compress>
@@ -10505,7 +10504,7 @@
 							</#if>
 						</#compress></#local>
 
-						<#if keyInfoPath?eval?has_content>
+						<#if keyInfoPath?has_content && keyInfoPath?eval?has_content>
 							<#local summaryKeyInfo><para role="indent"><@com.richText keyInfoPath?eval/></para></#local>
 						</#if>
 					</#if>
