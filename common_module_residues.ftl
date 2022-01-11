@@ -95,12 +95,6 @@
             <para role="small"><@totalRadioactiveResiduesTable study.ResultsAndDiscussion.TotalRadioactiveResiduesTRR/></para>
         </#if>
 
-<#--        NOTE: removed IUCLID6.6-->
-<#--        <#if study.ResultsAndDiscussion.StorageStability?has_content>-->
-<#--            <para>Storage stability (sample integrity):</para>-->
-<#--            <para role="indent"><@com.text study.ResultsAndDiscussion.StorageStability/></para>-->
-<#--        </#if>-->
-
         <#if study.ResultsAndDiscussion.OtherDetailsOnTRRs?has_content>
             <para>Other details on TRRs:</para>
             <para role="indent"><@com.text study.ResultsAndDiscussion.OtherDetailsOnTRRs/></para>
@@ -1150,7 +1144,12 @@
         </#if>
 
         <#-- Iterate-->
-        <#if summaryList?has_content>
+        <#if !summaryList?has_content>
+            <@com.emptyLine/>
+        	<para>No summary information available for this section.</para>
+        	<@com.emptyLine/>
+
+        <#else>
 
             <@com.emptyLine/>
             <para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
@@ -1174,25 +1173,31 @@
                 <#--Key Information-->
                 <#if summary.hasElement("KeyInformation") && summary.KeyInformation.KeyInformation?has_content>
                     <para><emphasis role="bold">Key information: </emphasis></para>
-                    <para><@com.richText summary.KeyInformation.KeyInformation/></para>
-
-                    <#if docSubType=="MetabolismPlants">
-                        <para>[Please, note that the full text of the end point summary on metabolism studies is reported here.
-                                Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>
-<#--                    <#elseif docSubType=="MagnitudeResiduesPlants" >-->
-<#--                        NOTE: not needed in IUCLID6.6-->
-<#--                        <para>[Please, note that the full text of the end point summary on magnitude of residues is reported here.-->
-<#--                                Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>-->
-                    </#if>
+                    <para role='indent'><@com.richText summary.KeyInformation.KeyInformation/></para>
+					
+					<#if selection?has_content>
+	                    <#if docSubType=="MetabolismPlants">
+	                        <para>[Please, note that the full text of the end point summary on metabolism studies is reported here.
+	                                Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>
+	<#--                    <#elseif docSubType=="MagnitudeResiduesPlants" >-->
+	<#--                        NOTE: not needed in IUCLID6.6-->
+	<#--                        <para>[Please, note that the full text of the end point summary on magnitude of residues is reported here.-->
+	<#--                                Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>-->
+	                    </#if>
+	                </#if>
                 </#if>
 
                 <#--Results blocks (type dependent)-->
                 <#if summary.documentSubType=="MetabolismPlants">
                     <#if (!(selection?has_content) || selection?seq_contains("PrimaryCrops")) && summary.KeyInformation.PrimaryCrops?has_content>
+                    	<#if !(selection?has_content)><para><emphasis role="bold">Primary crops:</emphasis></para></#if>
                         <para><@metabolismPlantsSummaryTable summary.KeyInformation.PrimaryCrops/></para>
+                        <@com.emptyLine/>
                     </#if>
                     <#if (!(selection?has_content) || selection?seq_contains("RotationalCrops")) && summary.KeyInformation.RotationalCrops?has_content>
+                    	<#if !(selection?has_content)><para><emphasis role="bold">Rotational crops:</emphasis></para></#if>
                         <para><@metabolismPlantsSummaryTable summary.KeyInformation.RotationalCrops/></para>
+                        <@com.emptyLine/>
                     </#if>
                 <#elseif summary.documentSubType=="StabilityResiduesCommodities">
                     <#if summary.KeyInformation.StorageStabilityPlant?has_content>
@@ -1205,6 +1210,10 @@
                     </#if>
                 <#elseif summary.documentSubType=="MagnitudeResiduesPlants">
                     <#if summary.KeyInformation.SummaryResiduesData?has_content>
+                    	<para><emphasis role="bold">Summary of residues data from the supervised residue trials
+                    		<#if summary.KeyInformation.Endpoint?has_content> - <@com.picklist summary.KeyInformation.Endpoint/></#if>
+                    		:</emphasis>
+                		</para>
                         <para role="small"><@summaryResiduesDataSummaryTable summary.KeyInformation.SummaryResiduesData/></para>
                     </#if>
                 <#elseif summary.documentSubType=="NatureMagnitudeResiduesProcessedCommodities">
@@ -1298,13 +1307,13 @@
                 <#if summary.hasElement("Discussion") && summary.Discussion.Discussion?has_content>
                     <@com.emptyLine/>
                     <para><emphasis role="bold">Discussion:</emphasis></para>
-                    <para><@com.richText summary.Discussion.Discussion/></para>
+                    <para role='indent'><@com.richText summary.Discussion.Discussion/></para>
 
-                     <#if docSubType=="MetabolismPlants">
-                        <para>[Please, note that the full text of the end point summary on metabolism studies is reported here.
+                     <#if docSubType=="MetabolismPlants" && selection?has_content>
+                        <para role='indent'>[Please, note that the full text of the end point summary on metabolism studies is reported here.
                                 Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>
-                    <#elseif docSubType=="MagnitudeResiduesPlants" >
-                        <para>[Please, note that the full text of the end point summary on magnitude of residues is reported here.
+                    <#elseif docSubType=="MagnitudeResiduesPlants" && selection?has_content>
+                        <para role='indent'>[Please, note that the full text of the end point summary on magnitude of residues is reported here.
                                 Please, keep only the text relevant for primary crops or rotational crops as corresponds.]</para>
                     </#if>
                 </#if>
