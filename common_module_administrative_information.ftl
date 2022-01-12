@@ -450,7 +450,9 @@
 		<#local recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "Manufacturer_EU_PPP") />
 
 		<#if !(recordList?has_content)>
-			No relevant information on manufacturer available.
+			<@com.emptyLine/>
+			No information on manufacturer available.
+			<@com.emptyLine/>
 		<#else>
 			<#list recordList as record>
 
@@ -726,7 +728,9 @@
 		<#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "AssessmentOtherAuthorities") />
 
 		<#if !(studyList?has_content)>
-			No relevant information on assessment by other authorities available.
+			<@com.emptyLine/>
+			No information on assessment by other authorities available.
+			<@com.emptyLine/>
 		<#else>
 			<#list studyList as study>
 
@@ -889,7 +893,9 @@
 			</#list>
 
 		<#else>
-			<para>Not provided.</para>
+			<@com.emptyLine/>
+			<para>No information on import tolerances available.</para>
+			<@com.emptyLine/>
 		</#if>
 
 	</#compress>
