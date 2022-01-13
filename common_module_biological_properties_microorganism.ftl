@@ -298,7 +298,11 @@
             </#list>
         </#if>
 
-        <#if summaryList?has_content>
+        <#if !summaryList?has_content>
+            <@com.emptyLine/>
+            <para>No summary information available for this section.</para>
+            <@com.emptyLine/>
+        <#else>
             <@com.emptyLine/>
             <para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
         </#if>
