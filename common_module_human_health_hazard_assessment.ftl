@@ -10410,7 +10410,7 @@
 		docSubTypes?seq_contains("ToxRefValues") ||
 		docSubTypes?seq_contains("EndocrineDisruptingPropertiesAssessmentPest") ||
 		docSubTypes?seq_contains("NonDietaryExpo") ||
-		docSubTypes?seq_contains("DermalAbsorption") >
+		docSubTypes?seq_contains("DermalAbsorption")>
 			<#local merge=false>
 		</#if>
 
@@ -10538,15 +10538,13 @@
 							</#compress></#local>
 							<#if merge>
 								<#local links = links + [summaryLinks]/>
-							<#-- to check  :<#if resultFormat!="table">${links}</#if>-->
 							<#else>
 								<para><emphasis role="bold">Linked studies: </emphasis></para>${summaryLinks}
 								<@com.emptyLine/>
 							</#if>
 						</#if>
 	
-					<#--CSA value:
-	                3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
+					<#--CSA value-->
 						<#if summary.documentSubType=="ToxRefValues">
 							<para><emphasis role="bold">Toxicological reference values: </emphasis></para>
 							<@toxRefValuesTable summary/><@com.emptyLine/>
@@ -10580,11 +10578,10 @@
 							<#if summary.documentSubType=="Phototoxicity">
 							<#--special case for Phototox-->
 								<#local photoEndpoint><@com.picklist summary.KeyValueCsa.Results/></#local>
-								<#local photoLinks = summaryLinks?replace("\\|", "<\\?linebreak\\?>", "r")/>
-								<#local photoLinks = photoLinks?replace('role="indent"', '')/>
+								<#local photoLinks = summaryLinks?replace('role="indent"', '')/>
 								<#local summarySeq = [{"name":"Phototoxicity", "links": photoLinks, "endpoint": photoEndpoint}]/>
 							<#elseif summary.documentSubType=="SpecificInvestigationsOtherStudies">
-								<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":links?replace("\\|", "<\\?linebreak\\?>", "r"), "endpoint": ""}]/>
+								<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":summaryLinks?replace('role="indent"', ''), "endpoint": ""}]/>
 							<#else>
 								<#local summarySeq = getSummarySeq(summary)/>
 							</#if>
