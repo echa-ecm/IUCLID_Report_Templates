@@ -24,8 +24,8 @@
         </#if>
 
         <#if !recordList?has_content>
-		    No relevant information available.
-
+            <@com.emptyLine/>
+		    No information available for this section.
             <@com.emptyLine/>
 
 	    <#else>
