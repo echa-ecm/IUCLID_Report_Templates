@@ -152,14 +152,15 @@
 </#compress>
 </#macro>
 
-<#macro text textValue="">
-<#compress>
+<#macro text textValue="" compress=false>
+	<#if compress><#compress></#if>
+
 	<#if textValue?has_content>
 		<#escape x as x?html>
 		${textValue}
 		</#escape>
   	</#if>
-</#compress>
+	<#if compress></#compress></#if>
 </#macro>
 
 <#macro number numberValue>
