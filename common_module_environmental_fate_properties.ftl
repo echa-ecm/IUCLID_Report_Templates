@@ -3584,7 +3584,11 @@
 		</#if>
 
 		<#-- Iterate-->
-		<#if summaryList?has_content>
+		<#if !summaryList?has_content>
+			<@com.emptyLine/>
+			<para>No summary information available for this section.</para>
+			<@com.emptyLine/>
+		<#else>
 			<@com.emptyLine/>
 			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
@@ -4272,17 +4276,19 @@
 
 					<@com.children summary.PecSoil/>
 
-					<para>PEC:</para>
-					<para role="small"><@pecSoilSummaryTable summary.PecSoil.PecSoilMgkg/></para>
-
+					<#if summary.PecSoil.PecSoilMgkg?has_content>
+						<para>PEC:</para>
+						<para role="small"><@pecSoilSummaryTable summary.PecSoil.PecSoilMgkg/></para>
+					</#if>
 				<#elseif summary.hasElement("PecGroundWater") && summary.PecGroundWater?has_content>
 					<para><emphasis role="bold">PEC from ground water:</emphasis></para>
 
 					<@com.children summary.PecGroundWater/>
 
-					<para>PEC:</para>
-					<para role="small"><@pecGroundWaterSummaryTable summary.PecGroundWater.PecGroundWater/></para>
-
+					<#if summary.PecGroundWater.PecGroundWater?has_content>
+						<para>PEC:</para>
+						<para role="small"><@pecGroundWaterSummaryTable summary.PecGroundWater.PecGroundWater/></para>
+					</#if>
 				<#elseif summary.hasElement("PecSurfaceWaterPecSediment") && summary.PecSurfaceWaterPecSediment?has_content>
 					<para><emphasis role="bold">PEC from surface water and sediment:</emphasis></para>
 
