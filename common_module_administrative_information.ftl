@@ -253,7 +253,7 @@
 				<#local roles=roles?join(", ")/>
 				<@com.emptyLine/>
 				<para>
-					<emphasis role="bold">Role in the supply chain: </emphasis>
+					<emphasis role="underline">Role in the supply chain: </emphasis>
 					${roles}
 				</para>
 			</#if>
@@ -277,12 +277,11 @@
 				<#local legalEntity = iuclid.getDocumentForKey(record.ManufacturerImportForm.LegalEntity)/>
 				<#if legalEntity?has_content>
 					<para><emphasis role="underline">Producer's details:</emphasis></para>
-
 					<@legalEntityInfo legalEntity/>
+				</#if>
 
-					<#if record.ManufacturerImportForm.Remarks?has_content>
-						<para><emphasis role="bold">Remarks: </emphasis><@com.text record.ManufacturerImportForm.Remarks/></para>
-					</#if>
+				<#if record.ManufacturerImportForm.Remarks?has_content>
+					<para><emphasis role="underline">Remarks:</emphasis> <@com.text record.ManufacturerImportForm.Remarks/></para>
 				</#if>
 
 				<#if record.OnlyRepresentationInfo.ImporterEntries?has_content>
@@ -321,24 +320,22 @@
 
 				<@com.emptyLine/>
 
+				<#--Site-->
+				<#local site = iuclid.getDocumentForKey(record.ReferenceSite)/>
+				<#if site?has_content>
+					<@siteInfo site/>
+				</#if>
+
+				<#if record.Remarks?has_content>
+					<para><emphasis role="underline">Remarks:</emphasis> <@com.text record.Remarks/></para>
+				</#if>
+
 				<#--Mixture/Product-->
 				<#if _subject.documentType=="MIXTURE" && record.RelatedMixtureProduct.SpecifyToWhichMixtureProductSItApplies?has_content>
 					<para><emphasis role="underline">Applicable to mixture/product:</emphasis>
 						<#local product=iuclid.getDocumentForKey(record.RelatedMixtureProduct.SpecifyToWhichMixtureProductSItApplies)/>
 						<@mixtureName _subject/>
 					</para>
-					<@com.emptyLine/>
-				</#if>
-
-				<#--Site-->
-				<#local site = iuclid.getDocumentForKey(record.ReferenceSite)/>
-				<#if site?has_content>
-
-					<@siteInfo site/>
-
-					<#if record.Remarks?has_content>
-						<para><emphasis role="bold">Remarks: </emphasis><@com.text record.Remarks/></para>
-					</#if>
 				</#if>
 
 				<@com.emptyLine/>
@@ -450,7 +447,9 @@
 		<#local recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "Manufacturer_EU_PPP") />
 
 		<#if !(recordList?has_content)>
-			No relevant information on manufacturer available.
+			<@com.emptyLine/>
+			No information on manufacturer available.
+			<@com.emptyLine/>
 		<#else>
 			<#list recordList as record>
 
@@ -726,7 +725,9 @@
 		<#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "AssessmentOtherAuthorities") />
 
 		<#if !(studyList?has_content)>
-			No relevant information on assessment by other authorities available.
+			<@com.emptyLine/>
+			No information on assessment by other authorities available.
+			<@com.emptyLine/>
 		<#else>
 			<#list studyList as study>
 
@@ -889,7 +890,9 @@
 			</#list>
 
 		<#else>
-			<para>Not provided.</para>
+			<@com.emptyLine/>
+			<para>No information on import tolerances available.</para>
+			<@com.emptyLine/>
 		</#if>
 
 	</#compress>
