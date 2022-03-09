@@ -460,7 +460,7 @@
             <@com.emptyLine/>
             <para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-            <#assign printSummaryName = true/><#--  summaryList?size gt 1 />-->
+            <#assign printSummaryName = summaryList?size gt 1 />
 
             <#list summaryList as summary>
                 <@com.emptyLine/>
