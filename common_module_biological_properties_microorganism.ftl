@@ -11,7 +11,7 @@
             <#if (docs?size>1)><para><emphasis role="underline">#${doc_index+1}: <@com.text doc.name/></emphasis></para></#if>
 				
 			<#local docPath=path?eval/>
-			<para><@com.value docPath/></para>
+			<para><@com.value docPath 'literal'/></para>
         
             <#-- Reference -->
             <#local docPathParent=docPath?ancestors[0]/>
@@ -115,13 +115,13 @@
 
 <#-- GENERAL INFO SECTION -->
 <#-- NOTE: version not used -->
-<#macro generalInfo_effectivenessTargetOrg2 study>
+<#macro generalInfo_effectivenessTargetOrg_old study>
 
     <#local gen=study.GeneralInformation/>
 
     <#if gen.BackgroundInformation?has_content>
         <para><emphasis role="bold">Background information:</emphasis></para>
-        <para role="indent"><@com.text gen.BackgroundInformation/></para>
+        <para role="indent"><@com.text gen.BackgroundInformation 'literal'/></para>
     </#if>
 
     <#if gen.PestTargetOrganismsToBeControlled.TargetOrganisms?has_content>
@@ -133,7 +133,7 @@
 
     <#if gen.ProductsOrganismsOrObjectsToBeProtectedUnderStudy.OrganismsToBeProtectedOrTreatedMaterials?has_content>
         <para><emphasis role="bold">Organisms (to be protected) or treated materials:</emphasis></para>
-        <para role="indent"><@com.text gen.ProductsOrganismsOrObjectsToBeProtectedUnderStudy.OrganismsToBeProtectedOrTreatedMaterials/></para>
+        <para role="indent"><@com.text gen.ProductsOrganismsOrObjectsToBeProtectedUnderStudy.OrganismsToBeProtectedOrTreatedMaterials 'literal'/></para>
     </#if>
 
     <#if gen.InformationOnIntendedUseAndApplication?has_content>
@@ -146,7 +146,7 @@
             <para>Product type: <@com.picklist use.ProductType/></para>
         </#if>
         <#if use.ProductType?has_content>
-            <para>Field of use envisaged / user: <@com.text use.FieldOfUseEnvisagedUser/></para>
+            <para>Field of use envisaged / user: <@com.text use.FieldOfUseEnvisagedUser 'literal'/></para>
         </#if>
     </#if>
 
@@ -155,7 +155,7 @@
         <#if gen.InformationOnApplicationOfProduct.MethodOfApplication?has_content>
             <para>Method of application: <@com.picklistMultiple gen.InformationOnApplicationOfProduct.MethodOfApplication/>
                 <#if gen.InformationOnApplicationOfProduct.DetailsOnApplication?has_content>
-                    <para role="indent"><@com.text gen.InformationOnApplicationOfProduct.DetailsOnApplication/></para>
+                    <para role="indent"><@com.text gen.InformationOnApplicationOfProduct.DetailsOnApplication 'literal'/></para>
                 </#if>
             </para>
         </#if>
@@ -167,27 +167,27 @@
 
         <#if eff.EffectsOnTargetOrganisms?has_content>
             <para>Effects on target organisms:</para>
-            <para role="indent"><@com.text eff.EffectsOnTargetOrganisms/></para>
+            <para role="indent"><@com.text eff.EffectsOnTargetOrganisms 'literal'/></para>
         </#if>
 
         <#if eff.ModeAction?has_content>
             <para>Mode of action:</para>
             <para role="indent"><@com.picklist eff.ModeAction/>
-                <#if eff.DetailsOnModeOfAction?has_content>: <@com.text eff.DetailsOnModeOfAction/></#if></para>
+                <#if eff.DetailsOnModeOfAction?has_content>: <@com.text eff.DetailsOnModeOfAction 'literal'/></#if></para>
         </#if>
 
         <#if eff.PossibleOccurrenceOfResistance?has_content>
             <para>Ocurrence of resistance:</para>
-            <para role="indent"><@com.text eff.PossibleOccurrenceOfResistance/></para>
+            <para role="indent"><@com.text eff.PossibleOccurrenceOfResistance 'literal'/></para>
         </#if>
 
         <#if eff.ManagementStrategiesToAvoidResistance?has_content>
             <para>Management strategies to avoid resistance:</para>
-            <para role="indent"><@com.text eff.ManagementStrategiesToAvoidResistance/></para>
+            <para role="indent"><@com.text eff.ManagementStrategiesToAvoidResistance 'literal'/></para>
         </#if>
         <#if eff.AnyOtherKnownLimitationsAndManagementStrategies?has_content>
             <para>Other known limitations and management strategies:</para>
-            <para role="indent"><@com.text eff.AnyOtherKnownLimitationsAndManagementStrategies/></para>
+            <para role="indent"><@com.text eff.AnyOtherKnownLimitationsAndManagementStrategies 'literal'/></para>
         </#if>
     </#if>
 
@@ -201,7 +201,7 @@
     <#--  3.1 Use of the active substance-->
     <#if gen.BackgroundInformation?has_content>
         <para><emphasis role="bold">Background</emphasis></para>
-        <para role="indent"><@com.value gen.BackgroundInformation/></para>
+        <para role="indent"><@com.value gen.BackgroundInformation 'literal'/></para>
     </#if>
 
     <#--  3.2 Function (including also product type...) -->
@@ -210,11 +210,11 @@
         <para><emphasis role="bold">Function</emphasis></para>
 
         <#if use.FunctionAddressed?has_content>
-            <para role="indent"><@com.value use.FunctionAddressed/></para>
+            <para role="indent"><@com.value use.FunctionAddressed 'literal'/></para>
         </#if>
 
         <#if use.ProductType?has_content>
-            <para role="indent">Product type: <@com.value use.ProductType/></para>
+            <para role="indent">Product type: <@com.value use.ProductType 'literal'/></para>
         </#if>
     </#if>
 
@@ -223,13 +223,13 @@
 
     <#if eff.EffectsOnTargetOrganisms?has_content>
         <para><emphasis role="bold">Effects on harmful organisms</emphasis></para>
-        <para role="indent"><@com.value eff.EffectsOnTargetOrganisms/></para>
+        <para role="indent"><@com.value eff.EffectsOnTargetOrganisms 'literal'/></para>
     </#if>
 
     <#--  3.4 Field of use envisaged -->
     <#if use.FieldOfUseEnvisagedUser?has_content>
         <para><emphasis role="bold">Field of use envisaged</emphasis></para>
-        <para role="indent"><@com.value use.FieldOfUseEnvisagedUser/></para>
+        <para role="indent"><@com.value use.FieldOfUseEnvisagedUser 'literal'/></para>
     </#if>
 
     <#--  3.5 Harmful organisms controlled and crops or products protected or treated -->
@@ -245,7 +245,7 @@
 
         <#if gen.ProductsOrganismsOrObjectsToBeProtectedUnderStudy.OrganismsToBeProtectedOrTreatedMaterials?has_content>
             <para role="indent"><emphasis role="underline">Crops or products protected or treated:</emphasis></para>
-            <para role="indent2"><@com.value gen.ProductsOrganismsOrObjectsToBeProtectedUnderStudy.OrganismsToBeProtectedOrTreatedMaterials/></para>
+            <para role="indent2"><@com.value gen.ProductsOrganismsOrObjectsToBeProtectedUnderStudy.OrganismsToBeProtectedOrTreatedMaterials 'literal'/></para>
         </#if>
     </#if>
 
@@ -254,9 +254,9 @@
 
         <para><emphasis role="bold">Mode of action</emphasis></para>
 
-        <para role="indent"><@com.value eff.ModeAction/></para>
+        <para role="indent"><@com.value eff.ModeAction 'literal'/></para>
         <#if eff.DetailsOnModeOfAction?has_content>
-            <para role="indent"><@com.value eff.DetailsOnModeOfAction/></para>
+            <para role="indent"><@com.value eff.DetailsOnModeOfAction 'literal'/></para>
         </#if>
     </#if>
 
@@ -268,24 +268,24 @@
         <para><emphasis role="bold">Information on the occurrence or possible occurrence of the development of resistance, and appropriate management strategies</emphasis></para>
 
         <#if eff.PossibleOccurrenceOfResistance?has_content>
-            <para role="indent"><@com.value eff.PossibleOccurrenceOfResistance/></para>
+            <para role="indent"><@com.value eff.PossibleOccurrenceOfResistance 'literal'/></para>
         </#if>
 
         <#if eff.ManagementStrategiesToAvoidResistance?has_content>
-            <para role="indent"><@com.value eff.ManagementStrategiesToAvoidResistance/></para>
+            <para role="indent"><@com.value eff.ManagementStrategiesToAvoidResistance 'literal'/></para>
         </#if>
 
         <#if eff.AnyOtherKnownLimitationsAndManagementStrategies?has_content>
-            <para role="indent"><@com.value eff.AnyOtherKnownLimitationsAndManagementStrategies/></para>
+            <para role="indent"><@com.value eff.AnyOtherKnownLimitationsAndManagementStrategies 'literal'/></para>
         </#if>
     </#if>
 
     <#-- Method of application -->
     <#if gen.InformationOnApplicationOfProduct?has_content>
         <para><emphasis role="bold">Information on application of the product</emphasis></para>
-        <para role="indent">Method of application: <@com.value gen.InformationOnApplicationOfProduct.MethodOfApplication/></para>
+        <para role="indent">Method of application: <@com.value gen.InformationOnApplicationOfProduct.MethodOfApplication 'literal'/></para>
         <#if gen.InformationOnApplicationOfProduct.DetailsOnApplication?has_content>
-            <para role="indent"><@com.value gen.InformationOnApplicationOfProduct.DetailsOnApplication/></para>
+            <para role="indent"><@com.value gen.InformationOnApplicationOfProduct.DetailsOnApplication 'literal'/></para>
         </#if>
     </#if>
 </#macro>
@@ -301,10 +301,10 @@
             <para role="indent">Analytical monitoring: <@com.picklist sa.AnalyticalMonitoring/></para>
         </#if>
         <#if sa.DetailsOnSampling?has_content>
-            <para role="indent">Sampling: <@com.text sa.DetailsOnSampling/></para>
+            <para role="indent">Sampling: <@com.text sa.DetailsOnSampling 'literal'/></para>
         </#if>
         <#if sa.DetailsOnAnalyticalMethods?has_content>
-            <para role="indent">Analytical methods: <@com.text sa.DetailsOnAnalyticalMethods/></para>
+            <para role="indent">Analytical methods: <@com.text sa.DetailsOnAnalyticalMethods 'literal'/></para>
         </#if>
     </#if>
 
@@ -315,7 +315,7 @@
             <para role="indent">Vehicle: <@com.picklist ts.Vehicle/></para>
         </#if>
         <#if ts.DetailsOnPreparationAndApplicationOfTestSubstrate?has_content>
-            <para role="indent">Preparation and application of test substrate: <@com.text ts.DetailsOnPreparationAndApplicationOfTestSubstrate/></para>
+            <para role="indent">Preparation and application of test substrate: <@com.text ts.DetailsOnPreparationAndApplicationOfTestSubstrate 'literal'/></para>
         </#if>
     </#if>
 
@@ -326,7 +326,7 @@
             <para role="indent">Species: <@com.picklist to.TestOrganismsSpecies/></para>
         </#if>
         <#if to.DetailsOnTestOrganisms?has_content>
-            <para role="indent"><@com.text to.DetailsOnTestOrganisms/></para>
+            <para role="indent"><@com.text to.DetailsOnTestOrganisms 'literal'/></para>
         </#if>
         
     </#if>
@@ -344,10 +344,10 @@
             <para role="indent">Exposure duration: <@com.quantity sd.TotalExposureDuration/></para>
         </#if>
         <#if sd.Remarks?has_content>
-            <para role="indent">Remarks:<@com.text sd.Remarks/></para>
+            <para role="indent">Remarks:<@com.text sd.Remarks 'literal'/></para>
         </#if>
         <#if sd.PostExposureObservationPeriod?has_content>
-            <para role="indent">Post exposure observation period:<@com.text sd.PostExposureObservationPeriod/></para>
+            <para role="indent">Post exposure observation period:<@com.text sd.PostExposureObservationPeriod 'literal'/></para>
         </#if>
         
     </#if>
@@ -356,22 +356,22 @@
     <#if tc?has_content>
         <para><emphasis role="bold">Test conditions:</emphasis></para>
         <#if tc.TestTemperature?has_content>
-            <para role="indent">Temperature:<@com.text tc.TestTemperature/></para>
+            <para role="indent">Temperature:<@com.text tc.TestTemperature 'literal'/></para>
         </#if>
         <#if tc.Humidity?has_content>
-            <para role="indent">Humidity:<@com.text tc.Humidity/></para>
+            <para role="indent">Humidity:<@com.text tc.Humidity 'literal'/></para>
         </#if>
         <#if tc.PhotoperiodAndLighting?has_content>
-            <para role="indent">Photoperiod and lighting:<@com.text tc.PhotoperiodAndLighting/></para>
+            <para role="indent">Photoperiod and lighting:<@com.text tc.PhotoperiodAndLighting 'literal'/></para>
         </#if>
         <#if tc.NominalAndMeasuredConcentrations?has_content>
-            <para role="indent">Nominal and measured concentrations:<@com.text tc.NominalAndMeasuredConcentrations/></para>
+            <para role="indent">Nominal and measured concentrations:<@com.text tc.NominalAndMeasuredConcentrations 'literal'/></para>
         </#if>
         <#if tc.ReferenceSubstancePositiveControl?has_content>
             <para role="indent">Reference substance (positive control):<@com.picklist tc.ReferenceSubstancePositiveControl/></para>
         </#if>
         <#if tc.DetailsOnTestConditions?has_content>
-            <para role="indent">Other:<@com.text tc.DetailsOnTestConditions/></para>
+            <para role="indent">Other:<@com.text tc.DetailsOnTestConditions 'literal'/></para>
         </#if>
         
     </#if>
@@ -434,7 +434,7 @@
 
 <#macro toxicityToOtherAboveGroundOrganismsSummary subject includeMetabolites=true>
     <#compress>
-
+		
         <#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", "ToxicityToOtherAboveGroundOrganisms") />
         <#if includeMetabolites && _metabolites??>
 
@@ -460,7 +460,7 @@
             <@com.emptyLine/>
             <para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-            <#assign printSummaryName = summaryList?size gt 1 />
+            <#assign printSummaryName = true/><#--  summaryList?size gt 1 />-->
 
             <#list summaryList as summary>
                 <@com.emptyLine/>
@@ -471,8 +471,10 @@
                     <para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
                     <@com.emptyLine/>
                 </#if>
-
-                <#if printSummaryName><para><emphasis role="bold"><@com.text summary.name/></emphasis></para></#if>
+                
+				<#local docUrl=iuclid.webUrl.documentView(summary.documentKey) />
+				
+                <#if printSummaryName><para><emphasis role="bold"><ulink url="${docUrl}"><@com.text summary.name/></ulink></emphasis></para></#if>
 
                 <#if summary.KeyInformation.KeyInformation?has_content>
                     <para><emphasis role="bold">Key information: </emphasis></para>
@@ -505,8 +507,6 @@
                     <para role="indent"><@com.richText summary.Discussion.Discussion/></para>
                 </#if>
 
-            <#--                could use but links do not have hyperlink-->
-            <#--                <@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToOtherAboveGroundOrganisms printSummaryName/>-->
             </#list>
         </#if>
 
