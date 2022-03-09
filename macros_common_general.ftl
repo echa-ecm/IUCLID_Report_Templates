@@ -183,14 +183,17 @@
 </#compress>
 </#macro>
 
-<#macro text textValue="">
-<#compress>
-	<#if textValue?has_content>
+<#macro text textValue="" format="">
+	<#if textValue?has_content && format=="literal">
+		<#escape x as x?html>
+		<para role="i6LiteralText">${textValue}</para>
+		</#escape>
+
+		<#elseif textValue?has_content>
 		<#escape x as x?html>
 		${textValue}
 		</#escape>
   	</#if>
-</#compress>
 </#macro>
 
 <#macro number numberValue>
@@ -216,7 +219,7 @@
 			<#if localizedPhrase?has_content>
 
 				<#if !localizedPhrase.open || !(localizedPhrase.text?matches("other:")) || printOtherPhrase>
-					${localizedPhrase.text} <#t>
+					${localizedPhrase.text}<#t>  
 				</#if>
 
 				<#if localizedPhrase.open && picklistValue.otherText?has_content>
