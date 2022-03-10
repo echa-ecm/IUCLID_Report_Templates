@@ -29,9 +29,40 @@
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
-	'relevant' : 'generic'
+	'relevant' : 'svhc',	
+	'relevant' : 'ghs'
 	
 } />
+
+
+<#macro initiateRelevanceGHS relevance>
+	
+	<#global ghsRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign ghsRelevant>
+				<#if prop=="ghs">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+
+<#macro initiateRelevanceSVHC relevance>
+	
+	<#global svhcRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign svhcRelevant>
+				<#if prop=="svhc">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
 
 <#macro initiateRelevanceNZ relevance>
 	
@@ -165,7 +196,6 @@
 ${textValue}
 </#escape>
 </#compress>
-
 </#if>
 </#macro>
 
@@ -192,7 +222,7 @@ ${textValue}
 			<#if localizedPhrase?has_content>
 
 				<#if !localizedPhrase.open || !(localizedPhrase.text?matches("other:")) || printOtherPhrase>
-					${localizedPhrase.text} <#t>
+					${localizedPhrase.text}<#t>  
 				</#if>
 
 				<#if localizedPhrase.open && picklistValue.otherText?has_content>
@@ -716,8 +746,9 @@ ${textValue}
 </#macro>
 
 <#-- Function to get inbound references for a key -->
+<#-- Function to get inbound references for a key -->
 <#function inboundReferences key>
-    <#local params={"key": [key]}>
+    <#local params={"key": [key], "exclude": ["CUSTOM_ENTITY,CUSTOM_SECTION"]}>
     <#return iuclid.query("web.ReferencingQuery", params, 0, 100)>
 </#function>
 

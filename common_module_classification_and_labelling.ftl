@@ -11,7 +11,7 @@
 		<@com.emptyLine/>
 		<#list recordList as record>			
 			
-			<#if csrRelevant?? || pppRelevant??>
+			<#if csrRelevant?? || pppRelevant?? || !ghsRelevant??>
 				<para>
 					<@com.emptyLine/>
 
@@ -28,10 +28,12 @@
 					</para>
 				</#if>
 
-				<#if record.GeneralInformation.Remarks?has_content>
-					<para>
-						<emphasis role="bold">Remarks:</emphasis> <@com.richText record.GeneralInformation.Remarks/>
-					</para>
+				<#if !ghsRelevant??>
+					<#if record.GeneralInformation.Remarks?has_content>
+						<para>
+							<emphasis role="bold">Remarks:</emphasis> <@com.richText record.GeneralInformation.Remarks/>
+						</para>
+					</#if>
 				</#if>
 				
 				<#if record.GeneralInformation.RelatedCompositions.Composition?has_content>

@@ -482,6 +482,12 @@
 		<#if summaryList?has_content>
 			<@com.emptyLine/>
 			<para><emphasis role="HEAD-WoutNo">Discussion of physicochemical properties</emphasis></para>
+		<#else>
+			<#if pppRelevant??>
+				<@com.emptyLine/>
+				<para>No summary information for physicochemical properties available.</para>
+				<@com.emptyLine/>
+			</#if>
 		</#if>
 
 		<#if summaryList?has_content>

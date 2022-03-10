@@ -5986,14 +5986,22 @@
 		<#list PercutaneousRepeatableBlock as blockItem>
 			<para role="indent">
 				<#if blockItem.Absorption?has_content>
-					<@com.range blockItem.Absorption/>(%) 
+					<@com.range blockItem.Absorption/>
+<#--					(%) -->
 				</#if>	
 				<#if blockItem.TimePoint?has_content>
 					at <@com.quantity blockItem.TimePoint/>
 				</#if>
 				<#if blockItem.Dose?has_content>
-					(<@com.text blockItem.Dose/>) 
-				</#if>	
+					<#if pppRelevant??>
+						for dose <@com.text blockItem.Dose/>
+						<#if blockItem.ConcentrateDilution?has_content>
+							(<@com.picklist blockItem.ConcentrateDilution/>)
+						<#else>
+							(<@com.text blockItem.Dose/>)
+						</#if>
+					</#if>
+				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
 					(<@com.picklist blockItem.RemarksOnResults/>)
 				</#if>
@@ -6725,6 +6733,59 @@
 </#compress>
 </#macro>
 
+<#macro resultsOfAssaysList block role='indent'>
+	<#compress>
+		<#if block?has_content>
+			<#list block as blockItem>
+				<para role="${role}">
+
+					<@com.picklist blockItem.MaterialDetected/>
+					<#if blockItem.Detected>detected<#else>NOT detected</#if>
+
+					<#if blockItem.SampleType?has_content>
+						in <@com.picklist blockItem.SampleType/>
+					</#if>
+
+					<#if blockItem.TimePoint?has_content>
+						at <@com.quantity blockItem.TimePoint/>
+					</#if>
+
+					<#if blockItem.Quantity?has_content>
+						: <@com.range blockItem.Quantity/>
+					</#if>
+
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+
+<#macro assaysList block role='indent'>
+	<#compress>
+		<#if block?has_content>
+			<#list block as blockItem>
+				<para role="${role}">
+
+					<@com.picklist blockItem.AssayType/>:
+					<#if blockItem.LinkAnalyticalMethod?has_content>
+						analytical method(s):
+						<#list blockItem.LinkAnalyticalMethod as anmethlink>
+							<#local anmeth = iuclid.getDocumentForKey(anmethlink)/>
+							<@com.text anmeth.name/>
+							<#if anmethlink_has_next>, </#if>
+						</#list>
+					</#if>
+					<#if blockItem.Remarks?has_content>
+						(<@com.text blockItem.Remarks/>)
+					</#if>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+
 <#macro endpointSummary summary valueCsa="" valueForCsaText="" printName=false>
 	<para>
 		<#if printName>
@@ -7265,7 +7326,7 @@
 	<#assign skinIrritation = getSortedSkinIrritationNonHumanStudy(study, ["skin irritation: in vitro / ex vivo", "skin irritation: in vivo", "skin irritation / corrosion, other"] ) />
 	<#assign skinCorrosion = getSortedSkinCorrosionNonHumanStudy(study, ["skin corrosion: in vitro / ex vivo", "skin irritation / corrosion.*"]) />
 
-	<#if csrRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
+	<#if csrRelevant?? || svhcRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
 
 	<#--	NOTE: PPP: interim solution - to be changed-->
 	<#if !pppRelevant??>
@@ -7664,7 +7725,7 @@
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("EndpointAddressed") && study.MaterialsAndMethods.EndpointAddressed?has_content>
-			<para><emphasis role='bold'>Endpoint adressed: </emphasis><@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/></para>
+			<para><emphasis role='bold'>Endpoint addressed: </emphasis><@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("MethodType") && study.MaterialsAndMethods.MethodType?has_content>
@@ -7834,6 +7895,17 @@
 			<para>Type of inhalation exposure: <@com.picklist admExp.TypeOfInhalationExposure/></para>
 		</#if>
 
+		<#--Cell culture conditions-->
+		<#if admExp.hasElement("CellCultures") && admExp.CellCultures?has_content>
+			<para>Cell culture: <@com.picklistMultiple admExp.CellCultures/></para>
+		</#if>
+		<#if admExp.hasElement("PlatingConditions") && admExp.PlatingConditions?has_content>
+			<para>Plating conditions: <@com.text admExp.PlatingConditions/></para>
+		</#if>
+		<#if admExp.hasElement("IncubationConditions") && admExp.IncubationConditions?has_content>
+			<para>Incubation conditions: <@com.text admExp.IncubationConditions/></para>
+		</#if>
+
 		<#--Vehicle-->
 		<#if admExp.hasElement("Vehicle") && admExp.Vehicle?has_content>
 			<para>Vehicle:
@@ -7928,8 +8000,13 @@
 			</#if>
 		</#if>
 
-		<#-- Animals -->
+		<#--Assays-->
+		<#if admExp.hasElement("Assays") && admExp.Assays?has_content>
+			<para>Assays:</para>
+			<@assaysList admExp.Assays/>
+		</#if>
 
+		<#-- Animals -->
 		<#if admExp.hasElement("NoOfAnimalsPerSexPerDose") && admExp.NoOfAnimalsPerSexPerDose?has_content>
 			<para>No. of animals per sex per dose / concentration:</para><para role="indent"><@com.text admExp.NoOfAnimalsPerSexPerDose/></para>
 		</#if>
@@ -7943,12 +8020,18 @@
 			<para>Control animals:</para><para role="indent"><@com.value admExp.ControlAnimal/></para>
 		<#elseif admExp.hasElement("ControlAnimals") && admExp.ControlAnimals?has_content>
 			<para>Control animals:</para><para role="indent"><@com.value admExp.ControlAnimals/></para>
+		<#elseif admExp.hasElement("Controls") && admExp.Controls?has_content>
+			<para>Controls:</para><para role="indent"><@com.text admExp.Controls/></para>
 		</#if>
 		<#if admExp.hasElement("PositiveControl") && admExp.PositiveControl?has_content>
 			<para>Positive control:</para><para role="indent"><@com.text admExp.PositiveControl/></para>
 		</#if>
 
 		<#-- Details-->
+		<#if admExp.hasElement("OtherTreatments") && admExp.OtherTreatments?has_content>
+			<para>Other treatments:</para><para role="indent"><@com.text admExp.OtherTreatments/></para>
+		</#if>
+
 		<#if admExp.hasElement("DetailsOnStudyDesign") && admExp.DetailsOnStudyDesign?has_content>
 			<para>Study design:</para><para role="indent"><@com.text admExp.DetailsOnStudyDesign/></para>
 		</#if>
@@ -8662,16 +8745,12 @@
 		<#if study.ResultsAndDiscussion.ClinicalSigns?has_content>
 			<para>Clinical signs: </para>
 			<para role="indent">
-				<#if study.ResultsAndDiscussion.ClinicalSigns?node_type=="picklist_single">
-					<@com.picklist study.ResultsAndDiscussion.ClinicalSigns/>
-				<#else>
-					<@com.text study.ResultsAndDiscussion.ClinicalSigns/>
-				</#if>
+				<@com.value study.ResultsAndDiscussion.ClinicalSigns/>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.BodyWeight?has_content>
-			<para>Body weight: </para><para role="indent"><@com.text study.ResultsAndDiscussion.BodyWeight/></para>
+			<para>Body weight: </para><para role="indent"><@com.value study.ResultsAndDiscussion.BodyWeight/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.GrossPathology?has_content>
@@ -8684,15 +8763,13 @@
 	</#compress>
 </#macro>
 
-<#macro results_skinEyeIrritation study>
+<#macro results_skinIrritation study>
 	<#compress>
 
 	<#--In vitro
     NOTE: missing vehicle and negative controls of effect-->
-		<#if study.ResultsAndDiscussion.InVitro.hasElement("Results") && study.ResultsAndDiscussion.InVitro.Results?has_content>
+		<#if study.ResultsAndDiscussion.InVitro.Results?has_content>
 			<para><@inVitroList study.ResultsAndDiscussion.InVitro.Results/></para>
-		<#elseif study.ResultsAndDiscussion.InVitro.hasElement("ResultsOfExVivoInVitroStudy") && study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy?has_content>
-			<para><@inVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults?has_content>
@@ -8701,13 +8778,9 @@
 
 	<#--In vivo
     NOTE: missing "basis" of effect-->
-		<#if study.ResultsAndDiscussion.InVivo.hasElement("Results") && study.ResultsAndDiscussion.InVivo.Results?has_content>
+		<#if study.ResultsAndDiscussion.InVivo.Results?has_content>
 			<para>
 				<@inVivoList study.ResultsAndDiscussion.InVivo.Results/>
-			</para>
-		<#elseif study.ResultsAndDiscussion.InVivo.hasElement("IrritationCorrosionResults") && study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults?has_content>
-			<para>
-				<@inVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
 			</para>
 		</#if>
 
@@ -8719,10 +8792,39 @@
 			<para>Other effects:</para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.OtherEffects/></para>
 		</#if>
 
-	<#--NOTE: for Eye irritation there are specific macros, but very similar so not used
-        <@keyTox.EyeIrritationInVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/>
-        <@keyTox.EyeIrritationInVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
-    -->
+	</#compress>
+</#macro>
+
+
+<#macro results_eyeIrritation study>
+	<#compress>
+
+	<#--In vitro
+    NOTE: missing vehicle and negative controls of effect-->
+	<#if study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy?has_content>
+		<para><@EyeIrritationInVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/></para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults?has_content>
+		<para>Other effects / acceptance of results: </para><para role="indent"><@com.text study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults/></para>
+	</#if>
+
+	<#--In vivo
+    NOTE: missing "basis" of effect-->
+	<#if study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults?has_content>
+		<para>
+			<@EyeIrritationInVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
+		</para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData?has_content>
+		<para>Irritant/corrosive response: </para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData/></para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVivo.OtherEffects?has_content>
+		<para>Other effects:</para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.OtherEffects/></para>
+	</#if>
+
 	</#compress>
 </#macro>
 
@@ -9188,7 +9290,7 @@
 		<#--iterate over the children, but need the actual value of the text in IUCLID section-->
 		<para>
 			<#list study.ResultsAndDiscussion?children as child>
-				<#if child?node_name != "ResultsDetails" && child?has_content>
+				<#if child?node_type=="picklist_single">
 					<para>${livestockField2Text[child?node_name]}<@com.picklist child/></para>
 				</#if>
 			</#list>
@@ -9306,6 +9408,29 @@
 				<para role="indent"><@com.text study.ResultsAndDiscussion.ConversionFactor/>.</para>
 			</para>
 		</#if>
+	</#compress>
+</#macro>
+
+<#macro results_cellCulture study>
+	<#compress>
+		<#if study.ResultsAndDiscussion.CytopathicEffects?has_content>
+			<para>Cytopathic effects: <@com.picklist study.ResultsAndDiscussion.CytopathicEffects/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.TCID50?has_content>
+			<para>TCID50:<@com.quantity study.ResultsAndDiscussion.TCID50/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.ResultsOfAssays?has_content>
+			<para>Results of assays:</para>
+			<para><@resultsOfAssaysList study.ResultsAndDiscussion.ResultsOfAssays/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.Statistics?has_content>
+			<para>Statistics: <para role="indent"><@com.text study.ResultsAndDiscussion.Statistics/></para></para>
+		</#if>
+
+
 	</#compress>
 </#macro>
 
@@ -9477,13 +9602,15 @@
 					<para><emphasis role="HEAD-WoutNo"> 2. Full summary of the study according to OECD format </emphasis></para>
 
 					<#-- 2. Materials and methods-->
-					<@methods_intermediateEffects study/>
+					<para><emphasis role="bold">a) Materials and methods</emphasis></para>
+					<@methods_intermediateEffects study true/>
 					<@com.emptyLine/>
 					<@intermediateEffectIdentification study/>
 					<@com.emptyLine/>
 
 					<#--3.Results-->
-					<@results_intermediateEffects study/>
+					<para><emphasis role="bold">b) Results</emphasis></para>
+					<@results_intermediateEffects study true/>
 					<@com.emptyLine/>
 
 					<#--4.Assessment and conclusion-->
@@ -9536,10 +9663,8 @@
 	</#compress>
 </#macro>
 
-<#macro results_intermediateEffects study>
+<#macro results_intermediateEffects study printRemarks=false>
 	<#compress>
-
-		<para><emphasis role="bold">Results</emphasis></para>
 
 		<#list study.ResultsAndDiscussion.TestResults.TestResults as child>
 			<#if child_has_next || (child_index>0)><para><emphasis role="underline">Result #${child_index+1}</emphasis></para></#if>
@@ -9556,22 +9681,22 @@
 			</#if>
 
 			<#if child.ParameterAndResult?has_content>
-				<para role="indent">Parameter and result:
-					<#list child.ParameterAndResult as param>
+				<para role="indent">Parameter and result:</para>
+				<#list child.ParameterAndResult as param>
+					<para role="indent2">
 						<@com.picklist param.Parameter/> = <@com.quantity param.ParameterResult/>
-						<#if param_has_next>; </#if>
-					</#list>
-                </para>
+					</para>
+				</#list>
 			</#if>
 
 			<#if child.OtherObservation?has_content>
-				<para role="indent">Other observations:
-					<#list child.OtherObservation as obs>
+				<para role="indent">Other observations:</para>
+				<#list child.OtherObservation as obs>
+					<para role="indent2">
 						<@com.picklist obs.Observation/>
 						<#if obs.Concentration?has_content> - <@com.range obs.Concentration/></#if>
-						<#if obs_has_next>; </#if>
-					</#list>
-				</para>
+					</para>
+				</#list>
 			</#if>
 
 			<#if child.ResultsForTheTestMaterial?has_content>
@@ -9588,34 +9713,35 @@
 
 		</#list>
 
-	<#--2. Other information including tables (to include?) : doesn't exist here-->
+		<#--2. Other information including tables (to include?) : doesn't exist here-->
 
-	<#--3. Remarks on results-->
-		<#if study.OverallRemarksAttachments.RemarksOnResults?has_content>
-			<para>Overall remarks:</para><para role="indent"><@com.richText study.OverallRemarksAttachments.RemarksOnResults/></para>
+		<#--3. Remarks on results-->
+		<#if printRemarks>
+			<#if study.OverallRemarksAttachments.RemarksOnResults?has_content>
+				<para>Overall remarks:</para><para role="indent"><@com.richText study.OverallRemarksAttachments.RemarksOnResults/></para>
+			</#if>
 		</#if>
-
 	</#compress>
 </#macro>
 
-<#macro methods_intermediateEffects study>
+<#macro methods_intermediateEffects study printTestMat=false>
 	<#compress>
 
-		<para><emphasis role="bold">a) Materials and methods</emphasis></para>
+	    <#-- 1. Test material-->
+		<#if printTestMat>
+			<para>
+				<emphasis role="bold">Test material:</emphasis>
+				<para role="indent"><@studyandsummaryCom.testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/></para>
 
-	<#-- 1. Test material-->
-		<para>
-			<emphasis role="bold">Test material:</emphasis>
-			<para role="indent"><@studyandsummaryCom.testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/></para>
+				<#if study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy?has_content>
+					<para role="indent">
+						Specific details: <@com.text study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy/>
+					</para>
+				</#if>
+			</para>
+		</#if>
 
-			<#if study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy?has_content>
-				<para role="indent">
-					Specific details: <@com.text study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy/>
-				</para>
-			</#if>
-		</para>
-
-	<#-- 2. Test system-->
+		<#-- 2. Test system-->
 		<para>
 			<emphasis role="bold">Test system:</emphasis>
 
@@ -9724,12 +9850,11 @@
 
 		<para><emphasis role="bold">Effect identification:</emphasis></para>
 
-	<#-- 2. Test system-->
 		<#if study.EffectIdentification.Details?has_content>
-			<para>P/A/O:<?linebreak?>
+			<para role="indent">P/A/O:<?linebreak?>
 
 				<#list study.EffectIdentification.Details as pao>
-					<para role="indent">
+					<para role="indent2">
 					<#if pao.Process?has_content>
 						Process: <@com.picklist pao.Process/>.
 					</#if>
@@ -9745,14 +9870,14 @@
 		</#if>
 
 		<#if study.EffectIdentification.EffectDetails?has_content>
-			<para>Details: <@com.text  study.EffectIdentification.EffectDetails/></para>
+			<para role="indent">Details: <@com.text  study.EffectIdentification.EffectDetails/></para>
 		</#if>
 
 		<#if study.EffectIdentification.Context?has_content>
-			<para>Context:<?linebreak?>
+			<para role="indent">Context:<?linebreak?>
 
 				<#list study.EffectIdentification.Context as ctx>
-					<para role="indent">
+					<para role="indent2">
 						<#if ctx.System?has_content>
 							System: <@com.picklist ctx.System/>.
 						</#if>
@@ -9821,7 +9946,7 @@
 						<#if child.field8204?has_content> = <@com.quantity child.field8204/></#if>
 					</td>
 					<td>
-						<@com.text child.Justification/><?linebreak?>
+						<#if child.NoAllocated><@com.text child.Justification/></#if>
 						<@com.richText child.JustificationAndComments/>
 					</td>
 
@@ -9975,7 +10100,7 @@
 	<#--Conclusion-->
 		<#local conclusion><#compress>
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet?has_content>
-				<para role="indent">ED criteria for humans met:<@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet/></para>
+				<para role="indent">ED criteria for humans met: <@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet/></para>
 			</#if>
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals?has_content>
 				<para role="indent">Adverse effect relevant for wild mammals: <@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals/></para>
@@ -9990,8 +10115,7 @@
 			</#if>
 		</#compress></#local>
 		<#if conclusion?has_content>
-		<#--			<para><emphasis role="bold">Conclusion:</emphasis></para>-->
-			Conclusion:<?linebreak?>
+			<@com.emptyLine/><para><emphasis role="bold">Overall conclusion:</emphasis></para>
 			${conclusion}
 		</#if>
 	</#compress>
@@ -10086,7 +10210,12 @@
 				<#else>
 					<@com.range endpointPath.EffectLevelValue/>
 				</#if>
+
 				<?linebreak?>
+
+				<#if endpointPath.hasElement("PhysicalForm") && endpointPath.PhysicalForm?has_content>
+					(<@com.value endpointPath.PhysicalForm/>)<?linebreak?>
+				</#if>
 			</#if>
 		</#if>
 
@@ -10102,10 +10231,10 @@
 			<?linebreak?>
 		</#if>
 
-	<#-- Some cases (sensitisation) has additional information-->
-		<#if endpointPath.hasElement("AdditionalInformation") && endpointPath.AdditionalInformation?has_content>
-			<para><@com.richText endpointPath.AdditionalInformation/></para>
-		</#if>
+		<#-- Some cases (sensitisation) has additional information. NOTE: included outside of block-->
+		<#--		<#if endpointPath.hasElement("AdditionalInformation") && endpointPath.AdditionalInformation?has_content>-->
+		<#--			<para><@com.richText endpointPath.AdditionalInformation/></para>-->
+		<#--		</#if>-->
 
 	</#compress>
 </#macro>
@@ -10117,7 +10246,7 @@
 		${name}
 	</#if>
 
-<#--Add more details if exist: species, duration-->
+	<#--Add more details if exist: species, duration-->
 	<#if child.hasElement("TestType") && child.TestType?has_content>
 		| <@com.picklist child.TestType />
 		<#if child.hasElement("ExperimentalExposureTimePerWeek") && child.ExperimentalExposureTimePerWeek?has_content>
@@ -10125,7 +10254,7 @@
 		</#if>
 	</#if>
 	<#if child.hasElement("Species") && child.Species?has_content>
-		| <@com.picklist child.Species />
+		| <@com.picklist picklistValue=child.Species printDescription=false printRemarks=false/>
 	</#if>
 </#macro>
 
@@ -10233,11 +10362,11 @@
 <#macro getSummaryFromHash hash>
 	<#compress>
 		<table border="1">
-			<tbody>
+			<tbody valign="middle">
 			<tr>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA / Discussion</emphasis></th>
+				<th align="center"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Endpoint</emphasis></th>
+				<th align="center"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
+				<th align="center"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA</emphasis></th>
 			</tr>
 
 			<#list hash?keys?sort as key>
@@ -10258,10 +10387,8 @@
 	</#compress>
 </#macro>
 
-<#--Macro for summaries in TOX. Considerations:-->
-<#--- more than one summary could be present-->
-<#--- more than one summary doc type could be present (for acute toxicity, at least)-->
-<#macro summaryAll subject docSubTypes resultFormat="flat" includeMetabolites=true>
+<#--Macro for summaries in TOX-->
+<#macro toxPPPsummary subject docSubTypes includeMetabolites=true merge=false>
 	<#compress>
 
 		<#local summaryDocToCSAMap = {
@@ -10273,18 +10400,27 @@
 		"Phototoxicity" : {"path":"KeyValueCsa", "values":[{"type":"listValue", "field":"Results", "preText":"Results: "}]}
 		}/>
 
-		<#--Get all documents, from same or different type-->
+	<#--Get all documents, from same or different type-->
 		<#if !docSubTypes?is_sequence>
 			<#local docSubTypes=[docSubTypes]/>
 		</#if>
 
-		<#-- Get all entities (subject and metabolites, if they exist)-->
+	<#--Ensure merge=false for non compatible summary types-->
+		<#if docSubTypes?seq_contains("Toxicokinetics") ||
+		docSubTypes?seq_contains("ToxRefValues") ||
+		docSubTypes?seq_contains("EndocrineDisruptingPropertiesAssessmentPest") ||
+		docSubTypes?seq_contains("NonDietaryExpo") ||
+		docSubTypes?seq_contains("DermalAbsorption")>
+			<#local merge=false>
+		</#if>
+
+	<#-- Get all entities (subject and metabolites, if they exist)-->
 		<#local entities=[subject]/>
 		<#if includeMetabolites && _metabolites?? && _metabolites?has_content>
 			<#local entities = entities + _metabolites/>
 		</#if>
 
-		<#-- Get all summaries for each entity-->
+	<#-- Get all summaries for each entity-->
 		<#local entity2summaryHash = {}/>
 		<#list entities as entity>
 			<#local entitySummaryList=[]/>
@@ -10306,125 +10442,150 @@
 			</#if>
 		</#list>
 
-		<#--Iterate through summaries and create section lists for each entity-->
-<#--		<#list entity2summaryHash as entityName, allSummaryList>-->
-		<#list entity2summaryHash?keys as entityName>
-			<#local allSummaryList=entity2summaryHash[entityName]/>
+	<#--Iterate through summaries and create section lists for each entity-->
+		<#if !entity2summaryHash?has_content>
+			<@com.emptyLine/>
+			<para>No summary information available for this section.</para>
+			<@com.emptyLine/>
 
-			<#--In some cases it's necesary to iterate on the subsection block instead of the whole summary doc-->
-			<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP" || docSubTypes[0]=="GeneticToxicity">
-				<#local csaEntryList = []/>
-				<#list allSummaryList as summ>
-					<#list summ.KeyValueForChemicalSafetyAssessment?children as csaEntry>
-						<#if csaEntry?node_type=="block" && csaEntry?node_name!="MoAAnalysisHumanRelevanceFramework">
-							<#local csaEntryList = csaEntryList + [csaEntry]/>
-						</#if>
-					</#list>
-				</#list>
-				<#assign allSummaryBlockList=csaEntryList/>
-			<#else>
-				<#assign allSummaryBlockList=allSummaryList/>
-			</#if>
-
+		<#else>
+			<#list entity2summaryHash as entityName, allSummaryList>
+	
+				<#local keyInfo=[]/>
+				<#local links=[]/>
+				<#local endpointsHash={}/>
+				<#local addInfo=[]/>
+				<#local justification=[]/>
+				<#local moa=[]/>
+	
 			<#--Need to iterate in every section, so that all Discussions, Key Information, Endpoints, etc appear together-->
-			<#if allSummaryList?has_content || allSummaryBlockList?has_content>
-
-				<#if entity2summaryHash?keys?seq_index_of(entityName)==0>
-					<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
-				</#if>
-
-				<#if includeMetabolites && _metabolites?? && _metabolites?has_content && entityName!=subject.ChemicalName>
-					<@com.emptyLine/>
-					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityName}</emphasis> -----</emphasis></para>
-					<@com.emptyLine/>
-				</#if>
-
-				<#-- Key information-->
-				<#list allSummaryBlockList as summary>
-					<#local keyInfoPath><#compress>
-						<#if summary.hasElement("DescriptionOfKeyInformation.KeyInfo")>
-							summary.DescriptionOfKeyInformation.KeyInfo
-						<#elseif summary.hasElement("KeyInformation.KeyInformation")>
-							summary.KeyInformation.KeyInformation
-						</#if>
-					</#compress></#local>
-					<#if keyInfoPath?has_content>
-						<#if summary_index==0><para><emphasis role="bold">Key information: </emphasis></para></#if>
-						<para role="indent"><@com.richText keyInfoPath?eval/></para>
+				<#if allSummaryList?has_content>
+	
+					<#local printSummaryName = allSummaryList?size gt 1 />
+	
+					<#if entity2summaryHash?keys?seq_index_of(entityName)==0>
+						<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 					</#if>
-				</#list>
-				<@com.emptyLine/>
-
-				<#--Linked studies-->
-				<#list allSummaryBlockList as summary>
-					<#local links><#compress>
+	
+					<#if includeMetabolites && _metabolites?? && _metabolites?has_content && entityName!=subject.ChemicalName>
+						<@com.emptyLine/>
+						<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityName}</emphasis> -----</emphasis></para>
+						<@com.emptyLine/>
+					</#if>
+	
+					<#list allSummaryList as summary>
+	
+						<#if (!merge) && printSummaryName>
+							<para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para>
+							<@com.emptyLine/>
+						</#if>
+	
+					<#-- Key information-->
+						<#if summary.documentSubType=="ToxicityToReproduction_EU_PPP" || summary.documentSubType=="GeneticToxicity">
+	
+							<#local summaryKeyInfo = []/>
+							<#list summary.KeyValueForChemicalSafetyAssessment?children as csaEntry>
+								<#if csaEntry?node_type=="block" && csaEntry.hasElement("DescriptionOfKeyInformation.KeyInfo")>
+									<#if csaEntry.DescriptionOfKeyInformation.KeyInfo?has_content>
+										<#local csaName>${csaEntry?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}</#local>
+										<#local csaKeyInfo><para role="indent">
+										<#-- <emphasis role="underline">${csaName}:</emphasis-->
+											<@com.richText csaEntry.DescriptionOfKeyInformation.KeyInfo/>
+											</para>
+										</#local>
+										<#local summaryKeyInfo = summaryKeyInfo + [csaKeyInfo]/>
+									</#if>
+								</#if>
+							</#list>
+							<#local summaryKeyInfo>${summaryKeyInfo?join("<?linebreak?>")}</#local>
+	
+						<#else>
+							<#local summaryKeyInfo = ""/>
+	
+							<#local keyInfoPath><#compress>
+								<#if summary.hasElement("DescriptionOfKeyInformation.KeyInfo")>
+									summary.DescriptionOfKeyInformation.KeyInfo
+								<#elseif summary.hasElement("KeyInformation.KeyInformation")>
+									summary.KeyInformation.KeyInformation
+								</#if>
+							</#compress></#local>
+	
+							<#if keyInfoPath?has_content && keyInfoPath?eval?has_content>
+								<#local summaryKeyInfo><para role="indent"><@com.richText keyInfoPath?eval/></para></#local>
+							</#if>
+						</#if>
+	
+						<#if summaryKeyInfo?has_content>
+							<#if merge>
+								<#local keyInfo = keyInfo + [summaryKeyInfo]/>
+							<#else>
+								<para><emphasis role="bold">Key information: </emphasis></para>${summaryKeyInfo}
+							</#if>
+						</#if>
+	
+					<#--Linked studies-->
+						<#local summaryLinks=""/>
 						<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
-							<#if summary_index==0><para ><emphasis role="bold">Linked studies: </emphasis></para></#if>
-							<para role="indent">
+							<#local summaryLinks><#compress>
 								<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
 									<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
-									<command  linkend="${studyReference.documentKey.uuid!}">
-										<@com.text studyReference.name/>
-									</command>
-
-									<#if studyReferenceLinkedToSummary_has_next> | </#if>
+									<para role="indent">
+										<command  linkend="${studyReference.documentKey.uuid!}">
+											<@com.text studyReference.name/>
+										</command>
+									</para>
 								</#list>
-							</para>
+							</#compress></#local>
+							<#if merge>
+								<#local links = links + [summaryLinks]/>
+							<#else>
+								<para><emphasis role="bold">Linked studies: </emphasis></para>${summaryLinks}
+								<@com.emptyLine/>
+							</#if>
 						</#if>
-						<?linebreak?>
-					</#compress></#local>
-					<#if resultFormat!="table">${links}</#if>
-				</#list>
-				<@com.emptyLine/>
-
-				<#--CSA value:
-				3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
-				<#assign endpointsHash={}/>
-				<#list allSummaryList as summary>
-
-					<#if summary.documentSubType=="ToxRefValues">
-						<#if summary_index==0><para><emphasis role="bold">Toxicological reference values: </emphasis></para></#if>
-						<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-						<@toxRefValuesTable summary/>
-
-					<#elseif summary.documentSubType=="EndocrineDisruptingPropertiesAssessmentPest">
-						<#if summary_index==0><para><emphasis role="bold">ED assessment: </emphasis></para></#if>
-						<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-						<@endocrineDisruptingPropertiesTable summary/>
-
-					<#elseif summary.documentSubType=="NonDietaryExpo">
-						<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-						<@nonDietaryExpoSummary summary/>
-
-					<#elseif summary.documentSubType=="DermalAbsorption">
-						<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
-						<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-						<para role="indent">
-							<@dermalAbsorptionSummary summary/>
-						</para>
-
-					<#else>
-						<#if resultFormat=="flat">
-							<#--In this case it goes sequentially-->
-							<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
-							<#if summary_has_next || (summary_index>0)><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-							<para role="indent"><@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/></para>
-
-						<#elseif resultFormat=="table">
-							<#--In this case it first creates a hash, and then prints it ordered in table format-->
-							<#--1. Get sequence of hashes and populate hash-->
-
+	
+					<#--CSA value-->
+						<#if summary.documentSubType=="ToxRefValues">
+							<para><emphasis role="bold">Toxicological reference values: </emphasis></para>
+							<@toxRefValuesTable summary/><@com.emptyLine/>
+	
+						<#elseif summary.documentSubType=="EndocrineDisruptingPropertiesAssessmentPest">
+							<para><emphasis role="bold">ED assessment: </emphasis></para>
+							<@endocrineDisruptingPropertiesTable summary/><@com.emptyLine/>
+	
+						<#elseif summary.documentSubType=="NonDietaryExpo">
+							<@nonDietaryExpoSummary summary/><@com.emptyLine/>
+	
+						<#elseif summary.documentSubType=="DermalAbsorption">
+							<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+							<para role="indent">
+								<@dermalAbsorptionSummary summary/>
+								<@com.emptyLine/>
+							</para>
+	
+						<#elseif summary.documentSubType=="Toxicokinetics" || (summary.documentSubType=="Phototoxicity" && !(merge))>
+							<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+							<para role="indent">
+								<@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/>
+								<@com.emptyLine/>
+							</para>
+	
+						<#else>
+	
+							<#if !merge><#local endpointsHash={}/></#if>
+	
+						<#--Get sequence of hashes and populate hash-->
 							<#if summary.documentSubType=="Phototoxicity">
-								<#--special case for Phototox-->
+							<#--special case for Phototox-->
 								<#local photoEndpoint><@com.picklist summary.KeyValueCsa.Results/></#local>
-								<#local photoLinks = links?replace("\\|", "<\\?linebreak\\?>", "r")/>
+								<#local photoLinks = summaryLinks?replace('role="indent"', '')/>
 								<#local summarySeq = [{"name":"Phototoxicity", "links": photoLinks, "endpoint": photoEndpoint}]/>
 							<#elseif summary.documentSubType=="SpecificInvestigationsOtherStudies">
-								<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":links?replace("\\|", "<\\?linebreak\\?>", "r"), "endpoint": ""}]/>
+								<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":summaryLinks?replace('role="indent"', ''), "endpoint": ""}]/>
 							<#else>
 								<#local summarySeq = getSummarySeq(summary)/>
 							</#if>
-
+	
 							<#list summarySeq as seqEntry>
 								<#if endpointsHash[seqEntry["name"]]??>
 									<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
@@ -10433,212 +10594,140 @@
 									<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
 								</#if>
 							</#list>
-
-							<#--2. At last item, print in table format and ordering endpoints-->
-							<#if !summary_has_next && endpointsHash?has_content>
-								<para><emphasis role="bold">Endpoints: </emphasis></para>
-								<@getSummaryFromHash endpointsHash/>
+	
+	
+							<#if !merge && endpointsHash?has_content>
+								<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+								<@getSummaryFromHash endpointsHash/><@com.emptyLine/>
+							</#if>
+	
+						</#if>
+	
+					<#--  MoA: to do -->
+						<#local summaryMoA=""/>
+						<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.MoAHumanRelevanceFramework.MoAHumanRelevanceFramework") && summary.Discussion.Discussion?has_content>
+							<#local summaryMoA><para role="indent"><@com.richText summary.KeyValueForChemicalSafetyAssessment.MoAHumanRelevanceFramework.MoAHumanRelevanceFramework/></para></#local>
+						<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment.MoAAnalysisHumanRelevanceFramework.MoAAnalysisHumanRelevanceFramework")>
+							<#local summaryMoA><para role="indent"><@com.richText summary.KeyValueForChemicalSafetyAssessment.MoAAnalysisHumanRelevanceFramework.MoAAnalysisHumanRelevanceFramework/></para></#local>
+						</#if>
+						<#if summaryMoA?has_content>
+							<#if merge>
+								<#local moa = moa + [summaryMoA]/>
+							<#else>
+								<para><emphasis role="bold">Mode of Action Analysis / Human Relevance Framework: </emphasis></para>${summaryMoA}
 							</#if>
 						</#if>
-					</#if>
-				</#list>
-
-				<#--Discussion-->
-				<#list allSummaryBlockList as summary>
-					<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
-						<#if summary_index==0><para><emphasis role="bold">Discussion:</emphasis></para></#if>
-						<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
-					</#if>
-				</#list>
-
-				<#--Additional Info-->
-				<#list allSummaryBlockList as summary>
-					<#if summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
-						<#if summary_index==0><para><emphasis role="bold">Additional information:</emphasis></para></#if>
-						<para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para>
-					</#if>
-				</#list>
-
-				<#--Justification-->
-				<#list allSummaryBlockList  as summary>
-					<#if summary.hasElement("JustificationForClassificationOrNonClassification") && summary.JustificationForClassificationOrNonClassification?has_content>
-						<#if summary_index==0><para><emphasis role="bold">Justification for classification or non-classification:</emphasis></para></#if>
-						<#list summary.JustificationForClassificationOrNonClassification?children as justification>
-							<#if justification?has_content>
-								<para role="indent">
-									<#if justification_has_next>${justification?node_name}:</#if>
-									<@com.richText justification/>
-								</para>
+	
+	
+					<#--Discussion-->
+						<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
+							<#local summaryDiscussion><para role="indent"><@com.richText summary.Discussion.Discussion/></para></#local>
+							<#if merge>
+								<#local addInfo = addInfo + [summaryDiscussion]/>
+							<#else>
+								<para><emphasis role="bold">Additional information: </emphasis></para>${summaryDiscussion}
 							</#if>
-						</#list>
-					</#if>
-				</#list>
-				<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP">
-					<#--#this is wrong-->
-					<para role="indent"><emphasis role="bold">Justification for classification or non-classification:</emphasis></para>
-					<@com.richText allSummaryBlockList[0]?parent?parent.JustificationForClassificationOrNonClassification.JustificationForClassificationOrNonClassification/>
-				</#if>
-			</#if>
-		</#list>
-	</#compress>
-</#macro>
-
-<#--macro for individual summaries-->
-<#macro summarySingle subject docSubType resultFormat="flat" includeMetabolites=true>
-	<#compress>
-
-		<#local summaryDocToCSAMap = {
-			"Toxicokinetics" : {"path" : "KeyValue",
-								"values" : [{"type":"listValue", "field": "Bioaccumulation", "preText" : "Bioaccumulation potential: "},
-								{"type":"value", "field": "AbsorptionOral", "preText": "Oral absorption rate: ", "postText":"%"},
-								{"type":"value", "field": "AbsorptionDerm", "preText": "Dermal absorption rate: ", "postText":"%"},
-								{"type":"value", "field": "AbsorptionInhal", "preText": "Inhalation absorption rate: ", "postText":"%"}]},
-			"Phototoxicity" : {"path":"KeyValueCsa", "values":[{"type":"listValue", "field":"Results", "preText":"Results: "}]}
-		}/>
-
-		<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
-			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
-		<#else>
-			<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
-		</#if>
-
-		<#-- Get metabolites-->
-		<#if _metabolites?? && _metabolites?has_content>
-
-			<#-- get a list of entities of same size as summaryList-->
-			<#local entityList = []/>
-			<#list summaryList as summary>
-				<#local entityList = entityList + [subject.ChemicalName]/>
-			</#list>
-
-			<#-- add metabolites-->
-			<#list _metabolites as metab>
-				<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
-					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
-				<#else>
-					<#local metabSummaryList = iuclid.getSectionDocumentsForParentKey(metab.documentKey, "ENDPOINT_SUMMARY", docSubType) />
-				</#if>
-				<#if metabSummaryList?has_content>
-					<#local summaryList = summaryList + metabSummaryList/>
-					<#list metabSummaryList as metabSummary>
-						<#local entityList = entityList + [metab.ChemicalName]/>
+						</#if>
+	
+					<#--Additional Info-->
+						<#local summaryAddInfo = ""/>
+	
+						<#if summary.documentSubType=="ToxicityToReproduction_EU_PPP" || summary.documentSubType=="Sensitisation">
+	
+							<#local summaryAddInfo = []/>
+							<#list summary.KeyValueForChemicalSafetyAssessment?children as csaEntry>
+								<#if csaEntry?node_type=="block">
+									<#local addInfoPath><#compress>
+										<#if csaEntry.hasElement("EndpointConclusion.AdditionalInformation")>
+											csaEntry.EndpointConclusion.AdditionalInformation
+										<#elseif csaEntry.hasElement("AdditionalInformation.AdditionalInfo")>
+											csaEntry.AdditionalInformation.AdditionalInfo
+										</#if>
+									</#compress></#local>
+									<#if addInfoPath?has_content && addInfoPath?eval?has_content>
+										<#local csaName>${csaEntry?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}:</#local>
+										<#local csaAddInfo><para role="indent">
+										<#--  <emphasis role="underline">${csaName}</emphasis> -->
+											<@com.richText addInfoPath?eval/></para>
+										</#local>
+										<#local summaryAddInfo = summaryAddInfo + [csaAddInfo]/>
+									</#if>
+								</#if>
+							</#list>
+							<#local summaryAddInfo>${summaryAddInfo?join("<?linebreak?>")}</#local>
+	
+						<#elseif summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
+	
+							<#local summaryAddInfo><para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para></#local>
+						</#if>
+	
+						<#if summaryAddInfo?has_content>
+							<#if merge>
+								<#local addInfo =  addInfo + [summaryAddInfo]/>
+							<#else>
+								<para><emphasis role="bold">Additional information: </emphasis></para>${summaryAddInfo}
+							</#if>
+						</#if>
+	
+					<#--Justification-->
+						<#if summary.hasElement("JustificationForClassificationOrNonClassification") && summary.JustificationForClassificationOrNonClassification?has_content>
+	
+							<#local summaryJustification><#compress>
+								<#list summary.JustificationForClassificationOrNonClassification?children as just>
+									<#if just?has_content>
+										<para role="indent">
+											<#if just_has_next>${just?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}:</#if>
+											<@com.richText just/>
+										</para>
+									</#if>
+								</#list>
+							</#compress></#local>
+							<#if merge>
+								<#local justification =  justification + [summaryJustification]/>
+							<#else>
+								<para><emphasis role="bold">Justification for classification or non-classification:</emphasis></para>${summaryJustification}
+							</#if>
+						</#if>
 					</#list>
-				</#if>
-			</#list>
-		</#if>
-
-		<#if summaryList?has_content>
-			<@com.emptyLine/>
-			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
-
-			<#assign printSummaryName = summaryList?size gt 1 />
-
-			<#list summaryList as summary>
-				<@com.emptyLine/>
-
-				<#if includeMetabolites && _metabolites?? && _metabolites?has_content &&
-					subject.ChemicalName!=entityList[summary_index] &&
-					entityList?seq_index_of(entityList[summary_index]) == summary_index>
-
-					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
-					<@com.emptyLine/>
-				</#if>
-
-				<#if printSummaryName><para><emphasis role="bold">#{summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
-
-				<#if summary.hasElement("KeyInformation") && summary.KeyInformation.KeyInformation?has_content>
-					<para><emphasis role="bold">Key information: </emphasis></para>
-					<para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para>
-				</#if>
-				<#--NOTE: for genetic toxicity this is included in the subsections. I could merge all together here or indicate it in the subsections.-->
-
-				<#--Linked studies-->
-				<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
-					<para ><emphasis role="bold">Linked studies: </emphasis></para>
-					<para role="indent">
-						<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
-							<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
-							<command  linkend="${studyReference.documentKey.uuid!}">
-								<@com.text studyReference.name/>
-							</command>
-
-							<#if studyReferenceLinkedToSummary_has_next> | </#if>
-						</#list>
-					</para>
-				</#if>
-
-				<#--CSA value:
-            	3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
-				<#if docSubType=="ToxRefValues">
-					<para><emphasis role="bold">Toxicological reference values: </emphasis></para>
-					<@toxRefValuesTable summary/>
-
-				<#elseif docSubType=="EndocrineDisruptingPropertiesAssessmentPest">
-					<para><emphasis role="bold">ED assessment: </emphasis></para>
-					<@endocrineDisruptingPropertiesTable summary/>
-
-				<#elseif docSubType=="NonDietaryExpo">
-					<@nonDietaryExpoSummary summary/>
-
-				<#elseif docSubType=="DermalAbsorption">
-					<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
-					<para role="indent">
-						<@dermalAbsorptionSummary summary/>
-					</para>
-				<#else>
-					<#if resultFormat=="flat">
-						<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
-						<para role="indent"><@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/></para>
-
-					<#elseif resultFormat=="table">
-						<#if summaryDocToCSAMap?keys?seq_contains(docSubType)>
+	
+					<#if merge>
+						<#if keyInfo?has_content>
+							<para><emphasis role="bold">Key information: </emphasis></para>
+							${keyInfo?join("")}
+							<@com.emptyLine/>
+						</#if>
+	
+						<#if endpointsHash?has_content>
 							<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
-							<para role="indent"><@valueForCSA summary summaryDocToCSAMap[docSubType]/></para>
-						<#else>
-							<#if docSubType=="SpecificInvestigationsOtherStudies">
-								<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":links?replace("\\|", "<\\?linebreak\\?>", "r"), "endpoint": ""}]/>
-							<#else>
-								<#local summarySeq = getSummarySeq(summary)/>
-							</#if>
-							<#local endpointsHash={}/>
-							<#list summarySeq as seqEntry>
-								<#if endpointsHash[seqEntry["name"]]??>
-									<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
-									<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
-								<#else>
-									<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
-								</#if>
-							</#list>
-
-							<para><emphasis role="bold">Endpoints: </emphasis></para>
 							<@getSummaryFromHash endpointsHash/>
+							<@com.emptyLine/>
+						</#if>
+	
+						<#if moa?has_content>
+							<para><emphasis role="bold">Mode of Action Analysis / Human Relevance Framework:</emphasis></para>
+							${moa?join("")}
+							<@com.emptyLine/>
+						</#if>
+	
+						<#if addInfo?has_content>
+							<para><emphasis role="bold">Additional information:</emphasis></para>
+							${addInfo?join("")}
+							<@com.emptyLine/>
+						</#if>
+	
+					<#--                    <#if discussion?has_content>-->
+					<#--                        <para><emphasis role="bold">Discussion:</emphasis></para>-->
+					<#--                        ${discussion?join("")}-->
+					<#--                        <@com.emptyLine/>-->
+					<#--                    </#if>-->
+	
+						<#if justification?has_content>
+							<para><emphasis role="bold">Justification for classification or non classification:</emphasis></para>
+							${justification?join("")}
+							<@com.emptyLine/>
 						</#if>
 					</#if>
-				</#if>
-
-				<#--Additional Info-->
-				<#if summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
-					<para><emphasis role="bold">Additional information:</emphasis></para>
-					<para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para>
-				</#if>
-
-			<#--Discussion-->
-				<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
-					<para><emphasis role="bold">Discussion:</emphasis></para>
-					<para><@com.richText summary.Discussion.Discussion/></para>
-				</#if>
-
-			<#--Justification-->
-				<#if summary.hasElement("JustificationForClassificationOrNonClassification") && summary.JustificationForClassificationOrNonClassification?has_content>
-					<para><emphasis role="bold">Justification for classification or non-classification:</emphasis></para>
-					<#list summary.JustificationForClassificationOrNonClassification?children as justification>
-						<#if justification?has_content>
-							<para>
-								<#if justification_has_next>${justification?node_name}:</#if>
-								<@com.richText justification/>
-							</para>
-						</#if>
-					</#list>
+	
 				</#if>
 			</#list>
 		</#if>
