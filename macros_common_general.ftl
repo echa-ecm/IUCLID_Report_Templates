@@ -184,16 +184,19 @@
 </#macro>
 
 <#macro text textValue="" format="">
-	<#if textValue?has_content && format=="literal">
-		<#escape x as x?html>
-		<para role="i6LiteralText">${textValue}</para>
-		</#escape>
 
-		<#elseif textValue?has_content>
-		<#escape x as x?html>
-		${textValue}
-		</#escape>
-  	</#if>
+<#if textValue?has_content && format=="literal">
+<#escape x as x?html>
+<para role="i6LiteralText">${textValue}</para>
+</#escape>
+	
+<#elseif textValue?has_content>
+<#compress>
+<#escape x as x?html>
+${textValue}
+</#escape>
+</#compress>
+</#if>
 </#macro>
 
 <#macro number numberValue>
@@ -749,17 +752,19 @@
     <#return iuclid.query("web.ReferencingQuery", params, 0, 100)>
 </#function>
 
-<#--Macro to print any value type of a field-->
-<#macro value valuePath>
+<#--Macro to print any value type of a field
+	It includes arguments for the macros of specific data types
+-->
+<#macro value valuePath format="" printOtherPhrase=false printDescription=true printRemarks=true locale='en'>
 	<#compress>
 		<#assign valueType=valuePath?node_type/>
 
 		<#if valueType=="range">
 			<@com.range valuePath/>
 		<#elseif valueType=="picklist_single">
-			<@com.picklist  valuePath/>
+			<@com.picklist valuePath locale printOtherPhrase printDescription printRemarks/>
 		<#elseif valueType=="picklist_multi">
-			<@com.picklistMultiple valuePath/>
+			<@com.picklistMultiple valuePath locale printOtherPhrase printDescription printRemarks/>
 		<#elseif valueType=="quantity">
 			<@com.quantity valuePath/>
 		<#elseif valueType=="decimal" || valueType=="integer">
@@ -767,7 +772,7 @@
 		<#elseif valueType?contains("text_html")>
 			<@com.richText valuePath/>
 		<#elseif valueType?contains("text")>
-			<@com.text valuePath/>
+			<@com.text valuePath format/>
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
 		<#elseif valueType=="boolean">
