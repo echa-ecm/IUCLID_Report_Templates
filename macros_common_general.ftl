@@ -30,10 +30,40 @@
 	'relevant' : 'dar',
 	'relevant' : 'rar',
 	'relevant' : 'svhc',	
-	'relevant' : 'ghs'
+	'relevant' : 'ghs',
+	'relevant' : 'clh',
+	'relevant' : 'spc'
 	
 } />
 
+
+<#macro initiateRelevanceSPC relevance>
+	
+	<#global spcRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign spcRelevant>
+				<#if prop=="spc">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceCLH relevance>
+	
+	<#global clhRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign clhRelevant>
+				<#if prop=="clh">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
 
 <#macro initiateRelevanceGHS relevance>
 	
@@ -229,8 +259,10 @@ ${textValue}
 					${picklistValue.otherText}<#t>
 				</#if>
 
-				<#if printDescription && localizedPhrase.description?has_content>
-					[${localizedPhrase.description}]
+				<#if !spcRelevant??>
+					<#if printDescription && localizedPhrase.description?has_content>
+						[${localizedPhrase.description}]
+					</#if>
 				</#if>
 			</#if>
 
