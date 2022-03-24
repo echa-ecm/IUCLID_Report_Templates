@@ -721,14 +721,17 @@
 <#compress>
 	<#if HazardStatementRepeatableBlock?has_content>
 		<#list HazardStatementRepeatableBlock as blockItem>
-			<para role="indent">
+			<#if !spcRelevant??><para role="indent">
+				<#else>
+				<para></#if>
+
 				<@com.picklist blockItem.HazardStatement/>
 				<#if blockItem.AdditionalText?has_content>
 					(<@com.text blockItem.AdditionalText/>)
 				</#if>
-			</para>
-		</#list>
-  	</#if>
+			</para>			
+		</#list> 
+	</#if> 	
 </#compress>
 </#macro>
 
@@ -736,7 +739,10 @@
 <#compress>
 	<#if PrecautionaryStatementRepeatableBlock?has_content>
 		<#list PrecautionaryStatementRepeatableBlock as blockItem>
-			<para role="indent">
+			<#if !spcRelevant??><para role="indent">
+				<#else>
+				<para></#if>
+
 				<@com.picklist blockItem.PrecautionaryStatement/>
 				<#if blockItem.AdditionalText?has_content>
 					(<@com.text blockItem.AdditionalText/>)
@@ -750,14 +756,22 @@
 <#macro SupplimentalHazardStatementList SupplimentalHazardStatementRepeatableBlock>
 <#compress>
 	<#if SupplimentalHazardStatementRepeatableBlock?has_content>
+	
 		<#list SupplimentalHazardStatementRepeatableBlock as blockItem>
-			<para role="indent">
+			<#if blockItem?has_content>	
+			
+			<#if !spcRelevant??><para role="indent">
+				<#else>
+				<para></#if>
+
 				<@com.picklist blockItem.SupplHazardStatement/>
 				<#if blockItem.AdditionalText?has_content>
 					(<@com.text blockItem.AdditionalText/>)
-				</#if>
+				</#if>                
 			</para>
+			</#if>
 		</#list>
+		
   	</#if>
 </#compress>
 </#macro>
@@ -766,7 +780,10 @@
 <#compress>
 	<#if AdditionalLabellingRepeatableBlock?has_content>
 		<#list AdditionalLabellingRepeatableBlock as blockItem>
-			<para role="indent">
+			<#if !spcRelevant??><para role="indent">
+				<#else>
+				<para></#if>
+				
 				<@com.text blockItem.Labelling/>
 			</para>
 		</#list>
