@@ -214,12 +214,10 @@
 </#macro>
 
 <#macro text textValue="" format="">
-
 <#if textValue?has_content && format=="literal">
 <#escape x as x?html>
 <para role="i6LiteralText">${textValue}</para>
 </#escape>
-	
 <#elseif textValue?has_content>
 <#compress>
 <#escape x as x?html>
