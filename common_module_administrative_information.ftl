@@ -955,47 +955,52 @@
 <#macro existingResiduesTable path>
 	<#compress>
 
-		<para role="small">
-			<table border="1">
-				<#--		<title></title>-->
-				<col width="35%" />
-				<col width="65%" />
+		<#if path.MonitoringPurposesPlant?has_content ||
+				path.RiskAssessmentPlant?has_content ||
+				path.MonitoringPurposesAnimal?has_content ||
+				path.RiskAssessmentAnimal?has_content> 
+			<para role="small">
+				<table border="1">
+					<#--		<title></title>-->
+					<col width="35%" />
+					<col width="65%" />
 
-<#--				<thead align="center" valign="middle"><?dbfo bgcolor="#FBDDA6" ?>-->
+	<#--				<thead align="center" valign="middle"><?dbfo bgcolor="#FBDDA6" ?>-->
 
-				<tbody>
+					<tbody>
 
-				<#if path.MonitoringPurposesPlant?has_content>
-					<tr>
-						<td><?dbfo bgcolor="#FBDDA6" ?>Plant - monitoring</td>
-						<td><@com.text path.MonitoringPurposesPlant/></td>
-					</tr>
-				</#if>
+					<#if path.MonitoringPurposesPlant?has_content>
+						<tr>
+							<td><?dbfo bgcolor="#FBDDA6" ?>Plant - monitoring</td>
+							<td><@com.text path.MonitoringPurposesPlant/></td>
+						</tr>
+					</#if>
 
-				<#if path.RiskAssessmentPlant?has_content>
-					<tr>
-						<td><?dbfo bgcolor="#FBDDA6" ?>Plant - risk assessment</td>
-						<td><@com.text path.RiskAssessmentPlant/></td>
-					</tr>
-				</#if>
+					<#if path.RiskAssessmentPlant?has_content>
+						<tr>
+							<td><?dbfo bgcolor="#FBDDA6" ?>Plant - risk assessment</td>
+							<td><@com.text path.RiskAssessmentPlant/></td>
+						</tr>
+					</#if>
 
-				<#if path.MonitoringPurposesAnimal?has_content>
-					<tr>
-						<td><?dbfo bgcolor="#FBDDA6" ?>Animal - monitoring</td>
-						<td><@com.text path.MonitoringPurposesAnimal/></td>
-					</tr>
-				</#if>
+					<#if path.MonitoringPurposesAnimal?has_content>
+						<tr>
+							<td><?dbfo bgcolor="#FBDDA6" ?>Animal - monitoring</td>
+							<td><@com.text path.MonitoringPurposesAnimal/></td>
+						</tr>
+					</#if>
 
-				<#if path.RiskAssessmentAnimal?has_content>
-					<tr>
-						<td><?dbfo bgcolor="#FBDDA6" ?>Animal - risk assessment</td>
-						<td><@com.text path.RiskAssessmentAnimal/></td>
-					</tr>
-				</#if>
+					<#if path.RiskAssessmentAnimal?has_content>
+						<tr>
+							<td><?dbfo bgcolor="#FBDDA6" ?>Animal - risk assessment</td>
+							<td><@com.text path.RiskAssessmentAnimal/></td>
+						</tr>
+					</#if>
 
-				</tbody>
-			</table>
-		</para>
+					</tbody>
+				</table>
+			</para>
+		</#if>
 
 		<#if path.Remarks?has_content>
 			<@com.emptyLine/>
