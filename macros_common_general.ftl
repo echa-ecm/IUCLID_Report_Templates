@@ -806,7 +806,7 @@ ${textValue}
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
 		<#elseif valueType=="boolean">
-			<#if valuePath>Y<#else>N</#if>
+			<#if valuePath>Y<#else>N</#if>asi
 		<#else>
 			value type ${valueType} not supported!
 		</#if>
@@ -920,7 +920,7 @@ ${textValue}
 	If an active substance is provided and checkParent=true, then the function only retrieves metabolites for which the parent
 	is the active substance.
 -->
-<#function getMetabolites mixture activeSubstance="" checkParent=false>
+<#function getMetabolites mixture activeSubstance="" checkParent=false getRefSubstances=false>
 
 	<#local metabolitesList = [] />
 
@@ -938,8 +938,10 @@ ${textValue}
 		<#list metaboliteList as metabolite>
 			<#if metabolite.LinkMetaboliteDataset?has_content>
 				<#local substance = iuclid.getDocumentForKey(metabolite.LinkMetaboliteDataset)/>
-				<#if substance?has_content && substance.documentType=="SUBSTANCE">
-					<#local metabolitesList = addDocumentToSequenceAsUnique(substance, metabolitesList)/>
+				<#if substance?has_content>
+					<#if getRefSubstances || substance.documentType=="SUBSTANCE">
+						<#local metabolitesList = addDocumentToSequenceAsUnique(substance, metabolitesList)/>
+					</#if>
 				</#if>
 			</#if>
 		</#list>
