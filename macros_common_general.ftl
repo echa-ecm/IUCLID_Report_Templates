@@ -680,6 +680,21 @@ ${textValue}
 	<#return sequence + [document]>
 </#function>
 
+<#function addDocumentToSequence document sequence>
+    <#if !(document?has_content)>
+        <#return sequence>
+    </#if>
+    <#return sequence + [document]>
+</#function>
+
+<#function removeDocumentDuplicates sequence>
+    <#local docByKey = {}>
+    <#list sequence as doc>
+        <#local docByKey = docByKey + {doc.documentKey : doc}/>
+    </#list>
+    <#return docByKey?values >
+</#function>
+
 <#function getReportSubject rootDocument>
 	<#if rootDocument.documentType == 'DOSSIER'>
 		<#local dossierSubject = iuclid.getDocumentForKey(rootDocument.subjectKey) />
