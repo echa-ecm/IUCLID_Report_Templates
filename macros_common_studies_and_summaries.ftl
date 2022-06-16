@@ -239,7 +239,13 @@
 	<#if documentKey?has_content>
 		<#local testMaterial = iuclid.getDocumentForKey(documentKey) />
 		<#if testMaterial?has_content>
-			<#assign testMaterialInformations = com.addDocumentToSequence(testMaterial, testMaterialInformations) />			
+			
+			<#if csrRelevant??>		
+			<#assign testMaterialInformations = com.addDocumentToSequence(testMaterial, testMaterialInformations) />
+			<#else>
+				<#assign testMaterialInformations = com.addDocumentToSequenceAsUnique(testMaterial, testMaterialInformations) />
+			</#if>
+
 			<@com.text testMaterial.Name/>,
 			<#if testMaterial.Composition.OtherCharacteristics.TestMaterialForm?has_content>
 			<?linebreak?>
@@ -325,7 +331,13 @@
 		<#list multipleReferenceValue as item>
 			<#local reference = iuclid.getDocumentForKey(item) />
 			<#if reference?has_content>
+
+				<#if csrRelevant??>
 				<#assign literatureReferences = com.addDocumentToSequence(reference, literatureReferences) />
+					<#else>
+					<#assign literatureReferences = com.addDocumentToSequenceAsUnique(reference, literatureReferences) />
+				</#if>
+				
 				<command linkend="${reference.documentKey.uuid!}">
 					<@com.text reference.GeneralInfo.Author/> <#if reference.GeneralInfo.ReferenceYear?has_content>${reference.GeneralInfo.ReferenceYear?string["0"]}</#if>
 				</command>
