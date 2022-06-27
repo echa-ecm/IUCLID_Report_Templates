@@ -5,7 +5,9 @@
 
 	<#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "SubstanceComposition") />
 
-	<#if !includeBatchCompositions>
+	<#--Remove substance composition documents that correspond to batches if there is more than 1 entry-->
+	<#local addMessage=''/>
+	<#if (recordList?size > 1) && !includeBatchCompositions>
 		<#local batchCompositions=getAllBatchCompositions(_subject)/>
 		<#local filtRecordList=[]/>
 		<#list recordList as record>
@@ -20,11 +22,17 @@
 				<#local filtRecordList=com.addDocumentToSequenceAsUnique(record, filtRecordList)/>
 			</#if>
 		</#list>
+
+		<#-- If all compositions are used as batches, report a message -->
+		<#if (recordList?size>0) && (filtRecordList?size==0)>
+			<#local addMessage> For batch compositions, see section below.</#local>
+		</#if>
+		
 		<#assign recordList=filtRecordList/>
 	</#if>
 
 	<#if !(recordList?has_content)>
-		No relevant information available.		
+		<para>No relevant information available.${addMessage}</para>		
 	<#else>
 		
 		<#list recordList as record>
