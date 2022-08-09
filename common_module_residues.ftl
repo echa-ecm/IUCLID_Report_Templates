@@ -1,4 +1,4 @@
-<#--Methodssss-->
+<#--Methods-->
 <#macro residuesMethod study>
     <#compress>
         <#--General-->
