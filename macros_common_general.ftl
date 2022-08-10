@@ -990,7 +990,7 @@ ${textValue}
 -->
 <#function getOtherRepresentativeProducts mixture>
 
-	<#local otherProdsSummaries=iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_SUMMARY", "OtherRepresentativeProducts") />
+	<#local otherProdsSummaries=iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FIXED_RECORD", "OtherRepresentativeProducts") />
 	<#local otherProds=[]/>
 
 	<#list otherProdsSummaries as otherProdSummary>
