@@ -30,10 +30,40 @@
 	'relevant' : 'dar',
 	'relevant' : 'rar',
 	'relevant' : 'svhc',	
-	'relevant' : 'ghs'
+	'relevant' : 'ghs',
+	'relevant' : 'clh',
+	'relevant' : 'spc'
 	
 } />
 
+
+<#macro initiateRelevanceSPC relevance>
+	
+	<#global spcRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign spcRelevant>
+				<#if prop=="spc">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceCLH relevance>
+	
+	<#global clhRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign clhRelevant>
+				<#if prop=="clh">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
 
 <#macro initiateRelevanceGHS relevance>
 	
@@ -227,8 +257,10 @@ ${textValue}
 					${picklistValue.otherText}<#t>
 				</#if>
 
-				<#if printDescription && localizedPhrase.description?has_content>
-					[${localizedPhrase.description}]
+				<#if !spcRelevant??>
+					<#if printDescription && localizedPhrase.description?has_content>
+						[${localizedPhrase.description}]
+					</#if>
 				</#if>
 			</#if>
 
@@ -648,6 +680,21 @@ ${textValue}
 	<#return sequence + [document]>
 </#function>
 
+<#function addDocumentToSequence document sequence>
+    <#if !(document?has_content)>
+        <#return sequence>
+    </#if>
+    <#return sequence + [document]>
+</#function>
+
+<#function removeDocumentDuplicates sequence>
+    <#local docByKey = {}>
+    <#list sequence as doc>
+        <#local docByKey = docByKey + {doc.documentKey : doc}/>
+    </#list>
+    <#return docByKey?values >
+</#function>
+
 <#function getReportSubject rootDocument>
 	<#if rootDocument.documentType == 'DOSSIER'>
 		<#local dossierSubject = iuclid.getDocumentForKey(rootDocument.subjectKey) />
@@ -958,4 +1005,20 @@ ${textValue}
 	</#list>
 	<#return otherProds/>
 </#function>
+
+<#-- sanitizeUUID sanitises the UUID in order to keep just the second part after the '/', 
+     which corresponds to the dossier (first part is dataset) 
+-->
+<#function sanitizeUUID uuidPath>
+
+    <#local uuid><@com.text uuidPath/></#local>
+    
+ 	<#if uuid?matches(".*/.*", "r")>
+        <#local uuid=uuid?replace(".*/", '', 'r')/>
+    </#if>
+    
+    <#return uuid/>
+</#function>
+
+
 
