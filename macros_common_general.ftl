@@ -1006,3 +1006,19 @@ ${textValue}
 	<#return otherProds/>
 </#function>
 
+<#-- sanitizeUUID sanitises the UUID in order to keep just the second part after the '/', 
+     which corresponds to the dossier (first part is dataset) 
+-->
+<#function sanitizeUUID uuidPath>
+
+    <#local uuid><@com.text uuidPath/></#local>
+    
+ 	<#if uuid?matches(".*/.*", "r")>
+        <#local uuid=uuid?replace(".*/", '', 'r')/>
+    </#if>
+    
+    <#return uuid/>
+</#function>
+
+
+
