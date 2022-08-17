@@ -1,4 +1,4 @@
-<!-- Common macros and functions that could be reused in any template based on IUCLID6 data -->
+<!-- Common macros and functions that could be reused in any template based on IUCLID6 data. . -->
 
 <#--It initializes the following variables:
 	* _dossierHeader (:DossierHashModel) //The header document of a proper or 'raw' dossier, can be empty
