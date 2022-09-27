@@ -25,6 +25,7 @@
 <#global relevance = {
 	'relevant' : 'csr',
 	'relevant' : 'nzEPAclassification',
+	'relevant' : 'aicisClassification',
 	'relevant' : 'ppp',
 	'relevant' : 'par',
 	'relevant' : 'dar',
@@ -102,6 +103,20 @@
 		<#if prop?has_content>
 			<#assign nzEPArelevant>
 				<#if prop=="nzEPAclassification">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceAICIS relevance>
+	
+	<#global aicisRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign aicisRelevant>
+				<#if prop=="aicisClassification">
 				</#if>
 			</#assign>			
 		</#if>
