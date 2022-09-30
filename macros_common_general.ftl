@@ -876,13 +876,14 @@ ${textValue}
 	is not wanted, indicate "recursive=false".
 	If a type is specified, only components flagged with such specific function are retrieved
 -->
-<#function getComponents mixture type="" recursive=true getRefSubstances=false getSubstanceConstituents=false>
+<#function getComponents mixture type="" recursive=true getRefSubstances=false getSubstanceConstituents=false parsedMixtures=[]>
 
 	<#local documentTypes=['MIXTURE', 'SUBSTANCE']/>
 	<#if getRefSubstances><#local documentTypes=documentTypes+['REFERENCE_SUBSTANCE']/></#if>
 
 	<#local componentsList = [] />
 
+	<#local parsedMixtures =  parsedMixtures + [mixture.documentKey]/>
 	<#local compositionList = iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_RECORD", "MixtureComposition") />
 
 	<#list compositionList as composition>
@@ -900,8 +901,8 @@ ${textValue}
 						</#if>
 
 						<#-- if mixture and recursive is true, call function again-->
-						<#if substance.documentType=="MIXTURE" && recursive>
-							<#local componentsList = componentsList + getComponents(substance, type, recursive, getRefSubstances, getSubstanceConstituents)/>
+						<#if substance.documentType=="MIXTURE" && recursive && !parsedMixtures?seq_contains(mixture.documentKey)>
+							<#local componentsList = componentsList + getComponents(substance, type, recursive, getRefSubstances, getSubstanceConstituents, parsedMixtures)/>
 						</#if>
 					</#if>
 
