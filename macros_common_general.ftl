@@ -836,7 +836,7 @@ ${textValue}
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
 		<#elseif valueType=="boolean">
-			<#if valuePath>Y<#else>N</#if>asi
+			<#if valuePath>Y<#else>N</#if>
 		<#else>
 			value type ${valueType} not supported!
 		</#if>
