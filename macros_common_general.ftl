@@ -551,7 +551,7 @@ ${textValue}
 		<#if referenceSubstanceID?has_content>
 			<#if referenceSubstanceID.MolecularStructuralInfo.InChl?has_content>
 				<@com.text referenceSubstanceID.MolecularStructuralInfo.InChl />
-			<#else>No inchi notation provided
+			<#else>No inChi notation provided
 			</#if>
 		</#if>
 	</#compress>
