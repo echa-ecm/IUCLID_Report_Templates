@@ -196,13 +196,13 @@
             <#--Key Information-->
             <#if summary.KeyInformation.KeyInformation?has_content>
                 <para><emphasis role="bold">Key information: </emphasis></para>
-                <para style="background-color:#f7f7f7" ><@com.value summary.KeyInformation.KeyInformation/></para>
+                <para><para style="background-color:#f7f7f7" ><@com.value summary.KeyInformation.KeyInformation/></para></para>
             </#if>
 
             <#--Discussion-->
             <#if summary.Discussion.Discussion?has_content>
                 <para><emphasis role="bold">Discussion:</emphasis></para>
-                <para  style="background-color:#f7f7f7" ><@com.value summary.Discussion.Discussion/></para>
+                <para><para  style="background-color:#f7f7f7" ><@com.value summary.Discussion.Discussion/></para></para>
             </#if>
         </#list>
     </#if>
