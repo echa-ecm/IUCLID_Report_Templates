@@ -14,30 +14,35 @@
 
         <#if study.ResultsAndDiscussion.ResultsOnDetails?has_content>
             <para>Details on results: </para>
-            <para role="indent"><@com.text study.ResultsAndDiscussion.ResultsOnDetails/></para>
+            <para role="indent"><@com.value study.ResultsAndDiscussion.ResultsOnDetails/></para>
         </#if>
 
         <#if study.ResultsAndDiscussion.ObservedLimitationsOnEfficacy?has_content>
             <#local lim=study.ResultsAndDiscussion.ObservedLimitationsOnEfficacy/>
 
             <#if lim.IndicationOfResistance?has_content || lim.DetailsOnDevelopmentOfResistance?has_content>
-                <para>Details on results: <@com.picklist lim.IndicationOfResistance/></para>
-                <#if lim.DetailsOnDevelopmentOfResistance?has_content><para role="indent"><@com.text lim.DetailsOnDevelopmentOfResistance/></para></#if>
+                <para>Details on results: <@com.value lim.IndicationOfResistance/></para>
+                <#if lim.DetailsOnDevelopmentOfResistance?has_content><para role="indent"><@com.value lim.DetailsOnDevelopmentOfResistance/></para></#if>
             </#if>
 
             <#if lim.UndesirableOrUnintendedSideEffects?has_content || lim.DetailsOnUndesirableOrUnintendedSideEffects?has_content>
-                <para>Undesirable or unintended side effects: <@com.picklist lim.UndesirableOrUnintendedSideEffects/></para>
-                <#if lim.DetailsOnUndesirableOrUnintendedSideEffects?has_content><para role="indent"><@com.text lim.DetailsOnUndesirableOrUnintendedSideEffects/></para></#if>
+                <para>Undesirable or unintended side effects: <@com.value lim.UndesirableOrUnintendedSideEffects/></para>
+                <#if lim.DetailsOnUndesirableOrUnintendedSideEffects?has_content><para role="indent"><@com.value lim.DetailsOnUndesirableOrUnintendedSideEffects/></para></#if>
             </#if>
 
             <#if lim.OtherLimitationsObserved?has_content>
                 <para>Other limitations observed:</para>
-                <para role="indent"><@com.text lim.OtherLimitationsObserved/></para>
+                <para role="indent"><@com.value lim.OtherLimitationsObserved/></para>
             </#if>
 
+            <#if lim.CompatibilityInPlantProtectionProgrammes?has_content>
+                <para>Compatibility with plant protection programmes:</para>
+                <para role="indent"><@com.value lim.CompatibilityInPlantProtectionProgrammes/></para>
+            </#if>
+            
             <#if lim.RelevanceOfStudyResults?has_content>
                 <para>Relevance of study results:</para>
-                <para role="indent"><@com.text lim.RelevanceOfStudyResults/></para>
+                <para role="indent"><@com.value lim.RelevanceOfStudyResults/></para>
             </#if>
         </#if>
     </#compress>
@@ -50,31 +55,31 @@
             <#list block as blockItem>
                 <para role="indent">
                     <#if blockItem.hasElement("EfficacyParameter") && blockItem.EfficacyParameter?has_content>
-                        <@com.picklist blockItem.EfficacyParameter/>:
+                        <@com.value blockItem.EfficacyParameter/>:
                     </#if>
 
                     <#if blockItem.hasElement("Efficacy") && blockItem.Efficacy?has_content>
-                        <@com.range blockItem.Efficacy/>
+                        <@com.value blockItem.Efficacy/>
                     </#if>
 
                     <#if blockItem.hasElement("MinimumEffectiveDose") && blockItem.MinimumEffectiveDose?has_content>
-                        <@com.quantity blockItem.MinimumEffectiveDose/>
+                        <@com.value blockItem.MinimumEffectiveDose/>
                     </#if>
 
                     <#if blockItem.TimeToProduceEffect?has_content>
-                        at <@com.range blockItem.TimeToProduceEffect/>
+                        at <@com.value blockItem.TimeToProduceEffect/>
                     </#if>
 
                     <#if blockItem.Treatment?has_content>
-                        . Treatment: <@com.text blockItem.Treatment/>
+                        . Treatment: <@com.value blockItem.Treatment/>
                     </#if>
 
                     <#if blockItem.InterferingSubstances?has_content>
-                        . Interfering substances: <@com.picklist blockItem.InterferingSubstances/>
+                        . Interfering substances: <@com.value blockItem.InterferingSubstances/>
                     </#if>
 
                     <#if blockItem.RemarksOnResults?has_content>
-                        (<@com.picklist blockItem.RemarksOnResults/>)
+                        (<@com.value blockItem.RemarksOnResults/>)
                     </#if>
                 </para>
             </#list>
@@ -88,8 +93,8 @@
             <#list block as blockItem>
                 <para role="indent">
 
-                    <#local pestSci><@com.picklist blockItem.ScientificName/></#local>
-                    <#local pestCom><@com.picklist blockItem.CommonName/></#local>
+                    <#local pestSci><@com.value blockItem.ScientificName/></#local>
+                    <#local pestCom><@com.value blockItem.CommonName/></#local>
 
                     ${pestCom}
                     <#if pestCom?has_content && pestSci?has_content>[</#if>
@@ -97,11 +102,11 @@
                     <#if pestCom?has_content && pestSci?has_content>]</#if>
 
                     <#if blockItem.DevelopmentalStage?has_content>
-                        (<@com.picklist blockItem.DevelopmentalStage/>)
+                        (<@com.value blockItem.DevelopmentalStage/>)
                     </#if>
 
                     <#if blockItem.DevelopmentalStageOfTargetPlant?has_content>
-                        - developmental stage of target plant: <@com.picklistMultiple blockItem.DevelopmentalStageOfTargetPlant/>)
+                        - developmental stage of target plant: <@com.value blockItem.DevelopmentalStageOfTargetPlant/>)
                     </#if>
 
                 </para>
@@ -113,11 +118,6 @@
 <#--Methods-->
 <#macro efficacyMethod study>
     <#compress>
-
-        <#--General-->
-<#--        <#if study.MaterialsAndMethods.ComplianceWithQualityStandards?has_content>-->
-<#--            <para><emphasis role="bold">Compliance with quality standards: </emphasis><@com.picklist study.MaterialsAndMethods.ComplianceWithQualityStandards/></para>-->
-<#--        </#if>-->
 
         <#--Pest target orgs controlled-->
         <#if study.MaterialsAndMethods.PestTargetOrganismsToBeControlled?has_content>
@@ -151,20 +151,19 @@
 <#--Basic info-->
 <#macro basicinfo study>
     <#compress>
-
         <#if study.Background.BackgroundInformation?has_content>
             <para>Background information:</para>
-            <para role="indent"><@com.text study.Background.BackgroundInformation/></para>
+            <para role="indent"><@com.value study.Background.BackgroundInformation/></para>
         </#if>
 
         <#if study.Background.ObjectiveLabelClaimAddressed?has_content>
             <para>Objective / Label claim addressed:</para>
-            <para role="indent"><@com.text study.Background.ObjectiveLabelClaimAddressed/></para>
+            <para role="indent"><@com.value study.Background.ObjectiveLabelClaimAddressed/></para>
         </#if>
 
          <#if study.Background.SourceOfInformationTypeOfStudy?has_content>
             <para>Source of information / type of study:</para>
-            <para role="indent"><@com.picklistMultiple study.Background.SourceOfInformationTypeOfStudy/></para>
+            <para role="indent"><@com.value study.Background.SourceOfInformationTypeOfStudy/></para>
         </#if>
 
     </#compress>
@@ -177,29 +176,33 @@
     <#-- Get doc-->
     <#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
 
-
     <#-- Iterate-->
     <#if summaryList?has_content>
         <@com.emptyLine/>
+        
         <para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
 
-        <#assign printSummaryName = summaryList?size gt 1 />
+        <#-- Set flag to print indexes if there is more than 1 summary -->
+        <#assign printSummaryIndex = summaryList?size gt 1 />
 
         <#list summaryList as summary>
             <@com.emptyLine/>
 
-            <#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
+            <#-- get url -->
+            <#local summaryUrl=iuclid.webUrl.documentView(summary.documentKey) />
+
+            <para><emphasis role="bold"><#if printSummaryIndex>#${summary_index+1}: </#if><ulink url="${summaryUrl}"><@com.text summary.name/></ulink></emphasis></para>
 
             <#--Key Information-->
             <#if summary.KeyInformation.KeyInformation?has_content>
                 <para><emphasis role="bold">Key information: </emphasis></para>
-                <para><@com.richText summary.KeyInformation.KeyInformation/></para>
+                <para style="background-color:#f7f7f7" ><@com.value summary.KeyInformation.KeyInformation/></para>
             </#if>
 
             <#--Discussion-->
             <#if summary.Discussion.Discussion?has_content>
                 <para><emphasis role="bold">Discussion:</emphasis></para>
-                <para><@com.richText summary.Discussion.Discussion/></para>
+                <para  style="background-color:#f7f7f7" ><@com.value summary.Discussion.Discussion/></para>
             </#if>
         </#list>
     </#if>
