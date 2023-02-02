@@ -1,3 +1,8 @@
+<#import "macros_common_general.ftl" as com>
+<@com.initializeMainVariables />
+
+<#assign aicisStatement = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "AICIS_Statement") />
+
 <!-- Classification and labelling information -->
 <#macro classificationAndLabellingTable _subject>
 <#compress>
@@ -171,6 +176,26 @@
 				</#list>
 			</tbody>
 		</table>
+
+		<#-- AICIS only docbook format and data -->
+		<#if aicisRelevant??>
+		<?hard-pagebreak?>
+			<para role="i6header3">
+			Australian Regulatory Controls – Human health hazards
+			</para>
+
+			<#if aicisStatement?has_content>
+			<#-- Iterate AICIS statements -->
+				<#list aicisStatement as aicisStatements>
+					<#if aicisStatements?has_content>
+					<#-- Provide only AICIS statement details that relate to the relevant GHS information being outputted -->
+						<#if checkGhsUUIDs(recordList, aicisStatements)>
+							<para><@com.richText aicisStatements.SubjectReasonParametersScopeSummaries.SummaryOfHumanHealthHazards /></para>
+						</#if>
+					</#if>
+				</#list>
+			</#if>
+		</#if>		
 				
 		<@com.emptyLine/>
 		<table border="1">
@@ -390,6 +415,25 @@
 				</informaltable>
 			</#if>
 		</#list>			
+
+		
+		<#-- AICIS only docbook format and data -->
+		<#if aicisRelevant??>
+		<?hard-pagebreak?>
+			<para role="i6header3">Australian Regulatory Controls – Environmental hazards</para>
+
+			<#if aicisStatement?has_content>
+			<#-- Iterate AICIS statements -->
+				<#list aicisStatement as aicisStatements>
+					<#if aicisStatements?has_content>
+					<#-- Provide only AICIS statement details that relate to the relevant GHS information being outputted -->
+						<#if checkGhsUUIDs(recordList, aicisStatements)>
+							<para><@com.richText aicisStatements.SubjectReasonParametersScopeSummaries.SummaryOfEnvironmentalHazardCharacteristics/></para>
+						</#if>
+					</#if>
+				</#list>
+			</#if>
+		</#if>		
 		
 		<@com.emptyLine/>
 		<table border="1">
@@ -721,14 +765,17 @@
 <#compress>
 	<#if HazardStatementRepeatableBlock?has_content>
 		<#list HazardStatementRepeatableBlock as blockItem>
-			<para role="indent">
+			<#if !spcRelevant??><para role="indent">
+				<#else>
+				<para></#if>
+
 				<@com.picklist blockItem.HazardStatement/>
 				<#if blockItem.AdditionalText?has_content>
 					(<@com.text blockItem.AdditionalText/>)
 				</#if>
-			</para>
-		</#list>
-  	</#if>
+			</para>			
+		</#list> 
+	</#if> 	
 </#compress>
 </#macro>
 
@@ -736,7 +783,10 @@
 <#compress>
 	<#if PrecautionaryStatementRepeatableBlock?has_content>
 		<#list PrecautionaryStatementRepeatableBlock as blockItem>
-			<para role="indent">
+			<#if !spcRelevant??><para role="indent">
+				<#else>
+				<para></#if>
+
 				<@com.picklist blockItem.PrecautionaryStatement/>
 				<#if blockItem.AdditionalText?has_content>
 					(<@com.text blockItem.AdditionalText/>)
@@ -750,14 +800,22 @@
 <#macro SupplimentalHazardStatementList SupplimentalHazardStatementRepeatableBlock>
 <#compress>
 	<#if SupplimentalHazardStatementRepeatableBlock?has_content>
+	
 		<#list SupplimentalHazardStatementRepeatableBlock as blockItem>
-			<para role="indent">
+			<#if blockItem?has_content>	
+			
+			<#if !spcRelevant??><para role="indent">
+				<#else>
+				<para></#if>
+
 				<@com.picklist blockItem.SupplHazardStatement/>
 				<#if blockItem.AdditionalText?has_content>
 					(<@com.text blockItem.AdditionalText/>)
-				</#if>
+				</#if>                
 			</para>
+			</#if>
 		</#list>
+		
   	</#if>
 </#compress>
 </#macro>
@@ -766,7 +824,10 @@
 <#compress>
 	<#if AdditionalLabellingRepeatableBlock?has_content>
 		<#list AdditionalLabellingRepeatableBlock as blockItem>
-			<para role="indent">
+			<#if !spcRelevant??><para role="indent">
+				<#else>
+				<para></#if>
+				
 				<@com.text blockItem.Labelling/>
 			</para>
 		</#list>
@@ -813,6 +874,26 @@
 	<#if record.ConcentrationRangeVal?has_content || record.HazardCategories?has_content>
 		<#return true>
 	</#if>
+	<#return false>
+</#function>
+
+<#function checkGhsUUIDs recordList aicisStatements>
+
+<#-- get linked GHS document key -->						
+<#assign linkedGhsDocument = iuclid.getDocumentForKey(aicisStatements.SubjectReasonParametersScopeSummaries.RelatedGHS)/>
+					
+<#if recordList?has_content>
+	<#list recordList as records>
+
+		<#--compare linked GHS document uuid with GHS document UUID being outputted -->
+		<#if linkedGhsDocument?has_content && linkedGhsDocument.documentKey.uuid==records.documentKey.uuid>
+			<#return true>
+		<#else>
+			<#return false>
+		</#if>
+
+	</#list>
+</#if>
 	<#return false>
 </#function>
 

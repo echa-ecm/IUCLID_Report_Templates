@@ -279,15 +279,16 @@
 			
 			<@studyandsummaryCom.summaryKeyInformation summary/>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish?has_content>						
+			<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish?has_content>				
+
 			<emphasis role="underline">Freshwater fish</emphasis>	
 				<#assign longTermToxicityToFishFreshwaterList = summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish/>
 				<#if longTermToxicityToFishFreshwaterList?has_content>
+				
 				<#list longTermToxicityToFishFreshwaterList as longTermToxicityToFishFreshwater> 
 				
-					<#if longTermToxicityToFishFreshwater.DoseDescriptor?has_content || 
-					longTermToxicityToFishFreshwater.EffectConcentration?has_content>
-					
+					<#if longTermToxicityToFishFreshwater.DoseDescriptor?has_content || longTermToxicityToFishFreshwater.EffectConcentration?has_content>
+
 						<#assign valueForCsaTextLongTermToxicityToFishFreshwater>
 						
 							<#if longTermToxicityToFishFreshwater.DoseDescriptor?has_content>
@@ -2194,7 +2195,23 @@
 			${valueCsa}
 		</para>						
 		</#if>
-		
+
+		<!-- long-term toxicity to freshwater -->
+		<#if valueForCsaText=="valueForCsaTextLongTermToxicityToFishFreshwater">
+		<para>
+			<@com.emptyLine/>
+			${valueCsa}
+		</para>						
+		</#if>
+
+		<!-- long-term toxicity to fish marine -->
+		<#if valueForCsaText=="valueForCsaTextLongTermToxicityToFishMarine">
+		<para>
+			<@com.emptyLine/>
+			${valueCsa}
+		</para>						
+		</#if>
+
 		<!-- long-term toxicity to aquatic invertebrates freshwater -->
 		<#if valueForCsaText=="valueForCsaTextLongTermToxicityToAquaticInvertebratesFreshwater">
 		<para>
@@ -2685,10 +2702,29 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSALongTermToxicityToFish summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
-</#function>
+	<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish?has_content>
+	<#list summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish as freshwater>
+		<#if freshwater?has_content>
+		<#return true>
+		</#if>
+	</#list>
+	</#if>
 
+	<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish?has_content>
+	<#list summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish as marinewater>
+		<#if marinewater?has_content>
+		<#return true>
+		</#if>
+	</#list>
+	</#if>
+
+	<#if summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content>
+	<#return true>
+	</#if>
+
+	<#return false/>
+
+</#function>
 
 <#function getValuesForToxicityToTerrestrialArthropods summaryList>
 	<#local valuesCSA = []/>

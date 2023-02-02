@@ -5,7 +5,9 @@
 
 	<#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "SubstanceComposition") />
 
-	<#if !includeBatchCompositions>
+	<#--Remove substance composition documents that correspond to batches if there is more than 1 entry-->
+	<#local addMessage=''/>
+	<#if (recordList?size > 1) && !includeBatchCompositions>
 		<#local batchCompositions=getAllBatchCompositions(_subject)/>
 		<#local filtRecordList=[]/>
 		<#list recordList as record>
@@ -20,11 +22,17 @@
 				<#local filtRecordList=com.addDocumentToSequenceAsUnique(record, filtRecordList)/>
 			</#if>
 		</#list>
+
+		<#-- If all compositions are used as batches, report a message -->
+		<#if (recordList?size>0) && (filtRecordList?size==0)>
+			<#local addMessage> For batch compositions, see section below.</#local>
+		</#if>
+		
 		<#assign recordList=filtRecordList/>
 	</#if>
 
 	<#if !(recordList?has_content)>
-		No relevant information available.		
+		<para>No relevant information available.${addMessage}</para>		
 	<#else>
 		
 		<#list recordList as record>
@@ -193,15 +201,19 @@
 		<#-- Iterate-->
 		<#if summaryList?has_content>
 			<@com.emptyLine/>
-			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+<#--			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>-->
 
 			<#local printSummaryName = summaryList?size gt 1 />
 
 			<#list summaryList as summary>
 				<@com.emptyLine/>
 
-				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
+				<#local summUrl=iuclid.webUrl.documentView(summary.documentKey) />
 
+				<para><emphasis role="bold">
+					<#if printSummaryName>#${summary_index+1}:</#if>
+					<ulink url="${summUrl}"><@com.text summary.name/></ulink>
+				</emphasis></para>
 
 				<#--Key Information-->
 				<#if summary.DescriptionOfKeyInformation?has_content>
@@ -283,23 +295,23 @@
 	<#local batchCompHash={}/>
 	<#local compTypes=["Constituents", "Impurities", "Additives"]/>
 	<#local techSpecExists=techSpec?has_content/>
-	<#local from=1/>
 
 	<#--get list of batches and add techical specification if exists-->
 	<#local batchCompList=[]/>
-	<#if techSpecExists>
-		<#local batchCompList = batchCompList + [techSpec]/>
-		<#local from=0>
-	</#if>
+
 	<#list batchPath.SubstanceCompositionAnalysis as batch>
 		<#local batchComp=iuclid.getDocumentForKey(batch)/>
 		<#local batchCompList = batchCompList + [batchComp]/>
 	</#list>
 
+	<#if techSpecExists>
+		<#local batchCompList = batchCompList + [techSpec]/>
+	</#if>
+
 	<#--iterate list-->
 	<#list batchCompList as batchComp>
 
-		<#local batchNo>batch${batchComp_index+from}</#local>
+		<#local batchNo>batch${batchComp_index}</#local> <#-- the last batch correpsonds to the techspec-->
 
 		<#list compTypes as compType>
 			<#local batchCompPath='batchComp.'+compType+'.'+compType>
@@ -357,22 +369,20 @@
 		<title></title>
 
 		<tbody>
-			<tr>
+			<tr align="center" valign="middle">
 				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Component</emphasis></th>
+				<th colspan="${nBatch}"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Batches</emphasis></th>
 				<#if techSpecExists>
 					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?>
 						<emphasis role="bold">
-							<command linkend="${batchCompList[0].documentKey.uuid!}">Technical specification
-<#--								<?linebreak?><@com.text batchCompList[0].GeneralInformation.Name/>-->
-							</command>
+							<command linkend="${batchCompList[nBatch].documentKey.uuid!}">Proposed technical specification</command>
 						</emphasis>
 					</th>
 				</#if>
-				<th colspan="${nBatch}"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Batches</emphasis></th>
 			</tr>
 			<tr>
-				<#list 1..nBatch as i>
-					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">#${i}: <@com.text batchCompList[i].GeneralInformation.Name/></emphasis></th>
+				<#list 0..(nBatch-1) as i>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold"><@com.text batchCompList[i].GeneralInformation.Name/></emphasis></th>
 				</#list>
 			</tr>
 
@@ -396,18 +406,21 @@
 						${refTypes}
 					</td>
 
-					<#list from..nBatch as i>
+					<#list 0..nBatch as i>
 						<#local batchNo>batch${i}</#local>
-						<td>
-							<#if refSubData?keys?seq_contains(batchNo)>
-								<#if refSubData[batchNo]['conc']?has_content>
-									<para>${refSubData[batchNo]['conc']}</para>
+						<#if techSpecExists || i!=nBatch>
+							<td>
+								<#if refSubData?keys?seq_contains(batchNo)>
+
+										<#if refSubData[batchNo]['conc']?has_content>
+											<para>${refSubData[batchNo]['conc']}</para>
+										</#if>
+										<#if refSubData[batchNo]['range']?has_content>
+											<para>[${refSubData[batchNo]['range']}]</para>
+										</#if>
 								</#if>
-								<#if refSubData[batchNo]['range']?has_content>
-									<para>[${refSubData[batchNo]['range']}]</para>
-								</#if>
-							</#if>
-						</td>
+							</td>
+						</#if>
 					</#list>
 				</tr>
 			</#list>
