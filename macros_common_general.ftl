@@ -25,10 +25,7 @@
 <#global relevance = {
 	'relevant' : 'csr',
 	'relevant' : 'nzEPAclassification',
-<<<<<<< HEAD
 	'relevant' : 'aicisClassification',
-=======
->>>>>>> fa92c457e6451912bb024ee1f8c88acbd470eb86
 	'relevant' : 'ppp',
 	'relevant' : 'par',
 	'relevant' : 'dar',
@@ -42,7 +39,6 @@
 
 
 <#macro initiateRelevanceSPC relevance>
-<<<<<<< HEAD
 	
 	<#global spcRelevant = [] />	
 		
@@ -91,56 +87,6 @@
 		
 	<#list relevance?keys as prop>
 		<#if prop?has_content>
-=======
-	
-	<#global spcRelevant = [] />	
-		
-	<#list relevance?keys as prop>
-		<#if prop?has_content>
-			<#assign spcRelevant>
-				<#if prop=="spc">
-				</#if>
-			</#assign>			
-		</#if>
-	</#list>
-</#macro>
-
-<#macro initiateRelevanceCLH relevance>
-	
-	<#global clhRelevant = [] />	
-		
-	<#list relevance?keys as prop>
-		<#if prop?has_content>
-			<#assign clhRelevant>
-				<#if prop=="clh">
-				</#if>
-			</#assign>			
-		</#if>
-	</#list>
-</#macro>
-
-<#macro initiateRelevanceGHS relevance>
-	
-	<#global ghsRelevant = [] />	
-		
-	<#list relevance?keys as prop>
-		<#if prop?has_content>
-			<#assign ghsRelevant>
-				<#if prop=="ghs">
-				</#if>
-			</#assign>			
-		</#if>
-	</#list>
-</#macro>
-
-
-<#macro initiateRelevanceSVHC relevance>
-	
-	<#global svhcRelevant = [] />	
-		
-	<#list relevance?keys as prop>
-		<#if prop?has_content>
->>>>>>> fa92c457e6451912bb024ee1f8c88acbd470eb86
 			<#assign svhcRelevant>
 				<#if prop=="svhc">
 				</#if>
@@ -159,7 +105,6 @@
 				<#if prop=="nzEPAclassification">
 				</#if>
 			</#assign>			
-<<<<<<< HEAD
 		</#if>
 	</#list>
 </#macro>
@@ -174,8 +119,6 @@
 				<#if prop=="aicisClassification">
 				</#if>
 			</#assign>			
-=======
->>>>>>> fa92c457e6451912bb024ee1f8c88acbd470eb86
 		</#if>
 	</#list>
 </#macro>
@@ -285,11 +228,7 @@
 </#compress>
 </#macro>
 
-<<<<<<< HEAD
 <#macro text textValue="" format="" breakwords=false>
-=======
-<#macro text textValue="" format="">
->>>>>>> fa92c457e6451912bb024ee1f8c88acbd470eb86
 <#if textValue?has_content && format=="literal">
 <#escape x as x?html>
 <para role="i6LiteralText">${textValue}</para>
@@ -297,15 +236,11 @@
 <#elseif textValue?has_content>
 <#compress>
 <#escape x as x?html>
-<<<<<<< HEAD
 <#if breakwords==true>
 <phrase role="i6Phrase">${textValue}</phrase>
 <#else>
 ${textValue}
 </#if>
-=======
-${textValue}
->>>>>>> fa92c457e6451912bb024ee1f8c88acbd470eb86
 </#escape>
 </#compress>
 </#if>
@@ -330,10 +265,7 @@ ${textValue}
 <#macro picklist picklistValue locale="en" printOtherPhrase=false printDescription=true printRemarks=true>
 	<#compress>
 		<#escape x as x?html>
-<<<<<<< HEAD
 
-=======
->>>>>>> fa92c457e6451912bb024ee1f8c88acbd470eb86
 			<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, locale) />
 			<#if localizedPhrase?has_content>
 
