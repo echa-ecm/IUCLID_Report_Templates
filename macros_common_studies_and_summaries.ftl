@@ -63,7 +63,8 @@
 	<#if study?has_content>
 
 		<#if pppRelevant??>
-			<para xml:id="${study.documentKey.uuid!}"><emphasis role="bold">Information requirement: </emphasis>
+			<para><emphasis role="bold"><@com.text study.name/></emphasis>:</para>
+			<para xml:id="${study.documentKey.uuid!}" role="indent"><emphasis role="bold">Information requirement: </emphasis>
 			 	<#if study.AdministrativeData.Endpoint?has_content>
 			 		<@com.picklist study.AdministrativeData.Endpoint/>
 			 	<#else>
@@ -238,7 +239,13 @@
 	<#if documentKey?has_content>
 		<#local testMaterial = iuclid.getDocumentForKey(documentKey) />
 		<#if testMaterial?has_content>
-			<#assign testMaterialInformations = com.addDocumentToSequenceAsUnique(testMaterial, testMaterialInformations) />			
+			
+			<#if csrRelevant??>		
+			<#assign testMaterialInformations = com.addDocumentToSequence(testMaterial, testMaterialInformations) />
+			<#else>
+				<#assign testMaterialInformations = com.addDocumentToSequenceAsUnique(testMaterial, testMaterialInformations) />
+			</#if>
+
 			<@com.text testMaterial.Name/>,
 			<#if testMaterial.Composition.OtherCharacteristics.TestMaterialForm?has_content>
 			<?linebreak?>
@@ -258,7 +265,7 @@
 
 		</#if>
 	<#else>
-		Information not available in IUCLID
+		
 	</#if>
 </#compress>
 </#macro>
@@ -293,7 +300,19 @@
 	<@com.emptyLine/>
 		<emphasis role="bold">Test material</emphasis>
 		<?linebreak?>
-		<@testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/>
+		<#if !(study.MaterialsAndMethods.TestMaterials.TestMaterialInformation)?has_content && !(study.MaterialsAndMethods.TestMaterials.AdditionalTestMaterialInformation)?has_content>
+			Information not provided in IUCLID
+			<#else>
+				<!-- main test material information -->
+				<@testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/>
+				<!-- additional test material information -->
+				<#assign additionalTestMaterials = study.MaterialsAndMethods.TestMaterials.AdditionalTestMaterialInformation/>
+				<#list additionalTestMaterials as additionalTestMaterial>
+					<#if additionalTestMaterial?has_content>
+					<para><@testMaterialInformation additionalTestMaterial/></para>
+					</#if>
+				</#list>
+		</#if>
 	</para>
 	<para>
 	<@com.emptyLine/>
@@ -312,7 +331,13 @@
 		<#list multipleReferenceValue as item>
 			<#local reference = iuclid.getDocumentForKey(item) />
 			<#if reference?has_content>
-				<#assign literatureReferences = com.addDocumentToSequenceAsUnique(reference, literatureReferences) />
+
+				<#if csrRelevant??>
+				<#assign literatureReferences = com.addDocumentToSequence(reference, literatureReferences) />
+					<#else>
+					<#assign literatureReferences = com.addDocumentToSequenceAsUnique(reference, literatureReferences) />
+				</#if>
+				
 				<command linkend="${reference.documentKey.uuid!}">
 					<@com.text reference.GeneralInfo.Author/> <#if reference.GeneralInfo.ReferenceYear?has_content>${reference.GeneralInfo.ReferenceYear?string["0"]}</#if>
 				</command>

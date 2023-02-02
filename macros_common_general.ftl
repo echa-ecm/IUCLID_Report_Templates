@@ -1,4 +1,4 @@
-<!-- Common macros and functions that could be reused in any template based on IUCLID6 data -->
+<!-- Common macros and functions that could be reused in any template based on IUCLID6 data. . -->
 
 <#--It initializes the following variables:
 	* _dossierHeader (:DossierHashModel) //The header document of a proper or 'raw' dossier, can be empty
@@ -24,12 +24,104 @@
 
 <#global relevance = {
 	'relevant' : 'csr',
+	'relevant' : 'nzEPAclassification',
+	'relevant' : 'aicisClassification',
 	'relevant' : 'ppp',
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
-	'relevant' : 'generic'
+	'relevant' : 'svhc',	
+	'relevant' : 'ghs',
+	'relevant' : 'clh',
+	'relevant' : 'spc'
+	
 } />
+
+
+<#macro initiateRelevanceSPC relevance>
+	
+	<#global spcRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign spcRelevant>
+				<#if prop=="spc">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceCLH relevance>
+	
+	<#global clhRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign clhRelevant>
+				<#if prop=="clh">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceGHS relevance>
+	
+	<#global ghsRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign ghsRelevant>
+				<#if prop=="ghs">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+
+<#macro initiateRelevanceSVHC relevance>
+	
+	<#global svhcRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign svhcRelevant>
+				<#if prop=="svhc">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceNZ relevance>
+	
+	<#global nzEPArelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign nzEPArelevant>
+				<#if prop=="nzEPAclassification">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceAICIS relevance>
+	
+	<#global aicisRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign aicisRelevant>
+				<#if prop=="aicisClassification">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
 
 <#macro initiRelevanceForCSR relevance>
 	
@@ -136,20 +228,28 @@
 </#compress>
 </#macro>
 
-<#macro text textValue="">
+<#macro text textValue="" format="" breakwords=false>
+<#if textValue?has_content && format=="literal">
+<#escape x as x?html>
+<para role="i6LiteralText">${textValue}</para>
+</#escape>
+<#elseif textValue?has_content>
 <#compress>
-	<#if textValue?has_content>
-		<#escape x as x?html>
-		${textValue}
-		</#escape>
-  	</#if>
+<#escape x as x?html>
+<#if breakwords==true>
+<phrase role="i6Phrase">${textValue}</phrase>
+<#else>
+${textValue}
+</#if>
+</#escape>
 </#compress>
+</#if>
 </#macro>
 
 <#macro number numberValue>
 <#compress>
 	<#if numberValue?has_content>
-		${numberValue?string["0.###"]}
+		${numberValue?string["0.#########"]}
   	</#if>
 </#compress>
 </#macro>
@@ -162,34 +262,42 @@
 </#compress>
 </#macro>
 
-<#macro picklist picklistValue locale="en" printOtherPhrase=false>
-<#compress>
-	<#escape x as x?html>
-		<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, locale) />
-		<#if localizedPhrase?has_content>
-			<#if !localizedPhrase.open || !(localizedPhrase.text?matches("other:")) || printOtherPhrase>
-				${localizedPhrase.text} <#t>
+<#macro picklist picklistValue locale="en" printOtherPhrase=false printDescription=true printRemarks=true>
+	<#compress>
+		<#escape x as x?html>
+
+			<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, locale) />
+			<#if localizedPhrase?has_content>
+
+				<#if !localizedPhrase.open || !(localizedPhrase.text?matches("other:")) || printOtherPhrase>
+					${localizedPhrase.text}<#t>  
+				</#if>
+
+				<#if localizedPhrase.open && picklistValue.otherText?has_content>
+					${picklistValue.otherText}<#t>
+				</#if>
+
+				<#if !spcRelevant??>
+					<#if printDescription && localizedPhrase.description?has_content>
+						[${localizedPhrase.description}]
+					</#if>
+				</#if>
 			</#if>
-			<#if localizedPhrase.open && picklistValue.otherText?has_content>
-				${picklistValue.otherText}<#t>
+
+			<#if printRemarks && picklistValue.remarks?has_content>
+				- ${picklistValue.remarks}
 			</#if>
-			<#if localizedPhrase.description?has_content>
-				[${localizedPhrase.description}]
-			</#if>
-		</#if>
-		<#if picklistValue.remarks?has_content>
-			- ${picklistValue.remarks}
-		</#if>
-		<#lt>
-	</#escape>
-</#compress>
+			<#lt>
+
+		</#escape>
+	</#compress>
 </#macro>
 
-<#macro picklistMultiple picklistMultipleValue>
+<#macro picklistMultiple picklistMultipleValue locale="en" printOtherPhrase=false printDescription=true printRemarks=true>
 <#compress>
 	<#if picklistMultipleValue?has_content>
 		<#list picklistMultipleValue as item>
-			<@picklist item/>
+			<@picklist item locale printOtherPhrase printDescription printRemarks/>
 			<#if item_has_next>; </#if>
 		</#list>
 	</#if>
@@ -443,6 +551,17 @@
 </#compress>
 </#macro>
 
+<#macro inchi referenceSubstanceID>
+	<#compress>
+		<#if referenceSubstanceID?has_content>
+			<#if referenceSubstanceID.MolecularStructuralInfo.InChl?has_content>
+				<@com.text referenceSubstanceID.MolecularStructuralInfo.InChl />
+			<#else>No inChi notation provided
+			</#if>
+		</#if>
+	</#compress>
+</#macro>
+
 <#macro chemicalStructureFiles referenceSubstanceID>
 <#compress>
 <#if referenceSubstanceID?has_content>
@@ -462,37 +581,37 @@
 </#compress>
 </#macro>
 
-<#macro structuralFormula referenceSubstanceID>
-<#compress>
-<#if referenceSubstanceID?has_content>
-	<#local attachmentKey = referenceSubstanceID.MolecularStructuralInfo.StructuralFormula />
-	<#if attachmentKey?has_content>
-		<#local structuralFormula = iuclid.getMetadataForAttachment(attachmentKey) />
-		<#if structuralFormula?has_content && structuralFormula.isImage>
-			<para><emphasis role="bold"></emphasis></para>
-			<#if structuralFormula.exceedsLimit(10000000)>
-				<para><emphasis role="bold">Image size is too big (${structuralFormula.size} bytes) and cannot be displayed!</emphasis></para>
-			<#elseif !iuclid.imageMimeTypeSupported(structuralFormula.mediaType) />
-				<para><emphasis role="bold">Image type (${structuralFormula.mediaType}) is not yet supported!</emphasis></para>
-			<#else/>
-				<figure><title>
-				<#if structuralFormula?has_content>
-				<#local attachName><@com.text structuralFormula.filename/></#local>${attachName}
+<#macro structuralFormula referenceSubstanceID imageWidthPerc=31 printTitle=true>
+	<#compress>
+		<#if referenceSubstanceID?has_content>
+			<#local attachmentKey = referenceSubstanceID.MolecularStructuralInfo.StructuralFormula />
+			<#if attachmentKey?has_content>
+				<#local structuralFormula = iuclid.getMetadataForAttachment(attachmentKey) />
+				<#if structuralFormula?has_content && structuralFormula.isImage>
+					<#if structuralFormula.exceedsLimit(10000000)>
+						<para><emphasis role="bold">Image size is too big (${structuralFormula.size} bytes) and cannot be displayed!</emphasis></para>
+					<#elseif !iuclid.imageMimeTypeSupported(structuralFormula.mediaType) >
+						<para><emphasis role="bold">Image type (${structuralFormula.mediaType}) is not yet supported!</emphasis></para>
+					<#else>
+						<figure>
+							<#if printTitle>
+								<title>
+									<#local attachName><@com.text structuralFormula.filename/></#local>${attachName}
+								</title>
+							</#if>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="${imageWidthPerc}%" scalefit="1" fileref="data:${structuralFormula.mediaType};base64,${iuclid.getContentForAttachment(attachmentKey)}" />
+								</imageobject>
+							</mediaobject>
+						</figure>
+					</#if>
 				</#if>
-				</title>
-					<mediaobject>
-						<imageobject>
-							<imagedata width="31%" scalefit="1" fileref="data:${structuralFormula.mediaType};base64,${iuclid.getContentForAttachment(attachmentKey)}" />
-						</imageobject>
-					</mediaobject>										
-				</figure>
+			<#else>
+				<emphasis>No structural formula image attached to the Reference substance of the Active substance</emphasis>
 			</#if>
 		</#if>
-	<#else/>
-	<emphasis>No structural formula image attached to the Reference substance of the Active substance</emphasis>
-	</#if>
-</#if>
-</#compress>
+	</#compress>
 </#macro>
 										
 <#function getReferenceSubstanceKey key>
@@ -506,13 +625,13 @@
 </#function>
 
 <!-- other identifiers in a Substance or mixture -->
-<#macro otherIdentifiersList otherNamesRepeatableBlock>
+<#macro otherIdentifiersList otherNamesRepeatableBlock role="">
 <#compress>
 	<#if otherNamesRepeatableBlock?has_content>
 		<#list otherNamesRepeatableBlock as blockItem>
-			<para>
-				<@com.picklist blockItem.NameType/> <@com.text blockItem.Name/> 
-				<#if blockItem.Relation?has_content>
+			<para role="${role}">
+				<@com.picklist blockItem.NameType/>: <@com.text blockItem.Name/>
+				<#if blockItem.hasElement('Relation') && blockItem.Relation?has_content>
 					(<@com.picklist blockItem.Relation/>)
 				</#if>
 				<@com.picklistMultiple blockItem.Country/> 
@@ -579,6 +698,21 @@
 		</#if>
 	</#list>
 	<#return sequence + [document]>
+</#function>
+
+<#function addDocumentToSequence document sequence>
+    <#if !(document?has_content)>
+        <#return sequence>
+    </#if>
+    <#return sequence + [document]>
+</#function>
+
+<#function removeDocumentDuplicates sequence>
+    <#local docByKey = {}>
+    <#list sequence as doc>
+        <#local docByKey = docByKey + {doc.documentKey : doc}/>
+    </#list>
+    <#return docByKey?values >
 </#function>
 
 <#function getReportSubject rootDocument>
@@ -659,7 +793,253 @@
 </#compress>
 </#macro>
 
+<#--Macro to print the mixture name of a mixture with hyperlink to the specific MIXTURE document
+	(similar behaviour to macro "substanceName"
+-->
+<#macro mixtureName _subject>
+	<#compress>
+		<#if _subject.documentType=="MIXTURE">
+
+			<#assign docUrl=iuclid.webUrl.entityView(_subject.documentKey)/>
+			<#if docUrl?has_content>
+				<ulink url="${docUrl}"><@com.text _subject.MixtureName/></ulink>
+			<#else>
+				<@com.text _subject.MixtureName/>
+			</#if>
+		</#if>
+	</#compress>
+</#macro>
+
+<#-- Function to get inbound references for a key -->
+<#-- Function to get inbound references for a key -->
 <#function inboundReferences key>
-    <#local params={"key": [key]}>
+    <#local params={"key": [key], "exclude": ["CUSTOM_ENTITY,CUSTOM_SECTION"]}>
     <#return iuclid.query("web.ReferencingQuery", params, 0, 100)>
 </#function>
+
+<#--Macro to print any value type of a field
+	It includes arguments for the macros of specific data types
+-->
+<#macro value valuePath format="" printOtherPhrase=false printDescription=true printRemarks=true locale='en'>
+	<#compress>
+		<#assign valueType=valuePath?node_type/>
+
+		<#if valueType=="range">
+			<@com.range valuePath/>
+		<#elseif valueType=="picklist_single">
+			<@com.picklist valuePath locale printOtherPhrase printDescription printRemarks/>
+		<#elseif valueType=="picklist_multi">
+			<@com.picklistMultiple valuePath locale printOtherPhrase printDescription printRemarks/>
+		<#elseif valueType=="quantity">
+			<@com.quantity valuePath/>
+		<#elseif valueType=="decimal" || valueType=="integer">
+			<@com.number valuePath/>
+		<#elseif valueType?contains("text_html")>
+			<@com.richText valuePath/>
+		<#elseif valueType?contains("text")>
+			<@com.text valuePath format/>
+		<#elseif valueType=="date">
+			<@com.text valuePath/>
+		<#elseif valueType=="boolean">
+			<#if valuePath>Y<#else>N</#if>
+		<#else>
+			value type ${valueType} not supported!
+		</#if>
+		<#--NOTE: other types: address, document_reference, document_references, data_protection, inventory, attachment, attachments, section_types, repeatable-->
+	</#compress>
+</#macro>
+
+<#--Macro to interatively print all children fields of an element-->
+<#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
+	<#compress>
+		<#list path?children as child>
+			<#if child?node_type!="repeatable" && child?node_type!="block" && !(exclude?seq_contains(child?node_name)) && child?has_content>
+				<#local childName=child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first/>
+				<#local childType=child?node_type/>
+				<#local childValue><@value child/></#local>
+
+				<para role="${role1}">
+					<#if titleEmphasis><emphasis role="bold"></#if>
+						${childName}:
+						<#--<@iuclid.label for=child var="fieldLabel"/>:-->
+						<#if titleEmphasis></emphasis></#if>
+
+					<#if (childValue?length > 75)>
+						<para role="${role2}">${childValue}</para>
+					<#else>
+						${childValue}
+					</#if>
+				</para>
+
+			</#if>
+		</#list>
+	</#compress>
+</#macro>
+
+<!--Function to get a list of all SUBSTANCE / MIXTURE components from the MixtureComposition records of a mixture.
+	The function is by default recursive: in case of MIXTURE components, it also checks its compositions. If recursivity
+	is not wanted, indicate "recursive=false".
+	If a type is specified, only components flagged with such specific function are retrieved
+-->
+<#function getComponents mixture type="" recursive=true getRefSubstances=false getSubstanceConstituents=false parsedMixtures=[]>
+
+	<#local documentTypes=['MIXTURE', 'SUBSTANCE']/>
+	<#if getRefSubstances><#local documentTypes=documentTypes+['REFERENCE_SUBSTANCE']/></#if>
+
+	<#local componentsList = [] />
+
+	<#local parsedMixtures =  parsedMixtures + [mixture.documentKey]/>
+	<#local compositionList = iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_RECORD", "MixtureComposition") />
+
+	<#list compositionList as composition>
+		<#local componentList = composition.Components.Components />
+		<#list componentList as component>
+			<#if component.Reference?has_content>
+				<#if type=="" || isComponentType(component, type)>
+					<#local substance = iuclid.getDocumentForKey(component.Reference)/>
+					<#if substance?has_content && documentTypes?seq_contains(substance.documentType)>
+						<#local componentsList = addDocumentToSequenceAsUnique(substance, componentsList)/>
+
+						<#-- if substance and getSubstanceConstituents is true, get constituents of substance -->
+						<#if substance.documentType=="SUBSTANCE" && getSubstanceConstituents && getRefSubstances>
+							<#local componentsList = componentsList + getConstituents(substance)/>
+						</#if>
+
+						<#-- if mixture and recursive is true, call function again-->
+						<#if substance.documentType=="MIXTURE" && recursive && !parsedMixtures?seq_contains(mixture.documentKey)>
+							<#local componentsList = componentsList + getComponents(substance, type, recursive, getRefSubstances, getSubstanceConstituents, parsedMixtures)/>
+						</#if>
+					</#if>
+
+				</#if>
+			</#if>
+		</#list>
+	</#list>
+
+	<#return componentsList />
+</#function>
+
+<#--Function to check if a component from a mixture composition documents is of a certain function e.g. 'active substance'-->
+<#function isComponentType component type>
+	<#return component.Function?has_content && com.picklistValueMatchesPhrases(component.Function, [type]) />
+</#function>
+
+<!--Function to get a list of all SUBSTANCE constituents from the SubstanceComposition records of a substance.
+	Type can be specified to retrieve Constituents, Additives and/or Impurities.
+-->
+<#function getConstituents substance type=['Constituents', 'Additives', 'Impurities']>
+
+	<#local constituentsList = [] />
+
+	<#local compositionList = iuclid.getSectionDocumentsForParentKey(substance.documentKey, "FLEXIBLE_RECORD", "SubstanceComposition") />
+
+	<#list compositionList as composition>
+
+		<#list type as tp>
+
+			<#local path='composition.'+tp+'.'+tp>
+
+			<#list path?eval as constituent>
+
+				<#if constituent.ReferenceSubstance?has_content>
+					<#local substance = iuclid.getDocumentForKey(constituent.ReferenceSubstance)/>
+					<#local constituentsList = addDocumentToSequenceAsUnique(substance, constituentsList)/>
+				</#if>
+			</#list>
+		</#list>
+	</#list>
+
+	<#return constituentsList />
+</#function>
+
+<#--Function to retrieve all metabolites from the Metabolites records of a mixture.
+	If an active substance is provided and checkParent=true, then the function only retrieves metabolites for which the parent
+	is the active substance.
+-->
+<#function getMetabolites mixture activeSubstance="" checkParent=false getRefSubstances=false>
+
+	<#local metabolitesList = [] />
+
+	<#local compositionList = iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_SUMMARY", "Metabolites") />
+
+	<#list compositionList as composition>
+
+		<#if checkParent && activeSubstance?has_content>
+			<#if !isParentMetabolitesSubstance(composition, activeSubstance)>
+				<#continue>
+			</#if>
+		</#if>
+
+		<#local metaboliteList = composition.ListMetabolites.Metabolites />
+		<#list metaboliteList as metabolite>
+			<#if metabolite.LinkMetaboliteDataset?has_content>
+				<#local substance = iuclid.getDocumentForKey(metabolite.LinkMetaboliteDataset)/>
+				<#if substance?has_content>
+					<#if getRefSubstances || substance.documentType=="SUBSTANCE">
+						<#local metabolitesList = addDocumentToSequenceAsUnique(substance, metabolitesList)/>
+					</#if>
+				</#if>
+			</#if>
+		</#list>
+	</#list>
+
+	<#return metabolitesList />
+</#function>
+
+<#--Function to check if a metabolites composition record has a specific SUBSTANCE as parent, either by checking the
+	substance dataset or the reference substance within it.
+-->
+<#function isParentMetabolitesSubstance metabComp substance>
+
+	<#local parentLink=metabComp.MetabolitesInfo.ParentOfMetabolites/>
+
+	<#if parentLink?has_content>
+		<#local parent=iuclid.getDocumentForKey(parentLink)/>
+
+		<#local subReference=iuclid.getDocumentForKey(substance.ReferenceSubstance.ReferenceSubstance)/>
+
+		<#if (parent.documentType=="SUBSTANCE" && parent.documentKey.uuid==substance.documentKey.uuid) ||
+			(parent.documentType=="REFERENCE_SUBSTANCE" && parent.documentKey.uuid==subReference.documentKey.uuid)>
+			<#return true>
+		</#if>
+	</#if>
+
+	<#return false>
+</#function>
+
+<#--Function to retrieve all products datasets in the Other representative products section of a PPP mixture.
+-->
+<#function getOtherRepresentativeProducts mixture>
+
+	<#local otherProdsSummaries=iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FIXED_RECORD", "OtherRepresentativeProducts") />
+	<#local otherProds=[]/>
+
+	<#list otherProdsSummaries as otherProdSummary>
+		<#if otherProdSummary.OtherRepresentativeProductS?has_content>
+			<#list otherProdSummary.OtherRepresentativeProductS as prodLink>
+				<#local prod=iuclid.getDocumentForKey(prodLink)/>
+				<#if prod?has_content>
+					<#local otherProds = com.addDocumentToSequenceAsUnique(prod, otherProds)/>
+				</#if>
+			</#list>
+		</#if>
+	</#list>
+	<#return otherProds/>
+</#function>
+
+<#-- sanitizeUUID sanitises the UUID in order to keep just the second part after the '/', 
+     which corresponds to the dossier (first part is dataset) 
+-->
+<#function sanitizeUUID uuidPath>
+
+    <#local uuid><@com.text uuidPath/></#local>
+    
+ 	<#if uuid?matches(".*/.*", "r")>
+        <#local uuid=uuid?replace(".*/", '', 'r')/>
+    </#if>
+    
+    <#return uuid/>
+</#function>
+
+
+
