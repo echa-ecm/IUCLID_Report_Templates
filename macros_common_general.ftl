@@ -1,4 +1,4 @@
-<!-- Common macros and functions that could be reused in any template based on IUCLID6 data -->
+<!-- Common macros and functions that could be reused in any template based on IUCLID6 data. . -->
 
 <#--It initializes the following variables:
 	* _dossierHeader (:DossierHashModel) //The header document of a proper or 'raw' dossier, can be empty
@@ -25,13 +25,75 @@
 <#global relevance = {
 	'relevant' : 'csr',
 	'relevant' : 'nzEPAclassification',
+	'relevant' : 'aicisClassification',
 	'relevant' : 'ppp',
 	'relevant' : 'par',
 	'relevant' : 'dar',
 	'relevant' : 'rar',
-	'relevant' : 'generic'
+	'relevant' : 'svhc',	
+	'relevant' : 'ghs',
+	'relevant' : 'clh',
+	'relevant' : 'spc'
 	
 } />
+
+
+<#macro initiateRelevanceSPC relevance>
+	
+	<#global spcRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign spcRelevant>
+				<#if prop=="spc">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceCLH relevance>
+	
+	<#global clhRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign clhRelevant>
+				<#if prop=="clh">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceGHS relevance>
+	
+	<#global ghsRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign ghsRelevant>
+				<#if prop=="ghs">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+
+<#macro initiateRelevanceSVHC relevance>
+	
+	<#global svhcRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign svhcRelevant>
+				<#if prop=="svhc">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
 
 <#macro initiateRelevanceNZ relevance>
 	
@@ -41,6 +103,20 @@
 		<#if prop?has_content>
 			<#assign nzEPArelevant>
 				<#if prop=="nzEPAclassification">
+				</#if>
+			</#assign>			
+		</#if>
+	</#list>
+</#macro>
+
+<#macro initiateRelevanceAICIS relevance>
+	
+	<#global aicisRelevant = [] />	
+		
+	<#list relevance?keys as prop>
+		<#if prop?has_content>
+			<#assign aicisRelevant>
+				<#if prop=="aicisClassification">
 				</#if>
 			</#assign>			
 		</#if>
@@ -152,14 +228,22 @@
 </#compress>
 </#macro>
 
-<#macro text textValue="">
+<#macro text textValue="" format="" breakwords=false>
+<#if textValue?has_content && format=="literal">
+<#escape x as x?html>
+<para role="i6LiteralText">${textValue}</para>
+</#escape>
+<#elseif textValue?has_content>
 <#compress>
-	<#if textValue?has_content>
-		<#escape x as x?html>
-		${textValue}
-		</#escape>
-  	</#if>
+<#escape x as x?html>
+<#if breakwords==true>
+<phrase role="i6Phrase">${textValue}</phrase>
+<#else>
+${textValue}
+</#if>
+</#escape>
 </#compress>
+</#if>
 </#macro>
 
 <#macro number numberValue>
@@ -181,19 +265,22 @@
 <#macro picklist picklistValue locale="en" printOtherPhrase=false printDescription=true printRemarks=true>
 	<#compress>
 		<#escape x as x?html>
+
 			<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, locale) />
 			<#if localizedPhrase?has_content>
 
 				<#if !localizedPhrase.open || !(localizedPhrase.text?matches("other:")) || printOtherPhrase>
-					${localizedPhrase.text} <#t>
+					${localizedPhrase.text}<#t>  
 				</#if>
 
 				<#if localizedPhrase.open && picklistValue.otherText?has_content>
 					${picklistValue.otherText}<#t>
 				</#if>
 
-				<#if printDescription && localizedPhrase.description?has_content>
-					[${localizedPhrase.description}]
+				<#if !spcRelevant??>
+					<#if printDescription && localizedPhrase.description?has_content>
+						[${localizedPhrase.description}]
+					</#if>
 				</#if>
 			</#if>
 
@@ -206,11 +293,11 @@
 	</#compress>
 </#macro>
 
-<#macro picklistMultiple picklistMultipleValue>
+<#macro picklistMultiple picklistMultipleValue locale="en" printOtherPhrase=false printDescription=true printRemarks=true>
 <#compress>
 	<#if picklistMultipleValue?has_content>
 		<#list picklistMultipleValue as item>
-			<@picklist item/>
+			<@picklist item locale printOtherPhrase printDescription printRemarks/>
 			<#if item_has_next>; </#if>
 		</#list>
 	</#if>
@@ -469,7 +556,7 @@
 		<#if referenceSubstanceID?has_content>
 			<#if referenceSubstanceID.MolecularStructuralInfo.InChl?has_content>
 				<@com.text referenceSubstanceID.MolecularStructuralInfo.InChl />
-			<#else>No inchi notation provided
+			<#else>No inChi notation provided
 			</#if>
 		</#if>
 	</#compress>
@@ -538,13 +625,13 @@
 </#function>
 
 <!-- other identifiers in a Substance or mixture -->
-<#macro otherIdentifiersList otherNamesRepeatableBlock>
+<#macro otherIdentifiersList otherNamesRepeatableBlock role="">
 <#compress>
 	<#if otherNamesRepeatableBlock?has_content>
 		<#list otherNamesRepeatableBlock as blockItem>
-			<para>
-				<@com.picklist blockItem.NameType/> <@com.text blockItem.Name/> 
-				<#if blockItem.Relation?has_content>
+			<para role="${role}">
+				<@com.picklist blockItem.NameType/>: <@com.text blockItem.Name/>
+				<#if blockItem.hasElement('Relation') && blockItem.Relation?has_content>
 					(<@com.picklist blockItem.Relation/>)
 				</#if>
 				<@com.picklistMultiple blockItem.Country/> 
@@ -611,6 +698,21 @@
 		</#if>
 	</#list>
 	<#return sequence + [document]>
+</#function>
+
+<#function addDocumentToSequence document sequence>
+    <#if !(document?has_content)>
+        <#return sequence>
+    </#if>
+    <#return sequence + [document]>
+</#function>
+
+<#function removeDocumentDuplicates sequence>
+    <#local docByKey = {}>
+    <#list sequence as doc>
+        <#local docByKey = docByKey + {doc.documentKey : doc}/>
+    </#list>
+    <#return docByKey?values >
 </#function>
 
 <#function getReportSubject rootDocument>
@@ -709,36 +811,41 @@
 </#macro>
 
 <#-- Function to get inbound references for a key -->
+<#-- Function to get inbound references for a key -->
 <#function inboundReferences key>
-    <#local params={"key": [key]}>
+    <#local params={"key": [key], "exclude": ["CUSTOM_ENTITY,CUSTOM_SECTION"]}>
     <#return iuclid.query("web.ReferencingQuery", params, 0, 100)>
 </#function>
 
-<#--Macro to print any value type of a field-->
-<#macro value valuePath>
+<#--Macro to print any value type of a field
+	It includes arguments for the macros of specific data types
+-->
+<#macro value valuePath format="" printOtherPhrase=false printDescription=true printRemarks=true locale='en'>
 	<#compress>
 		<#assign valueType=valuePath?node_type/>
 
 		<#if valueType=="range">
 			<@com.range valuePath/>
 		<#elseif valueType=="picklist_single">
-			<@com.picklist  valuePath/>
+			<@com.picklist valuePath locale printOtherPhrase printDescription printRemarks/>
 		<#elseif valueType=="picklist_multi">
-			<@com.picklistMultiple valuePath/>
+			<@com.picklistMultiple valuePath locale printOtherPhrase printDescription printRemarks/>
 		<#elseif valueType=="quantity">
 			<@com.quantity valuePath/>
-		<#elseif valueType=="decimal">
+		<#elseif valueType=="decimal" || valueType=="integer">
 			<@com.number valuePath/>
-		<#elseif valueType=="multilingual_text_html">
+		<#elseif valueType?contains("text_html")>
 			<@com.richText valuePath/>
-		<#elseif valueType?contains("multilingual_text")>
-			<@com.text valuePath/>
-    
+		<#elseif valueType?contains("text")>
+			<@com.text valuePath format/>
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
+		<#elseif valueType=="boolean">
+			<#if valuePath>Y<#else>N</#if>
 		<#else>
 			value type ${valueType} not supported!
 		</#if>
+		<#--NOTE: other types: address, document_reference, document_references, data_protection, inventory, attachment, attachments, section_types, repeatable-->
 	</#compress>
 </#macro>
 
@@ -774,13 +881,14 @@
 	is not wanted, indicate "recursive=false".
 	If a type is specified, only components flagged with such specific function are retrieved
 -->
-<#function getComponents mixture type="" recursive=true getRefSubstances=false getSubstanceConstituents=false>
+<#function getComponents mixture type="" recursive=true getRefSubstances=false getSubstanceConstituents=false parsedMixtures=[]>
 
 	<#local documentTypes=['MIXTURE', 'SUBSTANCE']/>
 	<#if getRefSubstances><#local documentTypes=documentTypes+['REFERENCE_SUBSTANCE']/></#if>
 
 	<#local componentsList = [] />
 
+	<#local parsedMixtures =  parsedMixtures + [mixture.documentKey]/>
 	<#local compositionList = iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FLEXIBLE_RECORD", "MixtureComposition") />
 
 	<#list compositionList as composition>
@@ -798,8 +906,8 @@
 						</#if>
 
 						<#-- if mixture and recursive is true, call function again-->
-						<#if substance.documentType=="MIXTURE" && recursive>
-							<#local componentsList = componentsList + getComponents(substance, type, recursive, getRefSubstances, getSubstanceConstituents)/>
+						<#if substance.documentType=="MIXTURE" && recursive && !parsedMixtures?seq_contains(mixture.documentKey)>
+							<#local componentsList = componentsList + getComponents(substance, type, recursive, getRefSubstances, getSubstanceConstituents, parsedMixtures)/>
 						</#if>
 					</#if>
 
@@ -848,7 +956,7 @@
 	If an active substance is provided and checkParent=true, then the function only retrieves metabolites for which the parent
 	is the active substance.
 -->
-<#function getMetabolites mixture activeSubstance="" checkParent=false>
+<#function getMetabolites mixture activeSubstance="" checkParent=false getRefSubstances=false>
 
 	<#local metabolitesList = [] />
 
@@ -866,8 +974,10 @@
 		<#list metaboliteList as metabolite>
 			<#if metabolite.LinkMetaboliteDataset?has_content>
 				<#local substance = iuclid.getDocumentForKey(metabolite.LinkMetaboliteDataset)/>
-				<#if substance?has_content && substance.documentType=="SUBSTANCE">
-					<#local metabolitesList = addDocumentToSequenceAsUnique(substance, metabolitesList)/>
+				<#if substance?has_content>
+					<#if getRefSubstances || substance.documentType=="SUBSTANCE">
+						<#local metabolitesList = addDocumentToSequenceAsUnique(substance, metabolitesList)/>
+					</#if>
 				</#if>
 			</#if>
 		</#list>
@@ -896,4 +1006,40 @@
 
 	<#return false>
 </#function>
+
+<#--Function to retrieve all products datasets in the Other representative products section of a PPP mixture.
+-->
+<#function getOtherRepresentativeProducts mixture>
+
+	<#local otherProdsSummaries=iuclid.getSectionDocumentsForParentKey(mixture.documentKey, "FIXED_RECORD", "OtherRepresentativeProducts") />
+	<#local otherProds=[]/>
+
+	<#list otherProdsSummaries as otherProdSummary>
+		<#if otherProdSummary.OtherRepresentativeProductS?has_content>
+			<#list otherProdSummary.OtherRepresentativeProductS as prodLink>
+				<#local prod=iuclid.getDocumentForKey(prodLink)/>
+				<#if prod?has_content>
+					<#local otherProds = com.addDocumentToSequenceAsUnique(prod, otherProds)/>
+				</#if>
+			</#list>
+		</#if>
+	</#list>
+	<#return otherProds/>
+</#function>
+
+<#-- sanitizeUUID sanitises the UUID in order to keep just the second part after the '/', 
+     which corresponds to the dossier (first part is dataset) 
+-->
+<#function sanitizeUUID uuidPath>
+
+    <#local uuid><@com.text uuidPath/></#local>
+    
+ 	<#if uuid?matches(".*/.*", "r")>
+        <#local uuid=uuid?replace(".*/", '', 'r')/>
+    </#if>
+    
+    <#return uuid/>
+</#function>
+
+
 
