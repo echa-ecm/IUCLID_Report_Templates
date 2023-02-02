@@ -66,7 +66,7 @@
 			<para><emphasis role="bold"><@com.text study.name/></emphasis>:</para>
 			<para xml:id="${study.documentKey.uuid!}" role="indent"><emphasis role="bold">Information requirement: </emphasis>
 			 	<#if study.AdministrativeData.Endpoint?has_content>
-			 		<@com.picklist study.AdministrativeData.Endpoint/>
+			 		<@com.value study.AdministrativeData.Endpoint/>
 			 	<#else>
 			 		${endpoint!}
 				</#if>
@@ -77,7 +77,7 @@
 
 		<para role="indent">
 			<emphasis role="bold">Reason: </emphasis>
-			<@com.picklist study.AdministrativeData.DataWaiving/>
+			<@com.value study.AdministrativeData.DataWaiving/>
 		</para>
 		<para role="indent">
 			<emphasis role="bold">Justification:</emphasis>
@@ -105,7 +105,7 @@
 		<#if pppRelevant??>
 			<para xml:id="${study.documentKey.uuid!}"><emphasis role="bold">Information requirement: </emphasis>
 				<#if study.AdministrativeData.Endpoint?has_content>
-					<@com.picklist study.AdministrativeData.Endpoint/>
+					<@com.value study.AdministrativeData.Endpoint/>
 				<#else>
 					${endpoint!}
 				</#if>
@@ -114,7 +114,7 @@
 			<para><emphasis role="bold">Information requirement:</emphasis> ${endpoint!}
 			<#if printEndpointField>
 				<#if endpoint?has_content>(</#if>
-				<@com.picklist study.AdministrativeData.Endpoint/>
+				<@com.value study.AdministrativeData.Endpoint/>
 				<#if endpoint?has_content>)</#if>
 			</#if>
 			</para>
@@ -132,13 +132,13 @@
 		<#if study.hasElement("MaterialsAndMethods.StudyType") && study.MaterialsAndMethods.StudyType?has_content>
 			<para role="indent">
 				<emphasis role="bold">Planned study type:</emphasis>
-				<@com.picklist study.MaterialsAndMethods.StudyType/>
+				<@com.value study.MaterialsAndMethods.StudyType/>
 			</para>
 		</#if>
 		<#if study.hasElement("MaterialsAndMethods.MethodType") && study.MaterialsAndMethods.MethodType?has_content>
 			<para role="indent">
 				Type of method:
-				<@com.picklist study.MaterialsAndMethods.MethodType/>
+				<@com.value study.MaterialsAndMethods.MethodType/>
 			</para>
 		</#if>
 		<#if study.hasElement("MaterialsAndMethods.StudyDesign.DetailsOnMethods") && study.MaterialsAndMethods.StudyDesign.DetailsOnMethods?has_content>
@@ -150,8 +150,8 @@
 		<#if study.hasElement("MaterialsAndMethods.StudyDesign.InoculumOrTestSystem") && study.MaterialsAndMethods.StudyDesign.InoculumOrTestSystem?has_content>
 			<para role="indent">
 				Test system:
-				<@com.picklist study.MaterialsAndMethods.StudyDesign.InoculumOrTestSystem/>
-				(<@com.picklist study.MaterialsAndMethods.StudyDesign.OxygenConditions/>)
+				<@com.value study.MaterialsAndMethods.StudyDesign.InoculumOrTestSystem/>
+				(<@com.value study.MaterialsAndMethods.StudyDesign.OxygenConditions/>)
 			</para>
 		</#if>
 		<#if study.hasElement("MaterialsAndMethods.StudyDesign.DetailsOnSourceAndPropertiesOfSurfaceWater") && study.MaterialsAndMethods.StudyDesign.DetailsOnSourceAndPropertiesOfSurfaceWater?has_content>
@@ -181,22 +181,22 @@
 		<#if study.hasElement("MaterialsAndMethods.TestOrganisms.TestOrganismsSpecies") && study.MaterialsAndMethods.TestOrganisms.TestOrganismsSpecies?has_content>
 			<para role="indent">
 				Species:
-				<@com.picklist study.MaterialsAndMethods.TestOrganisms.TestOrganismsSpecies/>
+				<@com.value study.MaterialsAndMethods.TestOrganisms.TestOrganismsSpecies/>
 				<#if study.hasElement("MaterialsAndMethods.StudyDesign.WaterMediaType") && study.MaterialsAndMethods.StudyDesign.WaterMediaType?has_content>
-					(<@com.picklist study.MaterialsAndMethods.StudyDesign.WaterMediaType/>)
+					(<@com.value study.MaterialsAndMethods.StudyDesign.WaterMediaType/>)
 				</#if>
 			</para>
 		</#if>
 		<#if study.hasElement("MaterialsAndMethods.StudyDesign.RouteOfExposure") && study.MaterialsAndMethods.StudyDesign.RouteOfExposure?has_content>
 			<para role="indent">
 				Compartment / route:
-				<@com.picklist study.MaterialsAndMethods.StudyDesign.RouteOfExposure/> (<@com.picklist study.MaterialsAndMethods.StudyDesign.WaterMediaType/>)
+				<@com.value study.MaterialsAndMethods.StudyDesign.RouteOfExposure/> (<@com.value study.MaterialsAndMethods.StudyDesign.WaterMediaType/>)
 			</para>
 		</#if>
 		<#if study.hasElement("MaterialsAndMethods.StudyDesign.TestType") && study.MaterialsAndMethods.StudyDesign.TestType?has_content>
 			<para role="indent">
 				Test type:
-				<@com.picklist study.MaterialsAndMethods.StudyDesign.TestType/>
+				<@com.value study.MaterialsAndMethods.StudyDesign.TestType/>
 			</para>
 		</#if>
 		
@@ -221,8 +221,8 @@
 <#compress>
 	<#if guidelineRepeatableBlock?has_content>
 		<#list guidelineRepeatableBlock as blockItem>
-			<#local Qualifier><@com.picklist blockItem.Qualifier/></#local>
-			<#local Guideline><@com.picklist blockItem.Guideline/></#local>
+			<#local Qualifier><@com.value blockItem.Qualifier/></#local>
+			<#local Guideline><@com.value blockItem.Guideline/></#local>
 			<#if Qualifier?has_content>${Qualifier}</#if>
 			<#if Guideline?has_content>${Guideline}</#if>
 			<#if blockItem_has_next>; </#if>
@@ -249,14 +249,14 @@
 			<@com.text testMaterial.Name/>,
 			<#if testMaterial.Composition.OtherCharacteristics.TestMaterialForm?has_content>
 			<?linebreak?>
-			Form: <@com.picklist testMaterial.Composition.OtherCharacteristics.TestMaterialForm/>
+			Form: <@com.value testMaterial.Composition.OtherCharacteristics.TestMaterialForm/>
 			</#if> 
 			
 			<#--pppRelevant only -->
 			<#if pppRelevant??>
 				<#if testMaterial.Composition.CompositionPurityOtherInformation?has_content>
 					<?linebreak?>
-					Composition / purity: <@com.picklist testMaterial.Composition.CompositionPurityOtherInformation/>
+					Composition / purity: <@com.value testMaterial.Composition.CompositionPurityOtherInformation/>
 				</#if>
 			</#if>
 			
@@ -288,13 +288,13 @@
 
 <#macro studyRemarksColumn study>
 	<para>
-		<@com.picklist study.AdministrativeData.Reliability/>
+		<@com.value study.AdministrativeData.Reliability/>
 	</para>
 	<para>
-		<@com.picklist study.AdministrativeData.PurposeFlag/>
+		<@com.value study.AdministrativeData.PurposeFlag/>
 	</para>
 	<para>
-		<@com.picklist study.AdministrativeData.StudyResultType/>
+		<@com.value study.AdministrativeData.StudyResultType/>
 	</para>
 	<para>
 	<@com.emptyLine/>
@@ -349,7 +349,7 @@
 </#macro>
 
 <#-- Macros to print endpoint summary information: summary name, linked assessment entities and additional information of the endpoint summary  -->
-<#macro endpointSummary summary valueForCsaText="" printName=false>
+<#macro endpointSummary summary valueForCsaText="" path="" printName=false>
 	<#if printName>
 		<para><emphasis role="bold"><@com.text summary.name/></emphasis></para>
 	</#if>
@@ -365,7 +365,7 @@
 		</para>
 	</#if>
 	
-	<@relevantStudies summary/>	
+	<@relevantStudies summary path/>	
 	
 	<@assessmentEntitiesList summary />
 	
@@ -389,73 +389,38 @@
 </#macro>
 
 <#-- Macro to get relevant studies linked to a summary -->
-<#macro relevantStudies summary>
-							
-	<#if isStudyInformationDifferentPath(summary)>
-		<#if summary?has_content>
-			<#if isStudyInformationAvailable(summary)>			
-				<#if summary.LinkToRelevantStudyRecord.Link?has_content>
-					<@com.emptyLine/>
-					<#list summary.LinkToRelevantStudyRecord.Link as studyReferences>
-						<#if studyReferences?has_content>
-						<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
-							<para>Relevant studies: <@com.text studyLink.name/></para>
-						</#if>
-					</#list>
-				</#if>
-			</#if>
-		</#if>
-		
-		<#else>
-		<#assign summaryPathToDataMap = {
-		'Acute Toxicity oral' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'AcuteToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Acute Toxicity oral', 'subCategoryRelevant' : 'Yes'},
-		 'Acute Toxicity inhalation' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'AcuteToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Acute Toxicity inhalation', 'subCategoryRelevant' : 'Yes'},
-		 'Acute Toxicity dermal' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'AcuteToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Acute Toxicity dermal', 'subCategoryRelevant' : 'Yes'},
-		 'Irritation / corrosion (skin)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'IrritationCorrosion', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Irritation / corrosion (skin)', 'subCategoryRelevant' : 'Yes'},
-		 'Irritation / corrosion (eye)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'IrritationCorrosion', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Irritation / corrosion (eye)', 'subCategoryRelevant' : 'Yes'},
-		 'Skin sensitisation' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Sensitisation', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.SkinSensitisation.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Skin sensitisation', 'subCategoryRelevant' : 'Yes'},
-		 'Respiratory sensitisation' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Sensitisation', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Respiratory sensitisation', 'subCategoryRelevant' : 'Yes'},
-		 'Repeated dose oral' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'RepeatedDoseToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Repeated dose oral', 'subCategoryRelevant' : 'Yes'},
-		 'Repeated dose inhalation (systemic)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'RepeatedDoseToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Repeated dose inhalation (systemic)', 'subCategoryRelevant' : 'Yes'},
-		 'Repeated dose inhalation (local)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'RepeatedDoseToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Repeated dose inhalation (local)', 'subCategoryRelevant' : 'Yes'},
-		 'Repeated dose dermal (systemic)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'RepeatedDoseToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Repeated dose dermal (systemic)', 'subCategoryRelevant' : 'Yes'},
-		 'Repeated dose dermal (local)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'RepeatedDoseToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Repeated dose dermal (local)', 'subCategoryRelevant' : 'Yes'},
-		 'Genetic toxicity (in vitro)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'GeneticToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Genetic toxicity (in vitro)', 'subCategoryRelevant' : 'Yes'},
-		 'Genetic toxicity (in vivo)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'GeneticToxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Genetic toxicity (in vivo)', 'subCategoryRelevant' : 'Yes'},
-		 'Carcinogenicity oral' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Carcinogenicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Carcinogenicity oral', 'subCategoryRelevant' : 'Yes'},
-		 'Carcinogenicity inhalation' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Carcinogenicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Carcinogenicity inhalation', 'subCategoryRelevant' : 'Yes'},
-		 'Carcinogenicity dermal' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Carcinogenicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Carcinogenicity dermal', 'subCategoryRelevant' : 'Yes'},
-		 'Toxicity to reproduction (fertility)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'ToxicityToReproduction', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EffectsOnFertility.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Toxicity to reproduction (fertility)', 'subCategoryRelevant' : 'Yes'},
-		 'Toxicity to reproduction (developmental)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'ToxicityToReproduction', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Toxicity to reproduction (developmental)', 'subCategoryRelevant' : 'Yes'},
-		 'Toxicity to reproduction (other studies)' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'ToxicityToReproduction', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.ToxicityToReproductionOtherStudies.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Toxicity to reproduction (other studies)', 'subCategoryRelevant' : 'Yes'},
-		 'Neurotoxicity oral' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Neurotoxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Neurotoxicity oral', 'subCategoryRelevant' : 'Yes'},
-		 'Neurotoxicity inhalation' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Neurotoxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Neurotoxicity inhalation', 'subCategoryRelevant' : 'Yes'},
-		 'Neurotoxicity dermal' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Neurotoxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Neurotoxicity dermal', 'subCategoryRelevant' : 'Yes'},
-		 'Immunotoxicity oral' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Immunotoxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Immunotoxicity oral', 'subCategoryRelevant' : 'Yes'},
-		 'Immunotoxicity inhalation' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Immunotoxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Immunotoxicity inhalation', 'subCategoryRelevant' : 'Yes'},
-		 'Immunotoxicity dermal' : {'docType' : 'ENDPOINT_SUMMARY', 'docSubType' : 'Immunotoxicity', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.LinkToRelevantStudyRecords.StudyNameType', 'sectionName' : 'Immunotoxicity dermal', 'subCategoryRelevant' : 'Yes'} 
-		 }/>
-		 
-		<#list summaryPathToDataMap?keys as prop>
-		<#-- Check whether the loaded document's type is the same as indicated in the current record of summaryPathToDataMap -->
-		<#if summaryPathToDataMap[prop].docType == summary.documentType && summaryPathToDataMap[prop].docSubType == summary.documentSubType>
-			<#if summary?has_content>
-					<#local sectionReference = summaryPathToDataMap[prop].studyReferenceLink />
-					<#if sectionReference?has_content>
-						<@com.emptyLine/>
-						<#local studyRecordPath = "summary." + summaryPathToDataMap[prop].studyReferenceLink />
-						<#local study = studyRecordPath?eval />	
-						<#list study as studyReferences>
-							<#if studyReferences?has_content>
-							<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
-								<para>Relevant studies: <@com.text studyLink.name/></para>
-							</#if>
-						</#list>
+<#macro relevantStudies summary path>
+
+<#local docDefId = summary.documentType +"."+ summary.documentSubType/>
+
+	<#-- generic linkes from endpoint summaries to endpoint study records -->					
+	
+	<#if !(docDefId=="ENDPOINT_SUMMARY.AcuteToxicity" || docDefId=="ENDPOINT_SUMMARY.IrritationCorrosion" || docDefId=="ENDPOINT_SUMMARY.Sensitisation" ||
+	docDefId=="ENDPOINT_SUMMARY.RepeatedDoseToxicity" || docDefId=="ENDPOINT_SUMMARY.GeneticToxicity" || docDefId=="ENDPOINT_SUMMARY.Carcinogenicity" ||
+	docDefId=="ENDPOINT_SUMMARY.ToxicityToReproduction" || docDefId=="ENDPOINT_SUMMARY.Neurotoxicity" || docDefId=="ENDPOINT_SUMMARY.Immunotoxicity")>
+		<#if summary?has_content>		
+			<#if summary.LinkToRelevantStudyRecord.Link?has_content>
+				<@com.emptyLine/>
+				<#list summary.LinkToRelevantStudyRecord.Link as studyReferences>
+					<#if studyReferences?has_content>
+					<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
+						<para>Relevant studies: <@com.text studyLink.name/></para>
 					</#if>
+				</#list>
 			</#if>
 		</#if>
-		</#list>
 		
+	<#-- certain endpoint summaries that differentiate between linked studies and require a certain 'path' to be added -->
+	<#else>
+		<#local linkedRecord = ("summary.KeyValueForChemicalSafetyAssessment."+path+".LinkToRelevantStudyRecordS")?eval/>
+		<#if 	linkedRecord?has_content>
+			<#list linkedRecord as records>
+				<#if records?has_content>
+				<#local link = iuclid.getDocumentForKey(records) />
+					<para>Relevant studies: <@com.text link.name/></para>
+				</#if>
+			</#list>
+		</#if>		
 	</#if>
 </#macro>
 
@@ -466,34 +431,29 @@
  <#if !(docDefId=="ENDPOINT_SUMMARY.AcuteToxicity" || docDefId=="ENDPOINT_SUMMARY.IrritationCorrosion" || docDefId=="ENDPOINT_SUMMARY.Sensitisation" ||
  docDefId=="ENDPOINT_SUMMARY.RepeatedDoseToxicity" || docDefId=="ENDPOINT_SUMMARY.GeneticToxicity" || docDefId=="ENDPOINT_SUMMARY.Carcinogenicity" ||
  docDefId=="ENDPOINT_SUMMARY.ToxicityToReproduction" || docDefId=="ENDPOINT_SUMMARY.Neurotoxicity" || docDefId=="ENDPOINT_SUMMARY.Immunotoxicity")>
-	<#return true>
+	<#return false>
 	<#else>
-		<#return false>
+		<#return true>
 	</#if>
 </#if>
 <#return false>
 </#function>
 
-<#function isStudyInformationAvailable summary>
-<#if summary?has_content>							
-<#local docDefId = summary.documentType +"."+ summary.documentSubType/>
-<#if docDefId=="ENDPOINT_SUMMARY.EcotoxicologicalInformation" || docDefId=="ENDPOINT_SUMMARY.DataTox" || docDefId=="ENDPOINT_SUMMARY.AquaticToxicity" || docDefId=="ENDPOINT_SUMMARY.ExposureRelatedObservationsHumans" || docDefId=="ENDPOINT_SUMMARY.ToxicEffectsLivestockPets" || docDefId=="ENDPOINT_SUMMARY.AdditionalToxicologicalInformation" || docDefId=="ENDPOINT_SUMMARY.PhysicalChemicalProperties" || docDefId=="ENDPOINT_SUMMARY.EnvironmentalFateAndPathways" || docDefId=="ENDPOINT_SUMMARY.AdditionalInformationOnEnvironmentalFateAndBehaviour" || docDefId=="ENDPOINT_SUMMARY.TerrestrialToxicity" || docDefId=="ENDPOINT_SUMMARY.ResiduesInFoodAndFeedingstuffs" || docDefId=="ENDPOINT_SUMMARY.EffectivenessAgainstTargetOrganisms" || docDefId=="ENDPOINT_SUMMARY.Stability" || docDefId=="ENDPOINT_SUMMARY.Biodegradation" || docDefId=="ENDPOINT_SUMMARY.TransportAndDistribution" || docDefId=="ENDPOINT_SUMMARY.Bioaccumulation"><!--new from stability to change in assessment entity report-->
-	<#return false>
-	<#else>
-		<#return true>
-</#if>
-</#if>
-<#return false>
-</#function>
+
 
 <#-- Macros to print an endpoint summary's key information  -->
 <#macro summaryKeyInformation summary>
 	<#compress>
 		<@com.emptyLine/>
-		<#if summary.KeyInformation.KeyInformation?has_content>
+		<#if summary.hasElement("KeyInformation.KeyInformation") && summary.KeyInformation.KeyInformation?has_content>
 			<para>
 				<emphasis role="underline">Key Information:</emphasis>
-			    <@com.richText summary.KeyInformation.KeyInformation/>
+			    <@com.value summary.KeyInformation.KeyInformation/>
+			</para>
+			<#elseif summary.hasElement("KeyInformation") && summary.KeyInformation?has_content>
+			<para>
+				<emphasis role="underline">Key Information:</emphasis>
+			    <@com.value summary.KeyInformation/>
 			</para>
 		</#if>
 	</#compress>
