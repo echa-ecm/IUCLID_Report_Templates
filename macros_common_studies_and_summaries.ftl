@@ -63,7 +63,8 @@
 	<#if study?has_content>
 
 		<#if pppRelevant??>
-			<para xml:id="${study.documentKey.uuid!}"><emphasis role="bold">Information requirement: </emphasis>
+			<para><emphasis role="bold"><@com.text study.name/></emphasis>:</para>
+			<para xml:id="${study.documentKey.uuid!}" role="indent"><emphasis role="bold">Information requirement: </emphasis>
 			 	<#if study.AdministrativeData.Endpoint?has_content>
 			 		<@com.picklist study.AdministrativeData.Endpoint/>
 			 	<#else>
@@ -258,7 +259,7 @@
 
 		</#if>
 	<#else>
-		Information not available in IUCLID
+		
 	</#if>
 </#compress>
 </#macro>
@@ -293,7 +294,19 @@
 	<@com.emptyLine/>
 		<emphasis role="bold">Test material</emphasis>
 		<?linebreak?>
-		<@testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/>
+		<#if !(study.MaterialsAndMethods.TestMaterials.TestMaterialInformation)?has_content && !(study.MaterialsAndMethods.TestMaterials.AdditionalTestMaterialInformation)?has_content>
+			Information not provided in IUCLID
+			<#else>
+				<!-- main test material information -->
+				<@testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/>
+				<!-- additional test material information -->
+				<#assign additionalTestMaterials = study.MaterialsAndMethods.TestMaterials.AdditionalTestMaterialInformation/>
+				<#list additionalTestMaterials as additionalTestMaterial>
+					<#if additionalTestMaterial?has_content>
+					<para><@testMaterialInformation additionalTestMaterial/></para>
+					</#if>
+				</#list>
+		</#if>
 	</para>
 	<para>
 	<@com.emptyLine/>
