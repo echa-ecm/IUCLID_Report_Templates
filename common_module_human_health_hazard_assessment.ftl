@@ -6020,11 +6020,7 @@
 					<#if pppRelevant??>
 						for dose <@com.text blockItem.Dose/>
 						<#if blockItem.ConcentrateDilution?has_content>
-<<<<<<< HEAD
 							(<@com.value blockItem.ConcentrateDilution/>)
-=======
-							(<@com.picklist blockItem.ConcentrateDilution/>)
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 						<#else>
 							(<@com.text blockItem.Dose/>)
 						</#if>
@@ -6767,19 +6763,11 @@
 			<#list block as blockItem>
 				<para role="${role}">
 
-<<<<<<< HEAD
 					<@com.value blockItem.MaterialDetected/>
 					<#if blockItem.Detected>detected<#else>NOT detected</#if>
 
 					<#if blockItem.SampleType?has_content>
 						in <@com.value blockItem.SampleType/>
-=======
-					<@com.picklist blockItem.MaterialDetected/>
-					<#if blockItem.Detected>detected<#else>NOT detected</#if>
-
-					<#if blockItem.SampleType?has_content>
-						in <@com.picklist blockItem.SampleType/>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 					</#if>
 
 					<#if blockItem.TimePoint?has_content>
@@ -6803,11 +6791,7 @@
 			<#list block as blockItem>
 				<para role="${role}">
 
-<<<<<<< HEAD
 					<@com.value blockItem.AssayType/>:
-=======
-					<@com.picklist blockItem.AssayType/>:
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 					<#if blockItem.LinkAnalyticalMethod?has_content>
 						analytical method(s):
 						<#list blockItem.LinkAnalyticalMethod as anmethlink>
@@ -6826,11 +6810,7 @@
 </#macro>
 
 
-<<<<<<< HEAD
 <#macro endpointSummary summary valueCsa="" valueForCsaText="" path="" printName=false>
-=======
-<#macro endpointSummary summary valueCsa="" valueForCsaText="" printName=false>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 	<para>
 		<#if printName>
 			<para><emphasis role="bold"><@com.text summary.name/></emphasis></para>
@@ -7370,11 +7350,7 @@
 	<#assign skinIrritation = getSortedSkinIrritationNonHumanStudy(study, ["skin irritation: in vitro / ex vivo", "skin irritation: in vivo", "skin irritation / corrosion, other"] ) />
 	<#assign skinCorrosion = getSortedSkinCorrosionNonHumanStudy(study, ["skin corrosion: in vitro / ex vivo", "skin irritation / corrosion.*"]) />
 
-<<<<<<< HEAD
 	<#if csrRelevant?? || svhcRelevant??><#local endpointData><@com.value study.AdministrativeData.Endpoint/></#local></#if>
-=======
-	<#if csrRelevant?? || svhcRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 
 	<#--	NOTE: PPP: interim solution - to be changed-->
 	<#if !pppRelevant??>
@@ -7773,11 +7749,7 @@
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("EndpointAddressed") && study.MaterialsAndMethods.EndpointAddressed?has_content>
-<<<<<<< HEAD
 			<para><emphasis role='bold'>Endpoint addressed: </emphasis><@com.value study.MaterialsAndMethods.EndpointAddressed/></para>
-=======
-			<para><emphasis role='bold'>Endpoint addressed: </emphasis><@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/></para>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("MethodType") && study.MaterialsAndMethods.MethodType?has_content>
@@ -7950,17 +7922,6 @@
 		<#--Cell culture conditions-->
 		<#if admExp.hasElement("CellCultures") && admExp.CellCultures?has_content>
 			<para>Cell culture: <@com.value admExp.CellCultures/></para>
-		</#if>
-		<#if admExp.hasElement("PlatingConditions") && admExp.PlatingConditions?has_content>
-			<para>Plating conditions: <@com.text admExp.PlatingConditions/></para>
-		</#if>
-		<#if admExp.hasElement("IncubationConditions") && admExp.IncubationConditions?has_content>
-			<para>Incubation conditions: <@com.text admExp.IncubationConditions/></para>
-		</#if>
-
-		<#--Cell culture conditions-->
-		<#if admExp.hasElement("CellCultures") && admExp.CellCultures?has_content>
-			<para>Cell culture: <@com.picklistMultiple admExp.CellCultures/></para>
 		</#if>
 		<#if admExp.hasElement("PlatingConditions") && admExp.PlatingConditions?has_content>
 			<para>Plating conditions: <@com.text admExp.PlatingConditions/></para>
@@ -9354,11 +9315,7 @@
 		<para>
 			<#list study.ResultsAndDiscussion?children as child>
 				<#if child?node_type=="picklist_single">
-<<<<<<< HEAD
 					<para>${livestockField2Text[child?node_name]}<@com.value child/></para>
-=======
-					<para>${livestockField2Text[child?node_name]}<@com.picklist child/></para>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 				</#if>
 			</#list>
 		</para>
@@ -9481,11 +9438,7 @@
 <#macro results_cellCulture study>
 	<#compress>
 		<#if study.ResultsAndDiscussion.CytopathicEffects?has_content>
-<<<<<<< HEAD
 			<para>Cytopathic effects: <@com.value study.ResultsAndDiscussion.CytopathicEffects/></para>
-=======
-			<para>Cytopathic effects: <@com.picklist study.ResultsAndDiscussion.CytopathicEffects/></para>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 		</#if>
 
 		<#if study.ResultsAndDiscussion.TCID50?has_content>
@@ -9556,11 +9509,7 @@
 						<tr>
 							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Report type: </emphasis></th>
 							<td>
-<<<<<<< HEAD
 								<#if reference.GeneralInfo.LiteratureType?has_content><@com.value reference.GeneralInfo.LiteratureType/></#if>
-=======
-								<#if reference.GeneralInfo.LiteratureType?has_content><@com.picklist reference.GeneralInfo.LiteratureType/></#if>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 							</td>
 						</tr>
 						<tr>
@@ -9759,11 +9708,7 @@
 				<para role="indent">Parameter and result:</para>
 				<#list child.ParameterAndResult as param>
 					<para role="indent2">
-<<<<<<< HEAD
 						<@com.value param.Parameter/> = <@com.quantity param.ParameterResult/>
-=======
-						<@com.picklist param.Parameter/> = <@com.quantity param.ParameterResult/>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 					</para>
 				</#list>
 			</#if>
@@ -9772,11 +9717,7 @@
 				<para role="indent">Other observations:</para>
 				<#list child.OtherObservation as obs>
 					<para role="indent2">
-<<<<<<< HEAD
 						<@com.value obs.Observation/>
-=======
-						<@com.picklist obs.Observation/>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 						<#if obs.Concentration?has_content> - <@com.range obs.Concentration/></#if>
 					</para>
 				</#list>
@@ -10183,11 +10124,7 @@
 	<#--Conclusion-->
 		<#local conclusion><#compress>
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet?has_content>
-<<<<<<< HEAD
 				<para role="indent">ED criteria for humans met: <@com.value summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet/></para>
-=======
-				<para role="indent">ED criteria for humans met: <@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet/></para>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 			</#if>
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals?has_content>
 				<para role="indent">Adverse effect relevant for wild mammals: <@com.value summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals/></para>
@@ -10341,11 +10278,7 @@
 		</#if>
 	</#if>
 	<#if child.hasElement("Species") && child.Species?has_content>
-<<<<<<< HEAD
 		| <@com.value picklistValue=child.Species printDescription=false printRemarks=false/>
-=======
-		| <@com.picklist picklistValue=child.Species printDescription=false printRemarks=false/>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 	</#if>
 </#macro>
 
@@ -10668,11 +10601,7 @@
 						<#--Get sequence of hashes and populate hash-->
 							<#if summary.documentSubType=="Phototoxicity">
 							<#--special case for Phototox-->
-<<<<<<< HEAD
 								<#local photoEndpoint><@com.value summary.KeyValueCsa.Results/></#local>
-=======
-								<#local photoEndpoint><@com.picklist summary.KeyValueCsa.Results/></#local>
->>>>>>> 4d624d3fcb669685a0e52d25c933df25cbaabbbe
 								<#local photoLinks = summaryLinks?replace('role="indent"', '')/>
 								<#local summarySeq = [{"name":"Phototoxicity", "links": photoLinks, "endpoint": photoEndpoint}]/>
 							<#elseif summary.documentSubType=="SpecificInvestigationsOtherStudies">
