@@ -2601,7 +2601,7 @@
 
 			<@com.emptyLine/>
 			<table border="1">
-				<title>Exposure-related observations on skin sensitisation in humans</title>
+				<title>Exposure-related observations on repeated dose toxicity in humans</title>
 				<col width="39%" />
 				<col width="41%" />
 				<col width="20%" />
