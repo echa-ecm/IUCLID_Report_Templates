@@ -228,7 +228,7 @@
 </#compress>
 </#macro>
 
-<#macro text textValue="" format="">
+<#macro text textValue="" format="" breakwords=false>
 <#if textValue?has_content && format=="literal">
 <#escape x as x?html>
 <para role="i6LiteralText">${textValue}</para>
@@ -236,7 +236,11 @@
 <#elseif textValue?has_content>
 <#compress>
 <#escape x as x?html>
+<#if breakwords==true>
+<phrase role="i6Phrase">${textValue}</phrase>
+<#else>
 ${textValue}
+</#if>
 </#escape>
 </#compress>
 </#if>
@@ -261,6 +265,7 @@ ${textValue}
 <#macro picklist picklistValue locale="en" printOtherPhrase=false printDescription=true printRemarks=true>
 	<#compress>
 		<#escape x as x?html>
+
 			<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, locale) />
 			<#if localizedPhrase?has_content>
 
