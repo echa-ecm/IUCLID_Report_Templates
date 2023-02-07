@@ -189,6 +189,13 @@
 
 
 <#-----------------------PPP additions--------------------------------------------->
+<#--- applicant outputs information from the legal entity owner, third party, role in supply chain,
+	 and contact persons of an ENTITY (SUBSTANCE, MIXTURE), which contain information relating the 
+	 applicant submitting the dossier.
+
+	Inputs:
+	- _subject: ENTITY (SUBSTANCE, or MIXTURE)
+-->
 <#macro applicant _subject>
 	<#compress>
 
@@ -199,7 +206,6 @@
 				<@legalEntityInfo legalEntity "applicant"/>
 			</#if>
 		<#else>
-<#--			NOTE: for some reason with the substance the path _subject.OwnerLegalEntity seems empty!-->
 			<para>No information of applicant available.</para>
 		</#if>
 
@@ -222,10 +228,17 @@
 	</#compress>
 </#macro>
 
+<#--- legalEntityInfo outputs basic information of a legal entity
+	 
+	Inputs:
+	- legal_entity: LEGAL_ENTITY ENTITY
+	- name: str containing the generic name to be printed in the title
+-->
 <#macro legalEntityInfo legalEntity name="legal entity">
 	<#compress>
 		<@basicLegalEntityInformation _subject legalEntity/>
-	<#-- NOTE: missing IDENTIFIERS section-->
+		
+		<#-- NOTE: missing IDENTIFIERS section-->
 
 		<#if legalEntity.GeneralInfo.ContactAddress?has_content>
 			<@contactInfoOfLegalEntity _subject legalEntity.GeneralInfo "Basic contact information of the ${name}"/>
@@ -237,6 +250,12 @@
 	</#compress>
 </#macro>
 
+<#--- roleInSupplyChain outputs the roles in the supply chain of a SUBSTANCE or MIXTURE document 
+	as a concatenated string.
+	 
+	Inputs:
+	- _subject: ENTITY (SUBSTANCE, or MIXTURE)
+-->
 <#macro roleInSupplyChain _subject>
 	<#compress>
 		<#if _subject.RoleInSupplyChain?has_content>
@@ -261,6 +280,11 @@
 	</#compress>
 </#macro>
 
+<#--- producer outputs the contents of the document FLEXIBLE_RECORD.Suppliers
+	 
+	Inputs:
+	- _subject: ENTITY (SUBSTANCE, or MIXTURE)
+-->
 <#macro producer _subject>
 	<#compress>
 
@@ -271,7 +295,9 @@
 		<#else>
 			<#list recordList as record>
 
-				<#if (recordList?size>1) ><para><emphasis role="HEAD-WoutNo">Producer #${record_index+1}</emphasis></para></#if>
+				<#--Get hyperlink and print record's name (with a numbering system if more than one)-->
+				<#local docUrl=iuclid.webUrl.documentView(record.documentKey) />
+				<para><emphasis role="HEAD-WoutNo"><#if (recordList?size>1)>Producer #${record_index+1}:</#if><ulink url="${docUrl}"><@com.text record.name/></ulink></emphasis></para>
 
 				<#-- Producer-->
 				<#local legalEntity = iuclid.getDocumentForKey(record.ManufacturerImportForm.LegalEntity)/>
@@ -306,6 +332,11 @@
 </#macro>
 
 
+<#--- manufacturingPlant outputs the contents of the document FLEXIBLE_RECORD.Sites
+	 
+	Inputs:
+	- _subject: ENTITY (SUBSTANCE, or MIXTURE)
+-->
 <#macro manufacturingPlant _subject>
 	<#compress>
 
@@ -316,7 +347,9 @@
 		<#else>
 			<#list recordList as record>
 
-				<#if (recordList?size>1) ><para><emphasis role="HEAD-WoutNo">Manufacturing plant #${record_index+1}</emphasis></para></#if>
+				<#--Get hyperlink and print record's name (with a numbering system if more than one)-->
+				<#local docUrl=iuclid.webUrl.documentView(record.documentKey) />
+				<para><emphasis role="HEAD-WoutNo"><#if (recordList?size>1)>Manufacturing plant #${record_index+1}:</#if><ulink url="${docUrl}"><@com.text record.name/></ulink></emphasis></para>
 
 				<@com.emptyLine/>
 
@@ -345,6 +378,11 @@
 	</#compress>
 </#macro>
 
+<#--- siteInfo outputs information from a SITE entity
+	 
+	Inputs:
+	- site: SITE ENTITY
+-->
 <#macro siteInfo site>
 	<#compress>
 
@@ -382,6 +420,11 @@
 	</#compress>
 </#macro>
 
+<#--- producerDevCodeNos outputs information from a FLEXIBLE_RECORD.Identifiers document 
+	 
+	Inputs:
+	- _subject: ENTITY (SUBSTANCE, MIXTURE)
+-->
 <#macro producerDevCodeNos _subject>
 	<#compress>
 
@@ -394,7 +437,9 @@
 
 			<#list recordList as record>
 
-				<#if (recordList?size>1) ><para><emphasis role="HEAD-WoutNo">Development code numbers #${record_index+1}</emphasis></para></#if>
+				<#--Get hyperlink and print record's name (with a numbering system if more than one)-->
+				<#local docUrl=iuclid.webUrl.documentView(record.documentKey) />
+				<para><emphasis role="HEAD-WoutNo"><#if (recordList?size>1)>Development code numbers #${record_index+1}:</#if><ulink url="${docUrl}"><@com.text record.name/></ulink></emphasis></para>
 
 				<#--Regulatory programme identifiers-->
 				<#if record.RegulatoryProgrammeIdentifiers.RegulatoryProgrammeIdentifiers?has_content>
@@ -416,6 +461,13 @@
 	</#compress>
 </#macro>
 
+<#--- regProgIdsList outputs a list of identifiers from the Regulatory programme identifiers section
+	of a FLEXIBLE_RECORD.Identifiers document 
+	 
+	Inputs:
+	- path: node corresponding to the Regulatory programme identifiers section i.e. RegulatoryProgrammeIdentifiers.RegulatoryProgrammeIdentifiers
+	- role: str identifieng the role to be given to the paragraph e.g. indent, indent2
+-->
 <#macro regProgIdsList path role="">
 	<#compress>
 		<#if path?has_content>
@@ -429,6 +481,13 @@
 	</#compress>
 </#macro>
 
+<#--- regProgIdsList outputs a list of identifiers from the Other IT system identifiers
+ sectionof a FLEXIBLE_RECORD.Identifiers document 
+	 
+	Inputs:
+	- path: node corresponding to the Other IT system identifiers section i.e. RegulatoryProgrammeIdentifiers.ExternalSystemIdentifiers
+	- role: str identifieng the role to be given to the paragraph e.g. indent, indent2
+-->
 <#macro itSystemIdsList path role="">
 	<#compress>
 		<#if path?has_content>
@@ -442,24 +501,40 @@
 	</#compress>
 </#macro>
 
+<#-- manufacturer outputs the contents of the FLEXIBLE_RECORD.Manufacturer_EU_PPP document
+
+	Inputs:
+	- _subject: ENTITY in which the document is found
+-->
 <#macro manufacturer _subject>
 	<#compress>
+
 		<#local recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "Manufacturer_EU_PPP") />
 
 		<#if !(recordList?has_content)>
 			<@com.emptyLine/>
 			No information on manufacturer available.
 			<@com.emptyLine/>
+		
 		<#else>
+
 			<#list recordList as record>
 
-				<#if (recordList?size>1) ><para><emphasis role="HEAD-WoutNo">Manufacturer #${record_index+1}</emphasis></para></#if>
+				<#--Get hyperlink and print record's name (with a numbering system if more than one)-->
+				<#local docUrl=iuclid.webUrl.documentView(record.documentKey) />
+				<para><emphasis role="HEAD-WoutNo"><#if (recordList?size>1)>Manufacturer #${record_index+1}:</#if><ulink url="${docUrl}"><@com.text record.name/></ulink></emphasis></para>
 
 				<#--Key info-->
-				<#if record.KeyInformation.field4764?has_content>
+				<#if record.KeyInformation?has_content>
+					
 					<@com.emptyLine/>
+					
 					<para><emphasis role="bold">Key information: </emphasis></para>
-					<para role="indent"><@com.richText record.KeyInformation.field4764/></para>
+					<para role="indent"><para style="background-color:#f7f7f7" ><@com.richText record.KeyInformation.field4764/></para></para>
+
+					<#if record.KeyInformation.QualityControl?has_content> 
+						<para role='indent'>Quality control: <@com.text record.KeyInformation.QualityControl 'literal'/> <para>
+					</#if>
 				</#if>
 
 				<#--Related compositions-->
@@ -481,31 +556,7 @@
 				<#if record.AdditionalInformation?has_content>
 					<@com.emptyLine/>
 					<para><emphasis role="bold">Additional information and confidentiality:</emphasis></para>
-
-					<#if record.AdditionalInformation.field7821?has_content>
-						<para role="indent"><@com.richText record.AdditionalInformation.field7821/></para>
-					</#if>
-
-					<#if record.AdditionalInformation.GroundsForConfidentialFile?has_content>
-						<para role="indent">
-							<emphasis role="underline">Grounds for confidential file:</emphasis>
-							<@com.picklistMultiple record.AdditionalInformation.GroundsForConfidentialFile/>
-						</para>
-					</#if>
-
-					<#if record.AdditionalInformation.Justification?has_content>
-						<para role="indent">
-							<emphasis role="underline">Justification:</emphasis>
-							<@com.text record.AdditionalInformation.Justification/>
-						</para>
-					</#if>
-
-					<#if record.AdditionalInformation.Conditions?has_content>
-						<para role="indent">
-							<emphasis role="underline">Conditions:</emphasis>
-							<@com.picklistMultiple record.AdditionalInformation.Conditions/>
-						</para>
-					</#if>
+					<para role="indent"><para style="background-color:#f7f7f7" ><@com.richText record.AdditionalInformation.field7821/></para></para>
 				</#if>
 				<@com.emptyLine/>
 			</#list>
@@ -514,6 +565,11 @@
 	</#compress>
 </#macro>
 
+<#-- packaging outputs the contents of the FLEXIBLE_RECORD.Packaging document
+
+	Inputs:
+	- _subject: ENTITY in which the document is found
+-->
 <#macro packaging _subject>
 	<#compress>
 
@@ -521,10 +577,14 @@
 
 		<#if !(recordList?has_content)>
 			No relevant information on packaging available.
+		
 		<#else>
+
 			<#list recordList as record>
 
-				<#if (recordList?size>1)><para><emphasis role="HEAD-WoutNo">Packaging #${record_index+1}</emphasis></para></#if>
+				<#--Get hyperlink and print record's name (with a numbering system if more than one)-->
+				<#local docUrl=iuclid.webUrl.documentView(record.documentKey) />
+				<para><emphasis role="HEAD-WoutNo"><#if (recordList?size>1)>Packaging #${record_index+1}:</#if><ulink url="${docUrl}"><@com.text record.name/></ulink></emphasis></para>
 
 				<#--Use-->
 				<#if record.Packaging.UseOrComposition?has_content>
@@ -578,7 +638,7 @@
 				<#--Additional info-->
 				<#if record.Packaging.AdditionalInfo?has_content>
 					<para><emphasis role="bold">Additional information:</emphasis></para>
-					<para role="indent"><@com.richText record.Packaging.AdditionalInfo/></para>
+					<para role="indent"><para style="background-color:#f7f7f7"><@com.richText record.Packaging.AdditionalInfo/></para></para>
 				</#if>
 
 			</#list>
@@ -588,6 +648,11 @@
 
 </#macro>
 
+<#-- protectionMeasures outputs the contents of the FLEXIBLE_RECORD.ProtectionMeasures document
+
+	Inputs:
+	- _subject: ENTITY in which the document is found
+-->
 <#macro protectionMeasures _subject>
 	<#compress>
 
@@ -598,12 +663,14 @@
 		<#else>
 			<#list recordList as record>
 
-				<#if (recordList?size>1)><para><emphasis role="HEAD-WoutNo">Protection measures #${record_index+1}</emphasis></para></#if>
+				<#--Get hyperlink and print record's name (with a numbering system if more than one)-->
+				<#local docUrl=iuclid.webUrl.documentView(record.documentKey) />
+				<para><emphasis role="HEAD-WoutNo"><#if (recordList?size>1)>Protection measures #${record_index+1}:</#if><ulink url="${docUrl}"><@com.text record.name/></ulink></emphasis></para>
 
 				<#--Instructions-->
 				<#if record.InstructionsForUse.InstructionsForUse?has_content>
 					<para><emphasis role="bold">Instructions of use: </emphasis></para>
-					<para role="indent"><@com.richText record.InstructionsForUse.InstructionsForUse/></para>
+					<para role="indent2"><para style="background-color:#f7f7f7" ><@com.richText record.InstructionsForUse.InstructionsForUse/></para></para>
 				</#if>
 
 				<#--Measures to protect humans etc-->
@@ -614,35 +681,35 @@
 
 					<#if measures.RecommendedMethodsAndPrecautionsConcerningStorage?has_content>
 						<para role="indent"><emphasis role="underline">Recommended methods and precautions concerning storage:</emphasis></para>
-						<para role="indent2"><@com.richText measures.RecommendedMethodsAndPrecautionsConcerningStorage/></para>
+						<para role="indent2"><para style="background-color:#f7f7f7" ><@com.richText measures.RecommendedMethodsAndPrecautionsConcerningStorage/></para></para>
 					</#if>
 					<#if measures.RecommendedMethodsAndPrecautionsConcerningHandling?has_content>
 						<para role="indent"><emphasis role="underline">Recommended methods and precautions concerning handling and transport:</emphasis></para>
-						<para role="indent2"><@com.text measures.RecommendedMethodsAndPrecautionsConcerningHandling/></para>
+						<para role="indent2"><@com.text measures.RecommendedMethodsAndPrecautionsConcerningHandling 'literal'/></para>
 					</#if>
 					<#if measures.RecommendedMethodsAndPrecautionsConcerningFire?has_content>
 						<para role="indent"><emphasis role="underline">Recommended methods and precautions concerning fire:</emphasis></para>
-						<para role="indent2"><@com.text measures.RecommendedMethodsAndPrecautionsConcerningFire/></para>
+						<para role="indent2"><@com.text measures.RecommendedMethodsAndPrecautionsConcerningFire 'literal'/></para>
 					</#if>
 					<#if measures.ParticularsOfLikelyDirect?has_content>
 						<para role="indent"><emphasis role="underline">Particulars of likely direct or indirect adverse effects:</emphasis></para>
-						<para role="indent2"><@com.richText measures.ParticularsOfLikelyDirect/></para>
+						<para role="indent2"><para style="background-color:#f7f7f7" ><@com.richText measures.ParticularsOfLikelyDirect/></para></para>
 					</#if>
 					<#if measures.FirstAidInstructionsAntidotes?has_content>
 						<para role="indent"><emphasis role="underline">First aid instructions, antidotes:</emphasis></para>
-						<para role="indent2"><@com.text measures.FirstAidInstructionsAntidotes/></para>
+						<para role="indent2"><@com.text measures.FirstAidInstructionsAntidotes 'literal'/></para>
 					</#if>
 					<#if measures.EmergencyMeasuresToProtectEnvironmentInCaseOfAccident?has_content>
 						<para role="indent"><emphasis role="underline">Emergency measures to protect the environment in case of accident:</emphasis></para>
-						<para role="indent2"><@com.text measures.EmergencyMeasuresToProtectEnvironmentInCaseOfAccident/></para>
+						<para role="indent2"><@com.text measures.EmergencyMeasuresToProtectEnvironmentInCaseOfAccident 'literal'/></para>
 					</#if>
 					<#if measures.ControlMeasuresOfRepellents?has_content>
 						<para role="indent"><emphasis role="underline">Control measures of repellents or poison included in the product, to prevent action against non-target organisms:</emphasis></para>
-						<para role="indent2"><@com.richText measures.ControlMeasuresOfRepellents/></para>
+						<para role="indent2"><para style="background-color:#f7f7f7" ><@com.richText measures.ControlMeasuresOfRepellents/></para></para>
 					</#if>
 					<#if measures.Procedures?has_content>
 						<para role="indent"><emphasis role="underline">Procedures for cleaning application equipment:</emphasis></para>
-						<para role="indent2"><@com.text measures.Procedures/></para>
+						<para role="indent2"><@com.text measures.Procedures 'literal'/></para>
 					</#if>
 				</#if>
 
@@ -654,17 +721,17 @@
 
 					<#if dest.Air?has_content>
 						<para role="indent"><emphasis role="underline">Air:</emphasis></para>
-						<para role="indent2"><@com.text dest.Air/></para>
+						<para role="indent2"><@com.text dest.Air 'literal'/></para>
 					</#if>
 
 					<#if dest.Water?has_content>
 						<para role="indent"><emphasis role="underline">Water:</emphasis></para>
-						<para role="indent2"><@com.text dest.Water/></para>
+						<para role="indent2"><@com.text dest.Water 'literal'/></para>
 					</#if>
 
 					<#if dest.Soil?has_content>
 						<para role="indent"><emphasis role="underline">Soil:</emphasis></para>
-						<para role="indent2"><@com.text dest.Soil/></para>
+						<para role="indent2"><@com.text dest.Soil 'literal'/></para>
 					</#if>
 				</#if>
 
@@ -676,27 +743,27 @@
 
 					<#if waste.PossibilityOfReuseOrRecycling?has_content>
 						<para role="indent"><emphasis role="underline">Possibility of reuse or recycling:</emphasis></para>
-						<para role="indent2"><@com.text waste.PossibilityOfReuseOrRecycling/></para>
+						<para role="indent2"><@com.text waste.PossibilityOfReuseOrRecycling 'literal'/></para>
 					</#if>
 
 					<#if waste.PossibilityOfNeutralisationOfEffects?has_content>
 						<para role="indent"><emphasis role="underline">Neutralisation procedure and possibility of neutralisation of effects:</emphasis></para>
-						<para role="indent2"><@com.text waste.PossibilityOfNeutralisationOfEffects/></para>
+						<para role="indent2"><@com.text waste.PossibilityOfNeutralisationOfEffects 'literal'/></para>
 					</#if>
 
 					<#if waste.ConditionsForControllerDischarge?has_content>
 						<para role="indent"><emphasis role="underline">Conditions for controlled discharge including leachate qualities on disposal:</emphasis></para>
-						<para role="indent2"><@com.text waste.ConditionsForControllerDischarge/></para>
+						<para role="indent2"><@com.text waste.ConditionsForControllerDischarge 'literal'/></para>
 					</#if>
 
 					<#if waste.ConditionsForControllerIncineration?has_content>
 						<para role="indent"><emphasis role="underline">Conditions for controlled incineration:</emphasis></para>
-						<para role="indent2"><@com.text waste.ConditionsForControllerIncineration/></para>
+						<para role="indent2"><@com.text waste.ConditionsForControllerIncineration 'literal'/></para>
 					</#if>
 
 					<#if waste.InstructionsForSafeDisposal?has_content>
 						<para role="indent"><emphasis role="underline">Instructions for safe disposal of the product and its packaging for different groups of users:</emphasis></para>
-						<para role="indent2"><@com.richText waste.InstructionsForSafeDisposal/></para>
+						<para role="indent2"><para style="background-color:#f7f7f7" ><@com.richText waste.InstructionsForSafeDisposal/></para></para>
 					</#if>
 				</#if>
 
@@ -719,6 +786,12 @@
 	</#compress>
 </#macro>
 
+<#-- assessmentOtherAuthorities outputs the contents of the FLEXIBLE_RECORD.AssessmentOtherAuthorities document
+
+	Inputs:
+	- _subject: ENTITY (SUBSTANCE, MIXTURE) in which the document is found
+	- addInfo: if True, print the additional information section
+-->
 <#macro assessmentOtherAuthorities _subject addInfo=true>
 	<#compress>
 
@@ -731,7 +804,9 @@
 		<#else>
 			<#list studyList as study>
 
-				<#if (studyList?size>1) ><para><emphasis role="HEAD-WoutNo">Assessment #${study_index+1}</emphasis></para></#if>
+				<#--Get hyperlink and print record's name (with a numbering system if more than one)-->
+				<#local docUrl=iuclid.webUrl.documentView(study.documentKey) />
+				<para><emphasis role="HEAD-WoutNo"><#if (studyList?size>1)>Assessment #${study_index+1}:</#if><ulink url="${docUrl}"><@com.text study.name/></ulink></emphasis></para>
 
 				<#--Assessments in Europe-->
 				<#if study.AssessmentsEurope?has_content>
@@ -830,6 +905,13 @@
 	</#compress>
 </#macro>
 
+<#-- importTolerances outputs the contents of the Additional information section 
+	of the FLEXIBLE_RECORD.AssessmentOtherAuthorities document, which contain information related to
+	import tolerances.
+
+	Inputs:
+	- _subject: ENTITY (SUBSTANCE, MIXTURE) in which the document is found
+-->
 <#macro importTolerances subject>
 	<#compress>
 		<#local studyList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_RECORD", "AssessmentOtherAuthorities") />
@@ -898,6 +980,12 @@
 	</#compress>
 </#macro>
 
+<#-- assessmentsTable creates a table for the Assessments sections of the FLEXIBLE_RECORD.AssessmentOtherAuthorities document
+	(e.g. in Europe and Outside europe).
+
+	Inputs:
+	- path: node corresponding to the assessments section e.g. AssessmentsEurope
+-->
 <#macro assessmentsTable path>
 	<#compress>
 
@@ -952,6 +1040,12 @@
 	</#compress>
 </#macro>
 
+<#-- existingResiduesTable creates a table for the Existing residue definitions sections 
+	of the FLEXIBLE_RECORD.AssessmentOtherAuthorities document (e.g. in Europe and Outside europe).
+
+	Inputs:
+	- path: node corresponding to the existing residue definitions section e.g. AssessmentsEurope.ExistingResidues
+-->
 <#macro existingResiduesTable path>
 	<#compress>
 
@@ -1020,7 +1114,12 @@
 	</#compress>
 </#macro>
 
+<#-- existingResiduesTable creates a table for the Existing MRL sections 
+	of the FLEXIBLE_RECORD.AssessmentOtherAuthorities document (e.g. in Europe and Outside europe).
 
+	Inputs:
+	- path: node corresponding to the existing residue definitions section e.g. AssessmentsEurope.ExistingMrl
+-->
 <#macro existingMRLsTable path>
 	<#compress>
 
@@ -1075,12 +1174,18 @@
 	</#compress>
 </#macro>
 
-<#--Macros to move to macros_common_general-->
+<#-- mixtureName outputs the name of a MIXTURE entity with a hyperlink to the document
+	NOTE: Macros to be moved to macros_common_general
+
+	Inputs: 
+	- _subject: MIXTURE ENTITY
+-->
 <#macro mixtureName _subject>
 	<#compress>
 		<#if _subject.documentType=="MIXTURE">
 
-			<#assign docUrl=iuclid.webUrl.entityView(_subject.documentKey)/>
+			<#local docUrl=iuclid.webUrl.entityView(_subject.documentKey)/>
+
 			<#if docUrl?has_content>
 				<ulink url="${docUrl}"><@com.text _subject.MixtureName/></ulink>
 			<#else>
