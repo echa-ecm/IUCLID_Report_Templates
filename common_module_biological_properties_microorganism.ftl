@@ -584,6 +584,31 @@
                     <@toxicityToOtherAboveGroundOrganismsSummaryTable summary/>
                 </#if>
 
+                <#-- higher tier testing -->
+                <#if summary.KeyValueForChemicalSafetyAssessment.HigherTierTesting?has_content>
+
+                    <para><emphasis role="bold">Higher tier testing: </emphasis></para>
+
+                    <#-- rich text field -->
+                    <#if summary.KeyValueForChemicalSafetyAssessment.HigherTierTesting.KeyInformationFromHigherTierTesting?has_content>
+                        <para role='indent'><para  style="background-color:#f7f7f7" ><@com.value summary.KeyValueForChemicalSafetyAssessment.HigherTierTesting.KeyInformationFromHigherTierTesting/></para></para>
+                    </#if>
+
+                    <#-- link studies (same code as above) -->
+                    <#if summary.KeyValueForChemicalSafetyAssessment.HigherTierTesting.LinkToRelevantStudyRecordS?has_content>
+
+                        <para role='indent'>Linked studies:</para>
+                        <#list summary.KeyValueForChemicalSafetyAssessment.HigherTierTesting.LinkToRelevantStudyRecord as link>
+                            <#local study = iuclid.getDocumentForKey(link) />
+                            <para role='indent2'>
+                                <command linkend="${study.documentKey.uuid!}">
+                                    <@com.text study.name/>
+                                </command>
+                            </para>
+                        </#list>
+                    </#if>
+                </#if>
+
                 <#--Discussion-->
                 <#if summary.Discussion.Discussion?has_content>
                     <para><emphasis role="bold">Discussion:</emphasis></para>
@@ -597,10 +622,10 @@
 </#macro>
 
 <#-- toxicityToOtherAboveGroundOrganismsSummaryTable prints the section of key value for chemical safety assessment
-    of the ENDPOINT_SUMMARY.ToxicityToOtherAboveGroundOrganisms in table format.
+    of the ENDPOINT_SUMMARY.ToxicityToOtherAboveGroundOrganisms in table format (excluding higher tier testing)
     
     Inputs:
-    - csaBlock: path object of the section 
+    - summary: summary DOCUMENT
 -->
 <#macro toxicityToOtherAboveGroundOrganismsSummaryTable summary>
     <#compress>
@@ -639,8 +664,8 @@
 
                         <td>
 
-                            <#if endpointEntry.LinkToRelevantStudyRecordS?has_content>
-                                <#list endpointEntry.LinkToRelevantStudyRecordS as link>
+                            <#if endpointEntry.LinkToRelevantStudyRecord?has_content>
+                                <#list endpointEntry.LinkToRelevantStudyRecord as link>
                                     <#local study = iuclid.getDocumentForKey(link) />
                                     <para>
                                         <command linkend="${study.documentKey.uuid!}">
@@ -657,31 +682,6 @@
         </tbody>
         </table>
 
-        <#-- higher tier testing -->
-        <#if csaBlock.HigherTierTesting?has_content>
-
-            <para><emphasis role='underline'>Higher tier testing: </emphasis></para>
-
-            <#-- rich text field -->
-            <#if csaBlock.HigherTierTesting.KeyInformationFromHigherTierTesting?has_content>
-                <para role='indent'><para  style="background-color:#f7f7f7" ><@com.value csaBlock.HigherTierTesting.KeyInformationFromHigherTierTesting/></para></para>
-            </#if>
-
-            <#-- link studies (same code as above) -->
-            <#if csaBlock.HigherTierTesting.LinkToRelevantStudyRecordS?has_content>
-
-                <para role='indent'>Linked studies:</para>
-                <#list csaBlock.HigherTierTesting.LinkToRelevantStudyRecordS as link>
-                    <#local study = iuclid.getDocumentForKey(link) />
-                    <para role='indent2'>
-                        <command linkend="${study.documentKey.uuid!}">
-                            <@com.text study.name/>
-                        </command>
-                    </para>
-                </#list>
-            </#if>
-
-        </#if>
     </#compress>
 </#macro>
 
