@@ -581,7 +581,7 @@
                 <#-- Key value (new in April 2023)-->
                 <#if summary.KeyValueForChemicalSafetyAssessment?has_content>
                     <para><emphasis role="bold">Key value for CSA: </emphasis></para>
-                    <@toxicityToOtherAboveGroundOrganismsSummaryTable summary.KeyValueForChemicalSafetyAssessment/>
+                    <@toxicityToOtherAboveGroundOrganismsSummaryTable summary/>
                 </#if>
 
                 <#--Discussion-->
@@ -602,7 +602,7 @@
     Inputs:
     - csaBlock: path object of the section 
 -->
-<#macro toxicityToOtherAboveGroundOrganismsSummaryTable csaBlock>
+<#macro toxicityToOtherAboveGroundOrganismsSummaryTable summary>
     <#compress>
         
         <#-- table for the first two sections -->
@@ -616,7 +616,7 @@
 				<th align="center"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
 			</tr>
 
-            <#list csaBlock?children as endpointEntry>
+            <#list summary.KeyValueForChemicalSafetyAssessment?children as endpointEntry>
 
                 <#-- exclude the higher tier since the structure is very different -->
                 <#if endpointEntry?node_name != "HigherTierTesting">
