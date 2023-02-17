@@ -4267,49 +4267,7 @@
 				</#if>
 
 				<#--CSA-->
-				<#if summary.hasElement("PECOtherRoutes.PECOtherRoutesRep") && summary.PECOtherRoutes.PECOtherRoutesRep?has_content>
-					<para><emphasis role="bold">PEC from other routes of exposure:</emphasis></para>
-					<para role="small"><@pecOtherRoutesSummaryTable summary.PECOtherRoutes.PECOtherRoutesRep/></para>
-
-				<#elseif summary.hasElement("PecSoil") && summary.PecSoil?has_content>
-					<para><emphasis role="bold">PEC from soil:</emphasis></para>
-
-					<@com.children summary.PecSoil/>
-
-					<#if summary.PecSoil.PecSoilMgkg?has_content>
-						<para>PEC:</para>
-						<para role="small"><@pecSoilSummaryTable summary.PecSoil.PecSoilMgkg/></para>
-					</#if>
-				<#elseif summary.hasElement("PecGroundWater") && summary.PecGroundWater?has_content>
-					<para><emphasis role="bold">PEC from ground water:</emphasis></para>
-
-					<@com.children summary.PecGroundWater/>
-
-					<#if summary.PecGroundWater.PecGroundWater?has_content>
-						<para>PEC:</para>
-						<para role="small"><@pecGroundWaterSummaryTable summary.PecGroundWater.PecGroundWater/></para>
-					</#if>
-				<#elseif summary.hasElement("PecSurfaceWaterPecSediment") && summary.PecSurfaceWaterPecSediment?has_content>
-					<para><emphasis role="bold">PEC from surface water and sediment:</emphasis></para>
-
-					<@com.children summary.PecSurfaceWaterPecSediment/>
-
-					<#if summary.PecSurfaceWaterPecSediment.FocusStepOneTwoList?has_content>
-						<para>FOCUS step 1 and 2:</para>
-						<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepOneTwoList/></para>
-					</#if>
-
-					<#if summary.PecSurfaceWaterPecSediment.FocusStepThreeList?has_content>
-						<para>FOCUS step 3:</para>
-						<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepThreeList/></para>
-					</#if>
-
-					<#if summary.PecSurfaceWaterPecSediment.FocusStepFour?has_content>
-						<para>FOCUS step 4:</para>
-						<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepFour/></para>
-					</#if>
-				</#if>
-
+				<@estConcPEC summary/>
 
 				<#--Discussion-->
 				<#if summary.Discussion.Discussion?has_content>
@@ -4319,6 +4277,56 @@
 
 			</#list>
 		</#if>
+	</#compress>
+</#macro>
+
+<#macro estConcPEC summary>
+	<#compress>
+
+	<#--CSA-->
+	<#if summary.hasElement("PECOtherRoutes.PECOtherRoutesRep") && summary.PECOtherRoutes.PECOtherRoutesRep?has_content>
+		<para><emphasis role="bold">PEC from other routes of exposure:</emphasis></para>
+		<para role="small"><@pecOtherRoutesSummaryTable summary.PECOtherRoutes.PECOtherRoutesRep/></para>
+
+	<#elseif summary.hasElement("PecSoil") && summary.PecSoil?has_content>
+		<para><emphasis role="bold">PEC from soil:</emphasis></para>
+
+		<@com.children summary.PecSoil/>
+
+		<#if summary.PecSoil.PecSoilMgkg?has_content>
+			<para>PEC:</para>
+			<para role="small"><@pecSoilSummaryTable summary.PecSoil.PecSoilMgkg/></para>
+		</#if>
+	<#elseif summary.hasElement("PecGroundWater") && summary.PecGroundWater?has_content>
+		<para><emphasis role="bold">PEC from ground water:</emphasis></para>
+
+		<@com.children summary.PecGroundWater/>
+
+		<#if summary.PecGroundWater.PecGroundWater?has_content>
+			<para>PEC:</para>
+			<para role="small"><@pecGroundWaterSummaryTable summary.PecGroundWater.PecGroundWater/></para>
+		</#if>
+	<#elseif summary.hasElement("PecSurfaceWaterPecSediment") && summary.PecSurfaceWaterPecSediment?has_content>
+		<para><emphasis role="bold">PEC from surface water and sediment:</emphasis></para>
+
+		<@com.children summary.PecSurfaceWaterPecSediment/>
+
+		<#if summary.PecSurfaceWaterPecSediment.FocusStepOneTwoList?has_content>
+			<para>FOCUS step 1 and 2:</para>
+			<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepOneTwoList/></para>
+		</#if>
+
+		<#if summary.PecSurfaceWaterPecSediment.FocusStepThreeList?has_content>
+			<para>FOCUS step 3:</para>
+			<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepThreeList/></para>
+		</#if>
+
+		<#if summary.PecSurfaceWaterPecSediment.FocusStepFour?has_content>
+			<para>FOCUS step 4:</para>
+			<para role="small"><@pecSurfaceWaterSedimentSummaryTable summary.PecSurfaceWaterPecSediment.FocusStepFour/></para>
+		</#if>
+	</#if>
+
 	</#compress>
 </#macro>
 
@@ -4475,7 +4483,7 @@
 				<td>
 					<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 					<#if substance?has_content>
-						<@com.text substance.ChemicalName/>
+						<@com.text substance.ReferenceSubstanceName/>
 					</#if>
 					<#if item.ParentMetabolite?has_content>
 						(<@com.picklist item.ParentMetabolite/>)
@@ -4541,7 +4549,7 @@
 					<td>
 						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 						<#if substance?has_content>
-							<@com.text substance.ChemicalName/>
+							<@com.text substance.ReferenceSubstanceName/>
 						</#if>
 						<#if item.ParentMetabolite?has_content>
 							(<@com.picklist item.ParentMetabolite/>)
