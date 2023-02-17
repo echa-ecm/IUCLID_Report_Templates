@@ -3837,9 +3837,9 @@
 			
 				<#-- links:first try to get links within the block, else try outside of block -->
 				<#local links = ''/>
-				<#local links = getSummaryLinks(csaRowPath_i, ["Link", "LinkToRelevantStudyRecord", "LinkToRelevantStudyRecordS"])/>  
+				<#local links = com.getSummaryLinks(csaRowPath_i, ["Link", "LinkToRelevantStudyRecord", "LinkToRelevantStudyRecordS"])/>  
 				<#if ! links?has_content>
-					<#local links = getSummaryLinks(summary, ["LinkToRelevantStudyRecord.Link"])/>
+					<#local links = com.getSummaryLinks(summary, ["LinkToRelevantStudyRecord.Link"])/>
 				</#if>  
 						
 				
