@@ -3529,27 +3529,345 @@
 </#macro>
 
 <#--3. summaries-->
-<#macro fatePPPsummary subject docSubType endpoint="">
+
+<#-- fateCSA prints the information under the section Key Value for Chemical Safety Assessment of 
+	a single Fate summary, based on the document sub type.
+	For harmonised summaries, it uses the fateCSAtable macro.
+
+	Inputs:
+	- summary: summary document object (ENDPOINT_SUMMARY or FLEXIBLE_SUMMARY)
+	- endpoint: 'ResidueDefinitionRiskAssessment' or 'ResidueDefinitionMonitoring', for the "DefinitionResidueFate" document
+-->
+<#macro fateCSA summary endpoint="">
+
+	<#-- individual cases for all the old EU_PPP summaries -->
+	<#if summary.documentSubType=="BiodegradationInSoil_EU_PPP"><#-- obsolete document -->
+		<#if summary.KeyValueCsa.PersistenceDegradationSoil?has_content>
+			<para>Persistance / rate of degradation in soil:</para>
+			<para role="small"><@degradationRateSummaryTable summary.KeyValueCsa.PersistenceDegradationSoil/></para>
+		</#if>
+		<#if summary.KeyValueCsa.ModellingDegradationSoil?has_content>
+			<para>Modelling rate of degradation in soil:</para>
+			<para role="small"><@modellingDegradationRateSummaryTable summary.KeyValueCsa.ModellingDegradationSoil/></para>
+		</#if>
+		<#if summary.KeyValueCsa.KeyValueCsa?has_content>
+			<para>Key value for safety assessment:</para>
+			<para role="small"><@keyValueCSASummaryTable summary.KeyValueCsa.KeyValueCsa/></para>
+		</#if>
+
+	<#elseif summary.documentSubType=="RouteDegSoil_EU_PPP"><#-- obsolete document -->
+		<#if summary.KeyValueCsa.DegradationSoil?has_content>
+			<para>Route of degradation in soil:</para>
+			<para role="small"><@degradationRouteSummaryTable summary.KeyValueCsa.DegradationSoil/></para>
+		</#if>
+
+	<#elseif summary.documentSubType=="BiodegradationInWaterAndSedimentSimulationTests_EU_PPP"><#-- obsolete document -->
+		<#if summary.KeyValueCsa.PersistenceDegradationFreshwater?has_content>
+			<para>Persistance / rate of degradation in freshwater:</para>
+			<para role="small"><@degradationRateSummaryTable summary.KeyValueCsa.PersistenceDegradationFreshwater/></para>
+		</#if>
+		<#if summary.KeyValueCsa.ModelledDegradationFreshwater?has_content>
+			<para>Modelling rate of degradation in freshwater:</para>
+			<para role="small"><@modellingDegradationRateSummaryTable summary.KeyValueCsa.ModelledDegradationFreshwater/></para>
+		</#if>
+		<#if summary.KeyValueCsa.DegradationMarineWater.PersistenceDegradationFreshwaterSediment?has_content>
+			<para>Persistance / rate of degradation in freshwater sediment:</para>
+			<para role="small"><@degradationRateSummaryTable summary.KeyValueCsa.DegradationMarineWater.PersistenceDegradationFreshwaterSediment/></para>
+		</#if>
+		<#if summary.KeyValueCsa.DegradationMarineWater.ModelledDegradationFreshwaterSed?has_content>
+			<para>Modelling rate of degradation in freshwater sediment:</para>
+			<para role="small"><@modellingDegradationRateSummaryTable summary.KeyValueCsa.DegradationMarineWater.ModelledDegradationFreshwaterSed/></para>
+		</#if>
+		<#if summary.KeyValueCsa.DegradationMarineSediment.PersistenceDegradationWholeSystem?has_content>
+			<para>Persistance / rate of degradation in whole system:</para>
+			<para role="small"><@degradationRateSummaryTable summary.KeyValueCsa.DegradationMarineSediment.PersistenceDegradationWholeSystem/></para>
+		</#if>
+		<#if summary.KeyValueCsa.DegradationMarineSediment.ModelledDegradationWholeSystem?has_content>
+			<para>Modelling rate of degradation in whole system:</para>
+			<para role="small"><@modellingDegradationRateSummaryTable summary.KeyValueCsa.DegradationMarineSediment.ModelledDegradationWholeSystem/></para>
+		</#if>
+		<#if summary.KeyValueCsa.DegradationMarineWater.HalfLifeMarineWater?has_content>
+			<para>Rate of degradation in marine water:</para>
+			<para role='indent'>
+				Half-life in marine water: <@com.value summary.KeyValueCsa.DegradationMarineWater.HalfLifeMarineWater/>
+					<#if summary.KeyValueCsa.DegradationMarineWater.Temperature?has_content>at <@com.value summary.KeyValueCsa.DegradationMarineWater.Temperature/></#if>
+			</para>
+		</#if>
+		<#if summary.KeyValueCsa.DegradationMarineSediment.HalfLifeMarineWaterSed?has_content>
+			<para>Rate of degradation in marine water sediment:</para>
+			<para role='indent'>
+				Half-life in marine water sediment: <@com.value summary.KeyValueCsa.DegradationMarineSediment.HalfLifeMarineWaterSedr/>
+					<#if summary.KeyValueCsa.DegradationMarineSediment.Temperature?has_content>at <@com.value summary.KeyValueCsa.DegradationMarineSediment.Temperature/></#if>
+			</para>
+		</#if>
+								
+	<#elseif summary.documentSubType=="RouteDegWaterSed_EU_PPP"><#-- obsolete document -->
+		<#if summary.KeyValueCsa.RouteDegradationFreshwater?has_content>
+			<para>Route of degradation in freshwater:</para>
+			<para role="small"><@degradationRouteSummaryTable summary.KeyValueCsa.RouteDegradationFreshwater/></para>
+		</#if>
+		<#if summary.KeyValueCsa.RouteDegradationMarineWater?has_content>
+			<para>Route of degradation in marine water:</para>
+			<para role="small"><@degradationRouteSummaryTable summary.KeyValueCsa.RouteDegradationMarineWater/></para>
+		</#if>
+		<#if summary.KeyValueCsa.RouteDegradationFreswaterSediment?has_content>
+			<para>Route of degradation in freshwater sediment:</para>
+			<para role="small"><@degradationRouteSummaryTable summary.KeyValueCsa.RouteDegradationFreswaterSediment/></para>
+		</#if>
+		<#if summary.KeyValueCsa.RouteDegradationMarineWaterSediment?has_content>
+			<para>Route of degradation in marine water sediment:</para>
+			<para role="small"><@degradationRouteSummaryTable summary.KeyValueCsa.RouteDegradationMarineWaterSediment/></para>
+		</#if>
+	
+	<#-- definition of the residue -->
+	<#elseif summary.documentSubType=="DefinitionResidueFate">
+		<#if summary.KeyInformation[endpoint]?has_content>
+			<para><emphasis role="bold">Definition of the residue:</emphasis></para>
+			<para role="small"><@residueDefinitionSummaryTable summary.KeyInformation endpoint/></para>
+		</#if>
+
+	<#-- predicted concentrations environment summaries -->
+	<#elseif summary.documentSubType?matches("EstConc.*") && summary.documentType=="FLEXIBLE_SUMMARY">
+		<@estConcPEC summary/>
+
+	<#else>
+		<@fateCSAtable summary/>
+	
+	</#if>
+	
+</#macro>
+
+<#-- fateCSAtable prints the information under the section Key Value for Chemical Safety Assessment of 
+	harmonised Fate summaries in table format i.e. all summaries except the old EU_PPP summaries, Estimation of concentration
+	summaries and Residue definition.
+
+	The table has four columns:
+	- Endpoint: name of the block, if exists, where CSA values are found; else name of document
+	- Results: CSA value
+	- Conditions: Temperature, Ph or other additional information related to the CSA value
+	- Linked studies: Link to the study where the values have been derived
+		NOTE: this coresponds to studies links in the block, or if this does not exist,
+		studies linked in the generic section at the top of the document (in this latter case
+		the same study might appear repeated for different endpoints / CSA values)
+
+	If several summaries are provided, information is merged by endpoint.
+
+	Inputs:
+	- summaryList: single summary object or list of fate summaries objects
+-->
+<#macro fateCSAtable summaryList>
 	<#compress>
 
-		<#local summaryDocToCSAMap = {"PhototransformationInSoil" : [{"field": "HalflifeInSoil", "preText" : "Half-life in soil: "}],
-										"AdsorptionDesorption" : [{"field": "KocAt20Celsius", "preText" : "Koc: ", "postText" : "at 20°C"},
-																	{"path":"OtherAdsorptionCoefficients", "field": "TypeValue", "preTextPath" : "Type", "postText" : "L/kg", "atField":"AtTheTemperatureOf"}],
-										"Hydrolysis" : [{"field": "HalflifeForHydrolysis", "preText" : "Half-life for hydrolysis: ", "atField":"AtTheTemperatureOf"}],
-										"PhototransformationInWater" : [{"field": "HalflifeInWater", "preText" : "Half-life in water: "}],
-										"BiodegradationInWaterScreeningTests" : [{"field": "BiodegradationInWater", "preText" : "Biodegradation in water: "},
-																					{"field": "TypeOfWater", "preText" : "Type of water: "}	],
-										"BiodegradationInWaterAndSedimentSimulationTests" :[{"field": "HalflifeInFreshwater", "preText" : "Half-life in freshwater: ", "atField":"AtTheTemperatureOfFreshwater"},
-																							{"field": "HalflifeInMarineWater", "preText" : "Half-life in marine water: ", "atField":"AtTheTemperatureOfMarineWater"},
-																							{"field": "HalflifeInFreshwaterSediment", "preText" : "Half-life in freshwater sediment: ", "atField":"AtTheTemperatureOfFreshwaterSediment"},
-																							{"field": "HalflifeInMarineWaterSediment", "preText" : "Half-life in marine sediment: ", "atField":"AtTheTemperatureOfMarineWaterSediment"},
-																							{"path":"WholeSystem.HalfLifeInWholeSystem", "field": "HalfLifeInWholeSystem", "preText" : "Whole system", "preTextPath": "TypeOfSystem", "atField":"AtTheTemperatureOfWholeSystem"}],
-										"BiodegradationInWaterAndSedimentSimulationTests_EU_PPP" : [{"field": "DegradationMarineWater.HalfLifeMarineWater", "preText" : "Half-life in marine water: ", "atField":"DegradationMarineWater.Temperature"},
-                                                                                    				{"field": "DegradationMarineSediment.HalfLifeMarineWaterSed", "preText" : "Half-life in marine water sediment: ", "atField": "DegradationMarineSediment.Temperature"}],
-										"PhototransformationInAir" : [{"field": "HalflifeInAir", "preText" : "Half-life in air: "},
-																		{"field": "DegradationRateConstantWithOHRadicals", "preText" : "Degradation rate constant with OH radicals: "}],
-										"BiodegradationInSoil": [{"field": "HalflifeInSoil", "preText" : "Half-life in soil: ", "atField":"AtTheTemperatureOf"}]
-		}/>
+		<#-- if it's not list, convert to list -->
+		<#if !summaryList?is_sequence>
+			<#local summaryList=[summaryList]/>
+		</#if>
+
+		<#-- create a hash containing information from all summaries -->
+		<#local endpointsHash = {}/>
+		<#list summaryList as summary>
+			<#local summaryCSAseq = getFateCSASeq(summary)/>
+			<#list summaryCSAseq as seqEntry>
+				<#if endpointsHash[seqEntry["name"]]??>
+					<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
+					<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
+				<#else>
+					<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
+				</#if>
+			</#list>
+		</#list>
+
+		<#-- parse the hash and create the table -->
+		<#if endpointsHash?has_content>
+			<table border="1">
+				<tbody valign="middle">
+				<tr align="center">
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Endpoint</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Results</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Conditions</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Linked studies</emphasis></th>
+				</tr>
+
+				<#list endpointsHash as key, seq>
+					<#local usespan = true />
+					<#list seq as item>
+						<tr>
+							<#if usespan>
+								<td rowspan="${seq?size}">${key}</td>
+								<#local usespan = false />
+							</#if>
+							<td>${item.results}</td>
+							<td>${item.conditions}</td>
+							<td>${item.links}</td>
+						</tr>
+					</#list>
+				</#list>
+				</tbody></table>
+		</#if>
+	</#compress>
+</#macro>
+
+<#-- getFateCSASeq extracts information on the CSA block of harmonised fate summaries into a list, to be used to print
+	a table using the fateCSAtable macro.
+
+	It uses a mapping hashmap of document subtypes. Each subtype is a list of hashmaps, each containing
+	- 'path': general path of the CSA sub-section, if exists; else emtpy
+	- 'results': path to the main CSA value 
+	- 'conditions': path to pH, T, and other conditions related to the CSA value
+	- 'type': if exists, it will be used to print the name of the CSA value, instead of using the label
+
+	The function reads the hashmap and creates a lisy with the right output for results and conditions of each sub-section, printing
+	the labels and the values of the different fields.
+
+	Inputs:
+	- summary: a summary document object
+	- csaPath: list of strings for the paths to consider to extract the CSA block 
+		NOTE: this path tends to be standard, but sometimes there might be deviations e,g, KeyValueForCsa, KeyValueCsa
+
+	Returns:
+	- mySeq: sequence of hashmaps containing the keys "name" (endpoint), "results", "conditions" and "links" ready to be printed
+-->
+<#function getFateCSASeq summary csaPath=['KeyValueForChemicalSafetyAssessment']>
+	
+	<#local mySeq=[]/>
+
+	<#-- consider different path names, if not provided -->
+	<#local csaBlock = com.getObjectFromPathOptions(summary, csaPath)/>
+	
+
+	<#-- Mapping of fate summaries to fields to map -->
+	<#local summaryDocToCSAMap = {
+								"BiodegradationInSoil": [{"path": "BiodegradationInSoilForExposureAssessment", 
+															"result": ["HalflifeInSoil"], 
+															"conditions": ["AtTheTemperatureOf", "PHCondition1"]},
+														{"path": "BiodegradationInSoilForExposureAssessment", 
+															"result": ["HalflifeInSoilPhDependent"], 
+															"conditions": ["AtTheTemperatureOfPhDependent", "PHCondition2"]},
+														{"path": "BiodegradationInSoilForPersistenceAssessment", 
+															"result": ["DT50", "DT90"], 
+															"conditions": ["TemperatureOfTheTestSystem"]},
+														{"path": "RouteOfBiodegradation", "result": [], "conditions": []}
+														],
+								"PhototransformationInSoil" : [{"path":'', "result": ["HalflifeInSoil"]}],
+								"FieldStudies" : [{"path": "BiodegradationInSoilForExposureAssessment", 
+													"result": ["DT50"], "conditions": ["AtTheTemperatureOf", "PHCondition1"]},
+												{"path": "BiodegradationInSoilForExposureAssessment", 
+													"result": ["DT50PhDependent"], "conditions": ["AtTheTemperatureOfPhDependent", "PHCondition2"]},
+												{"path": "BiodegradationInSoilForPersistenceAssessment", 
+													"result": ["DT50", "DT90"], 
+													"conditions": ["TemperatureOfTheTestSystem"]},
+												{"path": "RouteOfBiodegradation", 
+													"result": [], 
+													"conditions": []}],
+								"AdsorptionDesorption" : [{"path":'', "result": ["KocAt20Celsius"], "conditions":["AtTheTemperatureOf"]},
+															<#-- below: repeatable block -->
+															{"path":'OtherAdsorptionCoefficients', "result":["TypeValue"], "type":"Type", "conditions":["AtTheTemperatureOf"]}],
+								"Hydrolysis" : [{"path":'', "result": ["HalflifeForHydrolysis"], "conditions":["AtTheTemperatureOf"]}],
+								"PhototransformationInWater" : [{"path":'', "result":["HalflifeInWater"], "conditions" : []}],
+								"BiodegradationInWaterScreeningTests" : [{"path":'', "result":["BiodegradationInWater"], "conditions" : ["TypeOfWater"]}],
+								"BiodegradationInWaterAndSedimentSimulationTests" :
+											[{"path":'BiodegradationInFreshwater', "result":["DT50ForExposureAssessment"], "conditions" : ["AtTheTemperatureOfExpo"]},
+											 {"path":'BiodegradationInFreshwater', "result":["DT50ForPersistenceAssessment", "DT90"], "conditions" : ["TemperatureOfTheTestSystem"]},
+											 {"path":'BiodegradationInMarineWater', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
+											 {"path":'BiodegradationInFreshwaterSediment', "result":["DT50ForExposureAssessment"], "conditions" : ["AtTheTemperatureOfExpo"]},
+											 {"path":'BiodegradationInFreshwaterSediment', "result":["DT50ForPersistenceAssessment", "DT90"], "conditions" : ["TemperatureOfTheTestSystem"]},
+											 {"path":'BiodegradationInMarineWaterSediment', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
+											 {"path":'WholeSystem', "result":["DT50ForExposureAssessmentFreshwaterAndSediment"], "conditions" : ["AtTheTemperatureOfWholeSystem"]},
+											 {"path":'WholeSystem', "result":["DT50ForPersistenceAssessmentFreshwaterAndSediment"], "conditions" : ["AtTheTemperatureOf"]},
+											 {"path":'WholeSystem', "result":["DT50MarineWaterAndSediment"], "conditions" : ["AtTheTemperatureOfMarine"]},
+											 {"path":'BiodegradationInSewageTreatmentPlant', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
+											 {"path":'BiodegradationInSewageTreatmentPlant', "result":["Degradation"], "conditions" : ["AtTheTemperatureOfSewage"]},
+											 {"path":'BiodegradationInSewerSystem', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
+											 {"path":'RouteOfBiodegradation', "result":[], "conditions" : []}],
+								"PhototransformationInAir" : [{"path":'', "result":["HalflifeInAir"], "conditions" : []},
+																{"path":'', "result":["DegradationRateConstantWithOHRadicals"], "conditions" : []}]
+
+	}/>
+
+	<#--CSA-->
+	<#if csaBlock?? && csaBlock?has_content && summaryDocToCSAMap?keys?seq_contains(summary.documentSubType)>
+
+		<#list summaryDocToCSAMap[summary.documentSubType] as csaRow>
+
+			<#-- get the path from the map, and take the label -->
+			<#if csaRow['path']?has_content>
+				<#local csaRowPath = "csaBlock." + csaRow['path']/>
+				<#local csaRowPath = csaRowPath?eval/>
+				<@iuclid.label for=csaRowPath var="endpoint"/>
+			<#else>
+				<#local csaRowPath = csaBlock/>
+				<#local endpoint = summary.documentSubType/> <#-- NOTE: possible to adapt the document type for better reading -->
+			</#if>	
+
+			<#-- if the path is not a repeatable block, make it into a list, so that we can work with rep blocks -->
+			<#if csaRowPath?node_type!="repeatable">
+				<#local csaRowPath = [csaRowPath]/>
+			</#if>
+				
+			<#list csaRowPath as csaRowPath_i>
+
+				<#-- get the result value -->
+				<#local results = []/>
+				<#list csaRow['result'] as resultItem>
+					<#local resultItemPath = "csaRowPath_i." + resultItem/>
+					<#if resultItemPath?eval?has_content>
+						<#local resultVal><@com.value resultItemPath?eval/></#local>
+						<#if csaRow?keys?seq_contains('type') && csaRow['type']?has_content>
+							<#local resultNamePath = "csaRowPath_i." + csaRow['type']/>
+							<#local resultName><@com.value resultNamePath?eval/></#local>
+						<#else>
+							<@iuclid.label for=resultItemPath?eval var="resultName"/>
+						</#if>
+						<#local result>${resultName}: ${resultVal}</#local>
+						<#local results = results + [result]/>
+					</#if>
+				</#list>
+
+				<#-- get the conditions -->
+				<#local conditions = []/>
+				<#list csaRow['conditions'] as conditionItem>
+					<#local conditionItemPath = "csaRowPath_i." + conditionItem/>
+					<#if conditionItemPath?eval?has_content>
+						<#local condVal><@com.value conditionItemPath?eval/></#local>
+						<@iuclid.label for=conditionItemPath?eval var="condName"/>
+						<#local condition>${condName}: ${condVal}</#local>
+						<#local conditions = conditions + [condition]/>
+					</#if>
+				</#list>
+			
+				<#-- links:first try to get links within the block, else try outside of block -->
+				<#local links = ''/>
+				<#local links = getSummaryLinks(csaRowPath_i, ["Link", "LinkToRelevantStudyRecord", "LinkToRelevantStudyRecordS"])/>  
+				<#if ! links?has_content>
+					<#local links = getSummaryLinks(summary, ["LinkToRelevantStudyRecord.Link"])/>
+				</#if>  
+						
+				
+
+				<#-- append -->
+				<#if results?has_content || conditions?has_content || links?has_content>
+					<#local mySeq = mySeq + [{'name': endpoint!, "links" : links!, 
+												"results":results?join("; "), "conditions":conditions?join("; ")}]/>
+				</#if>
+
+			</#list>
+		</#list>
+	</#if>
+
+	<#return mySeq/>
+</#function>
+
+<#-- fatePPPsummary prints a summary of the fate section for PPP (DEPRECATED)
+
+	Inputs:
+	- subject: entity
+	- docSubType: str defining the document subtype 
+	- endpoint: 'ResidueDefinitionRiskAssessment' or 'ResidueDefinitionMonitoring', 
+		for the "DefinitionResidueFate" document
+
+-->
+<#macro fatePPPsummary subject docSubType endpoint="">
+	<#compress>
 
 		<#-- Get doc-->
 		<#if docSubType=="DefinitionResidueFate">
@@ -3641,84 +3959,7 @@
 
 				<#--CSA-->
 				<#if csaPath?? && csaPath?has_content>
-
-					<para><emphasis role="bold">Key value for chemical safety assessment:</emphasis></para>
-
-					<#if docSubType=="BiodegradationInSoil_EU_PPP">
-						<#if csaPath.PersistenceDegradationSoil?has_content>
-							<para>Persistance / rate of degradation in soil:</para>
-							<para role="small"><@degradationRateSummaryTable csaPath.PersistenceDegradationSoil/></para>
-						</#if>
-						<#if csaPath.ModellingDegradationSoil?has_content>
-							<para>Modelling rate of degradation in soil:</para>
-							<para role="small"><@modellingDegradationRateSummaryTable csaPath.ModellingDegradationSoil/></para>
-						</#if>
-						<#if csaPath.KeyValueCsa?has_content>
-							<para>Key value for safety assessment:</para>
-							<para role="small"><@keyValueCSASummaryTable csaPath.KeyValueCsa/></para>
-						</#if>
-
-					<#elseif docSubType=="RouteDegSoil_EU_PPP">
-						<#if csaPath.DegradationSoil?has_content>
-							<para>Route of degradation in soil:</para>
-							<para role="small"><@degradationRouteSummaryTable csaPath.DegradationSoil/></para>
-						</#if>
-
-					<#elseif docSubType=="BiodegradationInWaterAndSedimentSimulationTests_EU_PPP">
-						<#if csaPath.PersistenceDegradationFreshwater?has_content>
-							<para>Persistance / rate of degradation in freshwater:</para>
-							<para role="small"><@degradationRateSummaryTable csaPath.PersistenceDegradationFreshwater/></para>
-						</#if>
-						<#if csaPath.ModelledDegradationFreshwater?has_content>
-							<para>Modelling rate of degradation in freshwater:</para>
-							<para role="small"><@modellingDegradationRateSummaryTable csaPath.ModelledDegradationFreshwater/></para>
-						</#if>
-						<#if csaPath.DegradationMarineWater.PersistenceDegradationFreshwaterSediment?has_content>
-							<para>Persistance / rate of degradation in freshwater sediment:</para>
-							<para role="small"><@degradationRateSummaryTable csaPath.DegradationMarineWater.PersistenceDegradationFreshwaterSediment/></para>
-						</#if>
-						<#if csaPath.DegradationMarineWater.ModelledDegradationFreshwaterSed?has_content>
-							<para>Modelling rate of degradation in freshwater sediment:</para>
-							<para role="small"><@modellingDegradationRateSummaryTable csaPath.DegradationMarineWater.ModelledDegradationFreshwaterSed/></para>
-						</#if>
-						<#if csaPath.DegradationMarineSediment.PersistenceDegradationWholeSystem?has_content>
-							<para>Persistance / rate of degradation in whole system:</para>
-							<para role="small"><@degradationRateSummaryTable csaPath.DegradationMarineSediment.PersistenceDegradationWholeSystem/></para>
-						</#if>
-						<#if csaPath.DegradationMarineSediment.ModelledDegradationWholeSystem?has_content>
-							<para>Modelling rate of degradation in whole system:</para>
-							<para role="small"><@modellingDegradationRateSummaryTable csaPath.DegradationMarineSediment.ModelledDegradationWholeSystem/></para>
-						</#if>
-
-                    <#elseif docSubType=="RouteDegWaterSed_EU_PPP">
-                        <#if csaPath.RouteDegradationFreshwater?has_content>
-                            <para>Route of degradation in freshwater:</para>
-                            <para role="small"><@degradationRouteSummaryTable csaPath.RouteDegradationFreshwater/></para>
-                        </#if>
-                        <#if csaPath.RouteDegradationMarineWater?has_content>
-                            <para>Route of degradation in marine water:</para>
-                            <para role="small"><@degradationRouteSummaryTable csaPath.RouteDegradationMarineWater/></para>
-                        </#if>
-                        <#if csaPath.RouteDegradationFreswaterSediment?has_content>
-                            <para>Route of degradation in freshwater sediment:</para>
-                            <para role="small"><@degradationRouteSummaryTable csaPath.RouteDegradationFreswaterSediment/></para>
-                        </#if>
-                        <#if csaPath.RouteDegradationMarineWaterSediment?has_content>
-                            <para>Route of degradation in marine water sediment:</para>
-                            <para role="small"><@degradationRouteSummaryTable csaPath.RouteDegradationMarineWaterSediment/></para>
-                        </#if>
-					</#if>
-
-					<#if summaryDocToCSAMap?keys?seq_contains(docSubType)>
-						<para role="indent"><@valueForCSA csaPath summaryDocToCSAMap[docSubType]/></para>
-					</#if>
-				<#else>
-					<#if docSubType=="DefinitionResidueFate">
-						<#if summary.KeyInformation[endpoint]?has_content>
-							<para><emphasis role="bold">Definition of the residue:</emphasis></para>
-							<para role="small"><@residueDefinitionSummaryTable summary.KeyInformation endpoint/></para>
-						</#if>
-					</#if>
+					<@fateCSA summary/>
 				</#if>
 
 				<#--Discussion-->
@@ -3732,6 +3973,71 @@
 	</#compress>
 </#macro>
 
+<#-- fatePPPsummary prints a summary of estimation of concentrations (EstConcSoil, EstConcGroundwater, EstConcWaterSed, EstConcOtherRoutes)
+	(DEPRECATED)
+
+	Inputs:
+	- subject: entity
+	- docSubType: str defining the document subtype 
+
+-->
+<#macro estConcSummary subject docSubType>
+	<#compress>
+
+		<#-- Get doc-->
+		<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+
+
+		<#-- Iterate-->
+		<#if summaryList?has_content>
+			<@com.emptyLine/>
+			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+
+			<#assign printSummaryName = summaryList?size gt 1 />
+
+			<#list summaryList as summary>
+				<@com.emptyLine/>
+
+				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
+
+				<#--Links (only for cases with no standard table)-->
+				<#if summary.RelevantSummaries.InputSummaries?has_content>
+					<para><emphasis role="bold">Link to relevant study records: </emphasis></para>
+					<para role="indent">
+						<#list summary.RelevantSummaries.InputSummaries as link>
+							<#if link?has_content>
+								<#local studyReference = iuclid.getDocumentForKey(link) />
+								<para>
+									<command  linkend="${studyReference.documentKey.uuid!}">
+										<@com.text studyReference.name/>
+									</command>
+								</para>
+							</#if>
+						</#list>
+					</para>
+				</#if>
+
+				<#--Key Information-->
+				<#if summary.KeyInformation.field357?has_content>
+					<para><emphasis role="bold">Key information: </emphasis></para>
+					<para role="indent"><@com.richText summary.KeyInformation.field357/></para>
+				</#if>
+
+				<#--CSA-->
+				<@estConcPEC summary/>
+
+				<#--Discussion-->
+				<#if summary.Discussion.Discussion?has_content>
+					<para><emphasis role="bold">Discussion: </emphasis></para>
+					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
+				</#if>
+
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#-- individual tables for CSA blocks -->
 <#macro degradationRateSummaryTable path>
 	<#compress>
 
@@ -4098,55 +4404,6 @@
 	</#compress>
 </#macro>
 
-<#macro valueForCSA csaPath propertyData>
-	<#compress>
-		<#list propertyData as value>
-
-			<#if value["path"]?has_content>
-				<#local iterPath="csaPath." + value["path"]/>
-				<#local iter=iterPath?eval/>
-				<#local value2 = [value + {"path":""}]>
-				<#list iter as elem>
-					<@valueForCSA elem value2/>
-				</#list>
-
-			<#else>
-
-				<#local valuePath = "csaPath." + value["field"] />
-				<#local val = valuePath?eval />
-				<#if val?has_content>
-					<para>
-
-					${value["preText"]!}
-					<#if value?keys?seq_contains("preTextPath")>
-						<#local preTextPath=value["preTextPath"]/>
-						<#if value?keys?seq_contains("preText")>(</#if>
-						<@com.value csaPath[preTextPath]/>
-						<#if value?keys?seq_contains("preText")>)</#if>
-						:
-					</#if>
-
-					<#-- value -->
-					<@com.value val />
-
-					<#-- postText -->
-					${value["postText"]!}
-
-					<#-- atValuePath -->
-					<#if value["atField"]?has_content>
-						<#local atValuePath = "csaPath." + value["atField"] />
-						<#local atVal = atValuePath?eval />
-						<#if atVal?has_content>
-							at <@com.quantity atVal />
-						</#if>
-					</#if>
-					</para>
-				</#if>
-			</#if>
-		</#list>
-	</#compress>
-</#macro>
-
 <#macro residueDefinitionSummaryTable path selectedEndpoint>
 	<#compress>
 
@@ -4224,62 +4481,14 @@
 	</#compress>
 </#macro>
 
-<#macro estConcSummary subject docSubType>
-	<#compress>
 
-		<#-- Get doc-->
-		<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
-
-
-		<#-- Iterate-->
-		<#if summaryList?has_content>
-			<@com.emptyLine/>
-			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
-
-			<#assign printSummaryName = summaryList?size gt 1 />
-
-			<#list summaryList as summary>
-				<@com.emptyLine/>
-
-				<#if printSummaryName><para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
-
-				<#--Links (only for cases with no standard table)-->
-				<#if summary.RelevantSummaries.InputSummaries?has_content>
-					<para><emphasis role="bold">Link to relevant study records: </emphasis></para>
-					<para role="indent">
-						<#list summary.RelevantSummaries.InputSummaries as link>
-							<#if link?has_content>
-								<#local studyReference = iuclid.getDocumentForKey(link) />
-								<para>
-									<command  linkend="${studyReference.documentKey.uuid!}">
-										<@com.text studyReference.name/>
-									</command>
-								</para>
-							</#if>
-						</#list>
-					</para>
-				</#if>
-
-				<#--Key Information-->
-				<#if summary.KeyInformation.field357?has_content>
-					<para><emphasis role="bold">Key information: </emphasis></para>
-					<para role="indent"><@com.richText summary.KeyInformation.field357/></para>
-				</#if>
-
-				<#--CSA-->
-				<@estConcPEC summary/>
-
-				<#--Discussion-->
-				<#if summary.Discussion.Discussion?has_content>
-					<para><emphasis role="bold">Discussion: </emphasis></para>
-					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
-				</#if>
-
-			</#list>
-		</#if>
-	</#compress>
-</#macro>
-
+<#--
+	estConcPEC prints the PEC section of estimation of concentrations summaries
+	(EstConcSoil, EstConcGroundwater, EstConcWaterSed, EstConcOtherRoutes)
+	
+	Inputs:
+	- summary: summary document object
+-->
 <#macro estConcPEC summary>
 	<#compress>
 
@@ -4330,6 +4539,7 @@
 	</#compress>
 </#macro>
 
+<#-- tables for PEC sections -->
 <#macro pecOtherRoutesSummaryTable path>
 
 	<#compress>
