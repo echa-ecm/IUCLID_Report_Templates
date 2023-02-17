@@ -207,7 +207,15 @@
 		</para>
 		<para role="indent">
 			<emphasis role="bold">Planned study period:</emphasis>
-			<@com.text study.AdministrativeData.StudyPeriod/>
+			<#if study.AdministrativeData.StudyPeriodStartDate?has_content>
+				Start date: <@com.value study.AdministrativeData.StudyPeriodStartDate/>
+			</#if>
+			<#if study.AdministrativeData.StudyPeriodEndDate?has_content>
+				End date: <@com.value study.AdministrativeData.StudyPeriodEndDate/>
+			</#if>
+			<#if study.AdministrativeData.StudyPeriod?has_content>
+				Remarks: <@com.value study.AdministrativeData.StudyPeriod/>
+			</#if>
 		</para>
 		<para role="indent">
 			<emphasis role="bold">Test material:</emphasis>
@@ -349,7 +357,7 @@
 </#macro>
 
 <#-- Macros to print endpoint summary information: summary name, linked assessment entities and additional information of the endpoint summary  -->
-<#macro endpointSummary summary valueForCsaText="" path="" printName=false>
+<#macro endpointSummary summary valueForCsaText="" docSubType="" printName=false>
 	<#if printName>
 		<para><emphasis role="bold"><@com.text summary.name/></emphasis></para>
 	</#if>
@@ -364,10 +372,10 @@
 			${valueForCsaText}
 		</para>
 	</#if>
-	
-	<@relevantStudies summary path/>	
-	
+		
 	<@assessmentEntitiesList summary />
+
+	<@ecotoxSummary _subject "${docSubType}"/>
 	
 	<@summaryAdditionalInformation summary/>
 </#macro>
@@ -388,17 +396,315 @@
 </#if>
 </#macro>
 
+<#macro ecotoxSummary doc docSubTypes>
+
+    <#-- get the list of summaries-->
+    <#if !docSubTypes?is_sequence>
+		<#local docSubTypes=[docSubTypes]/>
+	</#if>
+
+    <#local allSummaryList=[]/>
+    <#list docSubTypes as docSubType>
+        <#local summaryList = iuclid.getSectionDocumentsForParentKey(doc.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+        <#local allSummaryList=allSummaryList + summaryList/>
+    </#list>
+
+    <#-- print the table -->
+    <@ecotoxCSAtable allSummaryList/>
+</#macro>
+
+<#--Macro for the basic summary table of ecotox CSA using info stored in a hashmap-->
+<#macro ecotoxCSAtable summaryList>
+	<#compress>
+
+		<#-- if it's not list, convert to list -->
+		<#if !summaryList?is_sequence>
+			<#local summaryList=[summaryList]/>
+		</#if>
+
+		<#-- create a hash containing information from all summaries -->
+		<#local endpointsHash = {}/>
+		<#list summaryList as summary>
+			<#local summaryCSAseq = getEcotoxCSASeq(summary)/>
+			<#--  ${summaryCSAseq?join(":")}  -->
+			<#list summaryCSAseq as seqEntry>
+				<#if endpointsHash[seqEntry["name"]]??>
+					<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
+					<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
+				<#else>
+					<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
+				</#if>
+			</#list>
+		</#list>
+
+		<#-- parse the hash and create the table -->
+		<#if endpointsHash?has_content>
+			<table border="1">
+				<tbody valign="middle">
+				<tr align="center">
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Endpoint</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Dose descriptor</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Effect level</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Linked studies</emphasis></th>
+				</tr>
+
+				<#list endpointsHash as key, seq>
+					<#local usespan = true />
+					<#list seq as item>
+						<tr>
+							<#if usespan>
+								<td rowspan="${seq?size}">${key}</td>
+								<#local usespan = false />
+							</#if>
+							<td>${item.descriptor}</td>
+							<td>${item.effect}</td>
+							<td>${item.links}</td>
+						</tr>
+					</#list>
+				</#list>
+				</tbody></table>
+		</#if>
+	</#compress>
+</#macro>
+
+<#--Function to crete a hashmap with CSA info from ecotox summaries-->
+<#function getEcotoxCSASeq summary csaPath=['KeyValueForChemicalSafetyAssessment'] excludePath=['HigherTierTesting']>
+
+	<#local mySeq=[]/>
+
+	<#-- consider different path names, if not provided -->
+	<#local csaBlock = getObjectFromPathOptions(summary, csaPath)/>
+	
+	<#-- iterate CSA blocks-->
+	<#if csaBlock?has_content>
+
+		<#list csaBlock?children as block>
+			
+			<#-- take the label of the field as test type -->
+			<@iuclid.label for=block var="testType"/>
+
+			<#-- process if the path is not to be excluded -->
+			<#if !excludePath?seq_contains(block?node_name)>
+			
+				<#if block?node_type=="block">
+					<#-- dose descriptor -->
+					<#local doseDescriptor><#compress>
+						<#if block.hasElement("DoseDescriptor")>
+							<@com.value block.DoseDescriptor/>
+						</#if>
+					</#compress></#local>
+
+					<#-- effect concentration -->
+					<#local effConc><#compress>
+						<#if block.hasElement("EffectConcentration")>
+							<@com.value block.EffectConcentration/>
+						</#if>
+					</#compress></#local>
+
+					<#-- links -->
+					<#local links = ''/>
+					<#local links = getSummaryLinks(block, ["Link", "LinkToRelevantStudyRecord"])/>
+					
+					
+				<#-- special cases -->
+				<#else>
+					
+					<#-- turn the name of the field into the dose descriptor and print the field as effect -->
+					<#-- NOTE: this is the case of the bioconcentration documents -->
+					<#local doseDescriptor>${testType}</#local>
+					<#local effConc><@com.value block/></#local>
+					
+					<#-- make the endpoint the title of the document -->
+					<@iuclid.label for=summary var="testType"/>
+
+					<#-- if there are links to studies, repeat them in the table -->
+					<#local links = getSummaryLinks(summary, ["LinkToRelevantStudyRecord.Link"])/>
+
+				</#if>
+
+				<#-- append -->
+				<#if doseDescriptor?has_content || effConc?has_content || links?has_content>
+					<#local mySeq = mySeq + [{'name': testType!, "links" : links!, "descriptor":doseDescriptor!, "effect":effConc!}]/>
+				</#if>
+
+			</#if>
+		</#list>
+
+		<#--special cases-->
+		<#--  <#if csaPath.hasElement("EcTenLcTenNoecMarineWaterFish") && csaPath.EcTenLcTenNoecMarineWaterFish?has_content>
+			<#local endpoint>EC10 / LC10 / NOEC: <@com.range csaPath.EcTenLcTenNoecMarineWaterFish/></#local>
+			<#local mySeq = mySeq + [{'name': "Long-term toxicity to marine fish", "links" : generalLinks!, "endpoint":endpoint, "substance":"",
+			"organisms":"Marine fish"}]/>
+		</#if>  -->
+
+	</#if>
+	
+	<#return mySeq/>
+
+</#function>
+
+<#function getSummaryLinks summary paths role=''>  
+
+	<#-- initialise output -->
+	<#local pathValue = ''/>  
+
+	<#-- iterate over possible paths and create full path when found -->
+	<#local pathObject = getObjectFromPathOptions(summary, paths)/> 
+
+	<#-- print path if found and has content-->
+	<#if pathObject?has_content>
+		<#local pathValue><para role="${role}"><@printLinks pathObject/></para></#local>
+	</#if>
+
+	<#return pathValue/>
+</#function> 
+
+<#function getObjectFromPathOptions document paths> 
+	
+	<#-- iterate over possible paths and create full path when found -->
+	<#local pathObject = ''/>
+
+	<#list paths as path>
+		<#if document.hasElement(path)>
+			<#local fullPath = 'document.' + path />
+			<#local pathObject=fullPath?eval/>
+		</#if>
+	</#list>
+
+	<#return pathObject/>
+
+</#function>
+
+<#macro printLinks path>
+	
+	<#list path as link>
+		<#if link?has_content>
+			<#local studyReference = iuclid.getDocumentForKey(link) />
+			<para>
+				<command  linkend="${studyReference.documentKey.uuid!}">
+					<@com.text studyReference.name/>
+				</command>
+			</para>
+		</#if>
+	</#list>
+</#macro> 
+
+<#macro relevant summary>
+<#local docDefId = summary.documentType +"."+ summary.documentSubType/>
+<#if !(docDefId=="ENDPOINT_SUMMARY.AquaticToxicity" || docDefId=="ENDPOINT_SUMMARY.ToxicityOtherAquaOrganisms")>	
+
+	<#local fullPath = ("summary." + "KeyValueForChemicalSafetyAssessment")/>
+	<#local fullPath = fullPath?eval/>
+
+	<#assign items = []/>
+
+	<#list fullPath?children as child>
+		<#if child?has_content>
+				
+			<#local valueType=child?node_type/>
+			<@iuclid.label for=child var="descript"/>			
+			
+			${descript}
+
+			<@tableRelevantStudies summary child valueType descript /> 
+
+			<#else>No Endpoint Summary information available
+
+		</#if>
+	</#list>
+</#if>
+</#macro>
+
+<#macro tableRelevantStudies summary child valueType descript>
+
+<informaltable frame="all">
+	<tgroup cols='3'>										
+		<colspec width="33.3%" />
+		<colspec width="33.3%" />
+		<colspec width="33.3%" />
+			<tbody>
+		
+				<#if valueType=="block">
+				<row> 
+					<entry>
+						<#list child?children as child>
+						<@iuclid.label for=child var="description"/>
+									
+							<#if child?has_content>	
+							<#if description=="Link to relevant study record(s)">
+								<#list child as linkedRecords>
+									<#if linkedRecords?has_content>									         
+										<@com.documentReference linkedRecords/>	
+									</#if>
+								</#list>	
+							</#if>								
+							</#if>
+						</#list>
+					</entry>
+					<entry>
+						<#list child?children as child>
+						<@iuclid.label for=child var="description"/>											
+							<#if child?has_content>										         
+								<#if description=="Dose descriptor"> <@com.value child/>  </#if>
+							</#if>
+						</#list>
+					</entry>
+					<entry>
+						<#list child?children as child>
+						<@iuclid.label for=child var="description"/>
+									
+							<#if child?has_content>										         
+								<#if description=="Effect concentration"> <@com.value child/> </#if>
+							</#if>
+						</#list>
+					</entry>
+								
+				</row>
+				</#if>
+		</tbody>
+	</tgroup>
+</informaltable>
+</#macro>
+
+<#macro iterateHashMap summaryPathToDataMap summary>
+<#local properties = summaryPathToDataMap?keys />
+<#list properties as property>
+		<#if property?has_content>
+		<#-- Check whether the loaded document's type is the same as indicated in the current record of summaryPathToDataMap -->	
+			<#if summary?has_content>
+				<#local sectionReference = ("summary.KeyValueForChemicalSafetyAssessment." + summaryPathToDataMap[property].studyReferenceLink + ".LinkToRelevantStudyRecord")?eval  />
+				
+				<#if sectionReference?has_content>	
+					<#list sectionReference as studyReferences>
+						<#if studyReferences?has_content>
+						<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
+							<para>Relevant studies: <@com.text studyLink.name/></para>
+						</#if>
+					</#list>
+				</#if>
+			</#if>
+		</#if>
+		</#list>
+</#macro>
+
 <#-- Macro to get relevant studies linked to a summary -->
 <#macro relevantStudies summary path>
 
 <#local docDefId = summary.documentType +"."+ summary.documentSubType/>
 
-	<#-- generic linkes from endpoint summaries to endpoint study records -->					
-	
+	<#-- The #if condition below generally handles Summaries which have sub-sections which differentiate between linked studies, 
+	leaving only generic links from endpoint summaries to endpoint study records -->
 	<#if !(docDefId=="ENDPOINT_SUMMARY.AcuteToxicity" || docDefId=="ENDPOINT_SUMMARY.IrritationCorrosion" || docDefId=="ENDPOINT_SUMMARY.Sensitisation" ||
 	docDefId=="ENDPOINT_SUMMARY.RepeatedDoseToxicity" || docDefId=="ENDPOINT_SUMMARY.GeneticToxicity" || docDefId=="ENDPOINT_SUMMARY.Carcinogenicity" ||
-	docDefId=="ENDPOINT_SUMMARY.ToxicityToReproduction" || docDefId=="ENDPOINT_SUMMARY.Neurotoxicity" || docDefId=="ENDPOINT_SUMMARY.Immunotoxicity")>
-		<#if summary?has_content>		
+	docDefId=="ENDPOINT_SUMMARY.ToxicityToReproduction" || docDefId=="ENDPOINT_SUMMARY.Neurotoxicity" || docDefId=="ENDPOINT_SUMMARY.Immunotoxicity" ||
+	docDefId=="ENDPOINT_SUMMARY.SedimentToxicity" || docDefId=="ENDPOINT_SUMMARY.ToxicityToSoilMacroorganismsExceptArthropods" || 
+	docDefId=="ENDPOINT_SUMMARY.ToxicityToTerrestrialPlants" || docDefId=="ENDPOINT_SUMMARY.ToxicityToSoilMicroorganisms" || 
+	docDefId=="ENDPOINT_SUMMARY.ToxicityToBirds" || docDefId=="ENDPOINT_SUMMARY.ToxicityToOtherAboveGroundOrganisms" || docDefId=="ENDPOINT_SUMMARY.ToxicityToAquaticAlgae" || 
+	docDefId=="ENDPOINT_SUMMARY.ToxicityPlants" || docDefId=="ENDPOINT_SUMMARY.ToxicityMicroorganisms")>
+		
+		<#if summary?has_content>
+			<#-- some summaries do ot have links to studies, the following #if condition takes care of these exceptions -->
+			<#if !(docDefId=="ENDPOINT_SUMMARY.AquaticToxicity")>	
 			<#if summary.LinkToRelevantStudyRecord.Link?has_content>
 				<@com.emptyLine/>
 				<#list summary.LinkToRelevantStudyRecord.Link as studyReferences>
@@ -408,19 +714,39 @@
 					</#if>
 				</#list>
 			</#if>
+			</#if>
 		</#if>
-		
-	<#-- certain endpoint summaries that differentiate between linked studies and require a certain 'path' to be added -->
+	
 	<#else>
-		<#local linkedRecord = ("summary.KeyValueForChemicalSafetyAssessment."+path+".LinkToRelevantStudyRecordS")?eval/>
-		<#if 	linkedRecord?has_content>
-			<#list linkedRecord as records>
-				<#if records?has_content>
-				<#local link = iuclid.getDocumentForKey(records) />
-					<para>Relevant studies: <@com.text link.name/></para>
-				</#if>
-			</#list>
-		</#if>		
+
+	
+	<#assign summaryPathToDataMap = {
+		'Summary' : {'docType' : '${summary.documentType}', 'docSubType' : '${summary.documentSubType}', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.FreshwaterAlgaeShortTerm', 'sectionName' : 'Acute Toxicity oral', 'subCategoryRelevant' : 'Yes'}
+		
+		}/>
+
+		<#list summaryPathToDataMap?keys as prop>
+		<#-- Check whether the loaded document's type is the same as indicated in the current record of summaryPathToDataMap -->
+		<#if summaryPathToDataMap[prop].docType == summary.documentType && summaryPathToDataMap[prop].docSubType == summary.documentSubType>
+		<#if docDefId=="ENDPOINT_SUMMARY.ToxicityToAquaticAlgae">
+			<#if summary?has_content>
+					<#local sectionReference = summaryPathToDataMap[prop].studyReferenceLink />
+					<#if sectionReference?has_content>
+						<@com.emptyLine/>
+						<#local studyRecordPath = "summary." + summaryPathToDataMap[prop].studyReferenceLink + ".LinkToRelevantStudyRecord" />
+						<#local study = studyRecordPath?eval />	
+						<#list study as studyReferences>
+							<#if studyReferences?has_content>
+							<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
+								<para>Relevant studies: <@com.text studyLink.name/></para>
+							</#if>
+						</#list>
+					</#if>
+			</#if>
+		</#if>
+		</#if>
+		</#list>
+		
 	</#if>
 </#macro>
 

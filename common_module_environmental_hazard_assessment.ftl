@@ -1,21 +1,17 @@
-
 <!-- ENVIRONMENTAL HAZARD ASSESSMENT template file   -->
 
 <!-- Summary discussion Aquatic compartment (including sediment) -->
 <#macro aquaticToxicitySummary _subject>
 <#compress>
-
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "AquaticToxicity") />
-
 	<#if summaryList?has_content>
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
 			<#assign valueForCsaTextAquaticToxicity>
 			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextAquaticToxicity printSummaryName/>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaTextAquaticToxicity "AquaticToxicity" printSummaryName/>
 		</#list>
-	</#if>
-	
+	</#if>	
 </#compress>
 </#macro>
 		
@@ -111,73 +107,11 @@
 		</#if>
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
-		<#list summaryList as summary>
-			<@com.emptyLine/>
-			
-			<@studyandsummaryCom.summaryKeyInformation summary/>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish?has_content>						
-			<emphasis role="underline">Freshwater fish</emphasis>	
-				<#assign shortTermToxicityToFishFreshwaterList = summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish/>
-				<#if shortTermToxicityToFishFreshwaterList?has_content>
-				<#list shortTermToxicityToFishFreshwaterList as shortTermToxicityToFishFreshwater> 
-				
-					<#if shortTermToxicityToFishFreshwater.DoseDescriptor?has_content || 
-					shortTermToxicityToFishFreshwater.EffectConcentration?has_content>
-					
-						<#assign valueForCsaTextShortTermToxicityToFishFreshwater>
-						
-							<#if shortTermToxicityToFishFreshwater.DoseDescriptor?has_content>
-								<para>Dose descriptor: <@com.picklist shortTermToxicityToFishFreshwater.DoseDescriptor/>
-								</para><?linebreak?>
-							</#if>
-							
-							<#if shortTermToxicityToFishFreshwater.EffectConcentration?has_content>
-								<para>Effect concentration: <@com.range shortTermToxicityToFishFreshwater.EffectConcentration/>
-								</para><?linebreak?>
-							</#if>
-						
-						</#assign>
-						<@com.emptyLine/>
-					</#if>
-					
-				</#list>
-				</#if>			
-			</#if>
-			<@endpointSummary summary valueForCsaTextShortTermToxicityToFishFreshwater "valueForCsaTextShortTermToxicityToFishFreshwater" false/>
-					
-			<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish?has_content>						
-			<emphasis role="underline">Marine water fish</emphasis>	
-				<#assign shortTermToxicityToFishMarineList = summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish/>
-				<#if shortTermToxicityToFishMarineList?has_content>
-				<#list shortTermToxicityToFishMarineList as shortTermToxicityToFishMarine> 
-				
-					<#if shortTermToxicityToFishMarine.DoseDescriptor?has_content || 
-					shortTermToxicityToFishMarine.EffectConcentration?has_content>
-					
-						<#assign valueForCsaTextShortTermToxicityToFishMarine>
-						
-							<#if shortTermToxicityToFishMarine.DoseDescriptor?has_content>
-								<para>Dose descriptor: <@com.picklist shortTermToxicityToFishMarine.DoseDescriptor/>
-								</para><?linebreak?>
-							</#if>
-							
-							<#if shortTermToxicityToFishMarine.EffectConcentration?has_content>
-								<para>Effect concentration: <@com.range shortTermToxicityToFishMarine.EffectConcentration/>
-								</para><?linebreak?>
-							</#if>
-						
-						</#assign>
-					</#if>
-					
-				</#list>
-				</#if>			
+		<#list summaryList as summary>			
+			<@studyandsummaryCom.summaryKeyInformation summary/>			
+			<#if summary?has_content>					
+			<@studyandsummaryCom.ecotoxSummary _subject "ShortTermToxicityToFish"/>
 			</#if>			
-			<@endpointSummary summary valueForCsaTextShortTermToxicityToFishMarine "valueForCsaTextShortTermToxicityToFishMarine" false/>
-			<para><@studyandsummaryCom.relevantStudies summary/></para>		
-			<para><@studyandsummaryCom.assessmentEntitiesList summary/></para>	
-			<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>
-			
 		</#list>
 	</#if>
 				
@@ -279,68 +213,9 @@
 			
 			<@studyandsummaryCom.summaryKeyInformation summary/>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish?has_content>				
-
-			<emphasis role="underline">Freshwater fish</emphasis>	
-				<#assign longTermToxicityToFishFreshwaterList = summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish/>
-				<#if longTermToxicityToFishFreshwaterList?has_content>
-				
-				<#list longTermToxicityToFishFreshwaterList as longTermToxicityToFishFreshwater> 
-				
-					<#if longTermToxicityToFishFreshwater.DoseDescriptor?has_content || longTermToxicityToFishFreshwater.EffectConcentration?has_content>
-
-						<#assign valueForCsaTextLongTermToxicityToFishFreshwater>
-						
-							<#if longTermToxicityToFishFreshwater.DoseDescriptor?has_content>
-								<para>Dose descriptor: <@com.picklist longTermToxicityToFishFreshwater.DoseDescriptor/>
-								</para><?linebreak?>
-							</#if>
-							
-							<#if longTermToxicityToFishFreshwater.EffectConcentration?has_content>
-								<para>Effect concentration: <@com.range longTermToxicityToFishFreshwater.EffectConcentration/>
-								</para><?linebreak?>
-							</#if>
-						
-						</#assign>
-						<@com.emptyLine/>
-					</#if>
-					
-				</#list>
-				</#if>			
+			<#if summary?has_content>				
+			<@studyandsummaryCom.ecotoxSummary _subject "LongTermToxicityToFish"/>
 			</#if>
-			<@endpointSummary summary valueForCsaTextLongTermToxicityToFishFreshwater "valueForCsaTextLongTermToxicityToFishFreshwater" false/>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish?has_content>						
-			<emphasis role="underline">Marine water fish</emphasis>	
-				<#assign longTermToxicityToFishMarineList = summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish/>
-				<#if longTermToxicityToFishMarineList?has_content>
-				<#list longTermToxicityToFishMarineList as longTermToxicityToFishMarine> 
-				
-					<#if longTermToxicityToFishMarine.DoseDescriptor?has_content || 
-					longTermToxicityToFishMarine.EffectConcentration?has_content>
-					
-						<#assign valueForCsaTextLongTermToxicityToFishMarine>
-						
-							<#if longTermToxicityToFishMarine.DoseDescriptor?has_content>
-								<para>Dose descriptor: <@com.picklist longTermToxicityToFishMarine.DoseDescriptor/>
-								</para><?linebreak?>
-							</#if>
-							
-							<#if longTermToxicityToFishMarine.EffectConcentration?has_content>
-								<para>Effect concentration: <@com.range longTermToxicityToFishMarine.EffectConcentration/>
-								</para><?linebreak?>
-							</#if>
-						
-						</#assign>
-					</#if>
-					
-				</#list>
-				</#if>			
-			</#if>			
-			<@endpointSummary summary valueForCsaTextLongTermToxicityToFishMarine "valueForCsaTextLongTermToxicityToFishMarine" false/>
-			<para><@studyandsummaryCom.relevantStudies summary/></para>		
-			<para><@studyandsummaryCom.assessmentEntitiesList summary/></para>	
-			<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>			
 			
 		</#list>
 	</#if>
@@ -439,73 +314,11 @@
 		</#if>
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
-		<#list summaryList as summary>
-			<@com.emptyLine/>
-			
-			<@studyandsummaryCom.summaryKeyInformation summary/>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.FreshWaterInvertebrates?has_content>						
-			<emphasis role="underline">Freshwater fish</emphasis>	
-				<#assign shortTermToxicityToAquaticInvertebratesFreshwaterList = summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.FreshWaterInvertebrates/>
-				<#if shortTermToxicityToAquaticInvertebratesFreshwaterList?has_content>
-				<#list shortTermToxicityToAquaticInvertebratesFreshwaterList as shortTermToxicityToAquaticInvertebratesFreshwater> 
-				
-					<#if shortTermToxicityToAquaticInvertebratesFreshwater.DoseDescriptor?has_content || 
-					shortTermToxicityToAquaticInvertebratesFreshwater.EffectConcentration?has_content>
-					
-						<#assign valueForCsaTextShortTermToxicityToAquaticInvertebratesFreshwater>
-						
-							<#if shortTermToxicityToAquaticInvertebratesFreshwater.DoseDescriptor?has_content>
-								<para>Dose descriptor: <@com.picklist shortTermToxicityToAquaticInvertebratesFreshwater.DoseDescriptor/>
-								</para><?linebreak?>
-							</#if>
-							
-							<#if shortTermToxicityToAquaticInvertebratesFreshwater.EffectConcentration?has_content>
-								<para>Effect concentration: <@com.range shortTermToxicityToAquaticInvertebratesFreshwater.EffectConcentration/>
-								</para>
-							</#if>
-						
-						</#assign>
-						<@com.emptyLine/>
-					</#if>
-					
-				</#list>
-				</#if>			
+		<#list summaryList as summary>			
+			<@studyandsummaryCom.summaryKeyInformation summary/>			
+			<#if summary?has_content>
+			<@studyandsummaryCom.ecotoxSummary _subject "ShortTermToxicityToAquaticInvertebrates"/>					
 			</#if>
-			<@endpointSummary summary valueForCsaTextShortTermToxicityToAquaticInvertebratesFreshwater "valueForCsaTextShortTermToxicityToAquaticInvertebratesFreshwater" false/>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.MarineWaterInvertebrates?has_content>						
-			<emphasis role="underline">Marine fish</emphasis>	
-				<#assign shortTermToxicityToAquaticInvertebratesMarineList = summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.MarineWaterInvertebrates/>
-				<#if shortTermToxicityToAquaticInvertebratesMarineList?has_content>
-				<#list shortTermToxicityToAquaticInvertebratesMarineList as shortTermToxicityToAquaticInvertebratesMarine> 
-				
-					<#if shortTermToxicityToAquaticInvertebratesMarine.DoseDescriptor?has_content || 
-					shortTermToxicityToAquaticInvertebratesMarine.EffectConcentration?has_content>
-					
-						<#assign valueForCsaTextShortTermToxicityToAquaticInvertebratesMarine>
-						
-							<#if shortTermToxicityToAquaticInvertebratesMarine.DoseDescriptor?has_content>
-								<para>Dose descriptor: <@com.picklist shortTermToxicityToAquaticInvertebratesMarine.DoseDescriptor/>
-								</para><?linebreak?>
-							</#if>
-							
-							<#if shortTermToxicityToAquaticInvertebratesMarine.EffectConcentration?has_content>
-								<para>Effect concentration: <@com.range shortTermToxicityToAquaticInvertebratesMarine.EffectConcentration/>
-								</para>
-							</#if>
-						
-						</#assign>
-					</#if>
-					
-				</#list>
-				</#if>			
-			</#if>
-			<@endpointSummary summary valueForCsaTextShortTermToxicityToAquaticInvertebratesMarine "valueForCsaTextShortTermToxicityToAquaticInvertebratesMarine" false/>
-			<para><@studyandsummaryCom.relevantStudies summary/></para>		
-			<para><@studyandsummaryCom.assessmentEntitiesList summary/></para>	
-			<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>			
-			
 		</#list>
 	</#if>
 	
@@ -594,8 +407,7 @@
 <#macro longTermToxicityToAquaticInvertebratesSummary _subject>
 <#compress>	
 
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "LongTermToxicityToAquaticInvertebrates") />
-		
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "LongTermToxicityToAquaticInvertebrates") />		
 	
 	<#if summaryList?has_content>
 		
@@ -606,72 +418,10 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@com.emptyLine/>
-			
-			<@studyandsummaryCom.summaryKeyInformation summary/>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.FreshWaterInvertebrates?has_content>						
-			<emphasis role="underline">Freshwater fish</emphasis>	
-				<#assign longTermToxicityToAquaticInvertebratesFreshwaterList = summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.FreshWaterInvertebrates/>
-				<#if longTermToxicityToAquaticInvertebratesFreshwaterList?has_content>
-				<#list longTermToxicityToAquaticInvertebratesFreshwaterList as longTermToxicityToAquaticInvertebratesFreshwater> 
-				
-					<#if longTermToxicityToAquaticInvertebratesFreshwater.DoseDescriptor?has_content || 
-					longTermToxicityToAquaticInvertebratesFreshwater.EffectConcentration?has_content>
-					
-						<#assign valueForCsaTextLongTermToxicityToAquaticInvertebratesFreshwater>
-						
-							<#if longTermToxicityToAquaticInvertebratesFreshwater.DoseDescriptor?has_content>
-								<para>Dose descriptor: <@com.picklist longTermToxicityToAquaticInvertebratesFreshwater.DoseDescriptor/>
-								</para><?linebreak?>
-							</#if>
-							
-							<#if longTermToxicityToAquaticInvertebratesFreshwater.EffectConcentration?has_content>
-								<para>Effect concentration: <@com.range longTermToxicityToAquaticInvertebratesFreshwater.EffectConcentration/>
-								</para><?linebreak?>
-							</#if>
-						
-						</#assign>
-						<@com.emptyLine/>
-					</#if>
-					
-				</#list>
-				</#if>			
-			</#if>			
-			<@endpointSummary summary valueForCsaTextLongTermToxicityToAquaticInvertebratesFreshwater "valueForCsaTextLongTermToxicityToAquaticInvertebratesFreshwater" false/>
-						
-			<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.MarineWaterInvertebrates?has_content>						
-			<emphasis role="underline">Marine fish</emphasis>	
-				<#assign longTermToxicityToAquaticInvertebratesMarineList = summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.MarineWaterInvertebrates/>
-				<#if longTermToxicityToAquaticInvertebratesMarineList?has_content>
-				<#list longTermToxicityToAquaticInvertebratesMarineList as longTermToxicityToAquaticInvertebratesMarine> 
-				
-					<#if longTermToxicityToAquaticInvertebratesMarine.DoseDescriptor?has_content || 
-					longTermToxicityToAquaticInvertebratesMarine.EffectConcentration?has_content>
-					
-						<#assign valueForCsaTextLongTermToxicityToAquaticInvertebratesMarine>
-						
-							<#if longTermToxicityToAquaticInvertebratesMarine.DoseDescriptor?has_content>
-								<para>Dose descriptor: <@com.picklist longTermToxicityToAquaticInvertebratesMarine.DoseDescriptor/>
-								</para><?linebreak?>
-							</#if>
-							
-							<#if longTermToxicityToAquaticInvertebratesMarine.EffectConcentration?has_content>
-								<para>Effect concentration: <@com.range longTermToxicityToAquaticInvertebratesMarine.EffectConcentration/>
-								</para><?linebreak?>
-							</#if>
-						
-						</#assign>
-					</#if>
-					
-				</#list>
-				</#if>			
+		<@studyandsummaryCom.summaryKeyInformation summary/>			
+			<#if summary?has_content>						
+			<@studyandsummaryCom.ecotoxSummary _subject "LongTermToxicityToAquaticInvertebrates"/>		
 			</#if>
-			<@endpointSummary summary valueForCsaTextLongTermToxicityToAquaticInvertebratesMarine "valueForCsaTextLongTermToxicityToAquaticInvertebratesMarine" false/>
-			<para><@studyandsummaryCom.relevantStudies summary/></para>		
-			<para><@studyandsummaryCom.assessmentEntitiesList summary/></para>	
-			<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>
-			
 		</#list>
 	</#if>
 	
@@ -945,25 +695,9 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@com.emptyLine/>
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue1")> 
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue2")>
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue3")>
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue4")>
-
-			<#if summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.KeyValue3?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.KeyValue4?has_content>
-			<#assign valueForCsaTextToxicityToAquaticAlgae>
-				EC50 for freshwater algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue1/><?linebreak?>
-				EC50 for marine water algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue2/><?linebreak?>
-				EC10/LC10 or NOEC for freshwater algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue3/><?linebreak?>
-				EC10/LC10 or NOEC for marine water algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue4/>
-			</#assign>
+			<#if summary?has_content>			
+				<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToAquaticAlgae "ToxicityToAquaticAlgae" printSummaryName/>
 			</#if>
-			</#if></#if></#if></#if>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToAquaticAlgae printSummaryName/>
 		</#list>
 	</#if>	
 	
@@ -991,27 +725,9 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@com.emptyLine/>
-
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue1")> 
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue2")>
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue3")>
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue4")>
-
-			<#if summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.KeyValue3?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.KeyValue4?has_content>
-			
-			<#assign valueForCsaTextToxicityPlants>
-				EC50 for freshwater algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue1/><?linebreak?>
-				EC50 for marine water algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue2/><?linebreak?>
-				EC10/LC10 or NOEC for freshwater algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue3/><?linebreak?>
-				EC10/LC10 or NOEC for marine water algae: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue4/>
-			</#assign>
-			</#if>
-			</#if></#if></#if></#if>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityPlants printSummaryName/>
+		<#if summary?has_content>			
+			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityPlants "ToxicityPlants" printSummaryName/>
+		</#if>
 		</#list>
 	</#if>
 		
@@ -1122,25 +838,93 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@com.emptyLine/>
-			<#if summary.KeyValueForChemicalSafetyAssessment.Ec50Lc50ForFreshwaterSediment?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.Ec50Lc50ForMarineWaterSediment?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.Ec10Lc10OrNoecForFreshwaterSediment?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.Ec10Lc10OrNoecForMarineWaterSediment?has_content>
-			<#assign valueForCsaTextSediment>
-				EC50 or LC50 for freshwater sediment: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.Ec50Lc50ForFreshwaterSediment/><?linebreak?>
-				EC50 or LC50 for marine water sediment: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.Ec50Lc50ForMarineWaterSediment/><?linebreak?>
-				EC10, LC10 or NOEC for freshwater sediment: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.Ec10Lc10OrNoecForFreshwaterSediment/><?linebreak?>
-				EC10, LC10 or NOEC for marine water sediment: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.Ec10Lc10OrNoecForMarineWaterSediment/>
-			</#assign>
+			<#if summary?has_content>
+				<@studyandsummaryCom.endpointSummary summary valueForCsaTextSediment "SedimentToxicity" printSummaryName/>
 			</#if>
-			
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextSediment printSummaryName/>
 		</#list>
 	</#if>
 									
 </#compress>
 </#macro>
+
+EndocrineDisrupterAquaticVertebratesInVivo
+<!-- Other aquatic organisms study table -->
+<#macro EndocrineDisrupterAquaticVertebratesInVivo _subject>
+<#compress>			
+		
+	<#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "EndocrineDisrupterTestingInAqua") />
+	
+	<#-- Populate resultStudyList, dataWaivingStudyList, testingProposalStudyList -->
+	<@populateResultAndDataWaivingAndTestingProposalStudyLists studyList/>
+		
+	<!-- Study results -->
+	<#if !resultStudyList?has_content>
+	No relevant information available.
+	<#else/>
+		The results are summarised in the following table:
+		
+		<@com.emptyLine/>
+		<table border="1">
+			<title>Endocrine disrupter in aquatic vertebrates</title>
+			<col width="39%" />
+			<col width="41%" />
+			<col width="20%" />
+			<tbody>
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Method</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Results</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+				</tr>
+				
+				<#list resultStudyList as study>
+					<tr>
+						<!-- Method -->
+						<td>
+							<para>
+								<@com.picklist study.MaterialsAndMethods.TestOrganisms.TestOrganismsSpecies/>
+							</para>
+							
+							<para>
+								<@com.picklist study.MaterialsAndMethods.StudyDesign.WaterMediaType/>									
+							</para>
+							
+							<para>
+								<@com.picklist study.MaterialsAndMethods.StudyDesign.TestType/>
+							</para>
+							
+							<para>
+								<@studyandsummaryCom.guidelineList study.MaterialsAndMethods.Guideline/>
+							</para>
+							
+							<para>
+								<@com.text study.MaterialsAndMethods.MethodNoGuideline/>
+							</para>
+						</td>
+						<!-- Results -->
+						<td>
+							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","IC10","LC10","EC50","IC50","LC50","EC0","IC0","LC0"]) />
+							<@effectList studyandsummaryCom.orderByKeyResult(sortedEffectList) study/>
+						</td>
+						<!-- Remarks -->
+						<td>
+							<@studyandsummaryCom.studyRemarksColumn study/>
+						</td>
+					</tr>
+					<@studyandsummaryCom.tableRowForJustificationForTypeOfInformation study/>	
+				</#list>
+			</tbody>
+		</table>
+	</#if>
+	
+	<!-- Data waiving -->
+	<@studyandsummaryCom.dataWaiving dataWaivingStudyList "Effects on other aquatic organisms"/>
+			
+	<!-- Testing proposal -->
+	<@studyandsummaryCom.testingProposal testingProposalStudyList "Effects on other aquatic organisms"/>
+			
+</#compress>
+</#macro>
+
 
 <!-- Other aquatic organisms study table -->
 <#macro toxicityOtherAquaticOrganismsStudies _subject>
@@ -1234,8 +1018,9 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>				
-			<#assign valueForCsaTextToxicityOtherAquaOrganisms></#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityOtherAquaOrganisms printSummaryName/>
+			<#if summary?has_content>
+				<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityOtherAquaOrganisms "ToxicityOtherAquaOrganisms" printSummaryName/>
+			</#if>
 		</#list>
 	</#if>
 									
@@ -1251,7 +1036,9 @@
 	<#if summaryList?has_content>
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+			<#if summary?has_content>
+			<@studyandsummaryCom.endpointSummary summary "" "TerrestrialToxicity" printSummaryName/>
+			</#if>
 		</#list>
 	</#if>
 
@@ -1433,24 +1220,24 @@
 </#macro>	
 
 <!-- Toxicity to Terrestrial Arthropods for non CSR: study table -->
-<#macro toxicityToTerrestrialArthropodsStudies _subject>
+<#macro toxicityToTerrestrialArthropodsOtherThanBeesStudies _subject>
 <#compress>		
 
-	<#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "ToxicityToTerrestrialArthropods") />
+	<#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "ToxicityToTerrestrialArthropodsOtherThanBees") />
 	<@populateResultAndDataWaivingAndTestingProposalStudyLists studyList/>
-	<#assign resultStudyList2 = resultStudyList/>
-	<#assign dataWaivingStudyList2 = dataWaivingStudyList/>
-	<#assign testingProposalStudyList2 = testingProposalStudyList/>
-			
+	<#assign resultStudyList = resultStudyList/>
+	<#assign dataWaivingStudyList = dataWaivingStudyList/>
+	<#assign testingProposalStudyList = testingProposalStudyList/>
+
 	<!-- Study results -->
-	<#if !resultStudyList2?has_content>
+	<#if !resultStudyList?has_content>
+	<@com.emptyLine />
 		No relevant information available.		
 		<#else/>
-		The results are summarised in the following table:
-			
-		<@com.emptyLine/>
+		<para>The results are summarised in the following table:</para>
+
 		<table border="1">
-			<title>Effects on terrestrial arthropods</title>
+			<title>Effects on terrestrial arthropods other than bees</title>
 			<col width="39%" />
 			<col width="41%" />
 			<col width="20%" />
@@ -1461,8 +1248,8 @@
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
 				</tr>					
 				
-				<#list resultStudyList2 as study>
-				<#if (csrRelevant?? && !(isSoilMacroOrganismsInvolved(study))) || !(csrRelevant??)>
+				<#list resultStudyList as study>
+				<#if study?has_content>
 					<tr>
 						<!-- Method -->
 						<td>
@@ -1471,7 +1258,7 @@
 							</para>
 							
 							<para>
-								Application method: <@com.picklist study.MaterialsAndMethods.ApplicationMethod/>
+								Application method: <@com.picklist study.MaterialsAndMethods.TestSubstrate.ApplicationMethod/>
 							</para>
 							
 							<para>
@@ -1508,23 +1295,116 @@
 	</#if>
 	
 	<!-- Data waiving -->
-	<#if dataWaivingStudyList2?has_content>
+	<#if dataWaivingStudyList?has_content>
 		<para><emphasis role="HEAD-WoutNo">Data waiving</emphasis></para>
-		<@studyandsummaryCom.dataWaiving dataWaivingStudyList2 "Toxicity to soil arthropods" false/>
+		<@studyandsummaryCom.dataWaiving dataWaivingStudyList "Toxicity to soil arthropods" false/>
 	</#if>          
 			
 	<!-- Testing proposal -->
-	<#if testingProposalStudyList2?has_content>
+	<#if testingProposalStudyList?has_content>
 		<para><emphasis role="HEAD-WoutNo">Testing proposal</emphasis></para>
-		<@studyandsummaryCom.testingProposal testingProposalStudyList2 "Toxicity to soil arthropods" false/>
+		<@studyandsummaryCom.testingProposal testingProposalStudyList "Toxicity to soil arthropods" false/>
 	</#if>
 	
-	<#assign resultStudyList2 = []/>
-	<#assign dataWaivingStudyList2 = []/>
-	<#assign testingProposalStudyList2 = []/>
+	<#assign resultStudyList = []/>
+	<#assign dataWaivingStudyList = []/>
+	<#assign testingProposalStudyList = []/>
 		
 </#compress>
 </#macro>		
+
+<#macro toxicityToBeesStudies _subject>
+<#compress>		
+
+	<#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "ToxicityToBees") />
+	<@populateResultAndDataWaivingAndTestingProposalStudyLists studyList/>
+	<#assign resultStudyList = resultStudyList/>
+	<#assign dataWaivingStudyList = dataWaivingStudyList/>
+	<#assign testingProposalStudyList = testingProposalStudyList/>
+			
+	<!-- Study results -->
+	<#if !resultStudyList?has_content>
+	<@com.emptyLine />
+		No relevant information available.		
+		<#else/>
+		<para>The results are summarised in the following table:</para>
+
+		<table border="1">
+			<title>Effects on terrestrial arthropods - bees</title>
+			<col width="39%" />
+			<col width="41%" />
+			<col width="20%" />
+			<tbody>
+				<tr>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Method</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Results</emphasis></th>
+					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+				</tr>					
+				
+				<#list resultStudyList as study>
+				<#if study?has_content>
+					<tr>
+						<!-- Method -->
+						<td>
+							<para>
+								<@com.picklist study.MaterialsAndMethods.TestOrganisms.TestOrganismsSpecies/> (<@com.picklist study.MaterialsAndMethods.TestOrganisms.AnimalGroup/>)
+							</para>
+							
+							<para>
+								Application method: <@com.picklist study.MaterialsAndMethods.TestSubstrate.ApplicationMethod/>
+							</para>
+							
+							<para>
+								<@com.picklist study.AdministrativeData.Endpoint/>
+								
+								<#if study.MaterialsAndMethods.StudyDesign.StudyType?has_content>
+									(<@com.picklist study.MaterialsAndMethods.StudyDesign.StudyType/>)
+								</#if>
+							</para>
+							
+							<para>
+								<@studyandsummaryCom.guidelineList study.MaterialsAndMethods.Guideline/>
+							</para>
+							
+							<para>
+								<@com.text study.MaterialsAndMethods.MethodNoGuideline/>
+							</para>
+						</td>
+						<!-- Results -->
+						<td>
+							<#assign sortedEffectList = iuclid.sortByField(study.ResultsAndDiscussion.EffectConcentrations, "Endpoint", ["NOEC","LOEC","EC10","LC10","LD10","EC50","LC50","LD50"]) />
+							<@effectList sortedEffectList study/>
+						</td>
+						<!-- Remarks -->
+						<td>
+							<@studyandsummaryCom.studyRemarksColumn study/>
+						</td>
+					</tr>
+					<@studyandsummaryCom.tableRowForJustificationForTypeOfInformation study/>
+				</#if>
+				</#list>
+			</tbody>
+		</table>
+	</#if>
+	
+	<!-- Data waiving -->
+	<#if dataWaivingStudyList?has_content>
+		<para><emphasis role="HEAD-WoutNo">Data waiving</emphasis></para>
+		<@studyandsummaryCom.dataWaiving dataWaivingStudyList "Toxicity to soil arthropods" false/>
+	</#if>          
+			
+	<!-- Testing proposal -->
+	<#if testingProposalStudyList?has_content>
+		<para><emphasis role="HEAD-WoutNo">Testing proposal</emphasis></para>
+		<@studyandsummaryCom.testingProposal testingProposalStudyList "Toxicity to soil arthropods" false/>
+	</#if>
+	
+	<#assign resultStudyList = []/>
+	<#assign dataWaivingStudyList = []/>
+	<#assign testingProposalStudyList = []/>
+		
+</#compress>
+</#macro>
 			
 <!-- Summary Discussion for soil macroorganisms except arthropods -->	
 <#macro toxicityToSoilMacroorganismsExceptArthropodsSummary _subject>
@@ -1540,15 +1420,9 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 			<#list summaryList as summary>
-				<@com.emptyLine/>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForSoilMacroorganisms?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForSoilMacroorganisms?has_content> 
-				<#assign valueForCsaTextSoilMacroorganismsExceptArthropods>
-					Short-term EC50 or LC50 for soil macro-organisms: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForSoilMacroorganisms/><?linebreak?>
-					Long-term EC10/LC10 or NOEC for soil macro-organisms: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForSoilMacroorganisms/>
-				</#assign>
+				<#if summary?has_content>			
+					<@studyandsummaryCom.endpointSummary summary valueForCsaTextSoilMacroorganismsExceptArthropods "ToxicityToSoilMacroorganismsExceptArthropods" printSummaryName/>
 				</#if>
-				
-				<@studyandsummaryCom.endpointSummary summary valueForCsaTextSoilMacroorganismsExceptArthropods printSummaryName/>
 			</#list>
 	</#if>
 		
@@ -1569,14 +1443,9 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@com.emptyLine/>
-			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForSoilDwellingArthropods?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForSoilDwellingArthropods?has_content> 
-			<#assign valueForCsaTextToxicityToTerrestrialArthropods>
-				Short-term EC50 or LC50 for soil dwelling arthropods: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForSoilDwellingArthropods/><?linebreak?>
-				Long-term EC10/LC10 or NOEC for soil dwelling arthropods: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForSoilDwellingArthropods/>
-			</#assign>
+			<#if summary?has_content>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToTerrestrialArthropods "ToxicityToTerrestrialArthropods" printSummaryName/>
 			</#if>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToTerrestrialArthropods printSummaryName/>
 		</#list>
 	</#if>
 		
@@ -1673,8 +1542,7 @@
 
 	<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "ToxicityToTerrestrialPlants") />
 			
-	<#if summaryList?has_content>
-		
+	<#if summaryList?has_content>		
 		<#local summaryCSAValue = getValuesForToxicityToTerrestrialPlants(summaryList)/>
 		<#if summaryCSAValue?has_content>
 			<@CSAValueTextToxicityToTerrestrialPlants summaryCSAValue typeText typeText1 />
@@ -1683,14 +1551,9 @@
 		<#local printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
 			<@com.emptyLine/>
-			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForTerrestrialPlants?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForTerrestrialPlants?has_content> 
-			<#local valueForCsaTextToxicityToTerrestrialPlants>
-				Short-term EC50 or LC50 for terrestrial plants: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForTerrestrialPlants/><?linebreak?>
-				Long-term EC10/LC10 or NOEC for terrestrial plants: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForTerrestrialPlants/>
-			</#local>
+			<#if summary?has_content>			
+				<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToTerrestrialPlants "ToxicityToTerrestrialPlants" printSummaryName/>
 			</#if>
-			
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToTerrestrialPlants printSummaryName/>
 		</#list>
 	</#if>
 	
@@ -1783,16 +1646,9 @@
 		
 		<#list summaryList as summary>
 			<@com.emptyLine/>
-			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50ForSoilMicroorganisms?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10OrNoecForSoilMicroorganisms?has_content> 
-			
-			<#assign valueForCsaTextToxicityToSoilMicroorganisms>
-				Short-term EC50 or LC50 for soil micro-organisms: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50ForSoilMicroorganisms/><?linebreak?>
-				Long-term EC10/LC10 or NOEC for soil micro-organisms: 
-				<@com.quantity summary.KeyValueForChemicalSafetyAssessment.LongTermEc10OrNoecForSoilMicroorganisms/>
-			</#assign>
+			<#if summary?has_content>			
+				<@studyandsummaryCom.endpointSummary summary "KeyValueForChemicalSafetyAssessment" "ToxicityToSoilMicroorganisms" printSummaryName/>
 			</#if>
-			
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToSoilMicroorganisms printSummaryName/>
 		</#list>
 	</#if>
 		
@@ -1803,7 +1659,7 @@
 <#macro toxicityToTerrestrialArthropodsSummaryShortVersion _subject>
 <#compress>		
 
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "ToxicityToTerrestrialArthropods") />
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "ToxicityToTerrestrialArthropodsOtherThanBees") />
 	
 	<#if summaryList?has_content>
 		
@@ -1814,9 +1670,29 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@com.emptyLine/>			
-			<#assign valueForCsaTextToxicityToTerrestrialArthropods></#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToTerrestrialArthropods printSummaryName/>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToTerrestrialArthropods "ToxicityToTerrestrialArthropodsOtherThanBees" printSummaryName/>
+		</#list>
+	</#if>
+	
+</#compress>
+</#macro>
+
+<!-- Summary Discussion toxicity to terrestrial arthropods summary short version -->
+<#macro toxicityToBeesSummary _subject>
+<#compress>		
+
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "ToxicityToBees") />
+	
+	<#if summaryList?has_content>
+		
+		<#assign summaryCSAValue = getValues(summaryList)/>
+		<#if summaryCSAValue?has_content>
+			<@CSAValueText summaryCSAValue typeText typeText1 />
+		</#if>			
+		
+		<#assign printSummaryName = summaryList?size gt 1 />
+		<#list summaryList as summary>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToTerrestrialArthropods "ToxicityToBees" printSummaryName/>
 		</#list>
 	</#if>
 	
@@ -1905,8 +1781,7 @@
 		
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "ToxicityMicroorganisms") />
 			
-	<#if summaryList?has_content>
-		
+	<#if summaryList?has_content>		
 		<#assign summaryCSAValue = getValuesForToxicityMicroorganisms(summaryList)/>
 		<#if summaryCSAValue?has_content>
 			<@CSAValueTextToxicityMicroorganisms summaryCSAValue typeText typeText1 />
@@ -1914,21 +1789,9 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@com.emptyLine/>
-
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue1")> 
-			<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.KeyValue2")>
-
-			<#if summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content> 
-			
-			
-			<#assign valueForCsaTextToxicityMicroorganisms>
-			EC50/LC50 for aquatic micro-organisms: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue1/>
-			EC10/LC10 or NOEC for aquatic micro-organisms: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.KeyValue2/>
-			</#assign>
+			<#if summary?has_content>
+				<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityMicroorganisms "ToxicityMicroorganisms" printSummaryName/>
 			</#if>
-			</#if></#if>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityMicroorganisms printSummaryName/>
 		</#list>
 	</#if>
 	
@@ -2036,15 +1899,9 @@
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
 			<@com.emptyLine/>
-			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForBirds?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForBirds?has_content> 
-			<#assign valueForCsaTextToxicityToBirds>
-				Short-term EC50 or LC50 for birds: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForBirds/>
-				Long-term EC10/LC10 or NOEC for birds: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForBirds/>
-			</#assign>
+			<#if summary?has_content>			
+				<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToBirds "ToxicityToBirds" printSummaryName/>
 			</#if>
-			
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToBirds printSummaryName/>
 		</#list>
 	</#if>		
 
@@ -2139,16 +1996,9 @@
 		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@com.emptyLine/>
-			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForMammals?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForMammals?has_content> 
-			<#assign valueForCsaTextToxicityToOtherAboveGroundOrganisms>
-			Short-term EC50 or LC50 for mammals: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForMammals/>
-			Long-term EC10/LC10 or NOEC for mammals: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForMammals/>
-			</#assign>
+			<#if summary?has_content>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToOtherAboveGroundOrganisms "ToxicityToOtherAboveGroundOrganisms" printSummaryName/>
 			</#if>
-			
-			<@studyandsummaryCom.endpointSummary summary valueForCsaTextToxicityToOtherAboveGroundOrganisms printSummaryName/>
 		</#list>
 	</#if>
 		
@@ -2164,8 +2014,10 @@
 	<#if summaryList?has_content>		
 	 <#assign printSummaryName = summaryList?size gt 1 />
         <#list summaryList as summary>
-            <@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
-        </#list>
+			<#if summary?has_content>
+            <@studyandsummaryCom.endpointSummary summary "" "AdditionalEcotoxicologicalInformation" printSummaryName/>
+			</#if>
+		</#list>
 	</#if>
 	
 </#compress>
@@ -2569,7 +2421,9 @@
 </#function>
 
 <#function isCSAToxicityToBirds summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForBirds?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForBirds?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.BirdsShortTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.BirdsLongTerm.DoseDescriptor?has_content />
 </#function>
 
 <#function getValuesForToxicityToOtherAboveGroundOrganisms summaryList>
@@ -2589,7 +2443,9 @@
 </#function>
 
 <#function isCSAToxicityToOtherAboveGroundOrganisms summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForMammals?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForMammals?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MammalsShortTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MammalsLongTerm.DoseDescriptor?has_content />
 </#function>
 
 <#function getValuesForToxicityToSoilMicroorganisms summaryList>
@@ -2608,7 +2464,9 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSAToxicityToSoilMicroorganisms summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50ForSoilMicroorganisms?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10OrNoecForSoilMicroorganisms?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.SoilMicroorganismsShortTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.SoilMicroorganismsLongTerm.DoseDescriptor?has_content />
 </#function>
 
 <#function getValuesForToxicityToTerrestrialPlants summaryList>
@@ -2627,7 +2485,9 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSAToxicityToTerrestrialPlants summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForTerrestrialPlants?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForTerrestrialPlants?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.TerrestrialPlantsShortTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.TerrestrialPlantsLongTerm.DoseDescriptor?has_content />
 </#function>
 
 <#function getValuesForLongTermToxicityToAquaticInvertebrates summaryList>
@@ -2646,7 +2506,9 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSALongTermToxicityToAquaticInvertebrates summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.DoseDescriptor?has_content
+	|| summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.DoseDescriptor?has_content/>
 </#function>
 
 <#function getValuesShortTermToxicityToAquaticInvertebrates summaryList>
@@ -2657,33 +2519,28 @@
 	</#if>
 	
 	<#list summaryList as summary>
-	<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.FreshWaterInvertebrates?has_content>
-	<#list summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.FreshWaterInvertebrates as freshWaterAquaticInvValue>
-		<#if isCSAShortTermToxicityToAquaticInvertebratesFresh(summary, freshWaterAquaticInvValue)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
-	</#list>
-	</#if>
-
-
-			<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.MarineWaterInvertebrates?has_content>
-			<#list summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.MarineWaterInvertebrates as marineWaterAquaticInvValue>
-				<#if isCSAShortTermToxicityToAquaticInvertebratesMarine(summary, marineWaterAquaticInvValue)>
-					<#local valuesCSA = valuesCSA + [summary]/>			
-				</#if>				
-			</#list>
+		<#if summary?has_content>
+			<#if isCSAShortTermToxicityToAquaticInvertebratesFresh(summary)>
+				<#local valuesCSA = valuesCSA + [summary]/>			
 			</#if>
-
-
+				
+			<#if isCSAShortTermToxicityToAquaticInvertebratesMarine(summary)>
+				<#local valuesCSA = valuesCSA + [summary]/>			
+			</#if>
+		</#if>
 	</#list>
 	
 	<#return valuesCSA />	
 </#function>
-<#function isCSAShortTermToxicityToAquaticInvertebratesFresh summary freshWaterAquaticInvValue>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || freshWaterAquaticInvValue.EffectConcentration?has_content />
+
+<#function isCSAShortTermToxicityToAquaticInvertebratesFresh summary>
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.FreshWaterInvertebrates.DoseDescriptor?has_content />
 </#function>
-<#function isCSAShortTermToxicityToAquaticInvertebratesMarine summary marineWaterAquaticInvValue>
-	<#return marineWaterAquaticInvValue.EffectConcentration?has_content />
+
+<#function isCSAShortTermToxicityToAquaticInvertebratesMarine summary>
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MarineWaterInvertebrates.DoseDescriptor?has_content />
 </#function>
 
 <#function getValuesLongTermToxicityToFish summaryList>
@@ -2702,27 +2559,11 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSALongTermToxicityToFish summary>
-	<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish?has_content>
-	<#list summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish as freshwater>
-		<#if freshwater?has_content>
-		<#return true>
-		</#if>
-	</#list>
-	</#if>
 
-	<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish?has_content>
-	<#list summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish as marinewater>
-		<#if marinewater?has_content>
-		<#return true>
-		</#if>
-	</#list>
-	</#if>
-
-	<#if summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content>
-	<#return true>
-	</#if>
-
-	<#return false/>
+	<#return summary.KeyInformation.KeyInformation?has_content || 
+	summary.Discussion.Discussion?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.DoseDescriptor?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.DoseDescriptor?has_content/>
 
 </#function>
 
@@ -2765,11 +2606,14 @@
 
 	<#return summary.KeyInformation.KeyInformation?has_content || 
 	summary.Discussion.Discussion?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content ||
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue3?has_content ||
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue4?has_content />
+	summary.KeyValueForChemicalSafetyAssessment.FreshwaterAlgaeShortTerm.DoseDescriptor?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.FreshwaterAlgaeShortTerm.EffectConcentration?has_content ||
+	summary.KeyValueForChemicalSafetyAssessment.FreshwaterAlgaeLongTerm.DoseDescriptor?has_content ||
+	summary.KeyValueForChemicalSafetyAssessment.FreshwaterAlgaeLongTerm.EffectConcentration?has_content ||
+	summary.KeyValueForChemicalSafetyAssessment.MarineWaterAlgaeShortTerm.DoseDescriptor?has_content ||
+	summary.KeyValueForChemicalSafetyAssessment.MarineWaterAlgaeLongTerm.DoseDescriptor?has_content />
 </#function>
+
 <#function getValueShortTermToxicityToFish summaryList>
 	<#local valuesCSA = []/>
 	
@@ -2778,29 +2622,31 @@
 	</#if>
 	
 	<#list summaryList as summary>
-	<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish?has_content>
-	<#list summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.FreshWaterFish as freshWaterFishValue>
-		<#if isCSAShortTermToxicityToFishfresh(summary, freshWaterFishValue)>
+	<#if summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.DoseDescriptor?has_content>
+		<#if isCSAShortTermToxicityToFishfresh(summary)>
 			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>	
-	</#list>		
+		</#if>			
 	</#if>
-		<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish?has_content>
-		<#list summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.MarineWaterFish as marineWaterFishValue>
-			<#if isCSAShortTermToxicityToFishmarine(summary, marineWaterFishValue)>
+		<#if summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.DoseDescriptor?has_content>
+			<#if isCSAShortTermToxicityToFishmarine(summary)>
 				<#local valuesCSA = valuesCSA + [summary]/>			
 			</#if>	
-		</#list>		
 		</#if>
 	</#list>
 	
 	<#return valuesCSA />	
 </#function>
-<#function isCSAShortTermToxicityToFishfresh summary freshWaterFishValue>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || freshWaterFishValue.EffectConcentration?has_content />
+
+<#function isCSAShortTermToxicityToFishfresh summary >
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.DoseDescriptor?has_content
+	|| summary.KeyValueForChemicalSafetyAssessment.FreshWaterFish.EffectConcentration />
 </#function>
-<#function isCSAShortTermToxicityToFishmarine summary marineWaterFishValue>
-	<#return marineWaterFishValue.EffectConcentration?has_content />
+
+<#function isCSAShortTermToxicityToFishmarine summary >
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MarineWaterFish.EffectConcentration />
 </#function>
 
 <#function getValuesForToxicityToSoilMacroorganismsExceptArthropods summaryList>
@@ -2819,7 +2665,9 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSAToxicityToSoilMacroorganismsExceptArthropods summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.ShortTermEc50OrLc50ForSoilMacroorganisms?has_content || summary.KeyValueForChemicalSafetyAssessment.LongTermEc10Lc10OrNoecForSoilMacroorganisms?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.SoilMacroorganismsExceptArthropodsShortTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.SoilMacroorganismsExceptArthropodsLongTerm.DoseDescriptor?has_content />
 </#function>
 <#function getValuesForToxicityPlants summaryList>
 	<#local valuesCSA = []/>
@@ -2837,10 +2685,10 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSAToxicityPlants summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue3?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.KeyValue4?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.FreshwaterPlantsShortTerm.DoseDescriptor?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.FreshwaterPlantsLongTerm.DoseDescriptor?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.MarineWaterPlantsShortTerm.DoseDescriptor?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.MarineWaterPlantsLongTerm.DoseDescriptor?has_content />
 </#function>
 
 
@@ -2860,10 +2708,11 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSASedimentToxicity summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.Ec50Lc50ForFreshwaterSediment?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.Ec50Lc50ForMarineWaterSediment?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.Ec10Lc10OrNoecForFreshwaterSediment?has_content || 
-	summary.KeyValueForChemicalSafetyAssessment.Ec10Lc10OrNoecForMarineWaterSediment?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.FreshwaterSedimentShortTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.FreshwaterSedimentLongTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MarineWaterSedimentShortTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MarineWaterSedimentLongTerm.DoseDescriptor?has_content />
 </#function>
 <#function getValuesForToxicityMicroorganisms summaryList>
 	<#local valuesCSA = []/>
@@ -2881,7 +2730,9 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSAToxicityMicroorganisms summary>
-	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue1?has_content || summary.KeyValueForChemicalSafetyAssessment.KeyValue2?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content || summary.Discussion.Discussion?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MicroorganismsShortTerm.DoseDescriptor?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.MicroorganismsLongTerm.DoseDescriptor?has_content/>
 </#function>
 
 <#macro CSAValueTextToxicityMicroorganisms summaryCSAValue typeText="Discussion" typeText1="The following information is taken into account for effects on aquatic micro-organisms for the derivation of PNEC:">
