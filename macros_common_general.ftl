@@ -556,7 +556,7 @@ ${textValue}
 		<#if referenceSubstanceID?has_content>
 			<#if referenceSubstanceID.MolecularStructuralInfo.InChl?has_content>
 				<@com.text referenceSubstanceID.MolecularStructuralInfo.InChl />
-			<#else>No inChi notation provided
+			<#else>No inchi notation provided
 			</#if>
 		</#if>
 	</#compress>
@@ -841,13 +841,16 @@ ${textValue}
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
 		<#elseif valueType=="boolean">
-			<#if valuePath>Y<#else>N</#if>
+			<#if valuePath>Y<#else>N</#if>		
 		<#else>
 			value type ${valueType} not supported!
 		</#if>
 		<#--NOTE: other types: address, document_reference, document_references, data_protection, inventory, attachment, attachments, section_types, repeatable-->
 	</#compress>
 </#macro>
+
+
+
 
 <#--Macro to interatively print all children fields of an element-->
 <#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
@@ -1040,55 +1043,6 @@ ${textValue}
     
     <#return uuid/>
 </#function>
-
-<#function getObjectFromPathOptions document paths> 
-	
-	<#-- iterate over possible paths and create full path when found -->
-	<#local pathObject = ''/>
-
-	<#list paths as path>
-		<#if document.hasElement(path)>
-			<#local fullPath = 'document.' + path />
-			<#local pathObject=fullPath?eval/>
-		</#if>
-	</#list>
-
-	<#return pathObject/>
-
-</#function>
-
-<#function getSummaryLinks summary paths role=''>  
-
-	<#-- initialise output -->
-	<#local pathValue = ''/>  
-
-	<#-- iterate over possible paths and create full path when found -->
-	<#local pathObject = getObjectFromPathOptions(summary, paths)/> 
-
-	<#-- print path if found and has content-->
-	<#if pathObject?has_content>
-		<#local pathValue><para role="${role}"><@printLinks pathObject/></para></#local>
-	</#if>
-
-	<#return pathValue/>
-</#function> 
-
-
-
-<#macro printLinks path>
-	
-	<#list path as link>
-		<#if link?has_content>
-			<#local studyReference = iuclid.getDocumentForKey(link) />
-			<para>
-				<command  linkend="${studyReference.documentKey.uuid!}">
-					<@com.text studyReference.name/>
-				</command>
-			</para>
-		</#if>
-	</#list>
-
-</#macro>  
 
 
 
