@@ -1,4 +1,4 @@
-<!-- Common macros and functions for endpoint studies and summaries that could be reused in any template based on IUCLID6 data -->
+<!-- Common macross and functions for endpoint studies and summaries that could be reused in any template based on IUCLID6 data -->
 
 <#-- Macros to initialize and get assessment entity information -->
 
