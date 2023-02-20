@@ -556,7 +556,7 @@ ${textValue}
 		<#if referenceSubstanceID?has_content>
 			<#if referenceSubstanceID.MolecularStructuralInfo.InChl?has_content>
 				<@com.text referenceSubstanceID.MolecularStructuralInfo.InChl />
-			<#else>No inChi notation provided
+			<#else>No inchi notation provided
 			</#if>
 		</#if>
 	</#compress>
@@ -841,13 +841,16 @@ ${textValue}
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
 		<#elseif valueType=="boolean">
-			<#if valuePath>Y<#else>N</#if>
+			<#if valuePath>Y<#else>N</#if>		
 		<#else>
 			value type ${valueType} not supported!
 		</#if>
 		<#--NOTE: other types: address, document_reference, document_references, data_protection, inventory, attachment, attachments, section_types, repeatable-->
 	</#compress>
 </#macro>
+
+
+
 
 <#--Macro to interatively print all children fields of an element-->
 <#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
