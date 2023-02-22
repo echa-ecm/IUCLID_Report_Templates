@@ -228,6 +228,26 @@
 </#compress>
 </#macro>
 
+<#macro attachments attachmentsValue>
+<#compress>
+	<#if attachmentsValue?has_content>
+		<#list attachmentsValue as item>
+			<@attachment item/>
+			<#if item_has_next>; </#if>
+		</#list>
+	</#if>
+</#compress>
+</#macro>
+
+<#macro attachment attachmentValue>
+<#compress>
+	<#if attachmentValue?has_content>
+	<#local attachmentMetaData = iuclid.getMetadataForAttachment(attachmentValue)>
+		<@com.text attachmentMetaData.filename/> (${attachmentMetaData.mediaType})
+	</#if>
+</#compress>
+</#macro>
+
 <#macro text textValue="" format="" breakwords=false>
 <#if textValue?has_content && format=="literal">
 <#escape x as x?html>
@@ -841,16 +861,21 @@ ${textValue}
 		<#elseif valueType=="date">
 			<@com.text valuePath/>
 		<#elseif valueType=="boolean">
-			<#if valuePath>Y<#else>N</#if>		
+			<#if valuePath>Y<#else>N</#if>
+		<#elseif valueType=="document_references"> 
+			<@com.documentReferenceMultiple valuePath/>		
+		<#elseif valueType=="document_reference"> 
+			<@com.documentReference valuePath/>
+		<#elseif valueType=="attachment">	
+			<@com.attachment valuePath/>
+		<#elseif valueType=="attachments">	
+			<@com.attachments valuePath/>
 		<#else>
 			value type ${valueType} not supported!
 		</#if>
-		<#--NOTE: other types: address, document_reference, document_references, data_protection, inventory, attachment, attachments, section_types, repeatable-->
+		<#--NOTE: other types: address, inventory, section_types, repeatable-->
 	</#compress>
 </#macro>
-
-
-
 
 <#--Macro to interatively print all children fields of an element-->
 <#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
