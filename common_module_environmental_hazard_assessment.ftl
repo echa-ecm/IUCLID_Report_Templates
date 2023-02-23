@@ -2969,6 +2969,8 @@
 <#--Bioaccumulation-->
 <#macro results_bioaccumulation study>
 	<#compress>
+
+		<#-- blocks -->
 		<#if study.ResultsAndDiscussion.LipidContent?has_content>
 			<para>Lipid content:</para>
 			<para role="indent"><@lipidContentList study.ResultsAndDiscussion.LipidContent/></para>
@@ -2984,7 +2986,23 @@
 			<para role="indent"><@depurationList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.Depuration)/></para>
 		</#if>
 
-		<@com.children study.ResultsAndDiscussion/>
+		<#if study.ResultsAndDiscussion.hasElement("RateConstants) && study.ResultsAndDiscussion.RateConstants?has_content>
+			<para>Rate constants:</para>
+			<para role="indent"><@rateConstantsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.RateConstants)/></para>
+		</#if>
+		<#if study.ResultsAndDiscussion.KineticParameters?has_content> <#-- kinetic parameters right after RateConstants block -->
+			<para>Details on kinetic parameters: <@com.value study.ResultsAndDiscussion.KineticParameters/></para>
+		</#if>
+
+		<#-- metabolites fields -->
+		<#if study.ResultsAndDiscussion.Metabolites?has_content || study.ResultsAndDiscussion.MetabolitesDetails?has_content || study.ResultsAndDiscussion.IdentityOfMetabolites?has_content>
+			<para>Metabolites: <@com.value study.ResultsAndDiscussion.Metabolites/></para>
+			<para role="indent"><@com.value study.ResultsAndDiscussion.MetabolitesDetails/></para>
+			<para role="indent"><@metabolitesIdentityTable studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.IdentityOfMetabolites)/></para>
+		</#if>
+
+		<#-- rest of fields -->
+		<@com.children study.ResultsAndDiscussion ['KineticParameters', 'Metabolites', 'MetabolitesDetails']/>
 
 	</#compress>
 </#macro>
@@ -3076,6 +3094,92 @@
 					</para>
 				</#if>
 			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro RateConstantsList repeatableBlock>
+	<#compress>
+		<#if repeatableBlock?has_content>
+			<#list repeatableBlock as blockItem>
+				<para role="indent">
+					<#if blockItem.RateConstant?has_content>
+						<@com.value blockItem.RateConstant/>:
+					</#if>
+
+					<#if blockItem.Value?has_content>
+						<@com.value blockItem.Value/>
+					</#if>
+
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.value blockItem.RemarksOnResults/>)
+					</#if>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro RateConstantsList repeatableBlock>
+	<#compress>
+		<#if repeatableBlock?has_content>
+			<#list repeatableBlock as blockItem>
+				<para role="indent">
+					<#if blockItem.RateConstant?has_content>
+						<@com.value blockItem.RateConstant/>:
+					</#if>
+
+					<#if blockItem.Value?has_content>
+						<@com.value blockItem.Value/>
+					</#if>
+
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.value blockItem.RemarksOnResults/>)
+					</#if>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro MetabolitesIdentityTable repeatableBlock>
+	<#compress>
+		<#if repeatableBlock?has_content>
+			<table border="1">
+				<tbody valign="middle">
+
+					<tr align="center">
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Identity of compound</emphasis></th>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Parent compound(s)</emphasis></th>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Max. occurrence</emphasis></th>
+					</tr>
+
+				<#list repeatableBlock as blockItem>
+					<tr>
+						<td>
+							<#if blockItem.IdentityOfCompound?has_content>
+								<#local refSubstance=iuclid.getDocumentForKey(item.IdentityOfCompound)/>
+								<@com.text refSubstance.ReferenceSubstanceName/>
+							</#if>
+						</td>
+
+						<td>
+							<#if blockItem.ParentCompoundS?has_content>
+								<#list blockItem.ParentCompoundS as parent>
+									<#local refSubstance=iuclid.getDocumentForKey(parent)/>
+									<#if (blockItem.ParentCompoundS?size>1)<para></#if><@com.text refSubstance.ReferenceSubstanceName/><#if (blockItem.ParentCompoundS?size>1)</para></#if>
+								</#list>
+							</#if>
+						</td>
+
+						<td>
+							<<@com.value blockItem.MaximumOccurrence/>
+						</td>
+					</tr>
+				</#list>
+
+				</tbody>
+			</table>
 		</#if>
 	</#compress>
 </#macro>
