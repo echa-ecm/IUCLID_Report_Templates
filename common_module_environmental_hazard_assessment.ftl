@@ -2219,44 +2219,45 @@
 			|| blockItem.EffectConc?has_content || blockItem.ConcBasedOn?has_content
 			|| blockItem.NominalMeasured?has_content || blockItem.BasisForEffect?has_content
 			|| blockItem.RemarksOnResults?has_content>
-				<para>
-					<#if blockItem.Endpoint?has_content> 
-						<@com.picklist blockItem.Endpoint/>
-					</#if>
-					
-					<#if blockItem.Duration?has_content> 
-						(<@com.quantity blockItem.Duration/>):
-					</#if>
-					
-					<#if blockItem.EffectConc?has_content> 
-						<@com.range blockItem.EffectConc/> 
-					</#if>
-					
-					<#if blockItem.ConcBasedOn?has_content> 
-						<@com.picklist blockItem.ConcBasedOn/>
-					</#if>
-					
-					<#if blockItem.NominalMeasured?has_content>
-						(<@com.picklist blockItem.NominalMeasured/>)
-					</#if>
+			<para>
+				<#if blockItem.Endpoint?has_content> 
+					<@com.picklist blockItem.Endpoint/>
+				</#if>
 
-           <#local docDefId = study.documentType +"."+ study.documentSubType/>
-              <#if !(docDefId=="ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant")>
+				<#if blockItem.hasElement("LifeStage") && blockItem.LifeStage?has_content> <#-- for ToxicityToBees -->
+					(<@com.value blockItem.LifeStage/>)
+				</#if>
+				
+				<#if blockItem.Duration?has_content> 
+					(<@com.quantity blockItem.Duration/>):
+				</#if>
+				
+				<#if blockItem.EffectConc?has_content> 
+					<@com.range blockItem.EffectConc/> 
+				</#if>
+				
+				<#if blockItem.ConcBasedOn?has_content> 
+					<@com.picklist blockItem.ConcBasedOn/>
+				</#if>
+				
+				<#if blockItem.NominalMeasured?has_content>
+					(<@com.picklist blockItem.NominalMeasured/>)
+				</#if>
 
-                <#if blockItem.BasisForEffect?has_content>
-                  based on: <@com.picklist blockItem.BasisForEffect/>
-                </#if>
+				<#if blockItem.hasElement("BasisForEffect") && blockItem.BasisForEffect?has_content> <#-- more general case -->
+					based on: <@com.value blockItem.BasisForEffect/>
+				<#elseif blockItem.hasElement("BasisForEffectMulti") && blockItem.BasisForEffectMulti?has_content> <#-- case of ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant -->
+					based on: <@com.value blockItem.BasisForEffectMulti/>
+				</#if>
 
-              <#elseif docDefId=="ENDPOINT_STUDY_RECORD.ToxicityToAquaticPlant">
+				<#if blockItem.RemarksOnResults?has_content>
+					(<@com.picklist blockItem.RemarksOnResults/>)
+				</#if>
 
-                <#if blockItem.BasisForEffectMulti?has_content>
-                  based on: <@com.picklistMultiple blockItem.BasisForEffectMulti/>
-                </#if>
-              </#if>
-
-              <#if blockItem.RemarksOnResults?has_content>
-                (<@com.picklist blockItem.RemarksOnResults/>)
-              </#if>
+				<#-- note: two more fields exist in some OHTs
+					- 95%CI (range): ConfInterval
+					- slope of the curve (text, 2000): SlopeOfTheCurve
+				-->
         </para>
       </#if>
 </#list>
@@ -2986,10 +2987,11 @@
 			<para role="indent"><@depurationList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.Depuration)/></para>
 		</#if>
 
-		<#if study.ResultsAndDiscussion.hasElement("RateConstants) && study.ResultsAndDiscussion.RateConstants?has_content>
+		<#if study.ResultsAndDiscussion.hasElement("RateConstants") && study.ResultsAndDiscussion.RateConstants?has_content>
 			<para>Rate constants:</para>
 			<para role="indent"><@rateConstantsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.RateConstants)/></para>
 		</#if>
+		
 		<#if study.ResultsAndDiscussion.KineticParameters?has_content> <#-- kinetic parameters right after RateConstants block -->
 			<para>Details on kinetic parameters: <@com.value study.ResultsAndDiscussion.KineticParameters/></para>
 		</#if>
@@ -3002,7 +3004,7 @@
 		</#if>
 
 		<#-- rest of fields -->
-		<@com.children study.ResultsAndDiscussion ['KineticParameters', 'Metabolites', 'MetabolitesDetails']/>
+		<@com.children path=study.ResultsAndDiscussion exclude=['KineticParameters', 'Metabolites', 'MetabolitesDetails']/>
 
 	</#compress>
 </#macro>
@@ -3098,7 +3100,7 @@
 	</#compress>
 </#macro>
 
-<#macro RateConstantsList repeatableBlock>
+<#macro rateConstantsList repeatableBlock>
 	<#compress>
 		<#if repeatableBlock?has_content>
 			<#list repeatableBlock as blockItem>
@@ -3120,45 +3122,23 @@
 	</#compress>
 </#macro>
 
-<#macro RateConstantsList repeatableBlock>
-	<#compress>
-		<#if repeatableBlock?has_content>
-			<#list repeatableBlock as blockItem>
-				<para role="indent">
-					<#if blockItem.RateConstant?has_content>
-						<@com.value blockItem.RateConstant/>:
-					</#if>
-
-					<#if blockItem.Value?has_content>
-						<@com.value blockItem.Value/>
-					</#if>
-
-					<#if blockItem.RemarksOnResults?has_content>
-						(<@com.value blockItem.RemarksOnResults/>)
-					</#if>
-				</para>
-			</#list>
-		</#if>
-	</#compress>
-</#macro>
-
-<#macro MetabolitesIdentityTable repeatableBlock>
+<#macro metabolitesIdentityTable repeatableBlock>
 	<#compress>
 		<#if repeatableBlock?has_content>
 			<table border="1">
 				<tbody valign="middle">
 
 					<tr align="center">
-						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Identity of compound</emphasis></th>
-						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Parent compound(s)</emphasis></th>
-						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Max. occurrence</emphasis></th>
+						<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Identity of compound</emphasis></th>
+						<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Parent compound(s)</emphasis></th>
+						<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Max. occurrence</emphasis></th>
 					</tr>
 
 				<#list repeatableBlock as blockItem>
 					<tr>
 						<td>
 							<#if blockItem.IdentityOfCompound?has_content>
-								<#local refSubstance=iuclid.getDocumentForKey(item.IdentityOfCompound)/>
+								<#local refSubstance=iuclid.getDocumentForKey(blockItem.IdentityOfCompound)/>
 								<@com.text refSubstance.ReferenceSubstanceName/>
 							</#if>
 						</td>
@@ -3167,13 +3147,13 @@
 							<#if blockItem.ParentCompoundS?has_content>
 								<#list blockItem.ParentCompoundS as parent>
 									<#local refSubstance=iuclid.getDocumentForKey(parent)/>
-									<#if (blockItem.ParentCompoundS?size>1)<para></#if><@com.text refSubstance.ReferenceSubstanceName/><#if (blockItem.ParentCompoundS?size>1)</para></#if>
+									<#if (blockItem.ParentCompoundS?size>1)><para></#if><@com.text refSubstance.ReferenceSubstanceName/><#if (blockItem.ParentCompoundS?size>1)></para></#if>
 								</#list>
 							</#if>
 						</td>
 
 						<td>
-							<<@com.value blockItem.MaximumOccurrence/>
+							<@com.value blockItem.MaximumOccurrence/>
 						</td>
 					</tr>
 				</#list>
@@ -3255,7 +3235,15 @@
 		<#--Test conditions-->
 		<#if study.MaterialsAndMethods.hasElement("TestConditions") && study.MaterialsAndMethods.TestConditions?has_content>
 			<para><emphasis role='bold'>Test conditions:</emphasis>
-				<@com.children study.MaterialsAndMethods.TestConditions/>
+				<@com.children path=study.MaterialsAndMethods.TestConditions exclude=["IdentityOfTheReferenceSubstancePositiveControl"]/>
+
+				<#if study.MaterialsAndMethods.TestConditions.hasElement("IdentityOfTheReferenceSubstancePositiveControl") && study.MaterialsAndMethods.TestConditions.IdentityOfTheReferenceSubstancePositiveControl?has_content>
+					<para role='indent'>Ref. substance:</para>
+					<#list study.MaterialsAndMethods.TestConditions.IdentityOfTheReferenceSubstancePositiveControl as refSubLink>
+						<#local refSubstance=iuclid.getDocumentForKey(refSubLink)/>
+						<para role='indent2'><@com.text refSubstance.ReferenceSubstanceName/></para>
+					</#list>
+				</#if>
 			</para>
 		</#if>
 
@@ -3296,8 +3284,6 @@
 	<#-- case of harmonised summaries: use the generic macro in studies and summaries common module -->
 	<#else>
 		<@studyandsummaryCom.ecotoxCSAtable summaryList/>
-	</#if>
-
 	</#if>
 
 </#macro>
