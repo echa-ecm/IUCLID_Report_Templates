@@ -363,20 +363,18 @@
 	</#if>
 
 	<@summaryKeyInformation summary/>
-
-	<#if valueForCsaText?has_content>
-		<@com.emptyLine/>
-		<para>
-			<emphasis role="bold">Value used for CSA:</emphasis>
-			<?linebreak?>
-			${valueForCsaText}
-		</para>
-	</#if>
 		
 	<@assessmentEntitiesList summary />
 
+	<#if docSubType=="Hydrolysis" || docSubType=="PhototransformationInAir" || docSubType=="PhototransformationInWater" || docSubType=="PhototransformationInSoil" || 
+	docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
+	docSubType=="Biodegradation" || docSubType=="AdsorptionDesorption" || docSubType=="HenrysLawConstant" || docSubType=="TransportAndDistribution" || 
+	docSubType=="Bioaccumulation" || docSubType=="BioaccumulationAquaticSediment" || docSubType=="BioaccumulationTerrestrial">
+	<@fateCSAtable summary/>
+	<#else>
 	<@ecotoxSummary _subject "${docSubType}"/>
-	
+	</#if>
+
 	<@summaryAdditionalInformation summary/>
 </#macro>
 
@@ -654,6 +652,7 @@
 															"conditions": ["TemperatureOfTheTestSystem"]},
 														{"path": "RouteOfBiodegradation", "result": [], "conditions": []}
 														],
+								"HenrysLawConstant" : [{"path":'', "result": ["HenrysLawConstant"], "conditions":["AtTheTemperatureOf"]}],
 								"PhototransformationInSoil" : [{"path":'', "result": ["HalflifeInSoil"]}],
 								"FieldStudies" : [{"path": "BiodegradationInSoilForExposureAssessment", 
 													"result": ["DT50"], "conditions": ["AtTheTemperatureOf", "PHCondition1"]},
@@ -664,8 +663,8 @@
 													"conditions": ["TemperatureOfTheTestSystem"]},
 												{"path": "RouteOfBiodegradation", 
 													"result": [], 
-													"conditions": []}],
-								"AdsorptionDesorption" : [{"path":'', "result": ["KocAt20Celsius"], "conditions":["AtTheTemperatureOf"]},
+													"conditions": []}],								
+								"AdsorptionDesorption" : [{"path":'', "result": ["KocAt20Celsius"], "conditions":["AtTheTemperatureOf"]},							
 															<#-- below: repeatable block -->
 															{"path":'OtherAdsorptionCoefficients', "result":["TypeValue"], "type":"Type", "conditions":["AtTheTemperatureOf"]}],
 								"Hydrolysis" : [{"path":'', "result": ["HalflifeForHydrolysis"], "conditions":["AtTheTemperatureOf"]}],
