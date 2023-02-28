@@ -4601,7 +4601,7 @@
 				</#if>
 			</#list>
 		</#if>
-	</#if>
+	</#list>
 
 	<#if trProductsExist>
 		<#-- make table header -->
@@ -4658,7 +4658,7 @@
 							${studyandsummaryCom.getSummaryLinks(item, ['LinkToRelevantStudyRecord'])}
 						</td>
 					</tr>
-				</#if>
+				</#list>
 			</#list>
 			</tbody>
 		</table>
