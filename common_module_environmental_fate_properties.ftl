@@ -4578,6 +4578,19 @@
 	</#compress>
 </#macro>
 
+<#-- transformationProductsSummaryTable generates an HTML table from the transformation products block of some 
+	summaries e.g. biodegradation in soil, field studies, and biodegradation in water and sediment.
+
+	The columns are transformation product, compartment (if it exists), kinetic formation fraction, maximum occurrence, and linked studies. 
+	If the compartment column exists, the table has five columns, and if not, it has four columns.
+
+	If more than one summary is passed to the macro, all transformation products from all summaries are put together into 
+	the same table. If summaries with compartment and without are put together, "soil" is automatically taken for the compartment of
+	biodegradation in soil and field studies.
+
+	Inputs:
+	- summaryList: single summary or list of summary documents with transformation products blocks
+-->
 <#macro transformationProductsSummaryTable summaryList>
 	<#compress>
 
@@ -4589,14 +4602,14 @@
 	<#-- NOTE: a hash could be created to be able to sort results -->
 
 	<#-- make a condition to check if the trProducts block exists and add the compartment column (only in biodegradation in water) -->
-	<#local comparmentExists=false/>
+	<#local compartmentExists=false/>
 	<#local trProductsExist=false/>
 	<#list summaryList as summary>
 		<#if summary.hasElement('InformationOnTransformationProducts.InformationOnTransformationProducts')>
 			<#local trProductsExist=true/>
 			<#list summary.InformationOnTransformationProducts.InformationOnTransformationProducts as block>
 				<#if block.hasElement("Compartment")>
-					<#local comparmentExists=true/>
+					<#local compartmentExists=true/>
 					<#break>
 				</#if>
 			</#list>
@@ -4615,9 +4628,9 @@
 				<col width="25%" />
 			<#else>
 				<col width="30%" />
-				<col width="20%" />
-				<col width="20%" />
-				<col width="30%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="40%" />
 			</#if>
 			
 
@@ -4645,7 +4658,11 @@
 						</td>
 						<#if compartmentExists>
 							<td>
-								<@com.value item.Compartment/>
+								<#if item.hasElement("Compartment")>
+									<@com.value item.Compartment/>
+								<#else>
+									soil
+								</#if>
 							</td>
 						</#if>
 						<td>
