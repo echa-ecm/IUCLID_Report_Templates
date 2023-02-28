@@ -4577,3 +4577,92 @@
 
 	</#compress>
 </#macro>
+
+<#macro transformationProductsSummaryTable summaryList>
+	<#compress>
+
+	<#-- transform to sequence if it's not -->
+	<#if !summaryList?is_sequence>
+		<#local summaryList=[summaryList]/>
+	</#if>
+
+	<#-- NOTE: a hash could be created to be able to sort results -->
+
+	<#-- make a condition to check if the trProducts block exists and add the compartment column (only in biodegradation in water) -->
+	<#local comparmentExists=false/>
+	<#local trProductsExist=false/>
+	<#list summaryList as summary>
+		<#if summary.hasElement('InformationOnTransformationProducts.InformationOnTransformationProducts')>
+			<#local trProductsExist=true/>
+			<#list summary.InformationOnTransformationProducts.InformationOnTransformationProducts as block>
+				<#if block.hasElement("Compartment")>
+					<#local comparmentExists=true/>
+					<#break>
+				</#if>
+			</#list>
+		</#if>
+	</#if>
+
+	<#if trProductsExist>
+		<#-- make table header -->
+		<table border="1">
+
+			<#if compartmentExists>
+				<col width="25%" />
+				<col width="20%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="25%" />
+			<#else>
+				<col width="30%" />
+				<col width="20%" />
+				<col width="20%" />
+				<col width="30%" />
+			</#if>
+			
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Transformation product</emphasis></th>
+				<#if compartmentExists><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Compartment</emphasis></th></#if>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Kinetic formation fraction</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Maximum occurrence</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Linked studies</emphasis></th>
+			</tr>
+
+			</thead>
+			<tbody valign="middle">
+
+			<#-- populate table -->
+			<#list summaryList as summary>
+				<#list summary.InformationOnTransformationProducts.InformationOnTransformationProducts as item>
+					<tr>
+						<td>
+							<#local substance=iuclid.getDocumentForKey(item.IdentityOfTheTransformationProduct)/>
+							<#if substance?has_content>
+								<@com.text substance.ReferenceSubstanceName/>
+							</#if>
+						</td>
+						<#if compartmentExists>
+							<td>
+								<@com.value item.Compartment/>
+							</td>
+						</#if>
+						<td>
+							<@com.value item.KineticFormationFraction/>
+						</td>
+						<td>
+							<@com.value item.MaximumOccurrence/>
+						</td>
+						<td>
+							${studyandsummaryCom.getSummaryLinks(item, ['LinkToRelevantStudyRecord'])}
+						</td>
+					</tr>
+				</#if>
+			</#list>
+			</tbody>
+		</table>
+	</#if>
+	
+	</#compress>
+</#macro>
