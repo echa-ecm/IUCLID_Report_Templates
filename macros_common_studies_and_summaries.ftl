@@ -373,6 +373,7 @@
 		<@fateCSAtable summary/>
 	<#else>
 		<@ecotoxSummary _subject "${docSubType}"/>
+
 	</#if>
 
 	<@summaryAdditionalInformation summary/>
