@@ -217,17 +217,6 @@
 </#compress>
 </#macro>
 
-<#macro documentReferenceMultiple documentReferenceMultipleValue>
-<#compress>
-	<#if documentReferenceMultipleValue?has_content>
-		<#list documentReferenceMultipleValue as item>
-			<@documentReference item/>
-			<#if item_has_next>; </#if>
-		</#list>
-	</#if>
-</#compress>
-</#macro>
-
 <#macro attachments attachmentsValue>
 <#compress>
 	<#if attachmentsValue?has_content>
@@ -247,6 +236,19 @@
 	</#if>
 </#compress>
 </#macro>
+
+<#macro documentReferenceMultiple documentReferenceMultipleValue>
+<#compress>
+	<#if documentReferenceMultipleValue?has_content>
+		<#list documentReferenceMultipleValue as item>
+			<@documentReference item/>
+			<#if item_has_next>; </#if>
+		</#list>
+	</#if>
+</#compress>
+</#macro>
+
+
 
 <#macro text textValue="" format="" breakwords=false>
 <#if textValue?has_content && format=="literal">
@@ -866,6 +868,8 @@ ${textValue}
 			<@com.documentReferenceMultiple valuePath/>		
 		<#elseif valueType=="document_reference"> 
 			<@com.documentReference valuePath/>
+		<#elseif valueType=="data_protection">
+			<@iuclid.phrase code=.node.confidentiality />
 		<#elseif valueType=="attachment">	
 			<@com.attachment valuePath/>
 		<#elseif valueType=="attachments">	
@@ -876,6 +880,7 @@ ${textValue}
 		<#--NOTE: other types: address, inventory, section_types, repeatable-->
 	</#compress>
 </#macro>
+
 
 <#--Macro to interatively print all children fields of an element-->
 <#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
