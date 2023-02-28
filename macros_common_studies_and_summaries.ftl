@@ -370,10 +370,9 @@
 	docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
 	docSubType=="Biodegradation" || docSubType=="AdsorptionDesorption" || docSubType=="HenrysLawConstant" || docSubType=="TransportAndDistribution" || 
 	docSubType=="Bioaccumulation" || docSubType=="BioaccumulationAquaticSediment" || docSubType=="BioaccumulationTerrestrial">
-	<@fateCSAtable summary/>
+		<@fateCSAtable summary/>
 	<#else>
-	<@ecotoxSummary _subject "${docSubType}"/>
-	<#else>
+		<@ecotoxSummary _subject "${docSubType}"/>
 	</#if>
 
 	<@summaryAdditionalInformation summary/>
