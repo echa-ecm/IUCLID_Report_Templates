@@ -363,20 +363,19 @@
 	</#if>
 
 	<@summaryKeyInformation summary/>
-
-	<#if valueForCsaText?has_content>
-		<@com.emptyLine/>
-		<para>
-			<emphasis role="bold">Value used for CSA:</emphasis>
-			<?linebreak?>
-			${valueForCsaText}
-		</para>
-	</#if>
 		
 	<@assessmentEntitiesList summary />
 
+	<#if docSubType=="Hydrolysis" || docSubType=="PhototransformationInAir" || docSubType=="PhototransformationInWater" || docSubType=="PhototransformationInSoil" || 
+	docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
+	docSubType=="Biodegradation" || docSubType=="AdsorptionDesorption" || docSubType=="HenrysLawConstant" || docSubType=="TransportAndDistribution" || 
+	docSubType=="Bioaccumulation" || docSubType=="BioaccumulationAquaticSediment" || docSubType=="BioaccumulationTerrestrial">
+	<@fateCSAtable summary/>
+	<#else>
 	<@ecotoxSummary _subject "${docSubType}"/>
-	
+	<#else>
+	</#if>
+
 	<@summaryAdditionalInformation summary/>
 </#macro>
 
@@ -654,7 +653,8 @@
 															"conditions": ["TemperatureOfTheTestSystem"]},
 														{"path": "RouteOfBiodegradation", "result": [], "conditions": []}
 														],
-								"PhototransformationInSoil" : [{"path":'', "result": ["HalflifeInSoil"]}],
+								"HenrysLawConstant" : [{"path":'', "result": ["HenrysLawConstant"], "conditions":["AtTheTemperatureOf"]}],
+								"PhototransformationInSoil" : [{"path":'', "result": ["HalflifeInSoil"], "conditions":[]}],
 								"FieldStudies" : [{"path": "BiodegradationInSoilForExposureAssessment", 
 													"result": ["DT50"], "conditions": ["AtTheTemperatureOf", "PHCondition1"]},
 												{"path": "BiodegradationInSoilForExposureAssessment", 
@@ -664,8 +664,8 @@
 													"conditions": ["TemperatureOfTheTestSystem"]},
 												{"path": "RouteOfBiodegradation", 
 													"result": [], 
-													"conditions": []}],
-								"AdsorptionDesorption" : [{"path":'', "result": ["KocAt20Celsius"], "conditions":["AtTheTemperatureOf"]},
+													"conditions": []}],								
+								"AdsorptionDesorption" : [{"path":'', "result": ["KocAt20Celsius"], "conditions":["AtTheTemperatureOf"]},							
 															<#-- below: repeatable block -->
 															{"path":'OtherAdsorptionCoefficients', "result":["TypeValue"], "type":"Type", "conditions":["AtTheTemperatureOf"]}],
 								"Hydrolysis" : [{"path":'', "result": ["HalflifeForHydrolysis"], "conditions":["AtTheTemperatureOf"]}],
@@ -1077,4 +1077,296 @@
 		<#return true />
 	</#if>
 	<#return false />
+</#function>
+
+<!-- testing for node-based output -->
+
+<#assign blockStack=[]>
+<#assign wantedNames=['Clinical signs','Preliminary study']>
+
+
+<#--	visits block's children (also chooses between repeatable or simple)  -->
+<#macro "@block">
+<#if __skipElement(.node)><#return></#if>
+	<#local isRepeatableBlock=blockStack?size gt 0 && blockStack[0]=="@repeatable">
+	<#assign blockStack = ["@block"] + blockStack>
+	<#if isRepeatableBlock>
+		<@RepeatableEntry>
+			<#recurse><#t>
+		</@RepeatableEntry>
+	<#else>
+		<@iuclid.label for=.node var="lbl"/>
+		<@Block label=lbl! blockLevel=blockStack?size>
+			<#recurse><#t>
+		</@Block>
+	</#if>
+	<#assign blockStack = blockStack[1..]>
+</#macro>
+
+
+<#--	visit document's children  -->
+<#macro "@document">
+<#if __skipElement(.node)><#return></#if>
+	<#recurse><#t>
+</#macro>
+
+
+<#--	visit a repeatable blocks's children  -->
+<#macro RepeatableEntry>
+<#if __skipElement(.node)><#return></#if>
+	<#nested><#t>
+</#macro>
+
+<#--	visit a blocks's children  -->
+<#macro Block label blockLevel>
+<#if __skipElement(.node)><#return></#if>
+<#--	<blockTitle>${label!}</blockTitle> -->
+	<#nested><#t>
+</#macro>
+
+<#--	chagne this to skip an element (maybe because its value is empty  -->
+<#function __skipElement value>
+	<#return false/>
+</#function>
+
+<#--	display for MultiLingualText of different sizes field  -->
+<#macro "@multilingual_text">
+	<#if __skipElement(.node)><#return></#if>
+	<#if .node?has_content>
+	<@com.value .node/>,<#t>
+	<#else>No information available,</#if>
+</#macro>
+
+<#macro "@multilingual_text_small">
+	<#if __skipElement(.node)><#return></#if>
+	<#if .node?has_content>
+	<@com.value .node/>,<#t>
+	<#else>No information available,</#if>
+</#macro>
+
+<#macro "@multilingual_text_medium">
+	<#if __skipElement(.node)><#return></#if>
+	<@iuclid.label for=.node var="lbl" />
+	<#if lbl?has_content>
+<#--		uncomment next line and this will be displayed only if the label of the text is in "wantedNames" (line 2) -->
+<#--		<#if !wantedNames?seq_contains(lbl)><#return></#if> -->
+		${lbl},
+	</#if>
+	<#if __skipElement(.node)><#return></#if>
+	<#if .node?has_content>
+	<@com.value .node/>,<#t>
+	<#else>No information available,</#if>
+</#macro>
+
+<#macro "@multilingual_text_large">
+	<#if __skipElement(.node)><#return></#if>
+	<#if .node?has_content>
+	<@com.value .node/>,<#t>
+	<#else>No information available,</#if>
+</#macro>
+
+<#macro "@multilingual_text_html">
+	<#if __skipElement(.node)><#return></#if>
+	<#if .node?has_content>
+		<#local multilingualContent=__multilingualContent(.node)/>
+		<#list multilingualContent?keys as lang>
+			<span>
+				<para role="i6LiteralText">${lang}</para>
+				${iuclid.convertHtmlToDocBook(multilingualContent[lang])},<#t>
+			</span>
+		</#list>
+	</#if>
+</#macro>
+
+<#macro "@text_small">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@text_medium">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@text_large">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@text_html">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@address">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@integer">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@decimal">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@date">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@quantity">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@range">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@picklist_single">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@picklist_multi">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@boolean">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,</#if>
+</#macro>
+
+<#macro "@attachment">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,<#t></#if>
+</#macro>
+
+<#macro "@attachments">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,<#t></#if>
+</#macro>
+
+<#macro "@document_reference">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,<#t></#if>
+</#macro>
+
+<#macro "@document_references">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,<#t></#if>
+</#macro>
+
+<#macro "@data_protection">
+<#if __skipElement(.node)><#return></#if>
+<#if .node?has_content>
+<@com.value .node/>,<#t>
+<#else>No information available,<#t></#if>
+</#macro>
+
+<#macro "@repeatable">
+<#if __skipElement(.node)><#return></#if>
+</#macro>
+
+<#function __multilingualContentAsText node>
+	<#local multilingualContent=__multilingualContent(node)/>
+	<#local multilingualText = "">
+	<#list multilingualContent?keys as lang>
+		<#if !lang?has_content> <#-- default text -->
+			<#if multilingualContent[lang]?has_content>
+				<#local multilingualText = multilingualText + multilingualContent[lang] + "\n" />
+			</#if>
+		<#else>
+			<#local multilingualText = multilingualText + lang + "\n" + multilingualContent[lang] + "\n" />			
+		</#if>
+	</#list>
+	<#return multilingualText>
+</#function>
+
+<#function __multilingualContent node>
+	<#local multilingualText = {}>
+	<#local multilingualText = multilingualText + {"": node.defaultText}/>
+	<#list .node.localizedTexts as text>
+		<#if multilingualFilterLangs>
+			<#if extension.lang?has_content && extension.lang?seq_contains(text.language)>
+				<#local multilingualText = multilingualText + {text.language: node.forLanguage(text.language)} />
+			</#if>
+		<#else>
+			<#local multilingualText = multilingualText + {text.language: node.forLanguage(text.language)} />
+		</#if>
+	</#list>
+	<#return multilingualText>
+</#function>
+
+<#macro FieldSnippet label content>
+	<formalpara>
+		<#if label?has_content>
+			<title role="i6label">${label}</title>
+		<#else>
+			<title role="i6label"/>
+		</#if>
+		<#if content?has_content>
+			<para role="i6LiteralText">${__insertSpaces(content)}</para>
+		</#if>
+	</formalpara>
+</#macro>
+
+<#function __insertSpaces txt>
+	<#if !txt?has_content>
+		<#return txt>
+	</#if>
+	<#local prefix = "">
+	<#local suffix = "">
+	<#if txt?length gt 10>
+		<#local prefix = txt[0..9] + "\x200B">
+		<#local suffix = txt[10..]>
+	<#else>
+		<#local prefix = txt>
+	</#if>
+	
+	<#if suffix?has_content>
+		<#return prefix + __insertSpaces(suffix)>
+	<#else>
+		<#return prefix>
+	</#if>
 </#function>
