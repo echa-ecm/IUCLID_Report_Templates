@@ -3,14 +3,14 @@
 <!-- General discussion of environmental fate and pathways -->
 <#macro environmentalFateAndPathwaysSummary _subject>
 <#compress>
-
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "EnvironmentalFateAndPathways") />
-
 	<#if summaryList?has_content>
 		<para><emphasis role="underline"><emphasis role="bold">General discussion of environmental fate and pathways:</emphasis></emphasis></para>
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+			<#if summary?has_content>
+				<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+			</#if>
 		</#list>
 	</#if>		
 </#compress>
