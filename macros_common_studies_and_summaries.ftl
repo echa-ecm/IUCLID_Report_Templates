@@ -653,7 +653,7 @@
 														{"path": "RouteOfBiodegradation", "result": [], "conditions": []}
 														],
 								"HenrysLawConstant" : [{"path":'', "result": ["HenrysLawConstant"], "conditions":["AtTheTemperatureOf"]}],
-								"PhototransformationInSoil" : [{"path":'', "result": ["HalflifeInSoil"]}],
+								"PhototransformationInSoil" : [{"path":'', "result": ["HalflifeInSoil"], "conditions":[]}],
 								"FieldStudies" : [{"path": "BiodegradationInSoilForExposureAssessment", 
 													"result": ["DT50"], "conditions": ["AtTheTemperatureOf", "PHCondition1"]},
 												{"path": "BiodegradationInSoilForExposureAssessment", 

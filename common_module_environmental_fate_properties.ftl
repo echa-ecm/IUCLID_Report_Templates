@@ -325,7 +325,7 @@
 			<#assign summaryCSAValue = getCSAValuesPhototransformationInWater(summary)/>
 			<#if summaryCSAValue?has_content>
 				<@CSAValueText summary typeText typeText1 />				
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText "PhototransformationInWater" printSummaryName/>
+			<@studyandsummaryCom.endpointSummary summary "" "PhototransformationInWater" printSummaryName/>
 			</#if>	
 		</#list>
 	</#if>
@@ -740,21 +740,14 @@
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BiodegradationInSoil") />
 	
 	<#if summaryList?has_content>
-		<#assign summaryCSAValue = getCSAValuesInSoil(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueText summaryCSAValue typeText typeText1 />
-		</#if>
+		
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<#assign valueForCsaText>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil?has_content>
-				Half-life in soil: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil/> 
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf?has_content>
-					at <@com.quantity summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf/>
-				</#if>
-			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText "BiodegradationInSoil" printSummaryName/>
+			<#assign summaryCSAValue = getCSAValuesInSoil(summary)/>
+			<#if summaryCSAValue?has_content>
+				<@CSAValueText summary typeText typeText1 />
+			</#if>			
+				<@studyandsummaryCom.endpointSummary summary "" "BiodegradationInSoil" printSummaryName/>
 		</#list>
 	</#if>
 	
