@@ -1,4 +1,3 @@
-
 <!-- 5. HUMAN HEALTH HAZARD ASSESSMENT template file -->
 
 <!-- Summary Discussion of Toxicokinetics (absorption, metabolism, distribution and elimination) -->
@@ -101,7 +100,7 @@
 							</para>
 
 							<para>
-								Metabolites identified: <@com.picklist study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.MetabolitesIdentified/>
+								Metabolites identified: <@com.value study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.MetabolitesIdentified/>
 							</para>
 
 							<para>
@@ -420,7 +419,7 @@
 	<#assign printSummaryName = summaryList?size gt 1 />
 
 		<#list summaryList as summary>
-			<#if summary.KeyInformation.KeyInformation?has_content>
+			<#if summary.KeyInformation?has_content>
 				<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 			</#if>
 			<@com.emptyLine/>					
@@ -431,16 +430,16 @@
 
 			<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
 			
-			<#if summary.KeyValue.Bioaccumulation?has_content || 
-			summary.KeyValue.AbsorptionOral?has_content || 
-			summary.KeyValue.AbsorptionDerm?has_content || 
+			<#if summary.KeyValue.Bioaccumulation?has_content ||
+			summary.KeyValue.AbsorptionOral?has_content ||
+			summary.KeyValue.AbsorptionDerm?has_content ||
 			summary.KeyValue.AbsorptionInhal?has_content>
 			
 				<@com.emptyLine/>
 				<para><emphasis role="bold">Value used for CSA:</emphasis></para>
 				
 				<#if summary.KeyValue.Bioaccumulation?has_content>
-					<para>Bioaccumulation potential: <@com.picklist summary.KeyValue.Bioaccumulation/></para>
+					<para>Bioaccumulation potential: <@com.value summary.KeyValue.Bioaccumulation/></para>
 				</#if>
 				
 				<#if summary.KeyValue.AbsorptionOral?has_content>		
@@ -457,7 +456,7 @@
 			
 			</#if>
 			
-			<@studyandsummaryCom.relevantStudies summary/>
+			<@studyandsummaryCom.relevantStudies summary "placeholder"/>
 			
 			<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>
 			
@@ -868,22 +867,24 @@
 
 		<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
 	   
-		<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content>
+		<#if 
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content ||
+		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content
+		>
 
 		<@com.emptyLine/>
 		<para><emphasis role="bold">Value used for CSA:</emphasis></para>
 		<para>Acute oral toxicity: 
-			<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EndpointConclusion/></para>
+			<para><@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion/></para>
 			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content>
-				(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit/>) 
+				(<@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit/>) 
 			</#if>
 			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content>
 				<@com.range summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue/>
@@ -891,9 +892,9 @@
 		</para>
 
 		<para>Acute dermal toxicity: 
-			<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EndpointConclusion/></para>
+			<para><@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion/></para>
 			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content>
-				(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit/>)
+				(<@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit/>)
 			</#if>
 			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content>
 				<@com.range summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue/>
@@ -901,9 +902,9 @@
 		</para>
 
 		<para>Acute inhalation toxicity: 
-			<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion/></para>
+			<para><@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion/></para>
 			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content>
-				(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit/>) 
+				(<@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit/>) 
 			</#if>
 			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content>
 				<@com.range summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue/>
@@ -911,7 +912,7 @@
 		</para>
 		</#if>
 		
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "placeholder"/></para>
 		
 		<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>
 
@@ -983,7 +984,7 @@
 							<!-- Results -->
 							<td>
 								<para>
-									<@com.picklist study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
+									<@com.value study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
 								</para>
 
 								<para>
@@ -1183,13 +1184,14 @@
 						<td>
 							<#if com.picklistValueMatchesPhrases(study.AdministrativeData.Endpoint, ["eye irritation: in vitro / ex vivo"])>
 							<para>in vitro study</para>
-							<@nonHumanStudyMethod study/>
 							</#if>
+
+							<@nonHumanStudyMethod study/>
 						</td>
 						<!-- Results -->
 						<td>
 							<para>
-								<@com.picklist study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
+								<@com.value study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
 							</para>
 							
 							<@EyeIrritationInVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/>
@@ -1485,18 +1487,18 @@
 
 			<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RespiratoryIrritation.EndpointConclusion.EndpointConclusion?has_content>
+			<#if summary.KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RespiratoryIrritation.EndpointConclusion?has_content>
 			<@com.emptyLine/>
 			<para><emphasis role="bold">Value used for CSA:</emphasis></para>
 			
-			Skin irritation / corrosion: <@com.picklist summary.KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.EndpointConclusion.EndpointConclusion/>
-			Eye irritation: <@com.picklist summary.KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.EndpointConclusion.EndpointConclusion/>
-			Respiratory irritation: <@com.picklist summary.KeyValueForChemicalSafetyAssessment.RespiratoryIrritation.EndpointConclusion.EndpointConclusion/>
+			Skin irritation / corrosion: <@com.value summary.KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.EndpointConclusion/>
+			Eye irritation: <@com.value summary.KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.EndpointConclusion/>
+			Respiratory irritation: <@com.value summary.KeyValueForChemicalSafetyAssessment.RespiratoryIrritation.EndpointConclusion/>
 			</#if>
 			
-			<para><@studyandsummaryCom.relevantStudies summary/></para>	
+			<para><@studyandsummaryCom.relevantStudies summary "SkinIrritationCorrosion"/></para>	
 			
 			<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>
 
@@ -1568,7 +1570,7 @@
 							<!-- Results -->
 							<td>
 								<para>
-									<@com.picklist study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
+									<@com.value study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
 								</para>
 
 								<para>
@@ -1800,11 +1802,11 @@
 						<!-- Results -->
 						<td>
 							<para>
-								<@com.picklist study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
+								<@com.value study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
 							</para>
 
 							<para>
-							<#local endpoint><@com.picklist study.AdministrativeData.Endpoint/></#local>
+							<#local endpoint><@com.value study.AdministrativeData.Endpoint/></#local>
 								<#if study.ResultsAndDiscussion.InVivoLLNA.Results?has_content>								
 								 <@inVivoLLNAList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.InVivoLLNA.Results) endpoint />
 								</#if>
@@ -2019,13 +2021,14 @@
 						<td>
 						<#if com.picklistValueMatchesPhrases(study.AdministrativeData.Endpoint, ["respiratory sensitisation: in vitro", "respiratory sensitisation: in chemico"])>
 							<para>in vitro study</para>							
-						<@nonHumanStudyMethod study />
 						</#if>
+
+						<@nonHumanStudyMethod study />
 						</td>
 						<!-- Results -->
 						<td>
 							<para>
-								<@com.picklist study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
+								<@com.value study.ApplicantSummaryAndConclusion.InterpretationOfResults/>
 							</para>
 
 							<para>
@@ -2220,16 +2223,15 @@
 				<para>no information available on skin sensitisation</para>
 			</#if>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.SkinSensitisation.EndpointConclusion.EndpointConclusion?has_content>
+			<#if summary.KeyValueForChemicalSafetyAssessment.SkinSensitisation.EndpointConclusion?has_content>
 				<@com.emptyLine/>
-				<emphasis role="bold">Value used for CSA:</emphasis> <@com.picklist summary.KeyValueForChemicalSafetyAssessment.SkinSensitisation.EndpointConclusion.EndpointConclusion/>
+				<emphasis role="bold">Value used for CSA:</emphasis> <@com.value summary.KeyValueForChemicalSafetyAssessment.SkinSensitisation.EndpointConclusion/>
 			</#if>
 			
-			<para><@studyandsummaryCom.relevantStudies summary/></para>	
+			<para><@studyandsummaryCom.relevantStudies summary "SkinSensitisation"/></para>	
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.SkinSensitisation.EndpointConclusion.AdditionalInformation?has_content>
-				<para>Additional information: <@com.richText summary.KeyValueForChemicalSafetyAssessment.SkinSensitisation.EndpointConclusion.AdditionalInformation/></para>
-			</#if>
+			<@studyandsummaryCom.summaryAdditionalInformation summary/>
+
 		</#list>
 	
 		<!-- relevant to CSR only -->
@@ -2254,7 +2256,6 @@
 			</#if>
 		</#if>
 	
-
 		<#if summaryList?has_content>
 			<#assign printSummaryName = summaryList?size gt 1 />
 			
@@ -2270,13 +2271,15 @@
 					<#else/>
 					<para>no information available on respiratory sensitisation</para>
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.EndpointConclusion.EndpointConclusion?has_content>
+				<#if summary.KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.EndpointConclusion?has_content>
 					<@com.emptyLine/>
-					<emphasis role="bold">Value used for CSA:</emphasis> <@com.picklist summary.KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.EndpointConclusion.EndpointConclusion/>
+					<emphasis role="bold">Value used for CSA:</emphasis> <@com.value summary.KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.EndpointConclusion/>
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.EndpointConclusion.AdditionalInformation?has_content>
-					<para>Additional information: <@com.richText summary.KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.EndpointConclusion.AdditionalInformation/></para>
-				</#if>
+
+				<para><@studyandsummaryCom.relevantStudies summary "RespiratorySensitisation"/></para>
+				
+				<@studyandsummaryCom.summaryAdditionalInformation summary/>
+
 				<@justification summary "Remarks"/>
 			</#list>
 		</#if>
@@ -2600,7 +2603,7 @@
 
 			<@com.emptyLine/>
 			<table border="1">
-				<title>Exposure-related observations on skin sensitisation in humans</title>
+				<title>Exposure-related observations on repeated dose toxicity in humans</title>
 				<col width="39%" />
 				<col width="41%" />
 				<col width="20%" />
@@ -2720,160 +2723,151 @@
 		</#if>
 		<@com.emptyLine/>
 		
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Species?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Organ?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Species?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Organ?has_content>
+			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Species?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Organ?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Species?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Organ?has_content>
 							
 				<@studyandsummaryCom.summaryKeyInformation summary/>
 			
 				<#if summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType?has_content>
 				<@com.emptyLine/>
-				Toxic effect type (for all routes and effects): <@com.picklist summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType/>
+				Toxic effect type (for all routes and effects): <@com.value summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType/>
 				</#if>
 			
 				<#assign valueForCsaTextOralSystemic>
-				<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EndpointConclusion/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelUnit/>:
+				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute/></para>
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelUnit?has_content>
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelUnit/>:
 				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.EffectLevelValue/>;
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelValue?has_content>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelValue/>;
 				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.TestType?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.TestType/>,
-				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek?has_content>	
-					<@com.text summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek/> hours/week;
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content>	
+					<@com.text summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek/> hours/week;
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Species?has_content>	
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Species/>)
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Species?has_content>	
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Species/>)
 				</#if>
 			   <?linebreak?>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Organ?has_content>
-					Target organs: <@com.picklistMultiple summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityViaOralRouteSystemicEffects.EndpointConclusion.Organ/>
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Organ?has_content>
+					Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Organ/>
 				</#if>
 				</#assign>
-			</#if>
-							
-			<@endpointSummary summary valueForCsaTextOralSystemic "valueForCsaTextOralSystemic" printSummaryName/>
+			</#if>							
+			<@endpointSummary summary valueForCsaTextOralSystemic "valueForCsaTextOralSystemic" "ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm" printSummaryName/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Species?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Organ?has_content>
+
+			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsInhalation?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Species?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Organ?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek>
 			
 			<#assign valueForCsaTextInhalationSystemic>
-				<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EndpointConclusion/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelUnit/>:
+				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsInhalation/></para>
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelUnit?has_content>
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelUnit/>:
 				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.EffectLevelValue/>;
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelValue?has_content>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelValue/>;
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.TestType?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.TestType/>,
-				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek?has_content>	
-					<@com.text summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek/> hours/week;
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content>	
+					<@com.text summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek/> hours/week;
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Species?has_content>	
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Species/>)
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Species?has_content>	
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Species/>)
 				</#if>
 				<?linebreak?>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Organ?has_content>
-				Target organs: <@com.picklistMultiple summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationSystemicEffects.EndpointConclusion.Organ/>
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Organ?has_content>
+				Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Organ/>
 				</#if>
 			</#assign>
-			</#if>
+			</#if>			
+			<@endpointSummary summary valueForCsaTextInhalationSystemic "valueForCsaTextInhalationSystemic" "ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm" printSummaryName/>
 			
-			<@endpointSummary summary valueForCsaTextInhalationSystemic "valueForCsaTextInhalationSystemic" printSummaryName/>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.Species?has_content>
+			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.TestType?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.Species?has_content>
 			
 			<#assign valueForCsaTextInhalationLocal>                    
-				<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EndpointConclusion/></para>					
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelUnit/>:
+				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion/></para>					
+				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelUnit?has_content>
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelUnit/>:
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.EffectLevelValue/>;
+				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelValue?has_content>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelValue/>;
 					
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.TestType?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.TestType/>;
+				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.TestType?has_content>
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.TestType/>;
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.Species?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion.Species/>)
+				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.Species?has_content>
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.Species/>)
 					
 				</#if>
 			</#assign>
 			</#if>
 			
-			<@endpointSummary summary valueForCsaTextInhalationLocal "valueForCsaTextInhalationLocal" printSummaryName/>
+			<@endpointSummary summary valueForCsaTextInhalationLocal "valueForCsaTextInhalationLocal" "RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects" printSummaryName/>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.Species?has_content>
+			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsDermal?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.Species?has_content>
 			
 			<#assign valueForCsaTextDermalSystemic>
-			   <para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EndpointConclusion/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelUnit/>:
+			   <para><@com.value summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsDermal/></para>
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelUnit?has_content>
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelUnit/>:
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.EffectLevelValue/>;
-					
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelValue?has_content>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelValue/>;
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.TestType?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.TestType/>,
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content>	
+					<@com.text summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek/> hours/week;
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek?has_content>	
-					<@com.text summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.ExperimentalExposureTimePerWeek/> hours/week;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.Species?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalSystemicEffects.EndpointConclusion.Species/>)
-					
+				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.Species?has_content>
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.Species/>)
 				</#if>
 			</#assign>
 			</#if>
 			
-			<@endpointSummary summary valueForCsaTextDermalSystemic "valueForCsaTextDermalSystemic" printSummaryName/>				
+			<@endpointSummary summary valueForCsaTextDermalSystemic "valueForCsaTextDermalSystemic" "ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm" printSummaryName/>				
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.TestType?has_content || summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.Species?has_content>
+			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.TestType?has_content || 
+			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.Species?has_content>
 			
 			<#assign valueForCsaTextDermalLocal>
-				<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EndpointConclusion/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelUnit/>:
+				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion/></para>
+				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelUnit?has_content>
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelUnit/>:
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.EffectLevelValue/>;
+				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelValue?has_content>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelValue/>;
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.TestType?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.TestType/>;
+				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.TestType?has_content>
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.TestType/>;
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.Species?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion.Species/>)
-					
+				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.Species?has_content>
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.Species/>)					
 				</#if>
 			</#assign>
 			
 			</#if>
 			
-			<@endpointSummary summary valueForCsaTextDermalLocal "valueForCsaTextDermalLocal" printSummaryName/>
+			<@endpointSummary summary valueForCsaTextDermalLocal "valueForCsaTextDermalLocal" "RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects" printSummaryName/>
 			
 			<para>
 				<@justification summary "Remarks"/>					
@@ -2951,7 +2945,7 @@
 								<@TestResultsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TestRs)/>
 								<#assign remarksOnResults = study.ResultsAndDiscussion.RemarksOnResults>
 									<#if remarksOnResults?has_content>
-									Remarks: <@com.picklist study.ResultsAndDiscussion.RemarksOnResults/>
+									Remarks: <@com.value study.ResultsAndDiscussion.RemarksOnResults/>
 									</#if>
 							</para>
 						</td>
@@ -3192,29 +3186,31 @@
 			
 			<!-- in vitro -->
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.DescriptionOfKeyInformation.KeyInfo?has_content>
+			<#if summary.KeyInformation.KeyInformation?has_content>
 			<para><emphasis role="underline">The following information is taken into account for any hazard / risk assessment (genetic toxicity in vitro):</emphasis></para>
-				<para><@com.richText summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.DescriptionOfKeyInformation.KeyInfo/></para>
+				<para><@com.richText summary.KeyInformation.KeyInformation/></para>
 			</#if>
 			
 			<para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.EndpointConclusion.EndpointConclusion?has_content>
+				<#if summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.EndpointConclusion?has_content>
 				<@com.emptyLine/>
-				<emphasis role="bold">Value used for CSA (genetic toxicity in vitro):</emphasis> Genetic toxicity: <@com.picklist summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.EndpointConclusion.EndpointConclusion/>
+				<emphasis role="bold">Value used for CSA (genetic toxicity in vitro):</emphasis> Genetic toxicity: <@com.value summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.EndpointConclusion/>
 				</#if>
 			</para>
+
+			<para><@studyandsummaryCom.relevantStudies summary "GeneticToxicityInVitro"/></para>	
 		
 			<!-- in vivo -->				
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.DescriptionOfKeyInformation.KeyInfo?has_content>
+			<#if summary.KeyInformation.KeyInformation?has_content>
 			<para><emphasis role="underline">The following information is taken into account for any hazard / risk assessment (genetic toxicity in vivo):</emphasis></para>
-				<para><@com.richText summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.DescriptionOfKeyInformation.KeyInfo/></para>
+				<para><@com.richText summary.KeyInformation.KeyInformation/></para>
 			</#if>
 			
 			<para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.EndpointConclusion.EndpointConclusion?has_content>
+				<#if summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.EndpointConclusion?has_content>
 				<@com.emptyLine/>
-				<emphasis role="bold">Value used for CSA (genetic toxicity in vivo):</emphasis> Genetic toxicity: <@com.picklist summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.EndpointConclusion.EndpointConclusion/>
+				<emphasis role="bold">Value used for CSA (genetic toxicity in vivo):</emphasis> Genetic toxicity: <@com.value summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.EndpointConclusion/>
 				</#if>
 			</para>
 		
@@ -3224,7 +3220,7 @@
 				<para><@com.richText summary.JustificationForClassificationOrNonClassification.Remarks/></para>
 			</#if>
 			
-			<para><@studyandsummaryCom.relevantStudies summary/></para>	
+			<para><@studyandsummaryCom.relevantStudies summary "GeneticToxicityInVivo"/></para>	
 			
 			<#if summary.Discussion.Discussion?has_content>
 				<para>
@@ -3670,95 +3666,95 @@
 				<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>			
 			
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content ||					
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.TestType?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.Species?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.Organ?has_content>
+				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelUnit?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelValue?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.TestType?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Species?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Organ?has_content>
 				
 				<#assign valueForCsaTextOralCacrinogenicity>
-					<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EndpointConclusion/></para>
+					<para><@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion/></para>
 					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelUnit/>) 
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelUnit/>) 
 					</#if>
 						
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.EffectLevelValue/>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelValue/>
 					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.TestType/>);
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.TestType?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.TestType/>);
 					</#if>
 					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.Species?has_content>
-						 (<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.Species/>)							
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Species?has_content>
+						 (<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Species/>)							
 					</#if>
 					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.Organ?has_content> 
-					Target organs: <@com.picklistMultiple summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion.Organ/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Organ?has_content> 
+					Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Organ/>
 					</#if>
 					
 				</#assign>
 				</#if>		
-				<@endpointSummary summary valueForCsaTextOralCacrinogenicity "valueForCsaTextOralCacrinogenicity" printSummaryName/>
+				<@endpointSummary summary valueForCsaTextOralCacrinogenicity "valueForCsaTextOralCacrinogenicity" "CarcinogenicityViaOralRoute" printSummaryName/>
 								
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content ||					
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.TestType?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.Species?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.Organ?has_content>
+				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelUnit?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelValue?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.TestType?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Species?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Organ?has_content>
 				
 				<#assign valueForCsaTextDermalCarcinogenicity>
-					 <para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EndpointConclusion/></para>
+					 <para><@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion/></para>
 					 
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelUnit/>)
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelUnit/>)
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content>
-						<@com.quantity summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.EffectLevelValue/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelValue?has_content>
+						<@com.range summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelValue/>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.TestType/>);
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.TestType?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.TestType/>);
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.Species?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.Species/>)					
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Species?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Species/>)					
 					</#if>					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.Organ?has_content>
-					Target organs: <@com.picklistMultiple summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion.Organ/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Organ?has_content>
+					Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Organ/>
 					</#if>
 				</#assign>
 				</#if>		
-				<@endpointSummary summary valueForCsaTextDermalCarcinogenicity "valueForCsaTextDermalCarcinogenicity" false/>
+				<@endpointSummary summary valueForCsaTextDermalCarcinogenicity "valueForCsaTextDermalCarcinogenicity" "CarcinogenicityViaDermalRoute" false/>
 	
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content ||					
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.TestType?has_content || 
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.Species?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.Organ?has_content>
+				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelUnit?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelValue?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.TestType?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Species?has_content ||
+				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Organ?has_content>
 				
 				<#assign valueForCsaTextInhalationCarcinogenicity>
-					<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EndpointConclusion/></para>
+					<para><@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion/></para>
 					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit/>) 
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelUnit/>) 
 					</#if>
 					
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.EffectLevelValue/>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelValue/>
 					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.TestType/>);
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.TestType?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.TestType/>);
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.Species?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.Species/>)							
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Species?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Species/>)							
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.Organ?has_content>
-					Target organs: <@com.picklistMultiple summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion.Organ/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Organ?has_content>
+					Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Organ/>
 					</#if>
 				</#assign>
 				</#if>					
-				<@endpointSummary summary valueForCsaTextInhalationCarcinogenicity "valueForCsaTextInhalationCarcinogenicity" false/>
+				<@endpointSummary summary valueForCsaTextInhalationCarcinogenicity "valueForCsaTextInhalationCarcinogenicity" "CarcinogenicityViaInhalationRoute" false/>
 
 			<@justification summary "JustifClassifCarc"/>
 				
@@ -4320,101 +4316,107 @@
 
 		<#if summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType?has_content>
 		<@com.emptyLine/>
-		Toxic effect type (for all routes and effects - fertility / developmental toxicity): <@com.picklist summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType/>
+		Toxic effect type (for all routes and effects - fertility / developmental toxicity): <@com.value summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType/>
 		<@com.emptyLine/>
 		</#if>	
 
 		<para><emphasis role="bold">Effects on fertility</emphasis></para>
 						
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.DescriptionOfKeyInformation.KeyInfo?has_content>
+			<#if summary.KeyInformation.KeyInformation?has_content>
 				<para><@com.emptyLine/>
 				<emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis>
 				</para>
 								
 				<para><@com.emptyLine/>
-				<@com.richText summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.DescriptionOfKeyInformation.KeyInfo/>
+				<@com.richText summary.KeyInformation.KeyInformation/>
 				</para>
 			</#if>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue?has_content || 
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.ExperimentalExposureTimePerWeek?has_content>
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.ExperimentalExposureTimePerWeek?has_content
+			>
 			
 				<#assign valueForCsaTextOralFertilityEffects>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EndpointConclusion/>
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EndpointConclusion/>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelUnit/>): 
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelUnit/>): 
 					</#if>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue?has_content>
-						<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue/>
+						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue/>
 					</#if>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.TestType/>,
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.TestType/>,
 					</#if>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.ExperimentalExposureTimePerWeek?has_content>	
 						<@com.text summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.ExperimentalExposureTimePerWeek/> hours/week
 					</#if>
 					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species?has_content>						
-						<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species/>)					
+						<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species/>)					
 					</#if>
 				</#assign>
 			</#if>
-			<@endpointSummary summary valueForCsaTextOralFertilityEffects "valueForCsaTextOralFertilityEffects" printSummaryName/>
+			<@endpointSummary summary valueForCsaTextOralFertilityEffects "valueForCsaTextOralFertilityEffects" "EffectsOnFertility.EffectOnFertilityViaOralRoute" printSummaryName/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue?has_content || 
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species?has_content>
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species?has_content
+			>
+
 			<#assign valueForCsaTextDermalEffectsOnFertility>
-				<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EndpointConclusion/>
+				<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EndpointConclusion/>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelUnit/>): 
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelUnit/>): 
 				</#if>	
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue/>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue/>
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.TestType?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.TestType/>,
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.TestType/>,
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.ExperimentalExposureTimePerWeek?has_content>	
 					<@com.text summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.ExperimentalExposureTimePerWeek/> hours/week;
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species?has_content>						
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species/>)
-					
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species/>)					
 				</#if>
 			</#assign>
 			</#if>
-			<@endpointSummary summary valueForCsaTextDermalEffectsOnFertility "valueForCsaTextDermalEffectsOnFertility" false/>
+			<@endpointSummary summary valueForCsaTextDermalEffectsOnFertility "valueForCsaTextDermalEffectsOnFertility" "EffectsOnFertility.EffectOnFertilityViaDermalRoute" false/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EndpointConclusion?has_content || 
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit?has_content || 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species?has_content>
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species?has_content
+			>
+
 			<#assign valueForCsaTextInhalationEffectsOnFertility>
-				<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EndpointConclusion/>
+				<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EndpointConclusion/>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit/>):
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit/>):
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelValue/>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelValue/>
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.TestType?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.TestType/>,
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.TestType/>,
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.ExperimentalExposureTimePerWeek?has_content>	
 					<@com.text summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.ExperimentalExposureTimePerWeek/> hours/week;
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species/>)
-					
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species/>)					
 				</#if>
 			</#assign>
 			</#if>
-			<@endpointSummary summary valueForCsaTextInhalationEffectsOnFertility "valueForCsaTextInhalationEffectsOnFertility" false/>
+			<@endpointSummary summary valueForCsaTextInhalationEffectsOnFertility "valueForCsaTextInhalationEffectsOnFertility" "EffectsOnFertility.EffectOnFertilityViaInhalationRoute" false/>
 		</#list>
 
 			<#if csrRelevant??>
@@ -4440,87 +4442,96 @@
                 
 		<#list summaryList as summary>
 		
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.DescriptionOfKeyInformation.KeyInfo?has_content>
+			<#if summary.KeyInformation.KeyInformation?has_content>
 				<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 			</#if>
 			<@com.emptyLine/>
 			
 			<para>
-			<@com.richText summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.DescriptionOfKeyInformation.KeyInfo/>
+			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 
 			<emphasis role="underline">Effect on developmental toxicity - development (via oral route)</emphasis>	
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion?has_content || 
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit?has_content || 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species?has_content>
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species?has_content
+			>
 			
 				<#assign valueForCsaTextOralDevelopmentalToxicity>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion/>
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion/>
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit/>): 
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit/>): 
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelValue/>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelValue/>
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.TestType?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.TestType/>;
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.TestType/>;
 				</#if>	
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species/>)						
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species/>)						
 				</#if>
 				</#assign>
 			</#if>
-			<@endpointSummary summary valueForCsaTextOralDevelopmentalToxicity "valueForCsaTextOralDevelopmentalToxicity" false/>
+			<@endpointSummary summary valueForCsaTextOralDevelopmentalToxicity "valueForCsaTextOralDevelopmentalToxicity" "EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute" false/>
 			
 			<emphasis role="underline">Effect on developmental toxicity - development (via dermal route)</emphasis>
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion?has_content || 
+			
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species?has_content>
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species?has_content
+			>
+
 			<#assign valueForCsaTextDermalDevelopmentToxicity>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion/>
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion/>
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelUnit/>):
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelUnit/>):
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelValue/>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelValue/>
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species/>)
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species/>)
 				</#if>
 			</#assign>
 			</#if>
-			<@endpointSummary summary valueForCsaTextDermalDevelopmentToxicity "valueForCsaTextDermalDevelopmentToxicity" false/>
+			<@endpointSummary summary valueForCsaTextDermalDevelopmentToxicity "valueForCsaTextDermalDevelopmentToxicity" "EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute" false/>
 			
 			<emphasis role="underline">Effect on developmental toxicity - development (via inhalation route)</emphasis>
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EndpointConclusion?has_content || 
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EndpointConclusion?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelValue?has_content ||
 			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species?has_content>
+			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species?has_content
+			>
+
 			<#assign valueForCsaTextInhalationDevelopmentalToxicity>
-				<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EndpointConclusion/></para>
+				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EndpointConclusion/></para>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelUnit?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelUnit/>): 
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelUnit/>): 
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelValue?has_content>
-					<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelValue/>
+					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelValue/>
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.TestType?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.TestType/>;
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.TestType/>;
 				</#if>
 				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species?has_content>
-					<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species/>)
+					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species/>)
 					
 				</#if>
 			</#assign>
 			</#if>
-			<@endpointSummary summary valueForCsaTextInhalationDevelopmentalToxicity "valueForCsaTextInhalationDevelopmentalToxicity" false/>
+			<@endpointSummary summary valueForCsaTextInhalationDevelopmentalToxicity "valueForCsaTextInhalationDevelopmentalToxicity" "EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute" false/>
 
 			<@justification summary "JustificationForClassificationOrNonClassification"/>
 			
@@ -5180,82 +5191,90 @@
 			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.TestType?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.Species?has_content>
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.TestType?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.Species?has_content
+			>
+
 				<#assign valueForCsaTextOralNeurotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content>
-						<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion/></para>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion?has_content>
+						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion/></para>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit/>) 
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelUnit/>) 
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content>
-						<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelValue?has_content>
+						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelValue/>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.TestType/>);
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.TestType?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.TestType/>);
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.Species?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion.Species/>)					
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.Species?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.Species/>)					
 					</#if>
 				</#assign>
 			</#if>
-			<@endpointSummary summary valueForCsaTextOralNeurotoxicity "valueForCsaTextOralNeurotoxicity" printSummaryName/>
+			<@endpointSummary summary valueForCsaTextOralNeurotoxicity "valueForCsaTextOralNeurotoxicity" "EffectOnNeurotoxicityViaOralRoute" printSummaryName/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.TestType?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.Species?has_content>
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.TestType?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.Species?has_content
+			>
+
 				<#assign valueForCsaTextDermalNeurotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content>
-						<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion/></para>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion?has_content>
+						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion/></para>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit/>) 
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelUnit/>) 
 					</#if>	
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content>
-						<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelValue?has_content>
+						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelValue/>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.TestType/>);
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.TestType?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.TestType/>);
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.Species?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion.Species/>)
-						
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.Species?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.Species/>)						
 					</#if>
 				</#assign>
 			</#if>			
-			<@endpointSummary summary valueForCsaTextDermalNeurotoxicity "valueForCsaTextDermalNeurotoxicity" false/>
+			<@endpointSummary summary valueForCsaTextDermalNeurotoxicity "valueForCsaTextDermalNeurotoxicity" "EffectOnNeurotoxicityViaDermalRoute" false/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.TestType?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.Species?has_content>
+			<#if 
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.TestType?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.Species?has_content
+			>
+
 				<#assign valueForCsaTextInhalationNeurotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content>
-						<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion/></para>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion?has_content>
+						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion/></para>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit/>) 
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelUnit/>) 
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content>
-						<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelValue?has_content>
+						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelValue/>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.TestType/>);
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.TestType?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.TestType/>);
 					</#if>	
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.Species?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion.Species/>)
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.Species?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.Species/>)
 						
 					</#if>
 				</#assign>
-			</#if>			
-			<@endpointSummary summary valueForCsaTextInhalationNeurotoxicity "valueForCsaTextInhalationNeurotoxicity" false/>
+			</#if>						
+			<@endpointSummary summary valueForCsaTextInhalationNeurotoxicity "valueForCsaTextInhalationNeurotoxicity" "EffectOnNeurotoxicityViaInhalationRoute" false/>
 
 			<@justification summary "JustifClassifRepTox"/>
 
@@ -5297,83 +5316,84 @@
 			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.TestType?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.Species?has_content>
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.TestType?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.Species?has_content>
 			
 				<#assign valueForCsaTextOralImmunotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion?has_content>
-						<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EndpointConclusion/></para>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion?has_content>
+						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion/></para>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelUnit/>) 
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelUnit/>) 
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content>
-						<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.EffectLevelValue/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelValue?has_content>
+						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelValue/>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.TestType/>);
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.TestType?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.TestType/>);
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.Species?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion.Species/>)
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.Species?has_content>
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.Species/>)
 					
 					</#if>
 				</#assign>
 			</#if>			
-			<@endpointSummary summary valueForCsaTextOralImmunotoxicity "valueForCsaTextOralImmunotoxicity" false/>
+			<@endpointSummary summary valueForCsaTextOralImmunotoxicity "valueForCsaTextOralImmunotoxicity" "EffectOnImmunotoxicityViaOralRoute" false/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.TestType?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.Species?has_content>
+
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.TestType?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.Species?has_content>
 				<#assign valueForCsaTextDermalImmunotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion?has_content>
-						<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EndpointConclusion/></para>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion?has_content>
+						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion/></para>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit/>) 
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelUnit/>) 
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content>
-						<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.EffectLevelValue/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelValue?has_content>
+						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelValue/>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.TestType?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.TestType/>)
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.TestType?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.TestType/>)
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.Species?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion.Species/>)
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.Species?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.Species/>)
 						
 					</#if>
 				</#assign>
 			</#if>				
-			<@endpointSummary summary valueForCsaTextDermalImmunotoxicity "valueForCsaTextDermalImmunotoxicity" false/>
+			<@endpointSummary summary valueForCsaTextDermalImmunotoxicity "valueForCsaTextDermalImmunotoxicity" "EffectOnImmunotoxicityViaDermalRoute" false/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.TestType?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.Species?has_content>
+			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelUnit?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelValue?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.TestType?has_content ||
+			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.Species?has_content>
 				<#assign valueForCsaTextInhalationImmunotoxicity>				
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion?has_content>
-						<para><@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EndpointConclusion/></para>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion?has_content>
+						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion/></para>
 					</#if>		
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit/>)
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelUnit?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelUnit/>)
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content>
-						<@com.quantity summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue/>
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelValue?has_content>
+						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelValue/>
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.TestType?has_content>
-					(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.TestType/>);
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.TestType?has_content>
+					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.TestType/>);
 					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.Species?has_content>
-						(<@com.picklist summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion.Species/>)						
+					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.Species?has_content>
+						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.Species/>)						
 					</#if>
 				</#assign>
 			</#if>				
-			<@endpointSummary summary valueForCsaTextInhalationImmunotoxicity "valueForCsaTextInhalationImmunotoxicity" false/>
+			<@endpointSummary summary valueForCsaTextInhalationImmunotoxicity "valueForCsaTextInhalationImmunotoxicity" "EffectOnImmunotoxicityViaInhalationRoute" false/>
 
 			<@justification summary "JustifClassifRepTox"/>
 
@@ -5415,7 +5435,7 @@
 				<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 			
-			<para><@studyandsummaryCom.relevantStudies summary/></para>	
+			<para><@studyandsummaryCom.relevantStudies summary "placeholder"/></para>	
 			
 			<para>
 				Additional information: <@com.richText summary.Discussion.Discussion/>
@@ -5440,7 +5460,7 @@
 				<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 			
-			<para><@studyandsummaryCom.relevantStudies summary/></para>	
+			<para><@studyandsummaryCom.relevantStudies summary "placeholder"/></para>	
 			
 			<para>
 				Additional information: <@com.richText summary.Discussion.Discussion/>
@@ -5477,11 +5497,16 @@
 	</#if>
 	<#local returnList = [] />
 	<#list studyList as study>
+	<#if study.hasElement("MaterialsAndMethods.EndpointAddressed")>
 		<#local endpointAddressed = study.MaterialsAndMethods.EndpointAddressed />
 		<#local PurposeFlag = study.AdministrativeData.PurposeFlag />
 		<#if com.picklistMultipleValueMatchesPhrases(endpointAddressed, ["acute toxicity: oral", "acute toxicity: inhalation", "acute toxicity: dermal"])>
 			<#local returnList = returnList + [study] />
 		</#if>
+		<#else>
+		<#return [] />
+	</#if>
+	
 	</#list>
 	<#-- sort resultStudyList according to PurposeFlag -->
 	<#assign returnList = iuclid.sortByField(returnList, "AdministrativeData.PurposeFlag", ["key study","supporting study","weight of evidence","disregarded due to major methodological deficiencies","other information"]) />
@@ -5883,13 +5908,13 @@
 					<@com.range blockItem.Absorption/> % 
 				</#if>	
 				<#if blockItem.TimePoint?has_content>	
-					at (<@com.picklist blockItem.TimePoint/>)
+					at (<@com.value blockItem.TimePoint/>)
 				</#if>
 				<#if blockItem.Dose?has_content>
 					(<@com.text blockItem.Dose/>) 
 				</#if>	
 				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
+					(<@com.value blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 		</#list>
@@ -5928,7 +5953,7 @@
 	<#if MainAdmeResultsRepeatableBlock?has_content>
 		<#list MainAdmeResultsRepeatableBlock as blockItem>
 			<para role="indent">
-				Type: <@com.picklist blockItem.Type/>
+				Type: <@com.value blockItem.Type/>
 				<?linebreak?>
 				Result: <@com.text blockItem.Results/>
 			</para>
@@ -5954,9 +5979,9 @@
 	<#if ParametersRepeatableBlock?has_content>
 		<#list ParametersRepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.ToxicokineticParameters/> 
+				<@com.value blockItem.ToxicokineticParameters/> 
 				<#if blockItem.TestNo?has_content>
-					(Test No.: <@com.picklist blockItem.TestNo/>)
+					(Test No.: <@com.value blockItem.TestNo/>)
 				</#if>
 			</para>
 		</#list>
@@ -5969,7 +5994,7 @@
 	<#if ADMERepeatableBlock?has_content>
 		<#list ADMERepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.Type/>
+				<@com.value blockItem.Type/>
 				<#if blockItem.Results?has_content>
 					: <@com.text blockItem.Results/>
 				</#if>
@@ -5985,16 +6010,24 @@
 		<#list PercutaneousRepeatableBlock as blockItem>
 			<para role="indent">
 				<#if blockItem.Absorption?has_content>
-					<@com.range blockItem.Absorption/>(%) 
+					<@com.range blockItem.Absorption/>
+<#--					(%) -->
 				</#if>	
 				<#if blockItem.TimePoint?has_content>
 					at <@com.quantity blockItem.TimePoint/>
 				</#if>
 				<#if blockItem.Dose?has_content>
-					(<@com.text blockItem.Dose/>) 
-				</#if>	
+					<#if pppRelevant??>
+						for dose <@com.text blockItem.Dose/>
+						<#if blockItem.ConcentrateDilution?has_content>
+							(<@com.value blockItem.ConcentrateDilution/>)
+						<#else>
+							(<@com.text blockItem.Dose/>)
+						</#if>
+					</#if>
+				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
+					(<@com.value blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 		</#list>
@@ -6008,7 +6041,7 @@
 		<#list EyeIrritationInVitroRepeatableBlock as blockItem>
 			<#if blockItem.RunExperiment?has_content || blockItem.Value?has_content>
 				<para>
-				<@com.picklist blockItem.IrritationParameter/>
+				<@com.value blockItem.IrritationParameter/>
 				</para>
 				<para role="indent">
 					<para>
@@ -6033,12 +6066,12 @@
 		<#list EyeIrritationInVivoRepeatableBlock as blockItem>
 			<#if blockItem.Basis?has_content || blockItem.Score?has_content || blockItem.Scale?has_content || blockItem.TimePoint?has_content || blockItem.Reversibility?has_content || blockItem.RemarksOnResults?has_content>
 				<para>
-				<@com.picklist blockItem.Parameter/>
+				<@com.value blockItem.Parameter/>
 				</para>
 				<para role="indent">
 					<para>
 						<#if blockItem.Basis?has_content>
-							(<@com.picklist blockItem.Basis/>)
+							(<@com.value blockItem.Basis/>)
 						</#if>
 					
 						<#if blockItem.Score?has_content>
@@ -6052,19 +6085,19 @@
 					
 					<#if blockItem.TimePoint?has_content>
 						<para>
-							(Time point: <@com.picklist blockItem.TimePoint/>)
+							(Time point: <@com.value blockItem.TimePoint/>)
 						</para>
 					</#if>
 					
 					<#if blockItem.Reversibility?has_content>
 						<para>
-							<@com.picklist blockItem.Reversibility/>							
+							<@com.value blockItem.Reversibility/>							
 						</para>
 					</#if>
 					
 					<#if blockItem.RemarksOnResults?has_content>
 						<para>
-							<@com.picklist blockItem.RemarksOnResults/>
+							<@com.value blockItem.RemarksOnResults/>
 						</para>
 					</#if>
 				</para>
@@ -6080,13 +6113,13 @@
 		<#list TransferRepeatableBlock as blockItem>
 			<para role="indent">
 				<#if blockItem.TransferType?has_content>
-					Transfer (<@com.picklist blockItem.TransferType/>)
+					Transfer (<@com.value blockItem.TransferType/>)
 				</#if>	
 				<#if blockItem.Observation?has_content>
-					: <@com.picklist blockItem.Observation/> 
+					: <@com.value blockItem.Observation/> 
 				</#if>
 				<#if blockItem.TestNo?has_content>
-					(<@com.picklist blockItem.TestNo/>)
+					(<@com.value blockItem.TestNo/>)
 				</#if>
 			</para>
 		</#list>
@@ -6103,13 +6136,13 @@
 					<@com.range blockItem.Absorption/> %
 				</#if>
 				<#if blockItem.TimePoint?has_content>
-					at (<@com.picklist blockItem.TimePoint/>)
+					at (<@com.value blockItem.TimePoint/>)
 				</#if>
 				<#if blockItem.Dose?has_content>
 					(<@com.text blockItem.Dose/>)
 				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
+					(<@com.value blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 		</#list>
@@ -6123,7 +6156,7 @@
 		<#list MainAdmeResultsRepeatableBlock as blockItem>
 			<para role="indent">
 				<#if blockItem.Type?has_content>
-					Type: <@com.picklist blockItem.Type/>
+					Type: <@com.value blockItem.Type/>
 				</#if>
 				<#if blockItem.Results?has_content>
 					Result: <@com.text blockItem.Results/>
@@ -6156,17 +6189,17 @@
 			<#if blockItem.Endpoint?has_content || blockItem.Sex?has_content || blockItem.BasedOn?has_content || blockItem.RemarksOnResults?has_content>
 			<para>
 				<#if blockItem.Endpoint?has_content>
-					<@com.picklist blockItem.Endpoint/>:
+					<@com.value blockItem.Endpoint/>:
 				</#if>
 				<@com.range blockItem.EffectLevel/>
 				<#if blockItem.Sex?has_content>
-					(<@com.picklist blockItem.Sex/>)
+					(<@com.value blockItem.Sex/>)
 				</#if>
 				<#if blockItem.BasedOn?has_content>
-					based on: (<@com.picklist blockItem.BasedOn/>) 
+					based on: (<@com.value blockItem.BasedOn/>) 
 				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
+					(<@com.value blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 			</#if>
@@ -6175,86 +6208,83 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: added basis-->
+
 <#macro EffectLevelsMatAbnormalitiesList EffectsMaternalRepeatableBlock>
-<#compress>
-	<#if EffectsMaternalRepeatableBlock?has_content>
-		<#list EffectsMaternalRepeatableBlock as blockItem>
-			<para role="indent">
-				<#if blockItem.Endpoint?has_content>
-					<@com.picklist blockItem.Endpoint/>:
-				</#if>
-				<#if blockItem.EffectLevel?has_content>
-					<@com.range blockItem.EffectLevel/>
-				</#if>
-				<#if blockItem.BasedOn?has_content>
-					<?linebreak?>based on: (<@com.picklist blockItem.BasedOn/>)
-				</#if>
-				<#if pppRelevant??>
-					<#if blockItem.Basis?has_content>
-						<?linebreak?>basis:<@com.picklistMultiple blockItem.Basis/>
+	<#compress>
+		<#if EffectsMaternalRepeatableBlock?has_content>
+			<#list EffectsMaternalRepeatableBlock as blockItem>
+				<para role="indent">
+					<#if blockItem.Endpoint?has_content>
+						<@com.value blockItem.Endpoint/>:
 					</#if>
-				</#if>
-				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
-				</#if>
-			</para>
-		</#list>
-  	</#if>
-</#compress>
+					<#if blockItem.EffectLevel?has_content>
+						<@com.range blockItem.EffectLevel/>
+					</#if>
+					<#if blockItem.BasedOn?has_content>
+						<?linebreak?>based on: (<@com.value blockItem.BasedOn/>)
+					</#if>
+					<#if pppRelevant??>
+						<#if blockItem.Basis?has_content>
+							<?linebreak?>basis:<@com.value blockItem.Basis/>
+						</#if>
+					</#if>
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.value blockItem.RemarksOnResults/>)
+					</#if>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
 </#macro>
-
-<#--changed for PPP: added basis. NOTE: this is pretty much same as previous macro and very similar to others.-->
 <#macro EffectLevelsFetusesList EffectsFetusesRepeatableBlock>
-<#compress>
-	<#if EffectsFetusesRepeatableBlock?has_content>
-		<#list EffectsFetusesRepeatableBlock as blockItem>
-			<para role="indent">
-				<#if blockItem.Endpoint?has_content>
-					<@com.picklist blockItem.Endpoint/>:
-				</#if>
-				<#if blockItem.EffectLevel?has_content>
-					<@com.range blockItem.EffectLevel/>
-				</#if>
-				<#if blockItem.BasedOn?has_content>
-					<?linebreak?>based on: (<@com.picklist blockItem.BasedOn/>)
-				</#if>
-				<#if pppRelevant??>
-					<#if blockItem.Basis?has_content>
-						<?linebreak?>basis: <@com.picklistMultiple blockItem.Basis/>
+	<#compress>
+		<#if EffectsFetusesRepeatableBlock?has_content>
+			<#list EffectsFetusesRepeatableBlock as blockItem>
+				<para role="indent">
+					<#if blockItem.Endpoint?has_content>
+						<@com.value blockItem.Endpoint/>:
 					</#if>
-				</#if>
-				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
-				</#if>
-			</para>
-		</#list>
-  	</#if>
-</#compress>
+					<#if blockItem.EffectLevel?has_content>
+						<@com.range blockItem.EffectLevel/>
+					</#if>
+					<#if blockItem.BasedOn?has_content>
+						<?linebreak?>based on: (<@com.value blockItem.BasedOn/>)
+					</#if>
+					<#if pppRelevant??>
+						<#if blockItem.Basis?has_content>
+							<?linebreak?>basis: <@com.value blockItem.Basis/>
+						</#if>
+					</#if>
+					<#if blockItem.RemarksOnResults?has_content>
+						(<@com.value blockItem.RemarksOnResults/>)
+					</#if>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
 </#macro>
-
 <#macro EffectLevelsExtendedList EffectsExtendedRepeatableBlock>
 <#compress>
 	<#if EffectsExtendedRepeatableBlock?has_content>
 		<#list EffectsExtendedRepeatableBlock as blockItem>
 			<para role="indent">
 				<#if blockItem.Endpoint?has_content>
-					<@com.picklist blockItem.Endpoint/>:
+					<@com.value blockItem.Endpoint/>:
 				</#if>
 				<#if blockItem.EffectLevel?has_content>
 					<@com.range blockItem.EffectLevel/> 
 				</#if>
 				<#if blockItem.Sex?has_content>
-					(<@com.picklist blockItem.Sex/>)
+					(<@com.value blockItem.Sex/>)
 				</#if>
 				<#if blockItem.BasedOn?has_content>
-					<?linebreak?>based on: (<@com.picklist blockItem.BasedOn/>)
+					based on: (<@com.value blockItem.BasedOn/>)
 				</#if>
 				<#if blockItem.Basis?has_content>
-					<?linebreak?><@com.picklistMultiple blockItem.Basis/>
+					<@com.value blockItem.Basis/>
 				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
-					<?linebreak?>(<@com.picklist blockItem.RemarksOnResults/>)
+					(<@com.value blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 		</#list>
@@ -6262,7 +6292,6 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: exclude some conditions. NOTE: is the phrasing correct? e.g. effective dose conc and then system?. ALso, could be merged with below macro.-->
 <#macro TargetSystemOrganToxList TargetRepeatableBlock>
 <#compress>
 	<#if TargetRepeatableBlock?has_content>
@@ -6285,10 +6314,10 @@
 				<para role="indent">
                     <#if !pppRelevant??><emphasis role="bold">Target system  / organ toxicity</emphasis><?linebreak?></#if>
 					<#if blockItem.System?has_content>
-						Lowest effective dose /concentration: <@com.picklist blockItem.System/>
+						Lowest effective dose /concentration: <@com.value blockItem.System/>
 					</#if>	
 					<#if blockItem.Organ?has_content>
-						: <@com.picklistMultiple blockItem.Organ/>
+						: <@com.value blockItem.Organ/>
 					</#if>
 					<#if blockItem.LowestEffectiveDoseConc?has_content>
 						(lowest effective dose/conc.: <@com.quantity blockItem.LowestEffectiveDoseConc/> ; ${text_1} ; ${text_2})
@@ -6300,50 +6329,51 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: added sections and exclude some conditions. NOTE: the ?contains statement DOES NOT WORK. Also, it could be merged with the above.-->
 <#macro TargetSystemOrganToxforEffectLevelsList TargetEffectRepeatableBlock>
 <#compress>
 	<#if TargetEffectRepeatableBlock?has_content>
 		<#list TargetEffectRepeatableBlock as blockItem>
-			<#local criticalEffectsObserved><@com.picklist blockItem.CriticalEffectsObserved/></#local>
-			<#if criticalEffectsObserved?contains(".*yes.*") || pppRelevant??>
-			<para role="indent">
-				<#if !pppRelevant??>
-					Target system / organ toxicity:<?linebreak?><@com.quantity blockItem.LowestEffectiveDoseConc/>
-				<#else>
-					Critical effects observed: ${criticalEffectsObserved}
-					<#if blockItem.LowestEffectiveDoseConc?has_content><?linebreak?>Lowest effective dose/conc. = <@com.quantity blockItem.LowestEffectiveDoseConc/></#if>
-				</#if>
+			<#local criticalEffectsObserved><@com.value blockItem.CriticalEffectsObserved/></#local>
+			<#if criticalEffectsObserved?contains("yes") || pppRelevant??>
+				<para role="indent">
+					<#if !pppRelevant??>
+						Target system / organ toxicity:
+						<?linebreak?>
+						<@com.quantity blockItem.LowestEffectiveDoseConc/>
+					<#else>
+						Critical effects observed: ${criticalEffectsObserved}
+						<#if blockItem.LowestEffectiveDoseConc?has_content><?linebreak?>Lowest effective dose/conc. = <@com.quantity blockItem.LowestEffectiveDoseConc/></#if>
+					</#if>
 
-				<#if blockItem.System?has_content>
-					(on <@com.picklist blockItem.System/>
-				</#if>
-				<#if blockItem.Organ?has_content>
-					: <@com.picklistMultiple blockItem.Organ/>)
-					<?linebreak?>
-				<#else>
-					)
-				</#if>
+					<#if blockItem.System?has_content>
+						(on <@com.value blockItem.System/>
+					</#if>
+					<#if blockItem.Organ?has_content>
+						<@com.value blockItem.Organ/>)
+						<?linebreak?>
+					<#else>
+						)
+					</#if>
 
-				<#if !pppRelevant??>
-					<#local details=[]/>
-					<#if blockItem.TreatmentRelated?has_content>
-						<#local tr>treatment related: <@com.picklist blockItem.TreatmentRelated/></#local>
-						<#local details=details+[tr]/>
+					<#if pppRelevant??>
+						<#local details=[]/>
+						<#if blockItem.TreatmentRelated?has_content>
+							<#local tr>treatment related: <@com.value blockItem.TreatmentRelated/></#local>
+							<#local details=details+[tr]/>
+						</#if>
+						<#if blockItem.DoseResponseRelationship?has_content>
+							<#local dr>dose-response relationship: <@com.value blockItem.DoseResponseRelationship/></#local>
+							<#local details=details+[dr]/>
+						</#if>
+						<#if blockItem.RelevantForHumans?has_content>
+							<#local hu>relevant for humans: <@com.value blockItem.RelevantForHumans/></#local>
+							<#local details=details+[hu]/>
+						</#if>
+						<#if details?has_content>
+							<?linebreak?>(${details?join("; ")})
+						</#if>
 					</#if>
-					<#if blockItem.DoseResponseRelationship?has_content>
-						<#local dr>dose-response relationship: <@com.picklist blockItem.DoseResponseRelationship/></#local>
-						<#local details=details+[dr]/>
-					</#if>
-					<#if blockItem.RelevantForHumans?has_content>
-						<#local hu>relevant for humans: <@com.picklist blockItem.RelevantForHumans/></#local>
-						<#local details=details+[hu]/>
-					</#if>
-					<#if details?has_content>
-						<?linebreak?>(${details?join("; ")})
-					</#if>
-				</#if>
-			</para>
+				</para>
 			</#if>
 		</#list>
   	</#if>
@@ -6354,14 +6384,14 @@
 <#compress>
 	<#if InductionRepeatableBlock?has_content>
 		<#list InductionRepeatableBlock as blockItem>
-			<#if Endpoint?contains(".*skin sensitisation: in vivo (non-LLNA).*")>
+			<#if Endpoint?contains("skin sensitisation: in vivo (non-LLNA)")>
 				<para role="indent">
-					Induction: <@com.picklist blockItem.Route/>
-					Vehicle: <@com.picklist blockItem.Vehicle/>
+					Induction: <@com.value blockItem.Route/>
+					Vehicle: <@com.value blockItem.Vehicle/>
 				</para>
-			<#elseif Endpoint?contains(".*skin sensitisation: in vivo (LLNA).*")>
+			<#elseif Endpoint?contains("skin sensitisation: in vivo (LLNA)")>
 	            <para role="indent">
-	                Vehicle: <@com.picklist blockItem.Vehicle/>
+	                Vehicle: <@com.value blockItem.Vehicle/>
 				</para>
 			</#if>
 		</#list>
@@ -6371,30 +6401,29 @@
 
 <#--TODO The following two macros could be possible merged to one -->
 <#macro inVivoLLNAList inVivoLLNARepeatableBlock endPoint>
-	<#if !endPoint?contains(".*(LLNA).*")>
+	<#if !endPoint?contains("(LLNA)")>
 		<#return>
 	</#if>
 	<#compress>
 	<#if inVivoLLNARepeatableBlock?has_content>
 		<#list inVivoLLNARepeatableBlock as blockItem>
 				<#local parameter>
-					<@com.picklist blockItem.Parameter />
+					<@com.value blockItem.Parameter />
 				</#local>
-				<#if parameter?contains(".*SI.*")>
+				<#if parameter?contains("SI")>
 					<#local prefix = "Stimulation index: " />
 				<#else>
 					<#local prefix = parameter + ": "/>
 				</#if>
 		        <para role="indent">
-					${prefix} <@com.range blockItem.Value/> (<@com.picklist blockItem.RemarksOnResults/>)
+					${prefix} <@com.range blockItem.Value/> (<@com.value blockItem.RemarksOnResults/>)
 				</para>
 		</#list>
   	</#if>
 	</#compress>
 </#macro>
-
 <#macro inVitroLLNAList inVivoLLNARepeatableBlock endPoint>
-	<#if !endPoint?contains(".*in vitro.*") && !endPoint?contains(".*in chemico.*")>
+	<#if !endPoint?contains("in vitro") && !endPoint?contains("in chemico")>
 		<#return>
 	</#if>
 	<#compress>
@@ -6404,9 +6433,9 @@
 					<para role="indent">
 						Results:
                         <?linebreak?>
-						<@com.picklist blockItem.Parameter /> <@com.quantity blockItem.Value/> 
+						<@com.value blockItem.Parameter /> <@com.quantity blockItem.Value/> 
 						<#if blockItem.RemarksOnResults?has_content>
-							(<@com.picklist blockItem.RemarksOnResults/>)
+							(<@com.value blockItem.RemarksOnResults/>)
 						</#if>
 					</para>
 				</#if>
@@ -6416,13 +6445,13 @@
 </#macro>
 
 <#macro inVivoNonLLNAList inVivoNonLLNARepeatableBlock endPoint>
-	<#if endPoint?contains(".*non-LLNA.*")>
+	<#if endPoint?contains("non-LLNA")>
 		<#compress>
 		<#if inVivoNonLLNARepeatableBlock?has_content>
 			<#list inVivoNonLLNARepeatableBlock as blockItem>
 		<para role="indent">
 			<#if blockItem.Reading?has_content>
-				No. with positive reactions: <@com.picklist blockItem.Reading/>
+				No. with positive reactions: <@com.value blockItem.Reading/>
 			</#if>	
 			<#if blockItem.NoWithReactions?has_content>
 				: <@com.number blockItem.NoWithReactions/>
@@ -6432,7 +6461,7 @@
 				<?linebreak?>
 			</#if>			
 			<#if blockItem.Group?has_content>
-				(<@com.picklist blockItem.Group/>
+				(<@com.value blockItem.Group/>
 			</#if>
 			<#if blockItem.HoursAfterChallenge?has_content>
 				; <@com.number blockItem.HoursAfterChallenge/>
@@ -6446,7 +6475,7 @@
 				<?linebreak?>
 			</#if>
 			<#if blockItem.RemarksOnResults?has_content>
-				(<@com.picklist blockItem.RemarksOnResults/>)
+				(<@com.value blockItem.RemarksOnResults/>)
 			</#if>
 		</para>
 		</#list>
@@ -6460,7 +6489,7 @@
 	<#if ControlRepeatableBlock?has_content>
 		<#list ControlRepeatableBlock as blockItem>
 			<para role="indent">
-				Positive control substance(s): <@com.picklistMultiple blockItem.PositiveControlSubstance/>
+				Positive control substance(s): <@com.value blockItem.PositiveControlSubstance/>
 			</para>
 		</#list>
   	</#if>
@@ -6471,13 +6500,13 @@
 <#compress>
 	<#if TestResultsRepeatableBlock?has_content>
 		<#list TestResultsRepeatableBlock as blockItem>
-			<#local genotoxicity><@com.picklist blockItem.Genotoxicity/></#local>
-			<#local organism><@com.picklist blockItem.Organism/></#local>
-			<#local metActIndicator><@com.picklist blockItem.MetActIndicator/></#local>
-			<#local cytotoxicity><@com.picklist blockItem.Cytotoxicity/></#local>
-			<#local vehContrValid><@com.picklist blockItem.VehContrValid/></#local>
-			<#local negContrValid><@com.picklist blockItem.NegContrValid/></#local>
-			<#local posContrValid><@com.picklist blockItem.PosContrValid/></#local>
+			<#local genotoxicity><@com.value blockItem.Genotoxicity/></#local>
+			<#local organism><@com.value blockItem.Organism/></#local>
+			<#local metActIndicator><@com.value blockItem.MetActIndicator/></#local>
+			<#local cytotoxicity><@com.value blockItem.Cytotoxicity/></#local>
+			<#local vehContrValid><@com.value blockItem.VehContrValid/></#local>
+			<#local negContrValid><@com.value blockItem.NegContrValid/></#local>
+			<#local posContrValid><@com.value blockItem.PosContrValid/></#local>
 			<#if genotoxicity?has_content || organism?has_content || metActIndicator?has_content || cytotoxicity?has_content || vehContrValid?has_content || negContrValid?has_content || posContrValid?has_content >
 			<para role="indent">
 				<#if !pppRelevant??>Test results:<?linebreak?></#if>
@@ -6506,13 +6535,13 @@
 <#compress>
 	<#if TestResultsRepeatableBlock?has_content>
 		<#list TestResultsRepeatableBlock as blockItem>
-			<#local genotoxicity><@com.picklist blockItem.Genotoxicity/></#local>
-			<#local sex><@com.picklist blockItem.Sex/></#local>
-			<#local toxicity><@com.picklist blockItem.Toxicity/></#local>
-			<#local vehContrValid><@com.picklist blockItem.VehContrValid/></#local>
-			<#local negContrValid><@com.picklist blockItem.NegContrValid/></#local>
-			<#local posContrValid><@com.picklist blockItem.PosContrValid/></#local>
-			<#local remarksOnResults><@com.picklist blockItem.RemarksOnResults/></#local>
+			<#local genotoxicity><@com.value blockItem.Genotoxicity/></#local>
+			<#local sex><@com.value blockItem.Sex/></#local>
+			<#local toxicity><@com.value blockItem.Toxicity/></#local>
+			<#local vehContrValid><@com.value blockItem.VehContrValid/></#local>
+			<#local negContrValid><@com.value blockItem.NegContrValid/></#local>
+			<#local posContrValid><@com.value blockItem.PosContrValid/></#local>
+			<#local remarksOnResults><@com.value blockItem.RemarksOnResults/></#local>
 			<#if genotoxicity?has_content || sex?has_content || toxicity?has_content || vehContrValid?has_content || negContrValid?has_content || posContrValid?has_content || remarksOnResults?has_content>
 			<para role="indent">
 				Genotoxicity: ${genotoxicity} (${sex})
@@ -6539,9 +6568,9 @@
 	<#if SpeciesStrainRepeatableBlock?has_content>
 		<#list SpeciesStrainRepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.SpeciesStrain/>
+				<@com.value blockItem.SpeciesStrain/>
 				<#if SpeciesStrainPath.MetabolicActivation?has_content>
-					(<@com.picklist SpeciesStrainPath.MetabolicActivation/> met. act.)
+					(<@com.value SpeciesStrainPath.MetabolicActivation/> met. act.)
 				</#if>
 			</para>
 		</#list>
@@ -6555,20 +6584,20 @@
 	<#if EffectLevelsPORepeatableBlock?has_content>
 		<#list EffectLevelsPORepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.Endpoint/>
+				<@com.value blockItem.Endpoint/>
 				<#if blockItem.EffectLevel?has_content>
 					(PO) <@com.range blockItem.EffectLevel/>)
 				<?linebreak?>
 				</#if>
 				<#if blockItem.Sex?has_content>
-					(<@com.picklist blockItem.Sex/>) 
+					(<@com.value blockItem.Sex/>) 
 				</#if>
 				<#if blockItem.Basis?has_content>
-					based on: <@com.picklistMultiple blockItem.Basis/>
+					based on: <@com.value blockItem.Basis/>
 				<?linebreak?>
 				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
+					(<@com.value blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 		</#list>
@@ -6581,101 +6610,92 @@
 	<#if SecondPgenerationEffectLevelsRepeatableBlock?has_content>
 		<#list SecondPgenerationEffectLevelsRepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.Endpoint/>
+				<@com.value blockItem.Endpoint/>
 				<#if blockItem.EffectLevel?has_content>
 					(P1): <@com.range blockItem.EffectLevel/>
-					<?linebreak?>
+				<?linebreak?>
 				</#if>				
-
 				<#if blockItem.Sex?has_content>
-					(<@com.picklist blockItem.Sex/>) 
+					(<@com.value blockItem.Sex/>) 
 				</#if>	
-
 				<#if blockItem.Basis?has_content>
-					based on: <@com.picklistMultiple blockItem.Basis/>
-					<?linebreak?>
+					based on: <@com.value blockItem.Basis/>
+				<?linebreak?>
 				</#if>
-				<@com.picklist blockItem.RemarksOnResults/>
+				<@com.value blockItem.RemarksOnResults/>
 			</para>
 		</#list>
   	</#if>
 </#compress>
 </#macro>
 
-<#--changed for PPP: added generation-->
 <#macro FgenerationList FgenerationListRepeatableBlock>
-<#compress>
-	<#if FgenerationListRepeatableBlock?has_content>
-		<#list FgenerationListRepeatableBlock as blockItem>
-			<para role="indent">
-
-				<@com.picklist blockItem.Endpoint/>
-				<#if pppRelevant?? && blockItem.Generation?has_content>(<@com.picklist blockItem.Generation/>)</#if>
-				<#if blockItem.EffectLevel?has_content>
-					: <@com.range blockItem.EffectLevel/>
-					<?linebreak?>
-				</#if>
-
-				<#if blockItem.Sex?has_content>
-					(<@com.picklist blockItem.Sex/>)
-				</#if>
-				<#if blockItem.Basis?has_content>
-					based on: <@com.picklistMultiple blockItem.Basis/>
-					<?linebreak?>
-				</#if>
-				<@com.picklist blockItem.RemarksOnResults/>
-			</para>
-		</#list>
-  	</#if>
-</#compress>
+	<#compress>
+		<#if FgenerationListRepeatableBlock?has_content>
+			<#list FgenerationListRepeatableBlock as blockItem>
+				<para role="indent">
+					<@com.value blockItem.Endpoint/>
+					<#if pppRelevant?? && blockItem.Generation?has_content>(<@com.value blockItem.Generation/>)</#if>
+					<#if blockItem.EffectLevel?has_content>
+						: <@com.range blockItem.EffectLevel/>
+						<?linebreak?>
+					</#if>
+					<#if blockItem.Sex?has_content>
+						(<@com.value blockItem.Sex/>)
+					</#if>
+					<#if blockItem.Basis?has_content>
+						based on: <@com.value blockItem.Basis/>
+						<?linebreak?>
+					</#if>
+					<@com.value blockItem.RemarksOnResults/>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
 </#macro>
 
-<#--changed for PPP: added block-->
 <#macro OverallReproductiveToxicityList ReproToxRepeatableBlock>
 <#compress>
 	<#if ReproToxRepeatableBlock?has_content>
 		<#list ReproToxRepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.ReproductiveEffectsObserved/> -
-				Lowest effective dose / concentration: <@com.quantity blockItem.LowestEffectiveDoseConc/>
+				<@com.value blockItem.ReproductiveEffectsObserved/>
+				Lowest effective dose / concentration <@com.quantity blockItem.LowestEffectiveDoseConc/>
 				<?linebreak?>
-				Relation to other toxic effects: <@com.picklist blockItem.RelationToOtherToxicEffects/>
+				Relation to other toxic effects: <@com.value blockItem.RelationToOtherToxicEffects/>
 
-				<#if !pppRelevant??>
+				<#if pppRelevant??>
 					<#local details=[]/>
 					<#if blockItem.TreatmentRelated?has_content>
-						<#local tr>treatment related: <@com.picklist blockItem.TreatmentRelated/></#local>
+						<#local tr>treatment related: <@com.value blockItem.TreatmentRelated/></#local>
 						<#local details=details+[tr]/>
 					</#if>
 					<#if blockItem.DoseResponseRelationship?has_content>
-						<#local dr>dose-response relationship: <@com.picklist blockItem.DoseResponseRelationship/></#local>
+						<#local dr>dose-response relationship: <@com.value blockItem.DoseResponseRelationship/></#local>
 						<#local details=details+[dr]/>
 					</#if>
 					<#if blockItem.RelevantForHumans?has_content>
-						<#local hu>relevant for humans: <@com.picklist blockItem.RelevantForHumans/></#local>
+						<#local hu>relevant for humans: <@com.value blockItem.RelevantForHumans/></#local>
 						<#local details=details+[hu]/>
 					</#if>
 					<#if details?has_content>
 						<?linebreak?>(${details?join("; ")})
 					</#if>
 				</#if>
-
 			</para>
 		</#list>
   	</#if>
 </#compress>
 </#macro>
 
-<#--changed for PPP: added description-->
 <#macro MatAbnormalitiesList MatAbnormalitiesRepeatableBlock>
 <#compress>
 	<#if MatAbnormalitiesRepeatableBlock?has_content>
 		<#list MatAbnormalitiesRepeatableBlock as blockItem>
 			<para role="indent">
-				<#if !pppRelevant??>Maternal abnormalities </#if>
-				<@com.picklist blockItem.Abnormalities/>
+				<#if !pppRelevant??>Maternal abnormalities </#if><@com.value blockItem.Abnormalities/>
 				<?linebreak?>
-				localisation: <@com.picklistMultiple blockItem.Localisation/>
+				localisation: <@com.value blockItem.Localisation/>
 				<#if pppRelevant?? && blockItem.DescriptionIncidenceAndSeverity?has_content>
 					<?linebreak?>description: <@com.text blockItem.DescriptionIncidenceAndSeverity/>
 				</#if>
@@ -6685,16 +6705,14 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: added description: this macro is basically same as above-->
 <#macro FetalAbnormalitiesList FetalAbnormalitiesRepeatableBlock>
 <#compress>
 	<#if FetalAbnormalitiesRepeatableBlock?has_content>
 		<#list FetalAbnormalitiesRepeatableBlock as blockItem>
 			<para role="indent">
-				<#if !pppRelevant??>Fetal abnormalities </#if>
-				<@com.picklist blockItem.Abnormalities/>
+				<#if !pppRelevant??>Fetal abnormalities </#if><@com.value blockItem.Abnormalities/>
 				<?linebreak?>
-				localisation: <@com.picklistMultiple blockItem.Localisation/>
+				localisation: <@com.value blockItem.Localisation/>
 				<#if pppRelevant?? && blockItem.DescriptionIncidenceAndSeverity?has_content>
 					<?linebreak?>description: <@com.text blockItem.DescriptionIncidenceAndSeverity/>
 				</#if>
@@ -6704,43 +6722,95 @@
 </#compress>
 </#macro>
 
-<#--changed for PPP: added block. NOTE: very similar to OverallReproductiveToxicityList-->
 <#macro OverallDevToxList OverallDevToxRepeatableBlock>
 <#compress>
 	<#if OverallDevToxRepeatableBlock?has_content>
 		<#list OverallDevToxRepeatableBlock as blockItem>
 			<para role="indent">
-				<@com.picklist blockItem.DevelopmentalEffectsObserved/> -
+				<@com.value blockItem.DevelopmentalEffectsObserved/>
+				<?linebreak?>
 				Lowest effective dose / concentration: <@com.quantity blockItem.LowestEffectiveDoseConc/>
 				<?linebreak?>
-				Relation to maternal toxicity: <@com.picklist blockItem.RelationToMaternalToxicity/>
+				Relation to maternal toxicity: <@com.value blockItem.RelationToMaternalToxicity/>
 
-				<#if !pppRelevant??>
+				<#if pppRelevant??>
 					<#local details=[]/>
 					<#if blockItem.TreatmentRelated?has_content>
-						<#local tr>treatment related: <@com.picklist blockItem.TreatmentRelated/></#local>
+						<#local tr>treatment related: <@com.value blockItem.TreatmentRelated/></#local>
 						<#local details=details+[tr]/>
 					</#if>
 					<#if blockItem.DoseResponseRelationship?has_content>
-						<#local dr>dose-response relationship: <@com.picklist blockItem.DoseResponseRelationship/></#local>
+						<#local dr>dose-response relationship: <@com.value blockItem.DoseResponseRelationship/></#local>
 						<#local details=details+[dr]/>
 					</#if>
 					<#if blockItem.RelevantForHumans?has_content>
-						<#local hu>relevant for humans: <@com.picklist blockItem.RelevantForHumans/></#local>
+						<#local hu>relevant for humans: <@com.value blockItem.RelevantForHumans/></#local>
 						<#local details=details+[hu]/>
 					</#if>
 					<#if details?has_content>
 						<?linebreak?>(${details?join("; ")})
 					</#if>
 				</#if>
-
 			</para>
 		</#list>
   	</#if>
 </#compress>
 </#macro>
 
-<#macro endpointSummary summary valueCsa="" valueForCsaText="" printName=false>
+<#macro resultsOfAssaysList block role='indent'>
+	<#compress>
+		<#if block?has_content>
+			<#list block as blockItem>
+				<para role="${role}">
+
+					<@com.value blockItem.MaterialDetected/>
+					<#if blockItem.Detected>detected<#else>NOT detected</#if>
+
+					<#if blockItem.SampleType?has_content>
+						in <@com.value blockItem.SampleType/>
+					</#if>
+
+					<#if blockItem.TimePoint?has_content>
+						at <@com.quantity blockItem.TimePoint/>
+					</#if>
+
+					<#if blockItem.Quantity?has_content>
+						: <@com.range blockItem.Quantity/>
+					</#if>
+
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+
+<#macro assaysList block role='indent'>
+	<#compress>
+		<#if block?has_content>
+			<#list block as blockItem>
+				<para role="${role}">
+
+					<@com.value blockItem.AssayType/>:
+					<#if blockItem.LinkAnalyticalMethod?has_content>
+						analytical method(s):
+						<#list blockItem.LinkAnalyticalMethod as anmethlink>
+							<#local anmeth = iuclid.getDocumentForKey(anmethlink)/>
+							<@com.text anmeth.name/>
+							<#if anmethlink_has_next>, </#if>
+						</#list>
+					</#if>
+					<#if blockItem.Remarks?has_content>
+						(<@com.text blockItem.Remarks/>)
+					</#if>
+				</para>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+
+<#macro endpointSummary summary valueCsa="" valueForCsaText="" path="" printName=false>
 	<para>
 		<#if printName>
 			<para><emphasis role="bold"><@com.text summary.name/></emphasis></para>
@@ -6756,7 +6826,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- inhalation systemic -->
@@ -6767,7 +6837,7 @@
 				<?linebreak?>
 				${valueCsa}
 			</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 			
 		<!-- inhalation local -->
@@ -6778,7 +6848,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>	
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 
 		<!-- dermal systemic -->
@@ -6789,7 +6859,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>	
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- dermal local -->
@@ -6800,7 +6870,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		<@studyandsummaryCom.summaryAdditionalInformation summary/>
 		</#if>
 		
@@ -6812,7 +6882,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- oral effects on fertility -->
@@ -6823,7 +6893,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- oral effects immunotoxicity -->
@@ -6834,7 +6904,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- oral effects neurotoxicity -->
@@ -6845,7 +6915,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- oral effects developmental -->
@@ -6856,7 +6926,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- dermal effects carcinogenicity -->
@@ -6867,7 +6937,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- dermal effects immunotoxicity -->
@@ -6878,7 +6948,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- dermal effects on fertility -->
@@ -6889,7 +6959,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- dermal effects on developmental toxicity -->
@@ -6900,7 +6970,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- dermal effects on neurotoxicity -->
@@ -6911,7 +6981,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		</#if>
 		
 		<!-- inhalation immunotoxicity -->
@@ -6922,7 +6992,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		<@studyandsummaryCom.summaryAdditionalInformation summary/>
 		</#if>
 		
@@ -6934,7 +7004,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		<@studyandsummaryCom.summaryAdditionalInformation summary/>
 		</#if>
 		
@@ -6946,7 +7016,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		<@summaryAdditionalInformationForHumanHealth summary valueForCsaText/>
 		</#if>
 		
@@ -6958,7 +7028,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		<@summaryAdditionalInformationForHumanHealth summary valueForCsaText/>
 		</#if>
 		
@@ -6970,7 +7040,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
 		<@summaryAdditionalInformationForHumanHealth summary valueForCsaText/>
 		</#if>
 				
@@ -6981,20 +7051,20 @@
 <#compress>
 	
 	<#if valueForCsaText=="valueForCsaTextInhalationEffectsOnFertility">
-		<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.AdditionalInformation.AdditionalInfo?has_content>
+		<#if summary.Discussion.Discussion?has_content>
 		<?linebreak?>
 		<@com.emptyLine/>
 		<para><emphasis role="underline">Additional information:</emphasis></para>
-		<@com.richText summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.AdditionalInformation.AdditionalInfo/>
+		<@com.richText summary.Discussion.Discussion/>
 		</#if>
 	</#if>
 	
 	<#if valueForCsaText=="valueForCsaTextInhalationDevelopmentalToxicity">
-		<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.AdditionalInformation.AdditionalInfo?has_content>
+		<#if summary.Discussion.Discussion?has_content>
 		<?linebreak?>
 		<@com.emptyLine/>
 		<para><emphasis role="underline">Additional information:</emphasis></para>
-		<@com.richText summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.AdditionalInformation.AdditionalInfo/>
+		<@com.richText summary.Discussion.Discussion/>
 		</#if>		
 	</#if>
 	
@@ -7045,11 +7115,11 @@
 	<#if inVitroRepeatableBlock?has_content>
 		<#local sortedList = iuclid.sortByField(inVitroRepeatableBlock, "IrritationCorrosionParameter", ["% tissue viability","transcutaneous electrical resistance (in kΩ)","dye content (µg/disc)","penetration time (in minutes)"]) />
 
-		<#local currentHeader><@com.picklist sortedList[0].IrritationCorrosionParameter/></#local>
+		<#local currentHeader><@com.value sortedList[0].IrritationCorrosionParameter/></#local>
 		<para>${currentHeader}</para>
 
 		<#list sortedList as blockItem>
-			<#local parameter><@com.picklist blockItem.IrritationCorrosionParameter/></#local>
+			<#local parameter><@com.value blockItem.IrritationCorrosionParameter/></#local>
 			<#if !(currentHeader == parameter)>
 				<#local currentHeader = parameter/>
 				<para>${currentHeader}</para>
@@ -7062,7 +7132,7 @@
 					Value: <@com.range blockItem.Value/>
 				</#if>
 				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
+					(<@com.value blockItem.RemarksOnResults/>)
 				</#if>
 			</para>
 		</#list>
@@ -7075,11 +7145,11 @@
 	<#if inVivoRepeatableBlock?has_content>
 		<#local sortedList = iuclid.sortByField(inVivoRepeatableBlock, "Parameter", ["overall irritation score","primary dermal irritation index (PDII)","erythema score","edema score"]) />
 
-		<#local currentHeader><@com.picklist sortedList[0].Parameter/></#local>
+		<#local currentHeader><@com.value sortedList[0].Parameter/></#local>
 		<para>${currentHeader}</para>
 
 		<#list sortedList as blockItem>
-			<#local parameter><@com.picklist blockItem.Parameter/></#local>
+			<#local parameter><@com.value blockItem.Parameter/></#local>
 			<#if !(currentHeader == parameter)>
 				<#local currentHeader = parameter/>
 				<para>${currentHeader}</para>
@@ -7090,14 +7160,14 @@
 					of max. <@com.number blockItem.Scale/>
 				</#if>
 				<#if blockItem.TimePoint?has_content>
-					(Time point: <@com.picklist blockItem.TimePoint/>)
+					(Time point: <@com.value blockItem.TimePoint/>)
 				</#if>
 				<#if blockItem.Reversibility?has_content>			
-					Reversibility: <@com.picklist blockItem.Reversibility/>
+					Reversibility: <@com.value blockItem.Reversibility/>
 				</#if>
 				<para>
 					<#if blockItem.RemarksOnResults?has_content>
-						(<@com.picklist blockItem.RemarksOnResults/>)
+						(<@com.value blockItem.RemarksOnResults/>)
 					</#if>
 				</para>
 			</para>
@@ -7108,7 +7178,7 @@
 
 <#function determineEndpointTextRepeatedDose endpoint values valuesText emptyText >
     <#if endpoint?has_content>
-        <#assign endpointValue><@com.picklist endpoint /></#assign>
+        <#assign endpointValue><@com.value endpoint /></#assign>
         <#list values as value>
             <#if endpointValue == value>
                 <#return valuesText[values?seq_index_of(value)] />
@@ -7120,23 +7190,23 @@
 </#function>
 <#function determineEndpointTextTypeOfAssay study emptyText>
     <#if study?has_content && study.MaterialsAndMethods.TypeOfAssay?has_content>
-        <#assign typeOfAssay><@com.picklist study.MaterialsAndMethods.TypeOfAssay/></#assign>
+        <#assign typeOfAssay><@com.value study.MaterialsAndMethods.TypeOfAssay/></#assign>
     </#if>
-    <#assign endpoint>(<@com.picklist study.AdministrativeData.Endpoint/>)</#assign>
+    <#assign endpoint>(<@com.value study.AdministrativeData.Endpoint/>)</#assign>
     <#return emptyText + typeOfAssay!"" + routeOfAdministration!"" + endpoint />
 </#function>
 
 <#function determineEndpointTextStudyType study emptyText >
     <#if study?has_content && study.MaterialsAndMethods.Studytype?has_content>
-        <#assign studyType><@com.picklist study.MaterialsAndMethods.Studytype/></#assign>
+        <#assign studyType><@com.value study.MaterialsAndMethods.Studytype/></#assign>
     </#if>
-    <#assign routeOfAdministration>(<@com.picklist study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration />)</#assign>
-    <#assign endpoint>(<@com.picklist study.AdministrativeData.Endpoint/>)</#assign>
+    <#assign routeOfAdministration>(<@com.value study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration />)</#assign>
+    <#assign endpoint>(<@com.value study.AdministrativeData.Endpoint/>)</#assign>
     <#return emptyText + studyType!"" + routeOfAdministration + endpoint />
 </#function>
 <#function determineEndpointTextRouteOfAdministration study emptyText >
     <#if study?has_content && study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration?has_content>
-        <#assign routeOfAdministration>(<@com.picklist study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration />)</#assign>
+        <#assign routeOfAdministration>(<@com.value study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration />)</#assign>
         <#return emptyText + "(other routes)" + routeOfAdministration />
     </#if>
     <#return emptyText + "(Route: not specified)" />
@@ -7203,26 +7273,36 @@
 <#-- Macros to separate documents into three lists: 'study results', 'data waiving', 'testing proposal' -->
 <#macro humanStudyMethod study>
 
-	<#local documentID = study.documentType +"."+ study.documentSubType />
+<#local documentID = study.documentType +"."+ study.documentSubType />
 
 	<#if !pppRelevant??>
 		<#if study.hasElement("MaterialsAndMethods.StudyType")>
 			<para>
-				Study type: <@com.picklist study.MaterialsAndMethods.StudyType/>
+				Study type: <@com.value study.MaterialsAndMethods.StudyType/>
 			</para>
 		</#if>
 
 		<para>
-			<#if documentID=="ENDPOINT_STUDY_RECORD.ExposureRelatedObservationsOther"> <#elseif documentID=="ENDPOINT_STUDY_RECORD.SensitisationData">Type of population: <#else><@com.picklistMultiple study.MaterialsAndMethods.Method.TypeOfPopulation/></#if>
+			<#if documentID=="ENDPOINT_STUDY_RECORD.ExposureRelatedObservationsOther">
+				<#-- placeholder -->
+			<#elseif documentID=="ENDPOINT_STUDY_RECORD.SensitisationData">
+				Type of population: <@com.value study.MaterialsAndMethods.Method.TypeOfPopulation/>
+			<#else>
+				<@com.value study.MaterialsAndMethods.Method.TypeOfPopulation/>
+			</#if>
 		</para>
 
 		<#if !(documentID=="ENDPOINT_STUDY_RECORD.SensitisationData")>
 			<para>
-				<#if documentID=="ENDPOINT_STUDY_RECORD.DirectObservationsClinicalCases">Subjects:<#else>Details on study design: <@com.text study.MaterialsAndMethods.Method.DetailsOnStudyDesign/></#if>
+				<#if documentID=="ENDPOINT_STUDY_RECORD.DirectObservationsClinicalCases">
+					Subjects: <@com.text study.MaterialsAndMethods.Method.Subjects/>
+				<#else>
+					Details on study design: <@com.text study.MaterialsAndMethods.Method.DetailsOnStudyDesign/>
+				</#if>
 			</para>
 
 			<para>
-				Endpoint addressed: <@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/>
+				Endpoint addressed: <@com.value study.MaterialsAndMethods.EndpointAddressed/>
 			</para>
 		</#if>
 
@@ -7230,23 +7310,23 @@
 		Subjects: <@com.text study.MaterialsAndMethods.Method.Subjects/>
 		</#if>
 
-			<para>
-				<#if study.hasElement("MaterialsAndMethods.TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
-					Study type: <@com.text study.MaterialsAndMethods.TypeOfStudyInformation/>
-				</#if>
-			</para>
+		<para>
+			<#if study.hasElement("MaterialsAndMethods.TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
+				Study type: <@com.text study.MaterialsAndMethods.TypeOfStudyInformation/>
+			</#if>
+		</para>
 
-			<para>
-				<@studyandsummaryCom.guidelineList study.MaterialsAndMethods.Guideline/>
-			</para>
+		<para>
+			<@studyandsummaryCom.guidelineList study.MaterialsAndMethods.Guideline/>
+		</para>
 
-			<para>
+		<para>
 			<@com.text study.MaterialsAndMethods.MethodNoGuideline/>
-			</para>
-		<#else>
-			<#--ideally this should be merged with the above-->
-			<@toxHumanMethodPPP study/>
-		</#if>
+		</para>
+	<#else>
+	<#--ideally this should be merged with the above-->
+		<@toxHumanMethodPPP study/>
+	</#if>
 </#macro>
 
 <#macro basicHumanStudyResults study>
@@ -7270,21 +7350,20 @@
 	<#assign skinIrritation = getSortedSkinIrritationNonHumanStudy(study, ["skin irritation: in vitro / ex vivo", "skin irritation: in vivo", "skin irritation / corrosion, other"] ) />
 	<#assign skinCorrosion = getSortedSkinCorrosionNonHumanStudy(study, ["skin corrosion: in vitro / ex vivo", "skin irritation / corrosion.*"]) />
 
-	<#if csrRelevant??><#local endpointData><@com.picklist study.AdministrativeData.Endpoint/></#local></#if>
+	<#if csrRelevant?? || svhcRelevant??><#local endpointData><@com.value study.AdministrativeData.Endpoint/></#local></#if>
 
 	<#--	NOTE: PPP: interim solution - to be changed-->
 	<#if !pppRelevant??>
-
 		<#-- endpoint and method type -->
 		<#if documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations">
 			<para>
-				Endpoint addressed: <@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/>
+				Endpoint addressed: <@com.value study.MaterialsAndMethods.EndpointAddressed/>
 			</para>
 
 			<para>
 				Type of effects studied: ${endpointData}
 				<#if study.MaterialsAndMethods.MethodType?has_content>
-					(<@com.picklist study.MaterialsAndMethods.MethodType/>)
+					(<@com.value study.MaterialsAndMethods.MethodType/>)
 				</#if>
 			</para>
 		</#if>
@@ -7292,10 +7371,10 @@
 		<#-- type of assay and endpoint, species, test concentration, controls -->
 		<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro">
 			<para>
-				<@com.picklist study.MaterialsAndMethods.TypeOfAssay/>
-				<#if study.AdministrativeData.Endpoint?has_content>
+				<@com.value study.MaterialsAndMethods.TypeOfAssay/>
+				
 					(${endpointData})
-				</#if>
+			
 			</para>
 
 			<para>
@@ -7314,7 +7393,7 @@
 		<#-- study type -->
 		<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo">
 			<para>
-				<@com.picklist study.MaterialsAndMethods.Studytype/>
+				<@com.value study.MaterialsAndMethods.Studytype/>
 			</para>
 
 		<#elseif documentID=="ENDPOINT_STUDY_RECORD.AdditionalToxicologicalInformation">
@@ -7324,12 +7403,15 @@
 		</#if>
 
 		<#-- endpoint -->
-		<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" || documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" || documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
+	  	<#if documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" ||
+		   documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" ||
+		   documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption" ||
+		   documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
 			<para>
 				${endpointData}
 			</para>
 
-			<#if !endpointData?contains(".*in vivo.*")>
+			<#if !endpointData?contains("in vivo")>
 				<para>in vitro study</para>
 			</#if>
 		</#if>
@@ -7340,42 +7422,63 @@
 		</#if>
 
 		<#-- species and strain -->
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation")>
+		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" || documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation")>
 			<para>
 				<#if study.hasElement("MaterialsAndMethods.TestAnimals.Species")>
-				<@com.picklist study.MaterialsAndMethods.TestAnimals.Species/>
+				<@com.value study.MaterialsAndMethods.TestAnimals.Species/>
 				</#if>
 
 				<#if study.hasElement("MaterialsAndMethods.TestAnimals.Strain")>
-					(<@com.picklist study.MaterialsAndMethods.TestAnimals.Strain/>)
+					(<@com.value study.MaterialsAndMethods.TestAnimals.Strain/>)
 				</#if>
 			</para>
 			<#elseif documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
 				<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Species")>
-					<para><@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Species/></para>
+					<para><@com.value study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Species/></para>
 				</#if>
 
 				<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Strain")>
-					<para>(<@com.picklist study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Strain/>)</para>
+					<para>(<@com.value study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Strain/>)</para>
 				</#if>
 		</#if>
 
 		<#-- sex, coverage and endpoint -->
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation") || !(skinIrritation?has_content) || !(skinCorrosion?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity")>
+		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" ||
+			documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
+			skinIrritation?has_content ||
+			skinCorrosion?has_content ||
+			documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity")>
 			<#if study.hasElement("MaterialsAndMethods.TestAnimals.Sex")>
 			<para>
-				<@com.picklist study.MaterialsAndMethods.TestAnimals.Sex/>
+				<@com.value study.MaterialsAndMethods.TestAnimals.Sex/>
+			</para>
+			</#if>
+			<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex")>
+			<para>
+				<@com.value study.MaterialsAndMethods.InVivoTestSystem.TestAnimals.Sex/>
 			</para>
 			</#if>
 
-
 			<#if documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption">
 				<para>
-					Coverage (dermal absorption study): <@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfCoverage/>
+					Coverage (dermal absorption study): <@com.value study.MaterialsAndMethods.AdministrationExposure.TypeOfCoverage/>
 				</para>
 			</#if>
 
-			<#if !(carcinoOtherValue?has_content) || !(carcinoDermalValue?has_content) || !(carcinoInhalationValue?has_content) || !(carcinoOralValue?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo") || !(documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral") || !(documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations") || !(documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetic") || !(documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption")>
+			<#if !(carcinoOtherValue?has_content ||
+			  carcinoDermalValue?has_content ||
+			  carcinoInhalationValue?has_content ||
+			  carcinoOralValue?has_content ||
+			  documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetic" ||
+			  documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption")>
 				<para>
 					${endpointData}
 				</para>
@@ -7384,14 +7487,14 @@
 
 		<#-- endpoint, induction, challenge -->
 		<#if documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation">
-			<#if endpointData?contains(".*skin sensitisation: in vivo (LLNA).*")>
+			<#if endpointData?contains("skin sensitisation: in vivo (LLNA)")>
 				<para>Local lymph node assay</para>
 			</#if>
 
 			<#if study.hasElement("MaterialsAndMethods.InVivoTestSystem.StudyDesignInVivoNonLLNA.Induction")>
 				<@InductionList study.MaterialsAndMethods.InVivoTestSystem.StudyDesignInVivoNonLLNA.Induction endpointData/>
 
-				<#elseif !endpointData?contains(".*skin sensitisation: in vivo (LLNA)") && !endpointData?contains(".*skin sensitisation:  in vitro.*")>
+				<#elseif !endpointData?contains("skin sensitisation: in vivo (LLNA)") && !endpointData?contains("skin sensitisation:  in vitro")>
 					<para>${endpointData}</para>
 			</#if>
 
@@ -7400,51 +7503,71 @@
 
 			<para>
 				<#if study.MaterialsAndMethods.TestSystem.RouteOfInductionExposure?has_content>
-					Induction: <@com.picklist study.MaterialsAndMethods.TestSystem.RouteOfInductionExposure/>
+					Induction: <@com.value study.MaterialsAndMethods.TestSystem.RouteOfInductionExposure/>
 				</#if>
 			</para>
 
 			<para>
 				<#if study.MaterialsAndMethods.TestSystem.RouteOfChallengeExposure?has_content>
-					Challenge: <@com.picklist study.MaterialsAndMethods.TestSystem.RouteOfChallengeExposure/>
+					Challenge: <@com.value study.MaterialsAndMethods.TestSystem.RouteOfChallengeExposure/>
 				</#if>
 			</para>
 		</#if>
 
 		<#-- coverage -->
 		<#if skinIrritation?has_content>
-			Coverage: <@com.picklist study.MaterialsAndMethods.TestSystem.TypeOfCoverage/>
+			Coverage: <@com.value study.MaterialsAndMethods.TestSystem.TypeOfCoverage/>
 			<#if study.MaterialsAndMethods.TestSystem.PreparationOfTestSite?has_content>
-				(<@com.picklist study.MaterialsAndMethods.TestSystem.PreparationOfTestSite/>)
+				(<@com.value study.MaterialsAndMethods.TestSystem.PreparationOfTestSite/>)
 			</#if>
 
 		<#elseif documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal">
 			<para>
 				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfCoverage")>
-					Coverage: <@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfCoverage/>
+					Coverage: <@com.value study.MaterialsAndMethods.AdministrationExposure.TypeOfCoverage/>
 				</#if>
 			</para>
 		</#if>
 
 		<#-- route of administration and type of inhalation -->
-		<#if !(carcinoDermalValue?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal") || !(documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation") || !(skinIrritation?has_content) || !(skinCorrosion?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal")>
+		<#if !(carcinoDermalValue?has_content ||
+			documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" ||
+			documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal" ||
+			documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
+			skinIrritation?has_content ||
+			skinCorrosion?has_content ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal")>
 		<para>
 			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.RouteOfAdministration")>
-			<@com.picklist study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration/>
+			<@com.value study.MaterialsAndMethods.AdministrationExposure.RouteOfAdministration/>
 			</#if>
 
 			<#if documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation">
 				<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposure")>
-					(<@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposure/>)
+					(<@com.value study.MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposure/>)
 				</#if>
 			</#if>
 		</para>
 		</#if>
 
 		<#--  type of inhalation -->
-		<#if !(carcinoOtherValue?has_content) || !(carcinoOralValue?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo") || !(documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOther") || !(documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityInhalation") || !(documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOral") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral") || !(documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics") || !(documentID=="ENDPOINT_STUDY_RECORD.Neurotoxicity") || !(documentID=="ENDPOINT_STUDY_RECORD.Immunotoxicity") || !(documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations")>
+		<#if !(carcinoOtherValue?has_content ||
+			carcinoOralValue?has_content ||
+			documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" ||
+			documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOther" ||
+			documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityInhalation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOral" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral" ||
+			documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics" ||
+			documentID=="ENDPOINT_STUDY_RECORD.Neurotoxicity" ||
+			documentID=="ENDPOINT_STUDY_RECORD.Immunotoxicity" ||
+			documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations")>
 			<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposureIfApplicable")>
-				(<@com.picklist study.MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposureIfApplicable/>)
+				(<@com.value study.MaterialsAndMethods.AdministrationExposure.TypeOfInhalationExposureIfApplicable/>)
 			</#if>
 		</#if>
 
@@ -7466,8 +7589,17 @@
 			</para>
 		</#if>
 
-		<#-- doses ocncentration -->
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation") || !(skinIrritation?has_content) || !(skinCorrosion?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation")>
+		<#-- doses concentration -->
+		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" ||
+			documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
+			skinIrritation?has_content ||
+			skinCorrosion?has_content ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation")>
 			<#if !(documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption")>
 
 				<para>
@@ -7488,7 +7620,7 @@
 		<#if documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" || documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation">
 			<#if study.hasElement("MaterialsAndMethods.TestSystem.Vehicle")>
 			<para>
-				Vehicle: <@com.picklist study.MaterialsAndMethods.TestSystem.Vehicle/>
+				Vehicle: <@com.value study.MaterialsAndMethods.TestSystem.Vehicle/>
 			</para>
 
 			</#if>
@@ -7496,7 +7628,7 @@
 			<#elseif documentID=="ENDPOINT_STUDY_RECORD.Neurotoxicity" || documentID=="ENDPOINT_STUDY_RECORD.Immunotoxicity" || documentID=="ENDPOINT_STUDY_RECORD.SpecificInvestigations" || documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOral" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityInhalation" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityDermal" || documentID=="ENDPOINT_STUDY_RECORD.RepeatedDoseToxicityOther" || documentID=="ENDPOINT_STUDY_RECORD.Carcinogenicity" || documentID=="ENDPOINT_STUDY_RECORD.ToxicityReproduction" || documentID=="ENDPOINT_STUDY_RECORD.ToxicityReproductionOther" || documentID=="ENDPOINT_STUDY_RECORD.DevelopmentalToxicityTeratogenicity">
 				<para>
 					<#if study.hasElement("MaterialsAndMethods.AdministrationExposure.Vehicle")>
-					Vehicle: <@com.picklist study.MaterialsAndMethods.AdministrationExposure.Vehicle/>
+					Vehicle: <@com.value study.MaterialsAndMethods.AdministrationExposure.Vehicle/>
 					</#if>
 				</para>
 		</#if>
@@ -7505,13 +7637,23 @@
 		<#if skinIrritation?has_content || skinCorrosion?has_content>
 			<para>
 				<#if study.MaterialsAndMethods.InVitroTestSystem.Vehicle?has_content>
-				Vehicle: <@com.picklist study.MaterialsAndMethods.InVitroTestSystem.Vehicle/>
+				Vehicle: <@com.value study.MaterialsAndMethods.InVitroTestSystem.Vehicle/>
 				</#if>
 			</para>
 		</#if>
 
 		<#-- duration of exposure, frequency of treatment, in vitro test system -->
-		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo") || !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro") || !(documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation") || !(documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation") || !(skinIrritation?has_content) || !(skinCorrosion?has_content) || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation") || !(documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral")>
+		<#if !(documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVivo" ||
+			documentID=="ENDPOINT_STUDY_RECORD.GeneticToxicityVitro" ||
+			documentID=="ENDPOINT_STUDY_RECORD.RespiratorySensitisation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.SkinSensitisation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.EyeIrritation" ||
+			skinIrritation?has_content ||
+			skinCorrosion?has_content ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOtherRoutes" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityDermal" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityInhalation" ||
+			documentID=="ENDPOINT_STUDY_RECORD.AcuteToxicityOral")>
 			<#if !(documentID=="ENDPOINT_STUDY_RECORD.DermalAbsorption") || !(documentID=="ENDPOINT_STUDY_RECORD.BasicToxicokinetics") >
 
 			<para>
@@ -7552,6 +7694,7 @@
 	<#else>
 		<@toxNonHumanMethodPPP study/>
 	</#if>
+
 </#macro>
 
 <#function getSortedSkinIrritationNonHumanStudy study endpointValueList>
@@ -7586,7 +7729,6 @@
     <#return returnList />
 </#function>
 
-
 <#-------------------------------------PPP: additions------------------------------------------------------------->
 <#--1. Methods-->
 <#macro toxNonHumanMethodPPP study>
@@ -7594,28 +7736,33 @@
 
 	<#-- General tox method characteristics-->
 		<#if study.MaterialsAndMethods.hasElement("ObjectiveOfStudyPick") && study.MaterialsAndMethods.ObjectiveOfStudyPick?has_content>
-			<para><emphasis role="bold">Objective: </emphasis><@com.picklistMultiple study.MaterialsAndMethods.ObjectiveOfStudyPick/></para>
+			<para><emphasis role="bold">Objective: </emphasis><@com.value study.MaterialsAndMethods.ObjectiveOfStudyPick/></para>
 		</#if>
 
 	<#--Type of study-->
 		<#if study.MaterialsAndMethods.hasElement("TypeOfStudy") && study.MaterialsAndMethods.TypeOfStudy?has_content>
-			<para><emphasis role='bold'>Type of study: </emphasis><@com.picklist study.MaterialsAndMethods.TypeOfStudy/></para>
+			<para><emphasis role='bold'>Type of study: </emphasis><@com.value study.MaterialsAndMethods.TypeOfStudy/></para>
 		<#elseif study.MaterialsAndMethods.hasElement("Studytype") && study.MaterialsAndMethods.Studytype?has_content>
-			<para><emphasis role='bold'>Type of assay: </emphasis><@com.picklist study.MaterialsAndMethods.Studytype/></para>
+			<para><emphasis role='bold'>Type of assay: </emphasis><@com.value study.MaterialsAndMethods.Studytype/></para>
 		<#elseif study.MaterialsAndMethods.hasElement("TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
 			<para><emphasis role='bold'>Type of information: </emphasis><@com.text study.MaterialsAndMethods.TypeOfStudyInformation/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("EndpointAddressed") && study.MaterialsAndMethods.EndpointAddressed?has_content>
-			<para><emphasis role='bold'>Endpoint adressed: </emphasis><@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/></para>
+			<para><emphasis role='bold'>Endpoint addressed: </emphasis><@com.value study.MaterialsAndMethods.EndpointAddressed/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("MethodType") && study.MaterialsAndMethods.MethodType?has_content>
-			<para><emphasis role="bold">Method type: </emphasis><@com.picklist study.MaterialsAndMethods.MethodType/></para>
+			<para><emphasis role="bold">Method type: </emphasis><@com.value study.MaterialsAndMethods.MethodType/></para>
 		</#if>
 
+		<#if study.MaterialsAndMethods.hasElement("TestType") && study.MaterialsAndMethods.TestType?has_content>
+			<para><emphasis role="bold">Test type: </emphasis><@com.value study.MaterialsAndMethods.TestType/></para>
+		</#if>
+
+
 		<#if study.MaterialsAndMethods.hasElement("LimitTest") && study.MaterialsAndMethods.LimitTest?has_content>
-			<para><emphasis role="bold">Limit test: </emphasis><@com.picklist study.MaterialsAndMethods.LimitTest/></para>
+			<para><emphasis role="bold">Limit test: </emphasis><@com.value study.MaterialsAndMethods.LimitTest/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("JustificationForNonLLNAMethod") && study.MaterialsAndMethods.JustificationForNonLLNAMethod?has_content>
@@ -7682,19 +7829,19 @@
 
 	<#--Type of study-->
 		<#if study.MaterialsAndMethods.hasElement("TypeOfSensitisationStudied") && study.MaterialsAndMethods.TypeOfSensitisationStudied?has_content>
-			<para><emphasis role='bold'>Type of sensitisation studied: </emphasis><@com.picklist study.MaterialsAndMethods.TypeOfSensitisationStudied/></para>
+			<para><emphasis role='bold'>Type of sensitisation studied: </emphasis><@com.value study.MaterialsAndMethods.TypeOfSensitisationStudied/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("TypeOfStudy") && study.MaterialsAndMethods.TypeOfStudy?has_content>
-			<para><emphasis role='bold'>Type of study: </emphasis><@com.picklist study.MaterialsAndMethods.TypeOfStudy/></para>
+			<para><emphasis role='bold'>Type of study: </emphasis><@com.value study.MaterialsAndMethods.TypeOfStudy/></para>
 		<#elseif study.MaterialsAndMethods.hasElement("Studytype") && study.MaterialsAndMethods.Studytype?has_content>
-			<para><emphasis role='bold'>Type of assay: </emphasis><@com.picklist study.MaterialsAndMethods.Studytype/></para>
+			<para><emphasis role='bold'>Type of assay: </emphasis><@com.value study.MaterialsAndMethods.Studytype/></para>
 		<#elseif study.MaterialsAndMethods.hasElement("TypeOfStudyInformation") && study.MaterialsAndMethods.TypeOfStudyInformation?has_content>
 			<para><emphasis role='bold'>Type of information: </emphasis><@com.text study.MaterialsAndMethods.TypeOfStudyInformation/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("EndpointAddressed") && study.MaterialsAndMethods.EndpointAddressed?has_content>
-			<para><emphasis role='bold'>Endpoint adressed: </emphasis><@com.picklistMultiple study.MaterialsAndMethods.EndpointAddressed/></para>
+			<para><emphasis role='bold'>Endpoint adressed: </emphasis><@com.value study.MaterialsAndMethods.EndpointAddressed/></para>
 		</#if>
 
 	<#--Method-->
@@ -7715,35 +7862,37 @@
 			</#if>
 		</para>
 
-		<span role="indent">
-			<@com.picklist testAn.Species/>
+		<para role="indent">
+			<@com.value testAn.Species/>
 			<#if testAn.Strain?has_content>
-				(<@com.picklist testAn.Strain/>)
+				(<@com.value testAn.Strain/>)
 			</#if>
 
 			<#if testAn.hasElement("Sex") && testAn.Sex?has_content>
-				, <@com.picklist testAn.Sex/>
+				, <@com.value testAn.Sex/>
 			</#if>
 
 			<#--			<#if testAn.hasElement("State") && testAn.State?has_content>-->
-			<#--				, <@com.picklist testAn.Sex/>-->
+			<#--				, <@com.value testAn.Sex/>-->
 			<#--			</#if>-->
 
 			<#if testAn.hasElement("DetailsOnSpeciesStrainSelectio") && testAn.DetailsOnSpeciesStrainSelectio?has_content>
 				- <@com.text testAn.DetailsOnSpeciesStrainSelectio/>
+			<#elseif testAn.hasElement("DetailsOnSpeciesStrainSelection") && testAn.DetailsOnSpeciesStrainSelection?has_content>
+				- <@com.text testAn.DetailsOnSpeciesStrainSelection/>
 			</#if>
-		</span>
+		</para>
 
 		<#if testAn.hasElement("OrganismDetails") && testAn.OrganismDetails?has_content>
-			<span role="indent">
+			<para role="indent">
 				<@com.text testAn.OrganismDetails/>
-			</span>
+			</para>
 		</#if>
 
 		<#if testAn.hasElement("DetailsOnTestAnimalsAndEnvironmentalConditions") && testAn.DetailsOnTestAnimalsAndEnvironmentalConditions?has_content>
-			<span role="indent">
+			<para role="indent">
 				<@com.text testAn.DetailsOnTestAnimalsAndEnvironmentalConditions/>
-			</span>
+			</para>
 		</#if>
 
 	</#compress>
@@ -7754,156 +7903,179 @@
 		<para><emphasis role="bold">Administration / Exposure:</emphasis></para>
 
 		<#if admExp.hasElement("RouteOfAdministration") && admExp.RouteOfAdministration?has_content>
-			<span role="indent">Route of administration: <@com.picklist admExp.RouteOfAdministration/>
-				<?linebreak?>
-				<#if admExp.hasElement("DetailsOnRouteOfAdministration") && admExp.DetailsOnRouteOfAdministration?has_content>
-					- <@com.text admExp.DetailsOnRouteOfAdministration/>
-				</#if>
-				</span>
+			<para>Route of administration: <@com.value admExp.RouteOfAdministration/></para>
+			<#if admExp.hasElement("DetailsOnRouteOfAdministration") && admExp.DetailsOnRouteOfAdministration?has_content>
+				<para role="indent">
+					<@com.text admExp.DetailsOnRouteOfAdministration/>
+				</para>
+			</#if>
 		</#if>
 
-		<#if admExp.hasElement("TypeOfCoverageadmExp") && admExp.TypeOfCoverage?has_content>
-			<span role="indent">Type of coverage: <@com.picklist admExp.TypeOfCoverage/></span>
+		<#if admExp.hasElement("TypeOfCoverage") && admExp.TypeOfCoverage?has_content>
+			<para>Type of coverage: <@com.value admExp.TypeOfCoverage/></para>
 		</#if>
 
 		<#if admExp.hasElement("TypeOfInhalationExposure") && admExp.TypeOfInhalationExposure?has_content>
-			<span role="indent">Type of inhalation exposure: <@com.picklist admExp.TypeOfInhalationExposure/></span>
+			<para>Type of inhalation exposure: <@com.value admExp.TypeOfInhalationExposure/></para>
 		</#if>
 
-	<#--Vehicle-->
+		<#--Cell culture conditions-->
+		<#if admExp.hasElement("CellCultures") && admExp.CellCultures?has_content>
+			<para>Cell culture: <@com.value admExp.CellCultures/></para>
+		</#if>
+		<#if admExp.hasElement("PlatingConditions") && admExp.PlatingConditions?has_content>
+			<para>Plating conditions: <@com.text admExp.PlatingConditions/></para>
+		</#if>
+		<#if admExp.hasElement("IncubationConditions") && admExp.IncubationConditions?has_content>
+			<para>Incubation conditions: <@com.text admExp.IncubationConditions/></para>
+		</#if>
+
+		<#--Vehicle-->
 		<#if admExp.hasElement("Vehicle") && admExp.Vehicle?has_content>
-			<span role="indent">Vehicle:
-					<#if admExp.Vehicle?node_type=="picklist_single">
-						<@com.picklist admExp.Vehicle/>
-					<#else>
-						<@com.text admExp.Vehicle/>
-					</#if>
-				</span>
-		</#if>
-
-	<#--Inhalation parameters-->
-		<span role="indent">
-				<#if admExp.hasElement("MassMedianAerodynamicDiameter") && admExp.MassMedianAerodynamicDiameter?has_content>
-					Mass median aerodynamic diameter (MMAD): <@com.range admExp.MassMedianAerodynamicDiameter/>.
+			<para>Vehicle:
+				<#if admExp.Vehicle?node_type=="picklist_single">
+					<@com.value admExp.Vehicle/>
+				<#else>
+					<@com.text admExp.Vehicle/>
 				</#if>
-			<#if admExp.hasElement("GeometricStandardDeviation") && admExp.GeometricStandardDeviation?has_content>
-				Geometric standard deviation (GSD): <@com.range admExp.GeometricStandardDeviation/>.
-			</#if>
-			<#if admExp.hasElement("RemarksOnMMAD") && admExp.RemarksOnMMAD?has_content>
-				Remarks: <@com.text admExp.RemarksOnMMAD/><?linebreak?>
-			</#if>
-
-			<#if admExp.hasElement("AnalyticalVerificationOfTestAtmosphereConcentrations") && admExp.AnalyticalVerificationOfTestAtmosphereConcentrations?has_content>
-				Analytical verification of test atmosphere concentrations: <@com.picklist admExp.AnalyticalVerificationOfTestAtmosphereConcentrations/><?linebreak?>
-			</#if>
-			</span>
-
-	<#-- Details on exposure or similar -->
-		<#if admExp.hasElement("DetailsOnExposure") && admExp.DetailsOnExposure?has_content>
-			<span role="indent">: <@com.text admExp.DetailsOnExposure/></span>
-		<#elseif admExp.hasElement("DetailsOnDermalExposure") && admExp.DetailsOnDermalExposure?has_content>
-			<span role="indent">Details on exposure: <@com.text admExp.DetailsOnDermalExposure/></span>
-		<#elseif admExp.hasElement("DetailsOnInhalationExposure") && admExp.DetailsOnInhalationExposure?has_content>
-			<span role="indent">Details on exposure: <@com.text admExp.DetailsOnInhalationExposure/></span>
-		<#elseif admExp.hasElement("DetailsOnOralExposure") && admExp.DetailsOnOralExposure?has_content>
-			<span role="indent">Details on exposure: <@com.text admExp.DetailsOnOralExposure/></span>
+			</para>
 		</#if>
 
-	<#--Duration/Frequency-->
+		<#--Inhalation parameters-->
+		<#if admExp.hasElement("MassMedianAerodynamicDiameter") && admExp.MassMedianAerodynamicDiameter?has_content>
+			<para>Mass median aerodynamic diameter (MMAD): <@com.range admExp.MassMedianAerodynamicDiameter/></para>
+		</#if>
+		<#if admExp.hasElement("GeometricStandardDeviation") && admExp.GeometricStandardDeviation?has_content>
+			<para>Geometric standard deviation (GSD): <@com.range admExp.GeometricStandardDeviation/></para>
+		</#if>
+		<#if admExp.hasElement("RemarksOnMMAD") && admExp.RemarksOnMMAD?has_content>
+			<para>Remarks on MMAD/GSD:</para><para role="indent"><@com.text admExp.RemarksOnMMAD/></para>
+        </#if>
+
+		<#if admExp.hasElement("AnalyticalVerificationOfTestAtmosphereConcentrations") && admExp.AnalyticalVerificationOfTestAtmosphereConcentrations?has_content>
+			<para>Analytical verification of test atmosphere concentrations: <@com.value admExp.AnalyticalVerificationOfTestAtmosphereConcentrations/></para>
+		</#if>
+
+		<#-- Details on exposure or similar -->
+		<#if admExp.hasElement("DetailsOnExposure") && admExp.DetailsOnExposure?has_content>
+			<para>Details on exposure: </para><para role="indent"><@com.text admExp.DetailsOnExposure/></para>
+		<#elseif admExp.hasElement("DetailsOnDermalExposure") && admExp.DetailsOnDermalExposure?has_content>
+			<para>Details on exposure: </para><para role="indent"><@com.text admExp.DetailsOnDermalExposure/></para>
+		<#elseif admExp.hasElement("DetailsOnInhalationExposure") && admExp.DetailsOnInhalationExposure?has_content>
+			<para>Details on exposure: </para><para role="indent"><@com.text admExp.DetailsOnInhalationExposure/></para>
+		<#elseif admExp.hasElement("DetailsOnOralExposure") && admExp.DetailsOnOralExposure?has_content>
+			<para>Details on exposure: </para><para role="indent"><@com.text admExp.DetailsOnOralExposure/></para>
+		</#if>
+
+		<#--Duration/Frequency-->
 		<#if admExp.hasElement("DurationOfTreatmentExposure") && admExp.DurationOfTreatmentExposure?has_content>
-			<span role="indent"><@com.text admExp.DurationOfTreatmentExposure/></span>
+			<para>Duration of treatment / exposure: <@com.text admExp.DurationOfTreatmentExposure/></para>
 		</#if>
 		<#if admExp.hasElement("FrequencyOfTreatment") && admExp.FrequencyOfTreatment?has_content>
-			<span role="indent">Frequency: <@com.text admExp.FrequencyOfTreatment/></span>
+			<para>Frequency: <@com.text admExp.FrequencyOfTreatment/></para>
 		</#if>
 		<#if admExp.hasElement("DurationAndFrequencyOfTreatmentExposure") && admExp.DurationAndFrequencyOfTreatmentExposure?has_content>
-			<span role="indent">Duration and frequency of exposure: <@com.text admExp.DurationAndFrequencyOfTreatmentExposure/></span>
+			<para>Duration and frequency of exposure: <@com.text admExp.DurationAndFrequencyOfTreatmentExposure/></para>
 		</#if>
 		<#if admExp.hasElement("DurationOfExposure") && admExp.DurationOfExposure?has_content>
-			<span role="indent">Duration of exposure:
-					<#if admExp.DurationOfExposure?node_type=="picklist_single">
-						<@com.picklist admExp.DurationOfExposure/>
-
-					<#elseif admExp.DurationOfExposure?node_type=="range">
-						<@com.range admExp.DurationOfExposure/>
-					<#else>
-						<@com.text admExp.DurationOfExposure/>
-					</#if>
-
-				<#if admExp.hasElement("RemarksOnDuration") && admExp.RemarksOnDuration?has_content>
-					(<@com.text admExp.RemarksOnDuration/>)
+			<para>Duration of exposure:
+				<#if admExp.DurationOfExposure?node_type=="picklist_single">
+					<@com.value admExp.DurationOfExposure/>
+				<#elseif admExp.DurationOfExposure?node_type=="range">
+					<@com.range admExp.DurationOfExposure/>
+				<#else>
+					<@com.text admExp.DurationOfExposure/>
 				</#if>
-				</span>
-		</#if>
-		<#if admExp.hasElement("DurationOfTest") && admExp.DurationOfTest?has_content>
-			<span role="indent">Duration of test: <@com.text admExp.DurationOfTest/></span>
-		</#if>
-		<#if admExp.hasElement("PostExposurePeriod") && admExp.PostExposurePeriod?has_content>
-			<span role="indent">Post exposure period: <@com.text admExp.PostExposurePeriod/></span>
-		</#if>
+			</para>
 
-	<#-- Doses concentrations -->
-		<#if admExp.hasElement("DosesConcentrations") && admExp.DosesConcentrations?has_content>
-			<span role="indent">Doses / concentrations:</span>
-			<#if admExp.DosesConcentrations?node_type=="repeatable">
-				<@keyTox.DosesConcentrationsWithRemarksList admExp.DosesConcentrations/>
-			<#--						<@keyTox.DosesConcentrationsList admExp.DosesConcentrations/>-->
-			<#--				<#else>-->
-			<#--					<@com.text admExp.DosesConcentrations/>-->
+			<#if admExp.hasElement("RemarksOnDuration") && admExp.RemarksOnDuration?has_content>
+				<para role="indent"><@com.text admExp.RemarksOnDuration/></para>
 			</#if>
 		</#if>
+		<#if admExp.hasElement("DurationOfTest") && admExp.DurationOfTest?has_content>
+			<para>Duration of test:</para><para role="indent"><@com.text admExp.DurationOfTest/></para>
+		</#if>
+		<#if admExp.hasElement("PostExposurePeriod") && admExp.PostExposurePeriod?has_content>
+			<para>Post exposure period:</para><para role="indent"><@com.text admExp.PostExposurePeriod/></para>
+		</#if>
+
+		<#-- Doses concentrations -->
+		<#if admExp.hasElement("DosesConcentrations") && admExp.DosesConcentrations?has_content>
+			<para>Doses / concentrations:</para>
+			<#if admExp.DosesConcentrations?node_type=="repeatable">
+				<@DosesConcentrationsWithRemarksList admExp.DosesConcentrations/>
+			<#--						<@keyTox.DosesConcentrationsList admExp.DosesConcentrations/>-->
+			<#else>
+				<para role="indent"><@com.value admExp.DosesConcentrations/></para>
+			</#if>
+
+		</#if>
 		<#if admExp.hasElement("Doses") && admExp.Doses?has_content>
-			<span role="indent">Doses: <@com.text admExp.Doses/></span>
+			<para>Doses:</para><para role="indent"><@com.text admExp.Doses/></para>
 		</#if>
 		<#if admExp.hasElement("Concentrations") && admExp.Concentrations?has_content>
-			<span role="indent">Concentrations: <@com.text admExp.Concentrations/></span>
+			<para>Concentrations:</para><para role="indent"><@com.text admExp.Concentrations/></para>
 		</#if>
 
 		<#if admExp.hasElement("AnalyticalVerificationOfDosesOrConcentrations") && admExp.AnalyticalVerificationOfDosesOrConcentrations?has_content>
-			<span role="indent">Analytical verification of doses / concentrations: <@com.picklist admExp.AnalyticalVerificationOfDosesOrConcentrations/>
-				<#if admExp.hasElement("DetailsOnAnalyticalVerificationOfDosesOrConcentrations") && admExp.DetailsOnAnalyticalVerificationOfDosesOrConcentrations?has_content>
-					- <@com.text admExp.DetailsOnAnalyticalVerificationOfDosesOrConcentrations/>
-				</#if>
-				</span>
+			<para>Analytical verification of doses / concentrations: <@com.value admExp.AnalyticalVerificationOfDosesOrConcentrations/></para>
+			<#if admExp.hasElement("DetailsOnAnalyticalVerificationOfDosesOrConcentrations") && admExp.DetailsOnAnalyticalVerificationOfDosesOrConcentrations?has_content>
+				<para role="indent"><@com.text admExp.DetailsOnAnalyticalVerificationOfDosesOrConcentrations/></para>
+			</#if>
 		</#if>
 
-	<#-- Animals -->
-		<#if admExp.hasElement("DetailsOnMatingProcedure") && admExp.DetailsOnMatingProcedure?has_content>
-			<span role="indent">Mating procedure: <@com.text admExp.DetailsOnMatingProcedure/></span>
+		<#--Assays-->
+		<#if admExp.hasElement("Assays") && admExp.Assays?has_content>
+			<para>Assays:</para>
+			<@assaysList admExp.Assays/>
 		</#if>
+
+		<#-- Animals -->
 		<#if admExp.hasElement("NoOfAnimalsPerSexPerDose") && admExp.NoOfAnimalsPerSexPerDose?has_content>
-			<span role="indent">No. of animals per sex per dose / concentration: <@com.text admExp.NoOfAnimalsPerSexPerDose/></span>
+			<para>No. of animals per sex per dose / concentration:</para><para role="indent"><@com.text admExp.NoOfAnimalsPerSexPerDose/></para>
 		</#if>
 		<#if admExp.hasElement("NoOfAnimalsPerGroup") && admExp.NoOfAnimalsPerGroup?has_content>
-			<span role="indent">No. of animals per group: <@com.text admExp.NoOfAnimalsPerGroup/></span>
+			<para>No. of animals per group: </para><para role="indent"><@com.text admExp.NoOfAnimalsPerGroup/></para>
 		</#if>
 		<#if admExp.hasElement("DetailsOnMatingProcedure") && admExp.DetailsOnMatingProcedure?has_content>
-			<span role="indent">Mating procedure: <@com.text admExp.DetailsOnMatingProcedure/></span>
+			<para>Mating procedure:</para><para role="indent"><@com.text admExp.DetailsOnMatingProcedure/></para>
 		</#if>
 		<#if admExp.hasElement("ControlAnimal") && admExp.ControlAnimal?has_content>
-			<span role="indent">Control animals: <@com.picklist admExp.ControlAnimal/></span>
+			<para>Control animals:</para><para role="indent"><@com.value admExp.ControlAnimal/></para>
+		<#elseif admExp.hasElement("ControlAnimals") && admExp.ControlAnimals?has_content>
+			<para>Control animals:</para><para role="indent"><@com.value admExp.ControlAnimals/></para>
+		<#elseif admExp.hasElement("Controls") && admExp.Controls?has_content>
+			<para>Controls:</para><para role="indent"><@com.text admExp.Controls/></para>
 		</#if>
 		<#if admExp.hasElement("PositiveControl") && admExp.PositiveControl?has_content>
-			<span role="indent">Positive control: <@com.text admExp.PositiveControl/></span>
+			<para>Positive control:</para><para role="indent"><@com.text admExp.PositiveControl/></para>
 		</#if>
 
-		<span role="indent">Details: <?linebreak?>
-				<#if admExp.hasElement("DetailsOnStudyDesign") && admExp.DetailsOnStudyDesign?has_content>
-					Study design: <@com.text admExp.DetailsOnStudyDesign/><?linebreak?>
-				</#if>
-			<#if admExp.hasElement("DetailsOnStudySchedule") && admExp.DetailsOnStudySchedule?has_content>
-				Study schedule: <@com.text admExp.DetailsOnStudySchedule/><?linebreak?>
-			</#if>
-			<#if admExp.hasElement("DetailsOnDosingAndSampling") && admExp.DetailsOnDosingAndSampling?has_content>
-				Dosing / sampling: <@com.text admExp.DetailsOnDosingAndSampling/><?linebreak?>
-			</#if>
-			<#if admExp.hasElement("DetailsOnInVitroTestSystemIfApplicable") && admExp.DetailsOnInVitroTestSystemIfApplicable?has_content>
-				In vitro test system: <@com.text admExp.DetailsOnInVitroTestSystemIfApplicable/><?linebreak?>
-			</#if>
-			<#if admExp.hasElement("Statistics") && admExp.Statistics?has_content>
-				Statistics: <@com.text admExp.Statistics/><?linebreak?>
-			</#if>
-			</span>
+		<#-- Details-->
+		<#if admExp.hasElement("OtherTreatments") && admExp.OtherTreatments?has_content>
+			<para>Other treatments:</para><para role="indent"><@com.text admExp.OtherTreatments/></para>
+		</#if>
+
+		<#if admExp.hasElement("DetailsOnStudyDesign") && admExp.DetailsOnStudyDesign?has_content>
+			<para>Study design:</para><para role="indent"><@com.text admExp.DetailsOnStudyDesign/></para>
+		</#if>
+
+		<#if admExp.hasElement("DetailsOnStudySchedule") && admExp.DetailsOnStudySchedule?has_content>
+			<para>Study schedule:</para><para role="indent"><@com.text admExp.DetailsOnStudySchedule/></para>
+		</#if>
+
+		<#if admExp.hasElement("DetailsOnDosingAndSampling") && admExp.DetailsOnDosingAndSampling?has_content>
+			<para>Dosing / sampling:</para><para role="indent"><@com.text admExp.DetailsOnDosingAndSampling/></para>
+		</#if>
+
+		<#if admExp.hasElement("DetailsOnInVitroTestSystemIfApplicable") && admExp.DetailsOnInVitroTestSystemIfApplicable?has_content>
+			<para>In vitro test system:</para><para role="indent"><@com.text admExp.DetailsOnInVitroTestSystemIfApplicable/></para>
+		</#if>
+
+		<#if admExp.hasElement("Statistics") && admExp.Statistics?has_content>
+			<para>Statistics:</para><para role="indent"><@com.text admExp.Statistics/></para>
+		</#if>
+
 	</#compress>
 </#macro>
 
@@ -7912,7 +8084,9 @@
 		<para><emphasis role="bold">Examinations:</emphasis></para>
 
 		<#list exam?children as child>
-			<span role="indent">${child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}: <@com.text child/></span>
+			<#if child?has_content>
+				<para>${child?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}:</para><para role="indent"><@com.text child/></para>
+			</#if>
 		</#list>
 	</#compress>
 </#macro>
@@ -7921,31 +8095,29 @@
 	<#compress>
 		<para><emphasis role="bold">Method:</emphasis></para>
 
-		<#if method.TargetGene?has_content><span role="indent">Target gene: <@com.text method.TargetGene/></span></#if>
+		<#if method.TargetGene?has_content><para>Target gene:</para><para role="indent"><@com.text method.TargetGene/></para></#if>
 		<#if method.SpeciesStrain?has_content>
-			<span role="indent">Species / strain:</span> <@speciesStrainMethodList method.SpeciesStrain/>
+			<para>Species / strain:</para> <@speciesStrainMethodList method.SpeciesStrain/>
 		</#if>
 
-		<#if method.CytokinesisBlockIfUsed?has_content><span role="indent">Cytokinesis block: <@com.text method.CytokinesisBlockIfUsed /></span></#if>
-		<#if method.MetabolicActivation?has_content><span role="indent">Metabolic activation: <@com.picklist method.MetabolicActivation/>
-			<#if method.MetabolicActivationSystem?has_content>- <@com.text method.MetabolicActivationSystem/></#if>
-			</span>
+		<#if method.CytokinesisBlockIfUsed?has_content><para>Cytokinesis block: </para><para role="indent"><@com.text method.CytokinesisBlockIfUsed /></para></#if>
+		<#if method.MetabolicActivation?has_content><para>Metabolic activation: <@com.value method.MetabolicActivation/></para>
+			<#if method.MetabolicActivationSystem?has_content><para role="indent"><@com.text method.MetabolicActivationSystem/></para></#if>
 		</#if>
 
-		<#if method.TestConcentrationsWithJustificationForTopDose?has_content><span role="indent">Doses: <@com.text method.TestConcentrationsWithJustificationForTopDose/></span></#if>
-		<#if method.Vehicle?has_content><span role="indent">Vehicle: <@com.text method.Vehicle/></span></#if>
+		<#if method.TestConcentrationsWithJustificationForTopDose?has_content><para role="indent">Doses:</para><para role="indent"><@com.text method.TestConcentrationsWithJustificationForTopDose/></para></#if>
+		<#if method.Vehicle?has_content><para role="indent">Vehicle: </para><para role="indent"><@com.text method.Vehicle/></para></#if>
 
 		<#if method.Controls?has_content>
-			<span role="indent">Controls:</span> <@controlsList method.Controls/>
+			<para>Controls:</para> <@controlsList method.Controls/>
 		</#if>
 
-		<#if method.DetailsOnTestSystemAndConditions?has_content><span role="indent">Test conditions: <@com.text method.DetailsOnTestSystemAndConditions/>
-			<#if method.RationaleForTestConditions?has_content> - <@com.text method.RationaleForTestConditions/></#if>
-			</span>
+		<#if method.DetailsOnTestSystemAndConditions?has_content><para>Test conditions:</para><para role="indent"><@com.text method.DetailsOnTestSystemAndConditions/></para>
+			<#if method.RationaleForTestConditions?has_content><para role="indent2"><@com.text method.RationaleForTestConditions/></para></#if>
 		</#if>
 
-		<#if method.EvaluationCriteria?has_content><span role="indent">Evaluation criteria: <@com.text method.EvaluationCriteria/></span></#if>
-		<#if method.Statistics?has_content><span role="indent">Statistics: <@com.text method.Statistics/></span></#if>
+		<#if method.EvaluationCriteria?has_content><para>Evaluation criteria:</para><para role="indent"><@com.text method.EvaluationCriteria/></para></#if>
+		<#if method.Statistics?has_content><para role="indent">Statistics:</para><para role="indent"><@com.text method.Statistics/></para></#if>
 
 	</#compress>
 </#macro>
@@ -7953,104 +8125,102 @@
 <#macro methods_method method>
 	<#compress>
 
-	<#--specific for Medical data docs-->
+		<#--specific for Medical data docs-->
 
 		<para><emphasis role="bold">Method:</emphasis></para>
 		<#if method.hasElement("TypeOfPopulation") && method.TypeOfPopulation?has_content>
-			<span role="indent">Type of population: <@com.picklistMultiple method.TypeOfPopulation/></span>
+			<para>Type of population:<@com.value method.TypeOfPopulation/></para>
 		</#if>
 		<#if method.hasElement("Subjects") && method.Subjects?has_content>
-			<span role="indent">Subjects: <@com.text method.Subjects/></span>
+			<para>Subjects: </para><para role="indent"><@com.text method.Subjects/></para>
 		</#if>
 		<#if method.hasElement("Controls") && method.Controls?has_content>
-			<span role="indent">Controls: <@com.text method.Controls/></span>
+			<para>Controls: </para><para role="indent"><@com.text method.Controls/></para>
 		</#if>
 		<#if method.hasElement("EthicalApproval") && method.EthicalApproval?has_content>
-			<span role="indent">Ethical approval: <@com.picklist method.EthicalApproval/></span>
+			<para>Ethical approval: <@com.value method.EthicalApproval/></para>
 		</#if>
 		<#if method.hasElement("DetailsOnStudyDesign") && method.DetailsOnStudyDesign?has_content>
-			<span role="indent">Details on study design: <@com.text method.DetailsOnStudyDesign/></span>
+			<para>Details on study design: </para><para role="indent"><@com.text method.DetailsOnStudyDesign/></para>
 		</#if>
 		<#if method.hasElement("RouteOfExposure") && method.RouteOfExposure?has_content>
-			<span role="indent">Route of exposure: <@com.picklistMultiple method.RouteOfExposure/></span>
+			<para>Route of exposure: <@com.value method.RouteOfExposure/></para>
 		</#if>
 		<#if method.hasElement("RouteOfAdministration") && method.RouteOfAdministration?has_content>
-			<span role="indent">Route of administration: <@com.picklist method.RouteOfAdministration/></span>
+			<para>Route of administration: <@com.value method.RouteOfAdministration/></para>
 		</#if>
 		<#if method.hasElement("ReasonOfExposure") && method.ReasonOfExposure?has_content>
-			<span role="indent">Reason: <@com.picklist method.ReasonOfExposure/></span>
+			<para>Reason: <@com.value method.ReasonOfExposure/></para>
 		</#if>
 		<#if method.hasElement("ExposureAssessment") && method.ExposureAssessment?has_content>
-			<span role="indent">
-			Exposure assessment: <@com.picklist method.ExposureAssessment/>
-				<#if method.hasElement("DetailsOnExposure") && method.DetailsOnExposure?has_content>
-					- <@com.text method.DetailsOnExposure/>
-				</#if>
-			</span>
+			<para>Exposure assessment: <@com.value method.ExposureAssessment/></para>
+			<#if method.hasElement("DetailsOnExposure") && method.DetailsOnExposure?has_content>
+				<para role="indent"><@com.text method.DetailsOnExposure/></para>
+			</#if>
 		</#if>
 		<#if method.hasElement("ClinicalHistory") && method.ClinicalHistory?has_content>
-			<span role="indent">Clinical history: <@com.text method.ClinicalHistory/></span>
+			<para>Clinical history: </para><para role="indent"><@com.text method.ClinicalHistory/></para>
 		</#if>
 		<#if method.hasElement("Examinations") && method.Examinations?has_content>
-			<span role="indent">Examinations: <@com.text method.Examinations/></span>
+			<para>Examinations: </para><para role="indent"><@com.text method.Examinations/></para>
 		</#if>
 		<#if method.hasElement("MedicalTreatment") && method.MedicalTreatment?has_content>
-			<span role="indent">Medical treatment: <@com.text method.MedicalTreatment/></span>
+			<para>Medical treatment: </para><para role="indent"><@com.text method.MedicalTreatment/></para>
 		</#if>
 		<#if method.hasElement("StatisticalMethods") && method.StatisticalMethods?has_content>
-			<span role="indent">Statistics: <@com.text method.StatisticalMethods/></span>
+			<para>Statistics: </para><para role="indent"><@com.text method.StatisticalMethods/></para>
 		</#if>
 
 	</#compress>
 </#macro>
 
 <#macro methods_testSystem testSys>
-<#-- Used in skin irritation, eye irritation-->
+	<#-- Used in skin irritation, eye irritation-->
 	<#compress>
 		<para><emphasis role="bold">Test system:</emphasis></para>
 
 		<#if testSys.hasElement("TypeOfCoverage") && testSys.TypeOfCoverage?has_content>
-			<span role="indent">Type of coverage: <@com.picklist testSys.TypeOfCoverage/></span>
+			<para>Type of coverage: <@com.value testSys.TypeOfCoverage/></para>
 		</#if>
 
 		<#if testSys.hasElement("PreparationOfTestSite") && testSys.PreparationOfTestSite?has_content>
-			<span role="indent">Preparation of test site: <@com.picklist testSys.PreparationOfTestSite/></span>
+			<para>Preparation of test site: <@com.value testSys.PreparationOfTestSite/></para>
 		</#if>
 
-	<#--Controls-->
+		<#--Controls-->
 		<#if testSys.Controls?has_content>
-			<span role="indent">Controls: <@com.picklistMultiple testSys.Controls/></span>
+			<para>Controls: <@com.value testSys.Controls/></para>
 		</#if>
 
-	<#--Vehicle-->
+		<#--Vehicle-->
 		<#if testSys.Vehicle?has_content>
-			<span role="indent">Vehicle: <@com.picklist testSys.Vehicle/></span>
+			<para>Vehicle: <@com.value testSys.Vehicle/></para>
 		</#if>
 
-	<#-- Doses concentrations (name has _list appended)-->
+		<#-- Doses concentrations (name has _list appended)-->
 		<#if testSys.AmountConcentrationApplied?has_content>
-			<span role="indent">Doses: <@com.text testSys.AmountConcentrationApplied/></span>
+			<para>Doses: </para><para role="indent"><@com.text testSys.AmountConcentrationApplied/></para>
 		</#if>
 
-	<#--Duration/Frequency-->
+		<#--Duration/Frequency-->
 		<#if testSys.hasElement("DurationOfTreatmentExposure") && testSys.DurationOfTreatmentExposure?has_content>
-			<span role="indent">Duration: <@com.text testSys.DurationOfTreatmentExposure/></span>
+			<para>Duration: </para><para role="indent"><@com.text testSys.DurationOfTreatmentExposure/></para>
 		</#if>
 		<#if testSys.ObservationPeriod?has_content>
-			<span role="indent">Observation period: <@com.text testSys.ObservationPeriod/></span>
+			<para>Observation period: </para><para role="indent"><@com.text testSys.ObservationPeriod/></para>
 		</#if>
 		<#if testSys.hasElement("DurationOfPostTreatmentIncubationInVitro") && testSys.DurationOfPostTreatmentIncubationInVitro?has_content>
-			<span role="indent">Duration of post-treatment incubation (in vitro): : <@com.text testSys.DurationOfPostTreatmentIncubationInVitro/></span>
+			<para>Duration of post-treatment incubation (in vitro): </para><para role="indent"><@com.text testSys.DurationOfPostTreatmentIncubationInVitro/></para>
 		</#if>
 
-	<#--No animals-->
+		<#--No animals-->
 		<#if testSys.NumberOfAnimals?has_content>
-			<span role="indent">No. of animals / in-vitro replicates: <@com.text testSys.NumberOfAnimals/></span>
+			<para role="indent">No. of animals / in-vitro replicates: <@com.text testSys.NumberOfAnimals/></para>
 		</#if>
 
-	<#--Details-->
+		<#--Details-->
 		<#if testSys.DetailsOnStudyDesign?has_content>
-			<span role="indent">Details on study design: <@com.text testSys.DetailsOnStudyDesign/></span>x
+			<para>Details on study design: </para><para role="indent"><@com.text testSys.DetailsOnStudyDesign/></para>
 		</#if>
 	</#compress>
 </#macro>
@@ -8059,33 +8229,33 @@
 	<#compress>
 		<para><emphasis role="bold">Test system:</emphasis></para>
 
-	<#--Species-->
+		<#--Species-->
 		<#if testSys.SpeciesStrain?has_content>
-			<span role="indent">Species / strain / cell type: <@speciesStrainMethodList testSys.SpeciesStrain/></span>
+			<para>Species / strain / cell type:</para><@speciesStrainMethodList testSys.SpeciesStrain/>
 		</#if>
 
-	<#--Controls-->
+		<#--Controls-->
 		<#if testSys.Controls?has_content>
-			<span role="indent">Controls: <@controlsList testSys.Controls/></span>
+			<para>Controls: </para><@controlsList testSys.Controls/>
 		</#if>
 
-	<#--Vehicle-->
+		<#--Vehicle-->
 		<#if testSys.Vehicle?has_content>
-			<span role="indent">Vehicle: <@com.picklist testSys.Vehicle/></span>
+			<para>Vehicle: <@com.value testSys.Vehicle/></para>
 		</#if>
 		<#if testSys.VehicleSolvent?has_content>
-			<span role="indent">Vehicle / solvent: <@com.picklist testSys.VehicleSolvent/></span>
+			<para>Vehicle / solvent: </para><para role="indent"><@com.text testSys.VehicleSolvent/></para>
 		</#if>
 
-	<#--Other-->
+		<#--Other-->
 		<#if testSys.TestSystemExpConditions?has_content>
-			<span role="indent">Details on test system and experimental conditions: <@com.text testSys.TestSystemExpConditions/></span>
+			<para>Details on test system and experimental conditions:</para><para role="indent"><@com.text testSys.TestSystemExpConditions/></para>
 		</#if>
 		<#if testSys.EvaluationCriteria?has_content>
-			<span role="indent">Evaluation criteria: <@com.text testSys.EvaluationCriteria/></span>
+			<para>Evaluation criteria: </para><para role="indent"><@com.text testSys.EvaluationCriteria/></para>
 		</#if>
 		<#if testSys.Statistics?has_content>
-			<span role="indent">Statistics: <@com.text testSys.Statistics/></span>
+			<para>Statistics: </para><para role="indent"><@com.text testSys.Statistics/></para>
 		</#if>
 
 	</#compress>
@@ -8095,59 +8265,59 @@
 	<#compress>
 		<para><emphasis role="bold">In vitro test system:</emphasis></para>
 
-	<#--Test system-->
+		<#--Test system-->
 		<#if vitroSys.TestSystem?has_content>
-			<span role="indent">Test system: <@com.picklist vitroSys.TestSystem/>
-				<#if vitroSys.DetailsOnTestSystem?has_content>
-					- <@com.text vitroSys.DetailsOnTestSystem/>
-				</#if>
-				<#if vitroSys.JustificationForTestSystemUsed?has_content>
-					<?linebreak?>(<@com.text vitroSys.JustificationForTestSystemUsed/>)
-				</#if>
-			</span>
+			<para>Test system: <@com.value vitroSys.TestSystem/></para>
+			<#if vitroSys.DetailsOnTestSystem?has_content>
+				<para role="indent"><@com.text vitroSys.DetailsOnTestSystem/></para>
+			</#if>
+			<#if vitroSys.JustificationForTestSystemUsed?has_content>
+				<para role="indent">Justification: <@com.text vitroSys.JustificationForTestSystemUsed/></para>
+			</#if>
 		</#if>
 
-	<#--Species and cell type -->
+		<#--Species and cell type -->
 		<#if vitroSys.SourceSpecies?has_content>
-			<span role="indent">Source species: <@com.picklist vitroSys.SourceSpecies/>
+			<para>Source species: <@com.value vitroSys.SourceSpecies/>
 				<#if vitroSys.SourceStrain?has_content>
-					(<@com.picklist vitroSys.SourceStrain/>)
+					(<@com.value vitroSys.SourceStrain/>)
 				</#if>
-				<#if vitroSys.DetailsOnAnimalUsedAsSourceOfTestSystem?has_content>
-					- <@com.text vitroSys.DetailsOnAnimalUsedAsSourceOfTestSystem/>
-				</#if>
-			</span>
-		</#if>
-		<#if vitroSys.CellType?has_content>
-			<span role="indent">Cell type: <@com.picklist vitroSys.CellType/>
-				<#if vitroSys.CellSource?has_content>
-					from <@com.picklist vitroSys.CellSource/>
-				</#if>
-			</span>
+			</para>
+			<#if vitroSys.DetailsOnAnimalUsedAsSourceOfTestSystem?has_content>
+				<para role="indent"><@com.text vitroSys.DetailsOnAnimalUsedAsSourceOfTestSystem/></para>
+			</#if>
 		</#if>
 
-	<#--Vehicle-->
+		<#if vitroSys.CellType?has_content>
+			<para>Cell type: <@com.value vitroSys.CellType/>
+				<#if vitroSys.CellSource?has_content>
+					from <@com.value vitroSys.CellSource/>
+				</#if>
+			</para>
+		</#if>
+
+		<#--Vehicle-->
 		<#if vitroSys.Vehicle?has_content>
-			<span role="indent">Vehicle: <@com.picklist vitroSys.Vehicle/></span>
+			<para>Vehicle: <@com.value vitroSys.Vehicle/></para>
 		</#if>
 
 		<#if vitroSys.ControlSamples?has_content>
-			<span role="indent">Control samples: <@com.picklistMultiple vitroSys.ControlSamples/></span>
+			<para>Control samples: <@com.value vitroSys.ControlSamples/></para>
 		</#if>
 
-	<#--Treatment-->
+		<#--Treatment-->
 		<#if vitroSys.AmountConcentrationApplied?has_content>
-			<span role="indent">Doses: <@com.text vitroSys.AmountConcentrationApplied/></span>
+			<para>Doses: </para><para role="indent"><@com.text vitroSys.AmountConcentrationApplied/></para>
 		</#if>
 		<#if vitroSys.DurationOfTreatmentExposure?has_content>
-			<span role="indent">Duration: <@com.text vitroSys.DurationOfTreatmentExposure/></span>
+			<para>Duration:</para><para role="indent"><@com.text vitroSys.DurationOfTreatmentExposure/></para>
 		</#if>
 		<#if vitroSys.DurationOfPostTreatmentIncubationIfApplicable?has_content>
-			<span role="indent">Duration of post-treatment incubation: <@com.text vitroSys.DurationOfPostTreatmentIncubationIfApplicable/></span>
+			<para>Duration of post-treatment incubation: </para><para role="indent"><@com.text vitroSys.DurationOfPostTreatmentIncubationIfApplicable/></para>
 		</#if>
 
 		<#if vitroSys.NumberOfReplicates?has_content>
-			<span role="indent">No. of replicates: <@com.text vitroSys.NumberOfReplicates/></span>
+			<para>No. of replicates: </para><para role="indent"><@com.text vitroSys.NumberOfReplicates/></para>
 		</#if>
 	</#compress>
 </#macro>
@@ -8158,22 +8328,22 @@
 
 	<#--Test system-->
 		<#if vitroSys.DetailsTestSystem?has_content>
-			<span role="indent">Test system: <@com.picklist vitroSys.DetailsTestSystem/></span>
+			<para>Test system: <@com.value vitroSys.DetailsTestSystem/></para>
 		</#if>
 
 	<#--Controls-->
 		<#if vitroSys.VehicleSolventControl?has_content>
-			<span role="indent">Vehicle / solvent control: <@com.picklist vitroSys.VehicleSolventControl/></span>
+			<para>Vehicle / solvent control: <@com.value vitroSys.VehicleSolventControl/></para>
 		</#if>
 		<#if vitroSys.NegativeControl?has_content>
-			<span role="indent">Negative control: <@com.picklist vitroSys.NegativeControl/></span>
+			<para>Negative control: <@com.value vitroSys.NegativeControl/></para>
 		</#if>
 		<#if vitroSys.control?has_content>
-			<span role="indent">Positive control: <@com.picklist vitroSys.control/></span>
+			<para>Positive control: <@com.value vitroSys.control/></para>
 		</#if>
 
 		<#if vitroSys.DetailsOnStudyDesign?has_content>
-			<span role="indent">Details on study design: <@com.text vitroSys.DetailsOnStudyDesign/></span>
+			<para>Details on study design: </para><para role="indent"><@com.text vitroSys.DetailsOnStudyDesign/></para>
 		</#if>
 	</#compress>
 </#macro>
@@ -8205,22 +8375,22 @@
 		<para>Study design: LLNA</para>
 
 		<#if llna.Vehicle?has_content>
-			<span role="indent">Vehicle: <@com.picklist llna.Vehicle/></span>
+			<para role="indent">Vehicle: <@com.value llna.Vehicle/></para>
 		</#if>
 		<#if llna.Concentration?has_content>
-			<span role="indent">Concentration: <@com.text llna.Concentration/></span>
+			<para role="indent">Concentration: <@com.text llna.Concentration/></para>
 		</#if>
 		<#if llna.NoOfAnimalsPerDose?has_content>
-			<span role="indent">No animals per dose: <@com.text llna.NoOfAnimalsPerDose/></span>
+			<para role="indent">No animals per dose: <@com.text llna.NoOfAnimalsPerDose/></para>
 		</#if>
 		<#if llna.PositiveControlSubstances?has_content>
-			<span role="indent">Positive control substances: <@com.picklistMultiple llna.PositiveControlSubstances/></span>
+			<para role="indent">Positive control substances: <@com.value llna.PositiveControlSubstances/></para>
 		</#if>
 		<#if llna.DetailsOnStudyDesign?has_content>
-			<span role="indent">Details on study design: <@com.text llna.DetailsOnStudyDesign/></span>
+			<para role="indent">Details on study design: <@com.text llna.DetailsOnStudyDesign/></para>
 		</#if>
 		<#if llna.Statistics?has_content>
-			<span role="indent">Statistics: <@com.text llna.Statistics/></span>
+			<para role="indent">Statistics: <@com.text llna.Statistics/></para>
 		</#if>
 	</#compress>
 </#macro>
@@ -8230,26 +8400,26 @@
 		<para>Study design: non-LLNA</para>
 
 		<#if nonllna.Induction?has_content>
-			<span role="indent">Induction:</span>
-			<@InductionChallengeList nonllna.Induction/>
+			<para role="indent">Induction:</para>
+			<@InductionChallengeList nonllna.Induction "indent2"/>
 		</#if>
 
 		<#if nonllna.Challenge?has_content>
-			<span role="indent">Challenge:</span>
-			<@InductionChallengeList nonllna.Challenge/>
+			<para role="indent">Challenge:</para>
+			<@InductionChallengeList nonllna.Challenge "indent2"/>
 		</#if>
 
 		<#if nonllna.NoOfAnimalsPerDose?has_content>
-			<span role="indent">No animals per dose: <@com.text nonllna.NoOfAnimalsPerDose/></span>
+			<para role="indent">No animals per dose: <@com.text nonllna.NoOfAnimalsPerDose/></para>
 		</#if>
 		<#if nonllna.PositiveControlSubstances?has_content>
-			<span role="indent">Positive control substances: <@com.picklist nonllna.PositiveControlSubstances/></span>
+			<para role="indent">Positive control substances: <@com.value nonllna.PositiveControlSubstances/></para>
 		</#if>
 		<#if nonllna.ChallengeControls?has_content>
-			<span role="indent">Challenge controls: <@com.text nonllna.ChallengeControls/></span>
+			<para role="indent">Challenge controls: <@com.text nonllna.ChallengeControls/></para>
 		</#if>
 		<#if nonllna.DetailsOnStudyDesign?has_content>
-			<span role="indent">Details on study design: <@com.text nonllna.DetailsOnStudyDesign/></span>
+			<para role="indent">Details on study design: <@com.text nonllna.DetailsOnStudyDesign/></para>
 		</#if>
 
 	</#compress>
@@ -8261,34 +8431,34 @@
 		<para><emphasis role="bold">In chemico test system:</emphasis></para>
 
 		<#if chemSys.DetailsTestSystem?has_content>
-			<span role="indent">Test system: <@com.picklistMultiple chemSys.DetailsTestSystem/></span>
+			<para>Test system: <@com.value chemSys.DetailsTestSystem/></para>
 		</#if>
 
 		<#if chemSys.VehicleSolvent?has_content>
-			<span role="indent">Vehicle / solvent: <@com.picklist chemSys.VehicleSolvent/></span>
+			<para>Vehicle / solvent: <@com.value chemSys.VehicleSolvent/></para>
 		</#if>
 
 		<#if chemSys.PositiveControl?has_content>
-			<span role="indent">Positive control: <@com.picklist chemSys.PositiveControl/></span>
+			<para>Positive control: <@com.value chemSys.PositiveControl/></para>
 		</#if>
 
 		<#if chemSys.DetailsOnStudyDesign?has_content>
-			<span role="indent">Details on study design: <@com.text chemSys.DetailsOnStudyDesign/></span>
+			<para>Details on study design: </para><para role="indent"><@com.text chemSys.DetailsOnStudyDesign/></para>
 		</#if>
 
 	</#compress>
 </#macro>
 
-<#macro InductionChallengeList InductionChallengeRepeatableBlock>
+<#macro InductionChallengeList InductionChallengeRepeatableBlock role="indent">
 	<#compress>
 		<#if InductionChallengeRepeatableBlock?has_content>
 			<#list InductionChallengeRepeatableBlock as blockItem>
-				<para role="indent">
+				<para role = "${role}">
 					<#if blockItem.hasElement("No") && blockItem.No?has_content>
-						<@com.picklist blockItem.No/>.
+						<@com.value blockItem.No/>.
 					</#if>
-					Route: <@com.picklist blockItem.Route/>.
-					Vehicle: <@com.picklist blockItem.Vehicle/>.
+					Route: <@com.value blockItem.Route/>.
+					Vehicle: <@com.value blockItem.Vehicle/>.
 					<#if blockItem.ConcentrationAmount?has_content>
 						Conc.: <@com.text blockItem.ConcentrationAmount/>.
 					</#if>
@@ -8296,9 +8466,9 @@
 						Duration: <@com.text blockItem.DaySDuration/>.
 					</#if>
 					<#if blockItem.hasElement("AdequacyOfInduction") && blockItem.AdequacyOfInduction?has_content>
-						Adequacy: <@com.picklist blockItem.AdequacyOfInduction/>.
+						Adequacy: <@com.value blockItem.AdequacyOfInduction/>.
 					<#elseif blockItem.hasElement("AdequacyOfChallenge") && blockItem.AdequacyOfChallenge?has_content>
-						Adequacy: <@com.picklist blockItem.AdequacyOfChallenge/>.
+						Adequacy: <@com.value blockItem.AdequacyOfChallenge/>.
 					</#if>
 				</para>
 
@@ -8308,19 +8478,19 @@
 </#macro>
 
 <#--There is an existing macro in keyTOX but combines different elements in that case-->
-<#macro speciesStrainMethodList speciesStrainRepeatableBlock>
+<#macro speciesStrainMethodList speciesStrainRepeatableBlock role="indent">
 	<#compress>
 		<#if speciesStrainRepeatableBlock?has_content>
 			<#list speciesStrainRepeatableBlock as blockItem>
-				<para role="indent">
+				<para role="${role}">
 					<#if blockItem.hasElement("SpeciesStrain") && blockItem.SpeciesStrain?has_content>
-						<@com.picklist blockItem.SpeciesStrain/>
+						<@com.value blockItem.SpeciesStrain/>
 					<#elseif blockItem.hasElement("SpeciesStrainCell") && blockItem.SpeciesStrainCell?has_content>
-						<@com.picklist blockItem.SpeciesStrainCell/>
+						<@com.value blockItem.SpeciesStrainCell/>
 					</#if>
 
 					<#if blockItem.hasElement("AdditionalStrainCharacteristics") && blockItem.AdditionalStrainCharacteristics?has_content>
-						(<@com.picklist blockItem.AdditionalStrainCharacteristics/>)
+						(<@com.value blockItem.AdditionalStrainCharacteristics/>)
 					</#if>
 
 					<#if blockItem.hasElement("MammalianCellDetails") && blockItem.MammalianCellDetails?has_content>
@@ -8335,25 +8505,25 @@
 </#macro>
 
 <#--Same as above-->
-<#macro controlsList controlRepeatableBlock>
+<#macro controlsList controlRepeatableBlock role="indent">
 	<#compress>
 		<#if controlRepeatableBlock?has_content>
 			<#list controlRepeatableBlock as blockItem>
-				<para role="indent">
-					Negative: <@com.picklist blockItem.NegativeControls/>.
+				<para role="${role}">
+					Negative: <@com.value blockItem.NegativeControls/>.
 					<#if blockItem.hasElement("SolventControls") && blockItem.SolventControls?has_content>
-						Solvent/vehicle controls: <@com.picklist blockItem.SolventControls/>.
+						Solvent/vehicle controls: <@com.value blockItem.SolventControls/>.
 					</#if>
 					<#if blockItem.hasElement("TrueNegativeControls") && blockItem.TrueNegativeControls?has_content>
-						True negative controls: : <@com.picklist blockItem.TrueNegativeControls/>.
+						True negative controls: : <@com.value blockItem.TrueNegativeControls/>.
 					</#if>
 
 					<?linebreak?>
 
-					Positive: <@com.picklist blockItem.PositiveControls/>
+					Positive: <@com.value blockItem.PositiveControls/>
 					<#if blockItem.PositiveControls?has_content>
 					<#if blockItem.hasElement("PositiveControlSubstance") && blockItem.PositiveControlSubstance?has_content>
-						(<@com.picklist blockItem.PositiveControlSubstance/>)
+						(<@com.value blockItem.PositiveControlSubstance/>)
 					</#if>
 					</#if>.<?linebreak?>
 
@@ -8369,12 +8539,12 @@
 <#--2. Results-->
 
 <#--These three macros are changed with respect to the original; however probably some table format would be better-->
-<#macro inVivoLLNAList_ inVivoLLNARepeatableBlock>
+<#macro inVivoLLNAList_ inVivoLLNARepeatableBlock role="indent">
 	<#compress>
 		<#if inVivoLLNARepeatableBlock?has_content>
 			<#list inVivoLLNARepeatableBlock as blockItem>
-				<para role="indent">
-					<#local parameter><@com.picklist blockItem.Parameter /></#local>
+				<para role="${role}">
+					<#local parameter><@com.value blockItem.Parameter /></#local>
 					<#if parameter=="SI">
 						<#local parameter = "Stimulation index" />
 					</#if>
@@ -8386,7 +8556,7 @@
 						<?linebreak?>(<@com.text blockItem.TestGroupRemarks/>)
 					</#if>
 					<#if blockItem.RemarksOnResults?has_content>
-						<?linebreak?>(<@com.picklist blockItem.RemarksOnResults/>)
+						<?linebreak?>(<@com.value blockItem.RemarksOnResults/>)
 					</#if>
 				</para>
 			</#list>
@@ -8394,15 +8564,15 @@
 	</#compress>
 </#macro>
 
-<#macro inVitroLLNAList_ inVivoLLNARepeatableBlock>
+<#macro inVitroLLNAList_ inVivoLLNARepeatableBlock role="indent">
 	<#compress>
 		<#if inVivoLLNARepeatableBlock?has_content>
 			<#list inVivoLLNARepeatableBlock as blockItem>
-				<para role="indent">
+				<para role="${role}">
 					<#if blockItem.RunExperiment?has_content>
-						<@com.picklist blockItem.RunExperiment/>:
+						<@com.value blockItem.RunExperiment/>:
 					</#if>
-					<@com.picklist blockItem.Parameter /> = <@com.quantity blockItem.Value/>
+					<@com.value blockItem.Parameter /> = <@com.quantity blockItem.Value/>
 					<#if blockItem.AtConcentration?has_content>
 						at concentration of <@com.quantity blockItem.AtConcentration/>
 					</#if>
@@ -8410,19 +8580,19 @@
 
 					<#local info=[]/>
 					<#if blockItem.Group?has_content>
-						<#local group><@com.picklist blockItem.Group/></#local>
+						<#local group><@com.value blockItem.Group/></#local>
 						<#local info = info + [group]/>
 					</#if>
 					<#if blockItem.VehicleControlsValid?has_content>
-						<#local veh>vehicle control: <@com.picklist blockItem.VehicleControlsValid/></#local>
+						<#local veh>vehicle control: <@com.value blockItem.VehicleControlsValid/></#local>
 						<#local info = info + [veh]/>
 					</#if>
 					<#if blockItem.PositiveControlsValid?has_content>
-						<#local pos>pos. control: <@com.picklist blockItem.PositiveControlsValid/></#local>
+						<#local pos>pos. control: <@com.value blockItem.PositiveControlsValid/></#local>
 						<#local info = info + [pos]/>
 					</#if>
 					<#if blockItem.NegativeControlsValid?has_content>
-						<#local neg>neg. control: <@com.picklist blockItem.NegativeControlsValid/></#local>
+						<#local neg>neg. control: <@com.value blockItem.NegativeControlsValid/></#local>
 						<#local info = info + [neg]/>
 					</#if>
 					<#if info?has_content>(${info?join("; ")})<?linebreak?></#if>
@@ -8432,7 +8602,7 @@
 					</#if>
 
 					<#if blockItem.RemarksOnResults?has_content>
-						<?linebreak?>(<@com.picklist blockItem.RemarksOnResults/>)
+						<?linebreak?>(<@com.value blockItem.RemarksOnResults/>)
 					</#if>
 				</para>
 			</#list>
@@ -8440,13 +8610,13 @@
 	</#compress>
 </#macro>
 
-<#macro inVivoNonLLNAList_ inVivoNonLLNARepeatableBlock>
+<#macro inVivoNonLLNAList_ inVivoNonLLNARepeatableBlock role="indent">
 	<#compress>
 		<#if inVivoNonLLNARepeatableBlock?has_content>
 			<#list inVivoNonLLNARepeatableBlock as blockItem>
-				<para role="indent">
+				<para role="${role}">
 					<#if blockItem.Reading?has_content>
-						<@com.picklist blockItem.Reading/>:
+						<@com.value blockItem.Reading/>:
 					</#if>
 					<#if blockItem.NoWithReactions?has_content>
 						<@com.number blockItem.NoWithReactions/> positive reactions
@@ -8457,7 +8627,7 @@
 					.<?linebreak?>
 					<#local info=[]/>
 					<#if blockItem.Group?has_content>
-						<#local group><@com.picklist blockItem.Group/></#local>
+						<#local group><@com.value blockItem.Group/></#local>
 						<#local info = info + [group]/>
 					</#if>
 					<#if blockItem.HoursAfterChallenge?has_content>
@@ -8475,7 +8645,7 @@
 					</#if>
 
 					<#if blockItem.RemarksOnResults?has_content>
-						(<@com.picklist blockItem.RemarksOnResults/>)
+						(<@com.value blockItem.RemarksOnResults/>)
 					</#if>
 				</para>
 			</#list>
@@ -8488,19 +8658,19 @@
 	<#compress>
 		<#if TestResultsRepeatableBlock?has_content>
 			<#list TestResultsRepeatableBlock as blockItem>
-				<#local genotoxicity><@com.picklist blockItem.Genotoxicity/></#local>
-				<#local organism><#if blockItem.hasElement("Organism")><@com.picklist blockItem.Organism/></#if></#local>
-				<#local sex><#if blockItem.hasElement("Sex")><@com.picklist blockItem.Sex/></#if></#local>
-				<#local metActIndicator><#if blockItem.hasElement("MetActIndicator")><@com.picklist blockItem.MetActIndicator/></#if></#local>
-				<#local cytotoxicity><#if blockItem.hasElement("Cytotoxicity")><@com.picklist blockItem.Cytotoxicity/></#if></#local>
-				<#local toxicity><#if blockItem.hasElement("Toxicity")><@com.picklist blockItem.Toxicity/></#if></#local>
+				<#local genotoxicity><@com.value blockItem.Genotoxicity/></#local>
+				<#local organism><#if blockItem.hasElement("Organism")><@com.value blockItem.Organism/></#if></#local>
+				<#local sex><#if blockItem.hasElement("Sex")><@com.value blockItem.Sex/></#if></#local>
+				<#local metActIndicator><#if blockItem.hasElement("MetActIndicator")><@com.value blockItem.MetActIndicator/></#if></#local>
+				<#local cytotoxicity><#if blockItem.hasElement("Cytotoxicity")><@com.value blockItem.Cytotoxicity/></#if></#local>
+				<#local toxicity><#if blockItem.hasElement("Toxicity")><@com.value blockItem.Toxicity/></#if></#local>
 
-				<#local vehContrValid><#if blockItem.VehContrValid?has_content>Vehicle: <@com.picklist blockItem.VehContrValid/>. </#if></#local>
-				<#local negContrValid><#if blockItem.NegContrValid?has_content>Negative: <@com.picklist blockItem.NegContrValid/>. </#if></#local>
-				<#local posContrValid><#if blockItem.PosContrValid?has_content>Positive: <@com.picklist blockItem.PosContrValid/>. </#if></#local>
-				<#local truenegContrValid><#if blockItem.hasElement("TrueNegativeControlsValidity") && blockItem.TrueNegativeControlsValidity?has_content>True negative: <@com.picklist blockItem.TrueNegativeControlsValidity/>. </#if></#local>
+				<#local vehContrValid><#if blockItem.VehContrValid?has_content>Vehicle: <@com.value blockItem.VehContrValid/>. </#if></#local>
+				<#local negContrValid><#if blockItem.NegContrValid?has_content>Negative: <@com.value blockItem.NegContrValid/>. </#if></#local>
+				<#local posContrValid><#if blockItem.PosContrValid?has_content>Positive: <@com.value blockItem.PosContrValid/>. </#if></#local>
+				<#local truenegContrValid><#if blockItem.hasElement("TrueNegativeControlsValidity") && blockItem.TrueNegativeControlsValidity?has_content>True negative: <@com.value blockItem.TrueNegativeControlsValidity/>. </#if></#local>
 
-				<#local remarks><#if blockItem.hasElement("RemarksOnResults")><@com.picklist blockItem.RemarksOnResults/></#if></#local>
+				<#local remarks><#if blockItem.hasElement("RemarksOnResults")><@com.value blockItem.RemarksOnResults/></#if></#local>
 
 				<#if genotoxicity?has_content || cytotoxicity?has_content || toxicity?has_content>
 					<para role="indent">
@@ -8538,63 +8708,44 @@
 	<#compress>
 	<#--		PreliminaryStudies-->
 		<#if study.ResultsAndDiscussion.PreliminaryStudies?has_content>
-			<para>Preliminary studies: <span role="indent"><@com.text study.ResultsAndDiscussion.PreliminaryStudies/></span></para>
+			<para>Preliminary studies: </para><para role="indent"><@com.text study.ResultsAndDiscussion.PreliminaryStudies/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.MainAdmeResults?has_content>
-			<para>
-				Main ADME results: <@keyTox.ADMEList study.ResultsAndDiscussion.MainAdmeResults/>
-			</para>
+			<para>Main ADME results: </para><@ADMEList study.ResultsAndDiscussion.MainAdmeResults/>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnAbsorption?has_content>
-			<para>
-				Absorption: <span role="indent"><@com.text study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnAbsorption/></span>
-			</para>
+			<para>Absorption:</para><para role="indent"><@com.text study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnAbsorption/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnDistribution?has_content>
-			<para>
-				Distribution: <span role="indent"><@com.text study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnDistribution/></span>
-			</para>
+			<para>Distribution: </para><para role="indent"><@com.text study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnDistribution/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnExcretion?has_content>
-			<para>
-				Excretion: <span role="indent"><@com.text study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnExcretion/></span>
-			</para>
+			<para>Excretion: </para><para role="indent"><@com.text study.ResultsAndDiscussion.PharmacokineticStudies.DetailsOnExcretion/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.PharmacokineticStudies.TransferIntoOrgans?has_content>
-			<para>
-				Transfer into organs:
-				<@keyTox.TransferList study.ResultsAndDiscussion.PharmacokineticStudies.TransferIntoOrgans/>
-			</para>
+			<para>Transfer into organs:</para><@TransferList study.ResultsAndDiscussion.PharmacokineticStudies.TransferIntoOrgans/>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.PharmacokineticStudies.ToxicokineticParameters?has_content>
-			<para>
-				Toxicokinetic parameters: <@keyTox.ToxicokineticParametersList study.ResultsAndDiscussion.PharmacokineticStudies.ToxicokineticParameters/>
-			</para>
+			<para>Toxicokinetic parameters: </para><@ToxicokineticParametersList study.ResultsAndDiscussion.PharmacokineticStudies.ToxicokineticParameters/>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.MetabolitesIdentified?has_content || study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.DetailsOnMetabolites?has_content >
-			<para>
-				Metabolites identified: <@com.picklist study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.MetabolitesIdentified/>
-				<span role="indent"><@com.text study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.DetailsOnMetabolites/></span>
-			</para>
+			<para>Metabolites identified: <@com.value study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.MetabolitesIdentified/></para>
+            <para role="indent"><@com.text study.ResultsAndDiscussion.MetaboliteCharacterisationStudies.DetailsOnMetabolites/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.EnzymaticActivity.EnzymaticActivityMeasured?has_content>
-			<para>
-				Enzymatic activity: <span role="indent"><@com.text study.ResultsAndDiscussion.EnzymaticActivity.EnzymaticActivityMeasured/></span>
-			</para>
+			<para>Enzymatic activity: </para><para role="indent"><@com.text study.ResultsAndDiscussion.EnzymaticActivity.EnzymaticActivityMeasured/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.Bioaccessibility.BioaccessibilityTestingResults?has_content>
-			<para>
-				Bioaccessibility (or Bioavailability): <span role="indent"><@com.text study.ResultsAndDiscussion.Bioaccessibility.BioaccessibilityTestingResults/></span>
-			</para>
+			<para>Bioaccessibility (or Bioavailability):</para><para role="indent"><@com.text study.ResultsAndDiscussion.Bioaccessibility.BioaccessibilityTestingResults/></para>
 		</#if>
 
 	</#compress>
@@ -8603,89 +8754,108 @@
 <#macro results_acuteToxicity study>
 	<#compress>
 		<#if study.ResultsAndDiscussion.hasElement("Preliminary") && study.ResultsAndDiscussion.Preliminary?has_content>
-			<para>Preliminary study: <span role="indent"><@com.text study.ResultsAndDiscussion.Preliminary/></span></para>
+			<para>Preliminary study: </para><para role="indent"><@com.text study.ResultsAndDiscussion.Preliminary/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.EffectLevels?has_content>
-			<para>Effect levels:
-				<span role="indent"><@keyTox.EffectLevelsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels)/></span>
-			</para>
+			<para>Effect levels:</para>
+            <para role="indent"><@EffectLevelsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels)/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.Mortality?has_content>
-			<para>Mortality: <span role="indent"><@com.text study.ResultsAndDiscussion.Mortality/></span></para>
+			<para>Mortality: </para><para role="indent"><@com.text study.ResultsAndDiscussion.Mortality/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.ClinicalSigns?has_content>
-			<para>Clinical signs: <span role="indent">
-				<#if study.ResultsAndDiscussion.ClinicalSigns?node_type=="picklist_single">
-					<@com.picklist study.ResultsAndDiscussion.ClinicalSigns/>
-				<#else>
-					<@com.text study.ResultsAndDiscussion.ClinicalSigns/>
-				</#if>
-			</span></para>
+			<para>Clinical signs: </para>
+			<para role="indent">
+				<@com.value study.ResultsAndDiscussion.ClinicalSigns/>
+			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.BodyWeight?has_content>
-			<para>Body weight: <span role="indent"><@com.text study.ResultsAndDiscussion.BodyWeight/></span></para>
+			<para>Body weight: </para><para role="indent"><@com.value study.ResultsAndDiscussion.BodyWeight/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.GrossPathology?has_content>
+			<para>Gross pathology: </para><para role="indent"><@com.text study.ResultsAndDiscussion.GrossPathology/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.OtherFindings?has_content>
-			<para>Other findings: <span role="indent"><@com.text study.ResultsAndDiscussion.OtherFindings/></span></para>
+			<para>Other findings: </para><para role="indent"><@com.text study.ResultsAndDiscussion.OtherFindings/></para>
 		</#if>
 	</#compress>
 </#macro>
 
-<#macro results_skinEyeIrritation study>
+<#macro results_skinIrritation study>
 	<#compress>
 
 	<#--In vitro
     NOTE: missing vehicle and negative controls of effect-->
-		<#if study.ResultsAndDiscussion.InVitro.hasElement("Results") && study.ResultsAndDiscussion.InVitro.Results?has_content>
-			<para>
-				<@keyTox.inVitroList study.ResultsAndDiscussion.InVitro.Results/>
-			</para>
-		<#elseif study.ResultsAndDiscussion.InVitro.hasElement("ResultsOfExVivoInVitroStudy") && study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy?has_content>
-			<para>
-				<@keyTox.inVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/>
-			</para>
+		<#if study.ResultsAndDiscussion.InVitro.Results?has_content>
+			<para><@inVitroList study.ResultsAndDiscussion.InVitro.Results/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults?has_content>
-			<para>Other effects / acceptance of results: <span role="indent"><@com.text study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults/></span></para>
+			<para>Other effects / acceptance of results: </para><para role="indent"><@com.text study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults/></para>
 		</#if>
 
 	<#--In vivo
     NOTE: missing "basis" of effect-->
-		<#if study.ResultsAndDiscussion.InVivo.hasElement("Results") && study.ResultsAndDiscussion.InVivo.Results?has_content>
+		<#if study.ResultsAndDiscussion.InVivo.Results?has_content>
 			<para>
-				<@keyTox.inVivoList study.ResultsAndDiscussion.InVivo.Results/>
-			</para>
-		<#elseif study.ResultsAndDiscussion.InVivo.hasElement("IrritationCorrosionResults") && study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults?has_content>
-			<para>
-				<@keyTox.inVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
+				<@inVivoList study.ResultsAndDiscussion.InVivo.Results/>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData?has_content>
-			<para>Irritant/corrosive response: <span role="indent"><@com.text study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData/></span></para>
+			<para>Irritant/corrosive response: </para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.InVivo.OtherEffects?has_content>
-			<para>Other effects: <span role="indent"><@com.text study.ResultsAndDiscussion.InVivo.OtherEffects/></span></para>
+			<para>Other effects:</para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.OtherEffects/></para>
 		</#if>
 
-	<#--NOTE: for Eye irritation there are specific macros, but very similar so not used
-        <@keyTox.EyeIrritationInVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/>
-        <@keyTox.EyeIrritationInVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
-    -->
+	</#compress>
+</#macro>
+
+
+<#macro results_eyeIrritation study>
+	<#compress>
+
+	<#--In vitro
+    NOTE: missing vehicle and negative controls of effect-->
+	<#if study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy?has_content>
+		<para><@EyeIrritationInVitroList study.ResultsAndDiscussion.InVitro.ResultsOfExVivoInVitroStudy/></para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults?has_content>
+		<para>Other effects / acceptance of results: </para><para role="indent"><@com.text study.ResultsAndDiscussion.InVitro.OtherEffectsAcceptanceOfResults/></para>
+	</#if>
+
+	<#--In vivo
+    NOTE: missing "basis" of effect-->
+	<#if study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults?has_content>
+		<para>
+			<@EyeIrritationInVivoList study.ResultsAndDiscussion.InVivo.IrritationCorrosionResults/>
+		</para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData?has_content>
+		<para>Irritant/corrosive response: </para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.IrritationCorrosionResponseData/></para>
+	</#if>
+
+	<#if study.ResultsAndDiscussion.InVivo.OtherEffects?has_content>
+		<para>Other effects:</para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivo.OtherEffects/></para>
+	</#if>
+
 	</#compress>
 </#macro>
 
 <#macro results_skinSensitisation study>
 	<#compress>
 		<#if study.ResultsAndDiscussion.PositiveControlResults?has_content>
-			<para>Positive control results: <span role="indent"><@com.text study.ResultsAndDiscussion.PositiveControlResults/></span></para>
+			<para>Positive control results: </para><para role="indent"><@com.text study.ResultsAndDiscussion.PositiveControlResults/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.InVivoLLNA.Results?has_content>
@@ -8707,14 +8877,14 @@
 		</#if>
 
 		<#if study.ResultsAndDiscussion.InVivoLLNA.CellularProliferationDataObservations?has_content>
-			<para>Cellular proliferation / observations:<span role="para"><@com.text study.ResultsAndDiscussion.InVivoLLNA.CellularProliferationDataObservations/></span></para>
+			<para>Cellular proliferation / observations:</para><para role="indent"><@com.text study.ResultsAndDiscussion.InVivoLLNA.CellularProliferationDataObservations/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.InVitroInChemico.PredictionModelOutcome?has_content>
-			<para>Outcome of prediction model:<span role="para"><@com.picklist study.ResultsAndDiscussion.InVitroInChemico.PredictionModelOutcome/></span></para>
+			<para>Outcome of prediction model:</para><para role="indent"><@com.value study.ResultsAndDiscussion.InVitroInChemico.PredictionModelOutcome/></para>
 		</#if>
 		<#if study.ResultsAndDiscussion.InVitroInChemico.OtherEffectsAcceptanceOfResults?has_content>
-			<para>Other effects / acceptance of results:<span role="para"><@com.text study.ResultsAndDiscussion.InVitroInChemico.OtherEffectsAcceptanceOfResults/></span></para>
+			<para>Other effects / acceptance of results:</para><para role="indent"><@com.text study.ResultsAndDiscussion.InVitroInChemico.OtherEffectsAcceptanceOfResults/></para>
 		</#if>
 	</#compress>
 </#macro>
@@ -8730,9 +8900,8 @@
 				<#if (exam_index%2)==0>
 					<#if exam?has_content || examinations[exam_index+1]?has_content>
 						<#local fieldName=name?replace("Observ", "")?replace("([A-Z]{1})", " $1", "r")?cap_first/>
-						<span role="indent">${fieldName}: <@com.picklist exam/>
-							<span role="indent2"><@com.text examinations[exam_index+1]/></span>
-						</span>
+						<para role="indent">${fieldName}: <@com.value exam/></para>
+						<para role="indent2"><@com.text examinations[exam_index+1]/></para>
 					</#if>
 				</#if>
 			</#if>
@@ -8742,52 +8911,55 @@
 
 <#macro results_repDoseCarciNeuroImmuno study>
 	<#compress>
-		<para>Examinations:
-			<#local examinations=study.ResultsAndDiscussion.ResultsOfExaminations?children/>
-			<#list examinations as exam>
-				<#local name=exam?node_name>
-				<#if name!="DetailsOnResults" && name!="RelevanceOfCarcinogenicEffectsPotential" && name!="SpecificImmunotoxicExaminations">
-					<#if (exam_index%2)==0>
-						<#if exam?has_content || examinations[exam_index+1]?has_content>
-							<#local fieldName=name?replace("Observ", "")?replace("([A-Z]{1})", " $1", "r")?cap_first/>
-							<span role="indent">${fieldName}: <@com.picklist exam/>
-												<span role="indent2"><@com.text examinations[exam_index+1]/></span>
-											</span>
+		<#if study.ResultsAndDiscussion.ResultsOfExaminations?has_content>
+			<para>Examinations:
+				<#local examinations=study.ResultsAndDiscussion.ResultsOfExaminations?children/>
+				<#list examinations as exam>
+					<#local name=exam?node_name>
+					<#if name!="DetailsOnResults" && name!="RelevanceOfCarcinogenicEffectsPotential" && name!="SpecificImmunotoxicExaminations">
+						<#if (exam_index%2)==0>
+							<#if exam?has_content || examinations[exam_index+1]?has_content>
+								<#local fieldName=name?replace("Observ", "")?replace("([A-Z]{1})", " $1", "r")?cap_first/>
+								<para role="indent">${fieldName}: <@com.value exam/></para>
+									<para role="indent2"><@com.text examinations[exam_index+1]/></para>
+							</#if>
 						</#if>
+					<#elseif name=="RelevanceOfCarcinogenicEffectsPotential" && exam?has_content>
+						<para role="indent">Relevance of carcinogenic effects / potential: </para><para role="indent2"><@com.text exam/></para>
+					<#elseif name=="DetailsOnResults" && exam?has_content>
+						<para role="indent">Details: </para><para role="indent2"><@com.text exam/></para>
 					</#if>
-				<#elseif name=="RelevanceOfCarcinogenicEffectsPotential" && exam?has_content>
-					<span role="indent">Relevance of carcinogenic effects / potential: <@com.text exam/></span>
-				<#elseif name=="DetailsOnResults" && exam?has_content>
-					<span role="indent">Details: <@com.text exam/></span>
-				</#if>
-			</#list>
-		</para>
+				</#list>
+			</para>
+		</#if>
 
-	<#--Immunotoxic examinations: same concept as above (could be a macro not to repeat everything)-->
-		<para>Specific immunotoxic examinations:
-			<#if study.ResultsAndDiscussion.ResultsOfExaminations.hasElement("SpecificImmunotoxicExaminations")>
+		<#--Immunotoxic examinations: same concept as above (could be a macro not to repeat everything)-->
+		<#if study.ResultsAndDiscussion.ResultsOfExaminations.hasElement("SpecificImmunotoxicExaminations") &&
+				study.ResultsAndDiscussion.ResultsOfExaminations.SpecificImmunotoxicExaminations?has_content>
+			<para>Specific immunotoxic examinations:
 				<#local examinations=study.ResultsAndDiscussion.ResultsOfExaminations.SpecificImmunotoxicExaminations?children/>
 				<#list examinations as exam>
 					<#local name=exam?node_name>
 					<#if (exam_index%2)==0>
 						<#if exam?has_content || examinations[exam_index+1]?has_content>
 							<#local fieldName=name?replace("Observ", "")?replace("([A-Z]{1})", " $1", "r")?cap_first/>
-							<span role="indent">${fieldName}: <@com.picklist exam/>
-												<span role="indent2"><@com.text examinations[exam_index+1]/></span>
-											</span>
+							<para role="indent">${fieldName}: <@com.value exam/></para>
+								<para role="indent2"><@com.text examinations[exam_index+1]/></para>
 						</#if>
 					</#if>
 				</#list>
-			</#if>
-		</para>
+			</para>
+		</#if>
 
-		<para>Effect levels:
-			<@keyTox.EffectLevelsExtendedList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels.Efflevel)/>
-		</para>
+		<#if study.ResultsAndDiscussion.EffectLevels.Efflevel?has_content>
+			<para>Effect levels:</para>
+				<@EffectLevelsExtendedList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels.Efflevel)/>
+		</#if>
 
-		<para>Target system  / organ toxicity:
-			<@keyTox.TargetSystemOrganToxList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TargetSystemOrganToxicity.TargetSystemOrganToxicity)/>
-		</para>
+		<#if study.ResultsAndDiscussion.TargetSystemOrganToxicity.TargetSystemOrganToxicity?has_content>
+			<para>Target system  / organ toxicity:</para>
+				<@TargetSystemOrganToxList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TargetSystemOrganToxicity.TargetSystemOrganToxicity)/>
+		</#if>
 	</#compress>
 </#macro>
 
@@ -8795,34 +8967,33 @@
 <#macro results_geneticToxicity study>
 	<#compress>
 		<#if study.ResultsAndDiscussion.TestRs?has_content>
-			<para>Test results:
+			<para>Test results:</para>
 				<#--					<@keyTox.TestResultsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TestRs)/>-->
 				<#--						<@keyTox.TestResultsInVivoList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TestRs)/>-->
 				<@TestResultsList_ studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TestRs)/>
-			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.ResultsDetails?has_content>
-			<para>Additional information on results: <span role="indent"><@com.text study.ResultsAndDiscussion.ResultsDetails/></span></para>
+			<para>Additional information on results: </para><para role="indent"><@com.text study.ResultsAndDiscussion.ResultsDetails/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.hasElement("RemarksOnResults") && study.ResultsAndDiscussion.RemarksOnResults?has_content>
-			<para>Remarks:<span role="indent"><@com.picklist study.ResultsAndDiscussion.RemarksOnResults/></span></para>
+			<para>Remarks:</para><para role="indent"><@com.value study.ResultsAndDiscussion.RemarksOnResults/></para>
 		</#if>
 	</#compress>
 </#macro>
 
 <#macro results_toxicityReproductionOther study>
 	<#compress>
-		<para>Effect levels:
-			<@keyTox.EffectLevelsExtendedList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels.Efflevel)/>
-		</para>
+		<#if study.ResultsAndDiscussion.EffectLevels.Efflevel?has_content>
+			<para>Effect levels:</para>
+				<@EffectLevelsExtendedList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels.Efflevel)/>
+		</#if>
 
 		<#if study.ResultsAndDiscussion.ObservedEffects.ObservedEffects?has_content>
 			<para>
-				Observed effects:
-				<span role="indent"><@com.text study.ResultsAndDiscussion.ObservedEffects.ObservedEffects/></span>
-			</para>
+				Observed effects:</para>
+				<para role="indent"><@com.text study.ResultsAndDiscussion.ObservedEffects.ObservedEffects/></para>
 		</#if>
 	</#compress>
 </#macro>
@@ -8830,7 +9001,7 @@
 <#macro results_toxicityReproduction study>
 	<#compress>
 
-	<#--P0-->
+		<#--P0-->
 		<#local p0=study.ResultsAndDiscussion.ResultsOfExaminationsParentalGeneration/>
 
 		<#if p0.GeneralToxicityP0?has_content || p0.ReproductiveFunctionPerformanceP0?has_content || p0.DetailsOnResultsP0.DetailsOnResults?has_content ||
@@ -8859,19 +9030,19 @@
 			<#if p0.EffectLevelsP0.Efflevel?has_content>
 				<para>
 					Effect levels:
-					<@keyTox.EffectLevelsPoList studyandsummaryCom.orderByKeyResult(p0.EffectLevelsP0.Efflevel)/>
+					<@EffectLevelsPoList studyandsummaryCom.orderByKeyResult(p0.EffectLevelsP0.Efflevel)/>
 				</para>
 			</#if>
 
 			<#if p0.TargetSystemOrganToxicityP0.TargetSystemOrganToxicity?has_content>
 				<para>
 					Target system / organ toxicity:
-					<@keyTox.TargetSystemOrganToxforEffectLevelsList studyandsummaryCom.orderByKeyResult(p0.TargetSystemOrganToxicityP0.TargetSystemOrganToxicity)/>
+					<@TargetSystemOrganToxforEffectLevelsList studyandsummaryCom.orderByKeyResult(p0.TargetSystemOrganToxicityP0.TargetSystemOrganToxicity)/>
 				</para>
 			</#if>
 		</#if>
 
-	<#--P1-->
+		<#--P1-->
 		<#local p1=study.ResultsAndDiscussion.ResultsP1SecondParentalGeneration/>
 
 		<#if p1.GeneralToxicityP1?has_content || p1.ReproductiveFunctionPerformanceP1?has_content || p1.DetailsOnResultsP1.DetailsOnResults?has_content ||
@@ -8900,19 +9071,19 @@
 			<#if p1.EffectLevelsP1.Efflevel?has_content>
 				<para>
 					Effect levels:
-					<@keyTox.SecondparentalGenerationP1List studyandsummaryCom.orderByKeyResult(p1.EffectLevelsP1.Efflevel)/>
+					<@SecondparentalGenerationP1List studyandsummaryCom.orderByKeyResult(p1.EffectLevelsP1.Efflevel)/>
 				</para>
 			</#if>
 
 			<#if p1.TargetSystemOrganToxicityP1.TargetSystemOrganToxicity?has_content>
 				<para>
 					Target system / organ toxicity:
-					<@keyTox.TargetSystemOrganToxforEffectLevelsList studyandsummaryCom.orderByKeyResult(p1.TargetSystemOrganToxicityP1.TargetSystemOrganToxicity)/>
+					<@TargetSystemOrganToxforEffectLevelsList studyandsummaryCom.orderByKeyResult(p1.TargetSystemOrganToxicityP1.TargetSystemOrganToxicity)/>
 				</para>
 			</#if>
 		</#if>
 
-	<#--F1-->
+		<#--F1-->
 		<#local f1=study.ResultsAndDiscussion.ResultsOfExaminationsOffspring/>
 
 		<#if f1.GeneralToxicityF1?has_content || f1.DevelopmentalNeurotoxicityF1?has_content || f1.DevelopmentalImmunotoxicityF1?has_content ||
@@ -8947,19 +9118,19 @@
 			<#if f1.EffectLevelsF1.Efflevel?has_content>
 				<para>
 					Effect levels:
-					<@keyTox.FgenerationList studyandsummaryCom.orderByKeyResult(f1.EffectLevelsF1.Efflevel)/>
+					<@FgenerationList studyandsummaryCom.orderByKeyResult(f1.EffectLevelsF1.Efflevel)/>
 				</para>
 			</#if>
 
 			<#if f1.TargetSystemOrganToxicityF1.TargetSystemOrganToxicity?has_content>
 				<para>
 					Target system / organ toxicity:
-					<@keyTox.TargetSystemOrganToxforEffectLevelsList studyandsummaryCom.orderByKeyResult(f1.TargetSystemOrganToxicityF1.TargetSystemOrganToxicity)/>
+					<@TargetSystemOrganToxforEffectLevelsList studyandsummaryCom.orderByKeyResult(f1.TargetSystemOrganToxicityF1.TargetSystemOrganToxicity)/>
 				</para>
 			</#if>
 		</#if>
 
-	<#--F2-->
+		<#--F2-->
 		<#local f2=study.ResultsAndDiscussion.ResultsF2Generation/>
 
 		<#if f2.GeneralToxicityF2?has_content || f2.DevelopmentalNeurotoxicityOfF1Generation?has_content || f2.DevelopmentalImmunotoxicityOfF1Generation?has_content ||
@@ -8994,23 +9165,23 @@
 			<#if f2.EffectLevelsF2.Efflevel?has_content>
 				<para>
 					Effect levels:
-					<@keyTox.FgenerationList studyandsummaryCom.orderByKeyResult(f2.EffectLevelsF2.Efflevel)/>
+					<@FgenerationList studyandsummaryCom.orderByKeyResult(f2.EffectLevelsF2.Efflevel)/>
 				</para>
 			</#if>
 
 			<#if f2.TargetSystemOrganToxicityF2.TargetSystemOrganToxicity?has_content>
 				<para>
 					Target system / organ toxicity:
-					<@keyTox.TargetSystemOrganToxforEffectLevelsList studyandsummaryCom.orderByKeyResult(f2.TargetSystemOrganToxicityF2.TargetSystemOrganToxicity)/>
+					<@TargetSystemOrganToxforEffectLevelsList studyandsummaryCom.orderByKeyResult(f2.TargetSystemOrganToxicityF2.TargetSystemOrganToxicity)/>
 				</para>
 			</#if>
 		</#if>
 
-	<#--Overall-->
+		<#--Overall-->
 		<#if study.ResultsAndDiscussion.ReproductiveToxicity.ReproductiveToxicity?has_content>
 			<para><emphasis role="bold">Overall reproductive toxicity:</emphasis></para>
 			<para>
-				<@keyTox.OverallReproductiveToxicityList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.ReproductiveToxicity.ReproductiveToxicity)/>
+				<@OverallReproductiveToxicityList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.ReproductiveToxicity.ReproductiveToxicity)/>
 			</para>
 		</#if>
 	</#compress>
@@ -9019,7 +9190,7 @@
 <#macro results_developmentalToxicity study>
 	<#compress>
 
-	<#--		Maternal-->
+		<#-- Maternal-->
 		<#local maternal=study.ResultsAndDiscussion.ResultsMaternalAnimals/>
 		<#if maternal.GeneralToxicityMaternalAnimals?has_content || maternal.MaternalDevelopmentalToxicity?has_content ||
 		maternal.EffectLevelsMaternalAnimals.Efflevel?has_content || maternal.MaternalAbnormalities.MaternalAbnormalities?has_content>
@@ -9029,7 +9200,7 @@
 					General toxicity:
 					<@examinationsSection path=maternal.GeneralToxicityMaternalAnimals exclude=["DetailsOnResults"]/>
 					<#if maternal.GeneralToxicityMaternalAnimals.DetailsOnResults?has_content>
-						<span role="indent">Details: <@com.text maternal.GeneralToxicityMaternalAnimals.DetailsOnResults/></span>
+						<para role="indent">Details: <@com.text maternal.GeneralToxicityMaternalAnimals.DetailsOnResults/></para>
 					</#if>
 				</para>
 			</#if>
@@ -9039,25 +9210,25 @@
 					Maternal developmental toxicity:
 					<@examinationsSection path=maternal.MaternalDevelopmentalToxicity exclude=["ResultsDetailsMaternal"]/>
 					<#if maternal.MaternalDevelopmentalToxicity.ResultsDetailsMaternal?has_content>
-						<span role="indent">Details: <@com.text maternal.MaternalDevelopmentalToxicity.ResultsDetailsMaternal/></span>
+						<para role="indent">Details: <@com.text maternal.MaternalDevelopmentalToxicity.ResultsDetailsMaternal/></para>
 					</#if>
 				</para>
 			</#if>
 
 			<#if maternal.EffectLevelsMaternalAnimals.Efflevel?has_content>
 				<para>Effect levels:
-					<@keyTox.EffectLevelsMatAbnormalitiesList studyandsummaryCom.orderByKeyResult(maternal.EffectLevelsMaternalAnimals.Efflevel)/>
+					<@EffectLevelsMatAbnormalitiesList studyandsummaryCom.orderByKeyResult(maternal.EffectLevelsMaternalAnimals.Efflevel)/>
 				</para>
 			</#if>
 
 			<#if maternal.MaternalAbnormalities.MaternalAbnormalities?has_content>
 				<para>Maternal abnormalities:
-					<@keyTox.MatAbnormalitiesList studyandsummaryCom.orderByKeyResult(maternal.MaternalAbnormalities.MaternalAbnormalities)/>
+					<@MatAbnormalitiesList studyandsummaryCom.orderByKeyResult(maternal.MaternalAbnormalities.MaternalAbnormalities)/>
 				</para>
 			</#if>
 		</#if>
 
-	<#--		Fetuses-->
+		<#-- Fetuses-->
 		<#local fetuses=study.ResultsAndDiscussion.ResultsFetuses/>
 		<#if fetuses?has_content>
 		<#--		This path doesn't seem correctly assigned-->
@@ -9068,26 +9239,26 @@
 					General toxicity:
 					<@examinationsSection path=fetuses exclude=["ResultsDetailsDevelop", "EffectLevelsFetuses", "FetalAbnormalities"]/>
 					<#if fetuses.ResultsDetailsDevelop?has_content>
-						<span role="indent">Details: <@com.text fetuses.ResultsDetailsDevelop/></span>
+						<para role="indent">Details: <@com.text fetuses.ResultsDetailsDevelop/></para>
 					</#if>
 				</para>
 			</#if>
 
 			<para>Effect levels:
-				<@keyTox.EffectLevelsFetusesList studyandsummaryCom.orderByKeyResult(fetuses.EffectLevelsFetuses.Efflevel)/>
+				<@EffectLevelsFetusesList studyandsummaryCom.orderByKeyResult(fetuses.EffectLevelsFetuses.Efflevel)/>
 			</para>
 
 			<para>Fetal abnormalities:
-				<@keyTox.FetalAbnormalitiesList studyandsummaryCom.orderByKeyResult(fetuses.FetalAbnormalities.FetalAbnormalities)/>
+				<@FetalAbnormalitiesList studyandsummaryCom.orderByKeyResult(fetuses.FetalAbnormalities.FetalAbnormalities)/>
 			</para>
 		</#if>
 
-	<#--		Overall-->
+		<#-- Overall-->
 		<#if study.ResultsAndDiscussion.DevelopmentalToxicity.DevelopmentalToxicity?has_content>
 			<para><emphasis role="bold">Overall developmental toxicity:</emphasis></para>
 
 			<para>
-				<@keyTox.OverallDevToxList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.DevelopmentalToxicity.DevelopmentalToxicity)/>
+				<@OverallDevToxList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.DevelopmentalToxicity.DevelopmentalToxicity)/>
 			</para>
 		</#if>
 	</#compress>
@@ -9097,24 +9268,26 @@
 <#macro results_phototoxicity study>
 	<#compress>
 
-		<para>
-			Results:
-			<span role="indent"><@com.text study.ResultsAndDiscussion.Results/></span>
-			<#if study.ResultsAndDiscussion.RemarksOnResult?has_content>
-				<span role="indent">Remarks: <@com.picklist study.ResultsAndDiscussion.RemarksOnResult/></span>
-			</#if>
+		<#if study.ResultsAndDiscussion.Results?has_content || study.ResultsAndDiscussion.RemarksOnResult?has_content>
+			<para>
+				Results:
+				<para role="indent"><@com.text study.ResultsAndDiscussion.Results/></para>
+				<#if study.ResultsAndDiscussion.RemarksOnResult?has_content>
+					<para role="indent">Remarks: <@com.value study.ResultsAndDiscussion.RemarksOnResult/></para>
+				</#if>
 
-		</para>
+			</para>
+		</#if>
 
 		<#if study.ResultsAndDiscussion.ResultsReferenceSubstance?has_content>
 			<para>
-				Results with reference substance (positive control): <span role="indent"><@com.text study.ResultsAndDiscussion.ResultsReferenceSubstance/></span>
+				Results with reference substance (positive control): <para role="indent"><@com.text study.ResultsAndDiscussion.ResultsReferenceSubstance/></para>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.StatisticsErrorEstimates?has_content>
 			<para>
-				Statistics: <span role="indent"><@com.text study.ResultsAndDiscussion.StatisticsErrorEstimates/></span>
+				Statistics: <para role="indent"><@com.text study.ResultsAndDiscussion.StatisticsErrorEstimates/></para>
 			</para>
 		</#if>
 
@@ -9125,7 +9298,7 @@
 <#macro results_effectsLivestock study>
 	<#compress>
 
-	<#--hashmap to get text content from field name-->
+		<#--hashmap to get text content from field name-->
 		<#local livestockField2Text={"ObservClinSigns" : "Clinical signs and mortality: ",
 		"ObservBodyweight" :"Body weight and weight gain: ",
 		"ObservFoodConsum" : "Food consumption and compound intake: ",
@@ -9138,18 +9311,18 @@
 
 		/>
 
-	<#--iterate over the children, but need the actual value of the text in IUCLID section-->
+		<#--iterate over the children, but need the actual value of the text in IUCLID section-->
 		<para>
 			<#list study.ResultsAndDiscussion?children as child>
-				<#if child?node_name != "ResultsDetails" && child?has_content>
-					<span>${livestockField2Text[child?node_name]}<@com.picklist child/></span>
+				<#if child?node_type=="picklist_single">
+					<para>${livestockField2Text[child?node_name]}<@com.value child/></para>
 				</#if>
 			</#list>
 		</para>
 
 		<#if study.ResultsAndDiscussion.ResultsDetails?has_content>
 			<para>
-				Details: <span role="indent"><@com.text study.ResultsAndDiscussion.ResultsDetails/></span>
+				Details: <para role="indent"><@com.text study.ResultsAndDiscussion.ResultsDetails/></para>
 			</para>
 		</#if>
 
@@ -9160,28 +9333,28 @@
 <#macro results_endocrineDisrupterMammalianScreening study>
 	<#compress>
 		<#if study.ResultsAndDiscussion.EndocrineDisruptingPotential?has_content>
-			<para>Endocrine disrupting potential: <span role="indent"><@com.picklist study.ResultsAndDiscussion.EndocrineDisruptingPotential/></span></para>
+			<para>Endocrine disrupting potential: <para role="indent"><@com.value study.ResultsAndDiscussion.EndocrineDisruptingPotential/></para></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.MaximumToleratedDoseLevelExceeded?has_content>
-			<para>Maximum tolerated dose level exceeded: <span role="indent"><@com.picklist study.ResultsAndDiscussion.MaximumToleratedDoseLevelExceeded/></span></para>
+			<para>Maximum tolerated dose level exceeded: <para role="indent"><@com.value study.ResultsAndDiscussion.MaximumToleratedDoseLevelExceeded/></para></para>
 		</#if>
 
-	<#-- Examinations-->
+		<#-- Examinations-->
 		<#local exam=study.ResultsAndDiscussion.ResultsOfExaminations/>
 		<#if exam?has_content>
 			<para>
 				Examinations:
 				<@examinationsSection path=exam exclude=["DetailsOnResults"]/>
 				<#if exam.DetailsOnResults?has_content>
-					<span role="indent">Details: <@com.text exam.DetailsOnResults/></span>
+					<para role="indent">Details: <@com.text exam.DetailsOnResults/></para>
 				</#if>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.EffectLevels.Efflevel?has_content>
 			<para>Effect levels:
-				<@keyTox.EffectLevelsExtendedList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels.Efflevel)/>
+				<@EffectLevelsExtendedList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.EffectLevels.Efflevel)/>
 			</para>
 		</#if>
 
@@ -9191,15 +9364,15 @@
 <#macro results_healthSurvExposureEpidemiological study>
 	<#compress>
 		<#if study.ResultsAndDiscussion.Results?has_content>
-			<para>Results: <span role="indent"><@com.text study.ResultsAndDiscussion.Results/></span></para>
+			<para>Results: <para role="indent"><@com.text study.ResultsAndDiscussion.Results/></para></para>
 		</#if>
 
-	<#--only for epidemiological data-->
+		<#--only for epidemiological data-->
 		<#if study.ResultsAndDiscussion.hasElement("ConfoundingFactors") && study.ResultsAndDiscussion.ConfoundingFactors?has_content>
-			<para>Confounding factors: <span role="indent"><@com.text study.ResultsAndDiscussion.ConfoundingFactors/></span></para>
+			<para>Confounding factors: <para role="indent"><@com.text study.ResultsAndDiscussion.ConfoundingFactors/></para></para>
 		</#if>
 		<#if study.ResultsAndDiscussion.hasElement("StrengthsWeaknesses") && study.ResultsAndDiscussion.StrengthsWeaknesses?has_content>
-			<para>Strengths and weaknesses: <span role="indent"><@com.text study.ResultsAndDiscussion.StrengthsWeaknesses/></span></para>
+			<para>Strengths and weaknesses: <para role="indent"><@com.text study.ResultsAndDiscussion.StrengthsWeaknesses/></para></para>
 		</#if>
 
 	</#compress>
@@ -9208,19 +9381,19 @@
 <#macro results_directObs study>
 	<#compress>
 		<#if study.ResultsAndDiscussion.hasElement("ClinicalSigns") && study.ResultsAndDiscussion.ClinicalSigns?has_content>
-			<para>Clinical signs: <span role="indent"><@com.text study.ResultsAndDiscussion.ClinicalSigns/></span></para>
+			<para>Clinical signs: <para role="indent"><@com.text study.ResultsAndDiscussion.ClinicalSigns/></para></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.RsExaminations?has_content>
-			<para>Results of examinations: <span role="indent"><@com.text study.ResultsAndDiscussion.RsExaminations/></span></para>
+			<para>Results of examinations: <para role="indent"><@com.text study.ResultsAndDiscussion.RsExaminations/></para></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.hasElement("EffectivityMedicalTreatment") && study.ResultsAndDiscussion.EffectivityMedicalTreatment?has_content>
-			<para>Effectivity of medical treatment: <span role="indent"><@com.text study.ResultsAndDiscussion.EffectivityMedicalTreatment/></span></para>
+			<para>Effectivity of medical treatment: <para role="indent"><@com.text study.ResultsAndDiscussion.EffectivityMedicalTreatment/></para></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.hasElement("Outcome") && study.ResultsAndDiscussion.Outcome?has_content>
-			<para>Outcome of incidence: <span role="indent"><@com.text study.ResultsAndDiscussion.Outcome/></span></para>
+			<para>Outcome of incidence: <para role="indent"><@com.text study.ResultsAndDiscussion.Outcome/></para></para>
 		</#if>
 	</#compress>
 </#macro>
@@ -9230,35 +9403,58 @@
 		<#if study.ResultsAndDiscussion.SignsSymptomsToxicity?has_content || study.ResultsAndDiscussion.DermalIrritation?has_content>
 			<para>Toxicity:
 				<#if study.ResultsAndDiscussion.SignsSymptomsToxicity?has_content>
-					<span role="indent">Signs and symptoms: <@com.picklist study.ResultsAndDiscussion.SignsSymptomsToxicity/>.</span>
+					<para role="indent">Signs and symptoms: <@com.value study.ResultsAndDiscussion.SignsSymptomsToxicity/>.</para>
 				</#if>
 				<#if study.ResultsAndDiscussion.DermalIrritation?has_content>
-					<span role="indent">Dermal irritation: <@com.picklist study.ResultsAndDiscussion.DermalIrritation/>.</span>
+					<para role="indent">Dermal irritation: <@com.value study.ResultsAndDiscussion.DermalIrritation/>.</para>
 				</#if>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.AbsorptionMatrices?has_content>
 			<para>Absorption in different matrices:
-				<span role="indent"><@com.text study.ResultsAndDiscussion.AbsorptionMatrices/>.</span>
+				<para role="indent"><@com.text study.ResultsAndDiscussion.AbsorptionMatrices/>.</para>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.TotalRecovery?has_content>
 			<para>Total recovery:
-				<span role="indent"><@com.text study.ResultsAndDiscussion.TotalRecovery/>.</span>
+				<para role="indent"><@com.text study.ResultsAndDiscussion.TotalRecovery/>.</para>
 			</para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.Absorption?has_content>
-			<para>Percutaneous absorption rate: <@keyTox.PercutaneousAbsorptionRateList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.Absorption)/></para>
+			<para>Percutaneous absorption rate: <@PercutaneousAbsorptionRateList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.Absorption)/></para>
 		</#if>
 
 		<#if study.ResultsAndDiscussion.ConversionFactor?has_content>
 			<para>Conversion factor human vs. animal skin:
-				<span role="indent"><@com.text study.ResultsAndDiscussion.ConversionFactor/>.</span>
+				<para role="indent"><@com.text study.ResultsAndDiscussion.ConversionFactor/>.</para>
 			</para>
 		</#if>
+	</#compress>
+</#macro>
+
+<#macro results_cellCulture study>
+	<#compress>
+		<#if study.ResultsAndDiscussion.CytopathicEffects?has_content>
+			<para>Cytopathic effects: <@com.value study.ResultsAndDiscussion.CytopathicEffects/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.TCID50?has_content>
+			<para>TCID50:<@com.quantity study.ResultsAndDiscussion.TCID50/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.ResultsOfAssays?has_content>
+			<para>Results of assays:</para>
+			<para><@resultsOfAssaysList study.ResultsAndDiscussion.ResultsOfAssays/></para>
+		</#if>
+
+		<#if study.ResultsAndDiscussion.Statistics?has_content>
+			<para>Statistics: <para role="indent"><@com.text study.ResultsAndDiscussion.Statistics/></para></para>
+		</#if>
+
+
 	</#compress>
 </#macro>
 
@@ -9269,7 +9465,7 @@
 
 		<#local resultStudyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "IntermediateEffects") />
 
-	<#-- Study results-->
+		<#-- Study results-->
 		<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Studies</emphasis></para>
 		<@com.emptyLine/>
 
@@ -9277,12 +9473,12 @@
 			No relevant individual studies available.
 		<#else>
 
-		<#--NOTE: change the name displayed e.g. with a hash mapping document name to name to display. Also for long-term tox this will be wrong.-->
+			<#--NOTE: change the name displayed e.g. with a hash mapping document name to name to display. Also for long-term tox this will be wrong.-->
 			${resultStudyList?size} individual <#if resultStudyList?size==1>study<#else>studies</#if> for intermediate effects <#if resultStudyList?size==1>is<#else>are</#if> summarised below:
 
 			<#list resultStudyList as study>
 
-				<sect4 xml:id="${study.documentKey.uuid!}" label="/${study_index+1}"><title  role="HEAD-5" >${study.name}</title>
+				<sect4 xml:id="${study.documentKey.uuid!}" label="/${study_index+1}" role="NotInToc"><title  role="HEAD-5" >${study.name}</title>
 
 					<#--1. Header-->
 					<para><emphasis role="HEAD-WoutNo">1. Information on the study</emphasis></para>
@@ -9298,7 +9494,7 @@
 						<#local reference = referenceList[0]/>
 					<#else>
 					<#--Create empty reference hash-->
-						<#local reference = {'GeneralInfo': {'Author':"", 'ReferenceYear':"", 'Name':"", 'ReportNo':"", 'StudyIdentifiers':""}}/>
+						<#local reference = {'GeneralInfo': {'LiteratureType':"", 'Author':"", 'ReferenceYear':"", 'Name':"", 'ReportNo':"", 'StudyIdentifiers':""}}/>
 					</#if>
 
 					<table border="1">
@@ -9308,7 +9504,13 @@
 						<tbody>
 						<tr>
 							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Data point:</emphasis></th>
-							<td>intermediate effects: <@com.picklist study.AdministrativeData.StudyResultType/></td>
+							<td>intermediate effects: <@com.value study.AdministrativeData.StudyResultType/></td>
+						</tr>
+						<tr>
+							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Report type: </emphasis></th>
+							<td>
+								<#if reference.GeneralInfo.LiteratureType?has_content><@com.value reference.GeneralInfo.LiteratureType/></#if>
+							</td>
 						</tr>
 						<tr>
 							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Report author: </emphasis></th>
@@ -9335,7 +9537,11 @@
 								<#if reference.GeneralInfo.StudyIdentifiers?has_content>
 									<#list reference.GeneralInfo.StudyIdentifiers as studyId>
 										<#if studyId.Remarks?matches(".*NOTIF.*STUD.*", "i") || studyId.Remarks?matches(".*NOS.*", "i")>
-											<#local NoSId = studyId.StudyID/>
+											<#if studyId.StudyID?has_content>
+												<#local NoSId = studyId.StudyID/>
+											<#else>
+												<#local NoSId>NA - justification: <@com.text studyId.Remarks/></#local>
+											</#if>
 											<#break>
 										</#if>
 									</#list>
@@ -9343,35 +9549,25 @@
 
 								<#if NoSId?has_content>
 									${NoSId}
-								<#-- NOTE: Remarks should contain the justification of no NoS_ID, but not safe to report automatically since it could contain other info-->
-								<#--<#elseif reference.GeneralInfo.Remarks?has_content>-->
-								<#--<@com.text reference.GeneralInfo.Remarks/>-->
 								</#if>
 							</td>
 						</tr>
 						<tr>
 							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Document No: </emphasis></th>
 							<td><#local docUrl=iuclid.webUrl.documentView(study.documentKey) />
-								<#--It doesn't work: workaround using url from entity + part of url from document-->
-								<#local datasetId = _subject.documentKey?replace("\\/.*$", "", "r")/>
-								<#local datasetEntity = _subject.documentType/>
-								<#--1. insert data related to the entity (mixture/substance and id)-->
-								<#local docUrl = docUrl?replace("\\?goto", "\\/raw\\/${datasetEntity}\\/${datasetId}\\?content_uri", "r")/>
-								<#--2. Properly display the colon :-->
-								<#local docUrl = docUrl?replace("\\%3A", "\\:", "r")/>
 								<ulink url="${docUrl}"><@com.text study.documentKey.uuid/></ulink>
 							</td>
 						</tr>
 						<tr>
 							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Guidelines followed in study: </emphasis></th>
-							<td><@com.picklist study.MaterialsAndMethods.MethodUsed.Qualifier/> <@com.picklist study.MaterialsAndMethods.MethodUsed.MethodUsed/>
+							<td><@com.value study.MaterialsAndMethods.MethodUsed.Qualifier/> <@com.value study.MaterialsAndMethods.MethodUsed.MethodUsed/>
 								<?linebreak?><@com.text study.MaterialsAndMethods.MethodUsed.PrincipleOfTheMethod/>
 							</td>
 						</tr>
 						<tr>
-							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Deviations from current test guideline (change): </emphasis></th>
+							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Deviations from current test guideline: </emphasis></th>
 							<td>
-								<#local deviations><@com.picklist study.MaterialsAndMethods.MethodUsed.Deviations/></#local>
+								<#local deviations><@com.value study.MaterialsAndMethods.MethodUsed.Deviations/></#local>
 								<#if deviations?starts_with('yes')>${deviations}</#if>
 							</td>
 						</tr>
@@ -9380,44 +9576,46 @@
 							<td>
 								<#--Check in change log: if uuid found, then "Yes:" and append status (concatenated); else "No"
 									(NOTE: probably part of this can go to a macro/function elsewhere)-->
-								<#local changeLogFlag=false/>
+								<#local changeLogFlag="no"/>
+
 								<#local changeLogStatusList=[]/>
+
 								<#local changeLogs = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "ChangeLog") />
 								<#list changeLogs as changeLog>
 									<#list changeLog.ChangeLog.ChangeLogEntries as changeLogEntry>
 										<#local changeLogDoc=iuclid.getDocumentForKey(changeLogEntry.LinkToDocument)/>
-									<#-- In case there is no link -->
+
 										<#if changeLogDoc?has_content>
 											<#if study.documentKey.uuid==changeLogDoc.documentKey.uuid>
-												<#local changeLogFlag=true/>
-												<#local changeLogStatus><@com.picklist changeLogEntry.Status/></#local>
+												<#local changeLogStatus><@com.value changeLogEntry.Status/></#local>
 												<#if changeLogStatus?has_content>
+													<#if !(changeLogStatus?starts_with("new"))>
+														<#local changeLogFlag="yes"/>
+													</#if>
 													<#local changeLogStatusList = changeLogStatusList + [changeLogStatus]/>
 												</#if>
 											</#if>
 										</#if>
 									</#list>
 								</#list>
-								<#if changeLogFlag==true>yes
-									<#if changeLogStatusList?has_content>- ${changeLogStatusList?join(", ")}</#if>
-								<#else>no
-								</#if>
+
+								${changeLogFlag}<#if changeLogStatusList?has_content> (${changeLogStatusList?join(", ")})</#if>
 							</td>
 						</tr>
 						<tr>
-							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">GLP/Officially recognised testing facilities (changed): </emphasis></th>
-							<td><@com.picklist study.MaterialsAndMethods.MethodUsed.GLPCompliance/>
+							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">GLP/Officially recognised testing facilities: </emphasis></th>
+							<td><@com.value study.MaterialsAndMethods.MethodUsed.GLPCompliance/>
 								<?linebreak?>
 								<#if study.MaterialsAndMethods.MethodUsed.OtherQualityFollowed?has_content>
-									other quality assurance: <@com.picklist study.MaterialsAndMethods.MethodUsed.OtherQualityFollowed/>
+									other quality assurance: <@com.value study.MaterialsAndMethods.MethodUsed.OtherQualityFollowed/>
 								</#if>
 							</td>
 						</tr>
 						<tr>
 							<th><?dbfo bgcolor="#d3d3d3" ?><emphasis role="bold">Acceptability/Reliability: </emphasis></th>
-							<td><@com.picklist study.AdministrativeData.Reliability/>
+							<td><@com.value study.AdministrativeData.Reliability/>
 								<#if study.AdministrativeData.RationalReliability?has_content>
-									: <@com.picklist study.AdministrativeData.RationalReliability/>
+									: <@com.value study.AdministrativeData.RationalReliability/>
 								</#if>
 							</td>
 						</tr>
@@ -9428,20 +9626,22 @@
 					<para><emphasis role="HEAD-WoutNo"> 2. Full summary of the study according to OECD format </emphasis></para>
 
 					<#-- 2. Materials and methods-->
-					<@methods_intermediateEffects study/>
+					<para><emphasis role="bold">a) Materials and methods</emphasis></para>
+					<@methods_intermediateEffects study true/>
 					<@com.emptyLine/>
 					<@intermediateEffectIdentification study/>
 					<@com.emptyLine/>
 
 					<#--3.Results-->
-					<@results_intermediateEffects study/>
+					<para><emphasis role="bold">b) Results</emphasis></para>
+					<@results_intermediateEffects study true/>
 					<@com.emptyLine/>
 
 					<#--4.Assessment and conclusion-->
 					<#local assess= study.ApplicantSSummaryAndConclusion/>
 					<para><emphasis role="HEAD-WoutNo">3. Assessment and conclusion </emphasis> </para>
-					<@com.emptyLine/>
-					<para><emphasis role="bold">a) Assessment and conclusion by applicant:</emphasis></para>
+					<#--					<@com.emptyLine/>-->
+					<#--					<para><emphasis role="bold">a) Assessment and conclusion by applicant:</emphasis></para>-->
 
 					<#if assess.ExecutiveSummary.ExecutiveSummary?has_content>
 						<@com.emptyLine/>
@@ -9453,21 +9653,21 @@
 
 					<@com.emptyLine/>
 					<para><emphasis role="bold">Interpretation of results:</emphasis></para>
-					<para>
-						<#if assess.InterpretationOfResultsObservations.TypeOfResult?has_content>
-							Type of result: <@com.picklist assess.InterpretationOfResultsObservations.TypeOfResult/><?linebreak?>
+
+					<#if assess.InterpretationOfResultsObservations.TypeOfResult?has_content>
+						<para role="indent">Type of result: <@com.value assess.InterpretationOfResultsObservations.TypeOfResult/></para>
+					</#if>
+					<#if assess.InterpretationOfResultsObservations.EffectConcentrationChoice?has_content>
+						<para role="indent">Effect concentration: <@com.value assess.InterpretationOfResultsObservations.EffectConcentrationChoice/>
+						<#if assess.InterpretationOfResultsObservations.Concentration?has_content>
+							= <@com.range assess.InterpretationOfResultsObservations.Concentration/>
 						</#if>
-						<#if assess.InterpretationOfResultsObservations.EffectConcentrationChoice?has_content>
-							Effect concentration: <@com.picklist assess.InterpretationOfResultsObservations.EffectConcentrationChoice/>
-							<#if assess.InterpretationOfResultsObservations.Concentration?has_content>
-								= <@com.range assess.InterpretationOfResultsObservations.Concentration/>
-							</#if>
-							<?linebreak?>
-						</#if>
-						<#if assess.InterpretationOfResultsObservations.Remarks?has_content>
-							Remarks: <@com.text assess.InterpretationOfResultsObservations.Remarks/><?linebreak?>
-						</#if>
-					</para>
+						</para>
+					</#if>
+					<#if assess.InterpretationOfResultsObservations.Remarks?has_content>
+						<para role="indent">Remarks: <@com.text assess.InterpretationOfResultsObservations.Remarks/></para>
+					</#if>
+
 
 					<#if  assess.InterpretationOfResultsObservations.OverallResults?has_content>
 						<@com.emptyLine/>
@@ -9477,9 +9677,9 @@
 						</para>
 					</#if>
 
-					<@com.emptyLine/>
+					<#--					<@com.emptyLine/>-->
 
-					<para><emphasis role="bold">b) Assessment and conclusion by RMS:</emphasis></para>
+					<#--					<para><emphasis role="bold">b) Assessment and conclusion by RMS:</emphasis></para>-->
 
 				</sect4>
 			</#list>
@@ -9487,106 +9687,103 @@
 	</#compress>
 </#macro>
 
-<#macro results_intermediateEffects study>
+<#macro results_intermediateEffects study printRemarks=false>
 	<#compress>
-
-		<para><emphasis role="bold">Results</emphasis></para>
 
 		<#list study.ResultsAndDiscussion.TestResults.TestResults as child>
 			<#if child_has_next || (child_index>0)><para><emphasis role="underline">Result #${child_index+1}</emphasis></para></#if>
-			<para>
 
-			<span role="indent">
-				<#if child.ConcentrationSelection?has_content><#local concSel><@com.picklist child.ConcentrationSelection/></#local>${concSel?cap_first}</#if>
+			<para role="indent">
+				<#if child.ConcentrationSelection?has_content><#local concSel><@com.value child.ConcentrationSelection/></#local>${concSel?cap_first}</#if>
 				<#if child.ConcentrationRangeTested?has_content>
 					: <@com.range child.ConcentrationRangeTested/>
 				</#if>
-			</span>
-
-				<#if child.NumberOfReplicatesAndOutliers?has_content>
-					<span role="indent">Number of replicates and outliers: <@com.text child.NumberOfReplicatesAndOutliers/></span>
-				</#if>
-
-				<#if child.ParameterAndResult?has_content>
-					<span role="indent">Parameter and result:
-                <#list child.ParameterAndResult as param>
-					<@com.picklist param.Parameter/> = <@com.quantity param.ParameterResult/>
-					<#if param_has_next>; </#if>
-				</#list>
-                </span>
-				</#if>
-
-				<#if child.OtherObservation?has_content>
-					<span role="indent">Other observations:
-                <#list child.OtherObservation as obs>
-					<@com.picklist obs.Observation/>
-					<#if obs.Concentration?has_content> - <@com.range obs.Concentration/></#if>
-					<#if obs_has_next>; </#if>
-				</#list>
-                </span>
-				</#if>
-
-				<#if child.ResultsForTheTestMaterial?has_content>
-					<span role="indent">Results for the test material: <@com.picklist child.ResultsForTheTestMaterial/></span>
-				</#if>
-
-				<#if child.AcceptanceOfResults?has_content>
-					<span role="indent">Acceptance: <@com.picklistMultiple child.AcceptanceOfResults/></span>
-				</#if>
-
-				<#if child.RemarksOnResults?has_content>
-					<span role="indent">Remarks: <@com.text child.RemarksOnResults/></span>
-				</#if>
-
 			</para>
+
+			<#if child.NumberOfReplicatesAndOutliers?has_content>
+				<para role="indent">Number of replicates and outliers: <@com.text child.NumberOfReplicatesAndOutliers/></para>
+			</#if>
+
+			<#if child.ParameterAndResult?has_content>
+				<para role="indent">Parameter and result:</para>
+				<#list child.ParameterAndResult as param>
+					<para role="indent2">
+						<@com.value param.Parameter/> = <@com.quantity param.ParameterResult/>
+					</para>
+				</#list>
+			</#if>
+
+			<#if child.OtherObservation?has_content>
+				<para role="indent">Other observations:</para>
+				<#list child.OtherObservation as obs>
+					<para role="indent2">
+						<@com.value obs.Observation/>
+						<#if obs.Concentration?has_content> - <@com.range obs.Concentration/></#if>
+					</para>
+				</#list>
+			</#if>
+
+			<#if child.ResultsForTheTestMaterial?has_content>
+				<para role="indent">Results for the test material: <@com.value child.ResultsForTheTestMaterial/></para>
+			</#if>
+
+			<#if child.AcceptanceOfResults?has_content>
+				<para role="indent">Acceptance: <@com.value child.AcceptanceOfResults/></para>
+			</#if>
+
+			<#if child.RemarksOnResults?has_content>
+				<para role="indent">Remarks: <@com.text child.RemarksOnResults/></para>
+			</#if>
+
 		</#list>
 
-	<#--2. Other information including tables (to include?) : doesn't exist here-->
+		<#--2. Other information including tables (to include?) : doesn't exist here-->
 
-	<#--3. Remarks on results-->
-		<#if study.OverallRemarksAttachments.RemarksOnResults?has_content>
-			<para>Overall remarks:<span role="indent"><@com.richText study.OverallRemarksAttachments.RemarksOnResults/></span></para>
+		<#--3. Remarks on results-->
+		<#if printRemarks>
+			<#if study.OverallRemarksAttachments.RemarksOnResults?has_content>
+				<para>Overall remarks:</para><para role="indent"><@com.richText study.OverallRemarksAttachments.RemarksOnResults/></para>
+			</#if>
 		</#if>
-
 	</#compress>
 </#macro>
 
-<#macro methods_intermediateEffects study>
+<#macro methods_intermediateEffects study printTestMat=false>
 	<#compress>
 
-		<para><emphasis role="bold">a) Materials and methods</emphasis></para>
+	    <#-- 1. Test material-->
+		<#if printTestMat>
+			<para>
+				<emphasis role="bold">Test material:</emphasis>
+				<para role="indent"><@studyandsummaryCom.testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/></para>
 
-	<#-- 1. Test material-->
-		<para>
-			<emphasis role="bold">Test material:</emphasis><?linebreak?>
-			<span role="indent"><@studyandsummaryCom.testMaterialInformation study.MaterialsAndMethods.TestMaterials.TestMaterialInformation/></span>
+				<#if study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy?has_content>
+					<para role="indent">
+						Specific details: <@com.text study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy/>
+					</para>
+				</#if>
+			</para>
+		</#if>
 
-			<#if study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy?has_content>
-				<span role="indent">
-					Specific details: <@com.text study.MaterialsAndMethods.TestMaterials.SpecificDetailsOnTestMaterialUsedForTheStudy/>
-				</span>
-			</#if>
-		</para>
-
-	<#-- 2. Test system-->
+		<#-- 2. Test system-->
 		<para>
 			<emphasis role="bold">Test system:</emphasis>
 
 			<#local sys=study.MaterialsAndMethods.TestSystem/>
 			<#if sys.TestSystemType?has_content>
-				<span role="indent">Type: <@com.picklist sys.TestSystemType/>.</span>
+				<para role="indent">Type: <@com.value sys.TestSystemType/>.</para>
 			</#if>
 			<#if sys.TestSystemIdentity?has_content>
-				<span role="indent">Identity: <@com.picklist sys.TestSystemIdentity/>.</span>
+				<para role="indent">Identity: <@com.value sys.TestSystemIdentity/>.</para>
 			</#if>
 			<#if sys.GeneticModOfSystem?has_content>
-				<span role="indent">Genetic modification: <@com.picklist sys.GeneticModOfSystem/>.</span>
+				<para role="indent">Genetic modification: <@com.value sys.GeneticModOfSystem/>.</para>
 			</#if>
 			<#if sys.TestSystemDetails?has_content>
-				<span role="indent">Details: <@com.text sys.TestSystemDetails/>.</span>
+				<para role="indent">Details: <@com.text sys.TestSystemDetails/>.</para>
 			</#if>
 			<#if sys.MetabolicCompetence?has_content>
-				<span role="indent">Metabolic competence: <@com.picklist sys.MetabolicCompetence/>.</span>
+				<para role="indent">Metabolic competence: <@com.value sys.MetabolicCompetence/>.</para>
 			</#if>
 		</para>
 
@@ -9594,15 +9791,15 @@
 		<para>
 			<emphasis role="bold">Detection method:</emphasis>
 			<#local det=study.MaterialsAndMethods.DetectionMethod/>
-			<span role="indent">
+			<para role="indent">
 				<#if det.DetectionMethodUsed?has_content>
-					<@com.picklist det.DetectionMethodUsed/>
+					<@com.value det.DetectionMethodUsed/>
 				</#if>
 				<#if det.DetailsOnDetectionMethod?has_content>
 					: <@com.text det.DetailsOnDetectionMethod/>
 				</#if>
 				.
-			</span>
+			</para>
 		</para>
 
 	<#-- 4. Test design -->
@@ -9610,68 +9807,62 @@
 		<para>
 			<emphasis role="bold">Study design:</emphasis>
 
-			<span role="indent">
+			<para role="indent">
 				Test material preparation:
-				<span role="indent2"><itemizedlist>
-					<#if des.TestMaterialPreparation.ConcentrationSelection?has_content>
-						<listitem>Concentration selection: <@com.picklist des.TestMaterialPreparation.ConcentrationSelection/>.</listitem>
-					</#if>
-						<#if des.TestMaterialPreparation.Vehicle?has_content>
-							<listitem>Vehicle / solvent: <@com.picklist des.TestMaterialPreparation.Vehicle/>.</listitem>
-						</#if>
-						<#if des.TestMaterialPreparation.DilutionStepsDoseIntervals?has_content>
-							<listitem>Dilution steps / dose intervals: <@com.text des.TestMaterialPreparation.DilutionStepsDoseIntervals/>.</listitem>
-						</#if>
-				</itemizedlist></span>
-			</span>
 
-			<span role="indent">
+				<#if des.TestMaterialPreparation.ConcentrationSelection?has_content>
+					<para role="indent2">Concentration selection: <@com.value des.TestMaterialPreparation.ConcentrationSelection/>.</para>
+				</#if>
+				<#if des.TestMaterialPreparation.Vehicle?has_content>
+					<para role="indent2">Vehicle / solvent: <@com.value des.TestMaterialPreparation.Vehicle/>.</para>
+				</#if>
+				<#if des.TestMaterialPreparation.DilutionStepsDoseIntervals?has_content>
+					<para role="indent2">Dilution steps / dose intervals: <@com.text des.TestMaterialPreparation.DilutionStepsDoseIntervals/>.</para>
+				</#if>
+
+			</para>
+
+			<para role="indent">
 				Control and reference items:
 				<#if des.ControlAndReferenceItems.ControlsReferenceItemsUsed?has_content>
-					<@com.picklist des.ControlAndReferenceItems.ControlsReferenceItemsUsed/>.
+					<@com.value des.ControlAndReferenceItems.ControlsReferenceItemsUsed/>.
 				</#if>
 				<#if des.ControlAndReferenceItems.ControlsReferenceSubstances?has_content>
-					<span role="indent2"><itemizedlist>
-						<#list des.ControlAndReferenceItems.ControlsReferenceSubstances as ref>
-							<listitem>
-								<#if ref.TypeOfControls?has_content><@com.picklist ref.TypeOfControls/></#if>
-								<#if ref.ControlOrReferenceItemsUsed?has_content>: <@com.picklist ref.ControlOrReferenceItemsUsed/></#if>
-								<#if ref.Remarks?has_content> (<@com.text ref.Remarks/>)</#if>
-							</listitem>
-						</#list>
-					</itemizedlist></span>
+					<#list des.ControlAndReferenceItems.ControlsReferenceSubstances as ref>
+						<para role="indent2">
+							<#if ref.TypeOfControls?has_content><@com.value ref.TypeOfControls/></#if>
+							<#if ref.ControlOrReferenceItemsUsed?has_content>: <@com.value ref.ControlOrReferenceItemsUsed/></#if>
+							<#if ref.Remarks?has_content> (<@com.text ref.Remarks/>)</#if>
+						</para>
+					</#list>
 				</#if>
-			</span>
+			</para>
 
-			<span role="indent">
+			<para role="indent">
 				Experimental conditions:
-				<span role="indent2"><itemizedlist>
-					<#if des.ExperimentalConditions.NumberOfReplicates?has_content>
-						<listitem>No of replicates: <@com.text des.ExperimentalConditions.NumberOfReplicates/>.</listitem>
-					</#if>
-						<#if des.ExperimentalConditions.ExperimentalConditions?has_content>
-							<listitem>Conditions:<@com.text des.ExperimentalConditions.ExperimentalConditions/>.</listitem>
-						</#if>
-						<#if des.ExperimentalConditions.AdditionalAnalysis?has_content>
-							<listitem>Additional analysis: <@com.picklist des.ExperimentalConditions.AdditionalAnalysis/>.</listitem>
-						</#if>
-				</itemizedlist></span>
-			</span>
+				<#if des.ExperimentalConditions.NumberOfReplicates?has_content>
+					<para role="indent2">No of replicates: <@com.text des.ExperimentalConditions.NumberOfReplicates/>.</para>
+				</#if>
+				<#if des.ExperimentalConditions.ExperimentalConditions?has_content>
+					<para role="indent2">Conditions:<@com.text des.ExperimentalConditions.ExperimentalConditions/>.</para>
+				</#if>
+				<#if des.ExperimentalConditions.AdditionalAnalysis?has_content>
+					<para role="indent2">Additional analysis: <@com.value des.ExperimentalConditions.AdditionalAnalysis/>.</para>
+				</#if>
+			</para>
 
-			<span role="indent">
+			<para role="indent">
 				Data analysis:
-				<span role="indent2"><itemizedlist>
-					<#if des.DataAnalysis.AcceptanceCriteria?has_content>
-						<listitem>Acceptance criteria: <@com.text des.DataAnalysis.AcceptanceCriteria/>.</listitem>
-					</#if>
-						<#if des.DataAnalysis.DataCalculationAndStatistics?has_content>
-							<listitem>Data calculation and statistics:<@com.text des.DataAnalysis.DataCalculationAndStatistics/>.</listitem>
-						</#if>
-						<#if des.DataAnalysis.EvaluationDataInterpretationCriteria?has_content>
-							<listitem>Evaluation / data interpretation criteria: <@com.text des.DataAnalysis.EvaluationDataInterpretationCriteria/>.</listitem>
-						</#if>
-				</itemizedlist></span>
-			</span>
+				<#if des.DataAnalysis.AcceptanceCriteria?has_content>
+					<para role="indent2">Acceptance criteria: <@com.text des.DataAnalysis.AcceptanceCriteria/>.</para>
+				</#if>
+				<#if des.DataAnalysis.DataCalculationAndStatistics?has_content>
+					<para role="indent2">Data calculation and statistics:<@com.text des.DataAnalysis.DataCalculationAndStatistics/>.</para>
+				</#if>
+				<#if des.DataAnalysis.EvaluationDataInterpretationCriteria?has_content>
+					<para role="indent2">Evaluation / data interpretation criteria: <@com.text des.DataAnalysis.EvaluationDataInterpretationCriteria/>.</para>
+				</#if>
+			</para>
 		</para>
 
 	</#compress>
@@ -9683,45 +9874,44 @@
 
 		<para><emphasis role="bold">Effect identification:</emphasis></para>
 
-	<#-- 2. Test system-->
 		<#if study.EffectIdentification.Details?has_content>
-			<para>P/A/O:<?linebreak?>
+			<para role="indent">P/A/O:<?linebreak?>
 
 				<#list study.EffectIdentification.Details as pao>
-					<span role="indent">
-				<#if pao.Process?has_content>
-					Process: <@com.picklist pao.Process/>.
-				</#if>
-						<#if pao.Object?has_content>
-							Object: <@com.picklist pao.Object/>.
-						</#if>
-						<#if pao.EffectAction?has_content>
-							Action: <@com.picklist pao.EffectAction/>.
-						</#if>
-				</span>
+					<para role="indent2">
+					<#if pao.Process?has_content>
+						Process: <@com.value pao.Process/>.
+					</#if>
+					<#if pao.Object?has_content>
+						Object: <@com.value pao.Object/>.
+					</#if>
+					<#if pao.EffectAction?has_content>
+						Action: <@com.value pao.EffectAction/>.
+					</#if>
+					</para>
 				</#list>
 			</para>
 		</#if>
 
 		<#if study.EffectIdentification.EffectDetails?has_content>
-			<para>Details: <@com.text  study.EffectIdentification.EffectDetails/></para>
+			<para role="indent">Details: <@com.text  study.EffectIdentification.EffectDetails/></para>
 		</#if>
 
 		<#if study.EffectIdentification.Context?has_content>
-			<para>Context:<?linebreak?>
+			<para role="indent">Context:<?linebreak?>
 
 				<#list study.EffectIdentification.Context as ctx>
-					<span role="indent">
+					<para role="indent2">
 						<#if ctx.System?has_content>
-							System: <@com.picklist ctx.System/>.
+							System: <@com.value ctx.System/>.
 						</#if>
 						<#if ctx.Organ?has_content>
-							Organ: <@com.picklistMultiple ctx.Organ/>.
+							Organ: <@com.value ctx.Organ/>.
 						</#if>
 						<#if ctx.Remarks?has_content>
 							(<@com.text ctx.Remarks/>).
 						</#if>
-					</span>
+					</para>
 				</#list>
 			</para>
 		</#if>
@@ -9760,10 +9950,10 @@
 						</#if>
 					</td>
 					<td>
-						<@com.picklistMultiple child.StudyRetained/>
+						<@com.value child.StudyRetained/>
 					</td>
 					<td>
-						<#local route><@com.picklist child.RouteOfOriginalStudy/></#local>
+						<#local route><@com.value child.RouteOfOriginalStudy/></#local>
 						${route}
 						<#if child.hasElement("OralAbsorption") && route?matches(".*oral.*") && child.OralAbsorption?has_content>
 							(<@com.number child.OralAbsorption/>%)
@@ -9776,11 +9966,11 @@
 						</#if>
 					</td>
 					<td>
-						<@com.picklist child.DoseDescriptorStartingPoint/>
+						<@com.value child.DoseDescriptorStartingPoint/>
 						<#if child.field8204?has_content> = <@com.quantity child.field8204/></#if>
 					</td>
 					<td>
-						<@com.text child.Justification/><?linebreak?>
+						<#if child.NoAllocated><@com.text child.Justification/></#if>
 						<@com.richText child.JustificationAndComments/>
 					</td>
 
@@ -9816,17 +10006,17 @@
 			<#local evPath=child.AssessmentLinesOfEvidence/>
 			<#local evidence><#compress>
 				<#if evPath.hasElement("SufficientInvestigationT") && evPath.SufficientInvestigationT?has_content>
-					<para>T-mediated parameters sufficiently investigated: <@com.picklist evPath.SufficientInvestigationT/></para>
+					<para>T-mediated parameters sufficiently investigated: <@com.value evPath.SufficientInvestigationT/></para>
 				<#elseif evPath.hasElement("SufficientInvestigationEas") && evPath.SufficientInvestigationEas?has_content>
-					<para>EAS-mediated parameters sufficiently investigated: <@com.picklist evPath.SufficientInvestigationEas/></para>
+					<para>EAS-mediated parameters sufficiently investigated: <@com.value evPath.SufficientInvestigationEas/></para>
 				</#if>
 
 				<#if evPath.HasEndocrineActivityBeenSufficientlyInvestigated?has_content>
-					<para>Endocrine activity sufficiently investigated: <@com.picklist evPath.HasEndocrineActivityBeenSufficientlyInvestigated/></para>
+					<para>Endocrine activity sufficiently investigated: <@com.value evPath.HasEndocrineActivityBeenSufficientlyInvestigated/></para>
 				</#if>
 
 				<#if evPath.SelectionOfRelevantScenario?has_content>
-					<para><@com.picklist evPath.SelectionOfRelevantScenario/></para>
+					<para><@com.value evPath.SelectionOfRelevantScenario/></para>
 				</#if>
 
 				<#if evPath.EvidenceAdverseEffects?has_content>
@@ -9934,23 +10124,22 @@
 	<#--Conclusion-->
 		<#local conclusion><#compress>
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet?has_content>
-				<para role="indent">ED criteria for humans met:<@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet/></para>
+				<para role="indent">ED criteria for humans met: <@com.value summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentHumans.CriteriaForHumansMet/></para>
 			</#if>
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals?has_content>
-				<para role="indent">Adverse effect relevant for wild mammals: <@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals/></para>
+				<para role="indent">Adverse effect relevant for wild mammals: <@com.value summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.AdverseEffectRelevantForMammals/></para>
 			</#if>
 
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.EdCriteriaMammalsMet?has_content>
-				<para role="indent">ED criteria for wild mammals met: <@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.EdCriteriaMammalsMet/></para>
+				<para role="indent">ED criteria for wild mammals met: <@com.value summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.EdCriteriaMammalsMet/></para>
 			</#if>
 
 			<#if summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.ImpactOnOtherOrganisms?has_content>
-				<para role="indent">ED criteria for non-target organisms other than mammals met: <@com.picklist summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.ImpactOnOtherOrganisms/></para>
+				<para role="indent">ED criteria for non-target organisms other than mammals met: <@com.value summary.OverallConclusionEdAssessment.OverallConclusionEdAssessmentNonTargetOrganisms.ImpactOnOtherOrganisms/></para>
 			</#if>
 		</#compress></#local>
 		<#if conclusion?has_content>
-		<#--			<para><emphasis role="bold">Conclusion:</emphasis></para>-->
-			Conclusion:<?linebreak?>
+			<@com.emptyLine/><para><emphasis role="bold">Overall conclusion:</emphasis></para>
 			${conclusion}
 		</#if>
 	</#compress>
@@ -9999,10 +10188,10 @@
 
 		<para>
 			<#if csa.Endpoint?has_content>
-				Endpoint: <@com.picklist csa.Endpoint/>
+				Endpoint: <@com.value csa.Endpoint/>
 			</#if>
 			<#if csa.TypeOfInformation?has_content>
-				- <@com.picklist csa.TypeOfInformation/>
+				- <@com.value csa.TypeOfInformation/>
 			</#if>
 			<#if csa.Justification?has_content>
 				(<@com.text csa.Justification/>)
@@ -10012,7 +10201,7 @@
 
 		<para>
 			<#if csa.Species?has_content>
-				Species: <@com.picklistMultiple csa.Species/>.
+				Species: <@com.value csa.Species/>.
 			</#if>
 		</para>
 
@@ -10020,10 +10209,10 @@
 			<#if csa.Results?has_content>
 				Results:
 				<#list csa.Results as res>
-					<span role="indent2">
-						<@com.number res.Concentration/><@com.picklist res.Parameter/>
+					<para role="indent2">
+						<@com.number res.Concentration/><@com.value res.Parameter/>
 						<#if res.Absorption?has_content> - absorption: <@com.range res.Absorption/></#if>
-					</span>
+					</para>
 				</#list>
 			</#if>
 		</para>
@@ -10035,9 +10224,9 @@
 		<#if endpointPath.hasElement("EffectLevelUnit")>
 			<#if endpointPath.EffectLevelUnit?has_content>
 				<#if endpointPath.EffectLevelUnit?node_type=="picklist_single">
-					<@com.picklist endpointPath.EffectLevelUnit/>:
+					<@com.value endpointPath.EffectLevelUnit/>:
 				<#else>
-					<@com.picklistMultiple endpointPath.EffectLevelUnit/>:
+					<@com.value endpointPath.EffectLevelUnit/>:
 				</#if>
 
 				<#if endpointPath.EffectLevelValue?node_type=="quantity">
@@ -10045,26 +10234,31 @@
 				<#else>
 					<@com.range endpointPath.EffectLevelValue/>
 				</#if>
+
 				<?linebreak?>
+
+				<#if endpointPath.hasElement("PhysicalForm") && endpointPath.PhysicalForm?has_content>
+					(<@com.value endpointPath.PhysicalForm/>)<?linebreak?>
+				</#if>
 			</#if>
 		</#if>
 
 		<#if endpointPath.EndpointConclusion?has_content >
-			<@com.picklist endpointPath.EndpointConclusion/>
+			<@com.value endpointPath.EndpointConclusion/>
 
 			<#if endpointPath.hasElement("System") &&  endpointPath.System?has_content>
-				: <@com.picklist endpointPath.System/>
+				: <@com.value endpointPath.System/>
 			</#if>
 			<#if endpointPath.hasElement("Organ") &&  endpointPath.Organ?has_content >
-				-  <@com.picklistMultiple endpointPath.Organ/>
+				-  <@com.value endpointPath.Organ/>
 			</#if>
 			<?linebreak?>
 		</#if>
 
-	<#-- Some cases (sensitisation) has additional information-->
-		<#if endpointPath.hasElement("AdditionalInformation") && endpointPath.AdditionalInformation?has_content>
-			<para><@com.richText endpointPath.AdditionalInformation/></para>
-		</#if>
+		<#-- Some cases (sensitisation) has additional information. NOTE: included outside of block-->
+		<#--		<#if endpointPath.hasElement("AdditionalInformation") && endpointPath.AdditionalInformation?has_content>-->
+		<#--			<para><@com.richText endpointPath.AdditionalInformation/></para>-->
+		<#--		</#if>-->
 
 	</#compress>
 </#macro>
@@ -10076,15 +10270,15 @@
 		${name}
 	</#if>
 
-<#--Add more details if exist: species, duration-->
+	<#--Add more details if exist: species, duration-->
 	<#if child.hasElement("TestType") && child.TestType?has_content>
-		| <@com.picklist child.TestType />
+		| <@com.value child.TestType />
 		<#if child.hasElement("ExperimentalExposureTimePerWeek") && child.ExperimentalExposureTimePerWeek?has_content>
 			(<@com.number child.ExperimentalExposureTimePerWeek /> h/w)
 		</#if>
 	</#if>
 	<#if child.hasElement("Species") && child.Species?has_content>
-		| <@com.picklist child.Species />
+		| <@com.value picklistValue=child.Species printDescription=false printRemarks=false/>
 	</#if>
 </#macro>
 
@@ -10115,17 +10309,20 @@
 
 	<#list csaPath?children as csaField>
 
-	<#--Name (higher-level)-->
+
+		<#--Name (higher-level)-->
 		<#local propName>
 			${csaField?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}
 		</#local>
 
 		<#if csaField?node_type=="block">
 
-		<#--Endpoints-->
+			<#--Endpoints-->
+			<#local links=""/>
+			<#local endpoint=""/>
 			<#list csaField?children as child>
 
-			<#--Links-->
+				<#--Links-->
 				<#if child?node_name=="LinkToRelevantStudyRecords" || child?node_name=="RelevantRecords">
 					<#local links><#compress>
 						<#if child.StudyNameType?has_content>
@@ -10141,18 +10338,18 @@
 					</#compress></#local>
 				</#if>
 
-			<#--Endpoints block-->
-			<#--case with simple block-->
+				<#--Endpoints block-->
+				<#--case with simple block-->
 				<#if isEndpointsBlock(child)>
 
-				<#--Name (lower-level)-->
+					<#--Name (lower-level)-->
 					<#local propName><@detailedEndpointName child propName/></#local>
 
-				<#--Endpoints-->
+					<#--Endpoints-->
 					<#local endpoint><#compress><@endpointBlock child/>
 					</#compress></#local>
 
-				<#--append-->
+					<#--append-->
 					<#if links?has_content || endpoint?has_content>
 						<#local mySeq = mySeq + [{'name': propName, "links" : links!, "endpoint":endpoint}]/>
 					</#if>
@@ -10189,11 +10386,11 @@
 <#macro getSummaryFromHash hash>
 	<#compress>
 		<table border="1">
-			<tbody>
+			<tbody valign="middle">
 			<tr>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
-				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA / Discussion</emphasis></th>
+				<th align="center"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Endpoint</emphasis></th>
+				<th align="center"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Studies</emphasis></th>
+				<th align="center"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA</emphasis></th>
 			</tr>
 
 			<#list hash?keys?sort as key>
@@ -10214,10 +10411,8 @@
 	</#compress>
 </#macro>
 
-<#--Macro for summaries in TOX. Considerations:-->
-<#--- more than one summary could be present-->
-<#--- more than one summary doc type could be present (for acute toxicity, at least)-->
-<#macro summaryAll _subject docSubTypes resultFormat="flat">
+<#--Macro for summaries in TOX-->
+<#macro toxPPPsummary subject docSubTypes includeMetabolites=true merge=false>
 	<#compress>
 
 		<#local summaryDocToCSAMap = {
@@ -10234,259 +10429,187 @@
 			<#local docSubTypes=[docSubTypes]/>
 		</#if>
 
-		<#local allSummaryList=[]/>
-		<#list docSubTypes as docSubType>
-			<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
-				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
-			<#else>
-				<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+	<#--Ensure merge=false for non compatible summary types-->
+		<#if docSubTypes?seq_contains("Toxicokinetics") ||
+		docSubTypes?seq_contains("ToxRefValues") ||
+		docSubTypes?seq_contains("EndocrineDisruptingPropertiesAssessmentPest") ||
+		docSubTypes?seq_contains("NonDietaryExpo") ||
+		docSubTypes?seq_contains("DermalAbsorption")>
+			<#local merge=false>
+		</#if>
+
+	<#-- Get all entities (subject and metabolites, if they exist)-->
+		<#local entities=[subject]/>
+		<#if includeMetabolites && _metabolites?? && _metabolites?has_content>
+			<#local entities = entities + _metabolites/>
+		</#if>
+
+	<#-- Get all summaries for each entity-->
+		<#local entity2summaryHash = {}/>
+		<#list entities as entity>
+			<#local entitySummaryList=[]/>
+			<#list docSubTypes as docSubType>
+				<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
+					<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
+				<#else>
+					<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
+				</#if>
+				<#local entitySummaryList = entitySummaryList + summaryList/>
+			</#list>
+			<#if entitySummaryList?has_content>
+				<#if entity.documentType=="MIXTURE">
+					<#local entityName=entity.MixtureName/>
+				<#elseif entity.documentType=="SUBSTANCE">
+					<#local entityName=entity.ChemicalName/>
+				</#if>
+				<#local entity2summaryHash = entity2summaryHash + { entityName : entitySummaryList}/>
 			</#if>
-			<#local allSummaryList = allSummaryList + summaryList/>
 		</#list>
 
-	<#--In some cases it's necesary to iterate on the subsection block instead of the whole summary doc-->
-		<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP" || docSubTypes[0]=="GeneticToxicity">
-			<#local csaEntryList = []/>
-			<#list allSummaryList as summ>
-				<#list summ.KeyValueForChemicalSafetyAssessment?children as csaEntry>
-					<#if csaEntry?node_type=="block" && csaEntry?node_name!="MoAAnalysisHumanRelevanceFramework">
-						<#local csaEntryList = csaEntryList + [csaEntry]/>
-					</#if>
-				</#list>
-			</#list>
-			<#assign allSummaryBlockList=csaEntryList/>
-		<#else>
-			<#assign allSummaryBlockList=allSummaryList/>
-		</#if>
-
-	<#--Need to iterate in every section, so that all Discussions, Key Information, Endpoints, etc appear together-->
-		<#if allSummaryList?has_content || allSummaryBlockList?has_content>
-			<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
-
-		<#-- Key information-->
-			<#list allSummaryBlockList as summary>
-				<#local keyInfoPath><#compress>
-					<#if summary.hasElement("DescriptionOfKeyInformation.KeyInfo")>
-						summary.DescriptionOfKeyInformation.KeyInfo
-					<#elseif summary.hasElement("KeyInformation.KeyInformation")>
-						summary.KeyInformation.KeyInformation
-					</#if>
-				</#compress></#local>
-				<#if keyInfoPath?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Key information: </emphasis></para></#if>
-					<para role="indent"><@com.richText keyInfoPath?eval/></para>
-				</#if>
-			</#list>
+	<#--Iterate through summaries and create section lists for each entity-->
+		<#if !entity2summaryHash?has_content>
+			<@com.emptyLine/>
+			<para>No summary information available for this section.</para>
 			<@com.emptyLine/>
 
-		<#--Linked studies-->
-			<#list allSummaryBlockList as summary>
-				<#local links><#compress>
-					<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
-						<#if summary_index==0><para ><emphasis role="bold">Linked studies: </emphasis></para></#if>
-						<para role="indent">
-							<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
-								<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
-								<command  linkend="${studyReference.documentKey.uuid!}">
-									<@com.text studyReference.name/>
-								</command>
-
-								<#if studyReferenceLinkedToSummary_has_next> | </#if>
+		<#else>
+			<#list entity2summaryHash as entityName, allSummaryList>
+	
+				<#local keyInfo=[]/>
+				<#local links=[]/>
+				<#local endpointsHash={}/>
+				<#local addInfo=[]/>
+				<#local justification=[]/>
+				<#local moa=[]/>
+	
+			<#--Need to iterate in every section, so that all Discussions, Key Information, Endpoints, etc appear together-->
+				<#if allSummaryList?has_content>
+	
+					<#local printSummaryName = allSummaryList?size gt 1 />
+	
+					<#if entity2summaryHash?keys?seq_index_of(entityName)==0>
+						<para><@com.emptyLine/><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
+					</#if>
+	
+					<#if includeMetabolites && _metabolites?? && _metabolites?has_content && entityName!=subject.ChemicalName>
+						<@com.emptyLine/>
+						<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityName}</emphasis> -----</emphasis></para>
+						<@com.emptyLine/>
+					</#if>
+	
+					<#list allSummaryList as summary>
+	
+						<#if (!merge) && printSummaryName>
+							<para><emphasis role="bold">#${summary_index+1}: <@com.text summary.name/></emphasis></para>
+							<@com.emptyLine/>
+						</#if>
+	
+					<#-- Key information-->
+						<#if summary.documentSubType=="ToxicityToReproduction_EU_PPP" || summary.documentSubType=="GeneticToxicity">
+	
+							<#local summaryKeyInfo = []/>
+							<#list summary.KeyValueForChemicalSafetyAssessment?children as csaEntry>
+								<#if csaEntry?node_type=="block" && csaEntry.hasElement("DescriptionOfKeyInformation.KeyInfo")>
+									<#if csaEntry.DescriptionOfKeyInformation.KeyInfo?has_content>
+										<#local csaName>${csaEntry?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}</#local>
+										<#local csaKeyInfo><para role="indent">
+										<#-- <emphasis role="underline">${csaName}:</emphasis-->
+											<@com.richText csaEntry.DescriptionOfKeyInformation.KeyInfo/>
+											</para>
+										</#local>
+										<#local summaryKeyInfo = summaryKeyInfo + [csaKeyInfo]/>
+									</#if>
+								</#if>
 							</#list>
-						</para>
-					</#if>
-					<?linebreak?>
-				</#compress></#local>
-				<#if resultFormat!="table">${links}</#if>
-			</#list>
-			<@com.emptyLine/>
-
-		<#--CSA value:
-        3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
-			<#assign endpointsHash={}/>
-			<#list allSummaryList as summary>
-
-				<#if summary.documentSubType=="ToxRefValues">
-					<#if summary_index==0><para><emphasis role="bold">Toxicological reference values: </emphasis></para></#if>
-					<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-					<@toxRefValuesTable summary/>
-
-				<#elseif summary.documentSubType=="EndocrineDisruptingPropertiesAssessmentPest">
-					<#if summary_index==0><para><emphasis role="bold">ED assessment: </emphasis></para></#if>
-					<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-					<@endocrineDisruptingPropertiesTable summary/>
-
-				<#elseif summary.documentSubType=="NonDietaryExpo">
-					<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-					<@nonDietaryExpoSummary summary/>
-
-				<#elseif summary.documentSubType=="DermalAbsorption">
-					<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
-					<#if summary_has_next || (summary_index>0) ><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-					<para role="indent">
-						<@dermalAbsorptionSummary summary/>
-					</para>
-
-				<#else>
-					<#if resultFormat=="flat">
-					<#--In this case it goes sequentially: NOTE that uses function from physchem-->
-						<#if summary_index==0><para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para></#if>
-						<#if summary_has_next || (summary_index>0)><para><emphasis role="underline">Summary #${summary_index+1}</emphasis></para></#if>
-						<para role="indent"><@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/></para>
-
-					<#elseif resultFormat=="table">
-					<#--In this case it first creates a hash, and then prints it ordered in table format-->
-					<#--1. Get sequence of hashes and populate hash-->
-
-						<#if summary.documentSubType=="Phototoxicity">
-						<#--special case for Phototox-->
-							<#local photoEndpoint><@com.picklist summary.KeyValueCsa.Results/></#local>
-							<#local photoLinks = links?replace("\\|", "<\\?linebreak\\?>", "r")/>
-							<#local summarySeq = [{"name":"Phototoxicity", "links": photoLinks, "endpoint": photoEndpoint}]/>
-						<#elseif summary.documentSubType=="SpecificInvestigationsOtherStudies">
-							<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":links?replace("\\|", "<\\?linebreak\\?>", "r"), "endpoint": ""}]/>
+							<#local summaryKeyInfo>${summaryKeyInfo?join("<?linebreak?>")}</#local>
+	
 						<#else>
-							<#local summarySeq = getSummarySeq(summary)/>
-						</#if>
-
-						<#list summarySeq as seqEntry>
-							<#if endpointsHash[seqEntry["name"]]??>
-								<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
-								<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
-							<#else>
-								<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
+							<#local summaryKeyInfo = ""/>
+	
+							<#local keyInfoPath><#compress>
+								<#if summary.hasElement("DescriptionOfKeyInformation.KeyInfo")>
+									summary.DescriptionOfKeyInformation.KeyInfo
+								<#elseif summary.hasElement("KeyInformation.KeyInformation")>
+									summary.KeyInformation.KeyInformation
+								</#if>
+							</#compress></#local>
+	
+							<#if keyInfoPath?has_content && keyInfoPath?eval?has_content>
+								<#local summaryKeyInfo><para role="indent"><@com.richText keyInfoPath?eval/></para></#local>
 							</#if>
-						</#list>
-
-					<#--2. At last item, print in table format and ordering endpoints-->
-						<#if !summary_has_next && endpointsHash?has_content>
-							<para><emphasis role="bold">Endpoints: </emphasis></para>
-							<@getSummaryFromHash endpointsHash/>
 						</#if>
-					</#if>
-				</#if>
-			</#list>
-
-		<#--Discussion-->
-			<#list allSummaryBlockList as summary>
-				<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Discussion:</emphasis></para></#if>
-					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
-				</#if>
-			</#list>
-
-		<#--Additional Info-->
-			<#list allSummaryBlockList as summary>
-				<#if summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Additional information:</emphasis></para></#if>
-					<para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para>
-				</#if>
-			</#list>
-
-		<#--Justification-->
-			<#list allSummaryBlockList  as summary>
-				<#if summary.hasElement("JustificationForClassificationOrNonClassification") && summary.JustificationForClassificationOrNonClassification?has_content>
-					<#if summary_index==0><para><emphasis role="bold">Justification for classification or non-classification:</emphasis></para></#if>
-					<#list summary.JustificationForClassificationOrNonClassification?children as justification>
-						<#if justification?has_content>
-							<para role="indent">
-								<#if justification_has_next>${justification?node_name}:</#if>
-								<@com.richText justification/>
-							</para>
+	
+						<#if summaryKeyInfo?has_content>
+							<#if merge>
+								<#local keyInfo = keyInfo + [summaryKeyInfo]/>
+							<#else>
+								<para><emphasis role="bold">Key information: </emphasis></para>${summaryKeyInfo}
+							</#if>
 						</#if>
-					</#list>
-				</#if>
-			</#list>
-			<#if docSubTypes[0]=="ToxicityToReproduction_EU_PPP">
-			<#--#this is wrong-->
-				<para role="indent"><emphasis role="bold">Justification for classification or non-classification:</emphasis></para>
-				<@com.richText allSummaryBlockList[0]?parent?parent.JustificationForClassificationOrNonClassification.JustificationForClassificationOrNonClassification/>
-			</#if>
-		</#if>
-	</#compress>
-</#macro>
-
-<#--flat format for study summaries: TO CHECK-->
-<#macro summarySingle _subject docSubType resultFormat="">
-	<#compress>
-
-		<#local summaryDocToCSAMap = {
-		"Toxicokinetics" : {"path" : "KeyValue",
-		"values" : [{"type":"listValue", "field": "Bioaccumulation", "preText" : "Bioaccumulation potential: "},
-		{"type":"value", "field": "AbsorptionOral", "preText": "Oral absorption rate: ", "postText":"%"},
-		{"type":"value", "field": "AbsorptionDerm", "preText": "Dermal absorption rate: ", "postText":"%"},
-		{"type":"value", "field": "AbsorptionInhal", "preText": "Inhalation absorption rate: ", "postText":"%"}]},
-		"Phototoxicity" : {"path":"KeyValueCsa", "values":[{"type":"listValue", "field":"Results", "preText":"Results: "}]}
-		}/>
-
-		<#if docSubType=="ToxRefValues" || docSubType=="EndocrineDisruptingPropertiesAssessmentPest" || docSubType=="NonDietaryExpo">
-			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_SUMMARY", docSubType) />
-		<#else>
-			<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", docSubType) />
-		</#if>
-
-		<#if summaryList?has_content>
-			<@com.emptyLine/>
-			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
-
-			<#assign printSummaryName = summaryList?size gt 1 />
-
-			<#list summaryList as summary>
-				<@com.emptyLine/>
-
-				<#if printSummaryName><para><emphasis role="bold">#{summary_index+1}: <@com.text summary.name/></emphasis></para></#if>
-
-				<#if summary.hasElement("KeyInformation") && summary.KeyInformation.KeyInformation?has_content>
-					<para><emphasis role="bold">Key information: </emphasis></para>
-					<para role="indent"><@com.richText summary.KeyInformation.KeyInformation/></para>
-				</#if>
-			<#--NOTE: for genetic toxicity this is included in the subsections. I could merge all together here or indicate it in the subsections.-->
-
-			<#--Linked studies-->
-				<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
-					<para ><emphasis role="bold">Linked studies: </emphasis></para>
-					<para role="indent">
-						<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
-							<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
-							<command  linkend="${studyReference.documentKey.uuid!}">
-								<@com.text studyReference.name/>
-							</command>
-
-							<#if studyReferenceLinkedToSummary_has_next> | </#if>
-						</#list>
-					</para>
-				</#if>
-
-			<#--CSA value:todo
-                3 options: table format, flat format (use macro from physchem) or specific formats based on docSubType-->
-				<#if docSubType=="ToxRefValues">
-					<para><emphasis role="bold">Toxicological reference values: </emphasis></para>
-					<@toxRefValuesTable summary/>
-
-				<#elseif docSubType=="EndocrineDisruptingPropertiesAssessmentPest">
-					<para><emphasis role="bold">ED assessment: </emphasis></para>
-					<@endocrineDisruptingPropertiesTable summary/>
-
-				<#elseif docSubType=="NonDietaryExpo">
-					<@nonDietaryExpoSummary summary/>
-
-				<#elseif docSubType=="DermalAbsorption">
-					<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
-					<para role="indent">
-						<@dermalAbsorptionSummary summary/>
-					</para>
-				<#else>
-					<#if resultFormat=="table">
-						<#if summaryDocToCSAMap?keys?seq_contains(docSubType)>
+	
+					<#--Linked studies-->
+						<#local summaryLinks=""/>
+						<#if summary.hasElement("LinkToRelevantStudyRecord") && summary.LinkToRelevantStudyRecord.Link?has_content>
+							<#local summaryLinks><#compress>
+								<#list summary.LinkToRelevantStudyRecord.Link as studyReferenceLinkedToSummary>
+									<#local studyReference = iuclid.getDocumentForKey(studyReferenceLinkedToSummary) />
+									<para role="indent">
+										<command  linkend="${studyReference.documentKey.uuid!}">
+											<@com.text studyReference.name/>
+										</command>
+									</para>
+								</#list>
+							</#compress></#local>
+							<#if merge>
+								<#local links = links + [summaryLinks]/>
+							<#else>
+								<para><emphasis role="bold">Linked studies: </emphasis></para>${summaryLinks}
+								<@com.emptyLine/>
+							</#if>
+						</#if>
+	
+					<#--CSA value-->
+						<#if summary.documentSubType=="ToxRefValues">
+							<para><emphasis role="bold">Toxicological reference values: </emphasis></para>
+							<@toxRefValuesTable summary/><@com.emptyLine/>
+	
+						<#elseif summary.documentSubType=="EndocrineDisruptingPropertiesAssessmentPest">
+							<para><emphasis role="bold">ED assessment: </emphasis></para>
+							<@endocrineDisruptingPropertiesTable summary/><@com.emptyLine/>
+	
+						<#elseif summary.documentSubType=="NonDietaryExpo">
+							<@nonDietaryExpoSummary summary/><@com.emptyLine/>
+	
+						<#elseif summary.documentSubType=="DermalAbsorption">
 							<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
-							<para role="indent"><@valueForCSA summary summaryDocToCSAMap[docSubType]/></para>
+							<para role="indent">
+								<@dermalAbsorptionSummary summary/>
+								<@com.emptyLine/>
+							</para>
+	
+						<#elseif summary.documentSubType=="Toxicokinetics" || (summary.documentSubType=="Phototoxicity" && !(merge))>
+							<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+							<para role="indent">
+								<@valueForCSA summary summaryDocToCSAMap[summary.documentSubType]/>
+								<@com.emptyLine/>
+							</para>
+	
 						<#else>
-							<#if docSubType=="SpecificInvestigationsOtherStudies">
-								<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":links?replace("\\|", "<\\?linebreak\\?>", "r"), "endpoint": ""}]/>
+	
+							<#if !merge><#local endpointsHash={}/></#if>
+	
+						<#--Get sequence of hashes and populate hash-->
+							<#if summary.documentSubType=="Phototoxicity">
+							<#--special case for Phototox-->
+								<#local photoEndpoint><@com.value summary.KeyValueCsa.Results/></#local>
+								<#local photoLinks = summaryLinks?replace('role="indent"', '')/>
+								<#local summarySeq = [{"name":"Phototoxicity", "links": photoLinks, "endpoint": photoEndpoint}]/>
+							<#elseif summary.documentSubType=="SpecificInvestigationsOtherStudies">
+								<#local summarySeq = [{"name":"Intraperitoneal/subcutaneous single dose", "links":summaryLinks?replace('role="indent"', ''), "endpoint": ""}]/>
 							<#else>
 								<#local summarySeq = getSummarySeq(summary)/>
 							</#if>
-
+	
 							<#list summarySeq as seqEntry>
 								<#if endpointsHash[seqEntry["name"]]??>
 									<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
@@ -10495,36 +10618,140 @@
 									<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
 								</#if>
 							</#list>
-
-							<para><emphasis role="bold">Endpoints: </emphasis></para>
-							<@getSummaryFromHash endpointsHash/>
+	
+	
+							<#if !merge && endpointsHash?has_content>
+								<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+								<@getSummaryFromHash endpointsHash/><@com.emptyLine/>
+							</#if>
+	
 						</#if>
-					</#if>
-				</#if>
-
-			<#--Additional Info-->
-				<#if summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
-					<para><emphasis role="bold">Additional information:</emphasis></para>
-					<para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para>
-				</#if>
-
-			<#--Discussion-->
-				<#if summary.hasElement("Discussion") && summary.Discussion.Discussion?has_content>
-					<para><emphasis role="bold">Discussion:</emphasis></para>
-					<para><@com.richText summary.Discussion.Discussion/></para>
-				</#if>
-
-			<#--Justification-->
-				<#if summary.hasElement("JustificationForClassificationOrNonClassification") && summary.JustificationForClassificationOrNonClassification?has_content>
-					<para><emphasis role="bold">Justification for classification or non-classification:</emphasis></para>
-					<#list summary.JustificationForClassificationOrNonClassification?children as justification>
-						<#if justification?has_content>
-							<para>
-								<#if justification_has_next>${justification?node_name}:</#if>
-								<@com.richText justification/>
-							</para>
+	
+					<#--  MoA: to do -->
+						<#local summaryMoA=""/>
+						<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.MoAHumanRelevanceFramework.MoAHumanRelevanceFramework") && summary.Discussion.Discussion?has_content>
+							<#local summaryMoA><para role="indent"><@com.richText summary.KeyValueForChemicalSafetyAssessment.MoAHumanRelevanceFramework.MoAHumanRelevanceFramework/></para></#local>
+						<#elseif summary.hasElement("KeyValueForChemicalSafetyAssessment.MoAAnalysisHumanRelevanceFramework.MoAAnalysisHumanRelevanceFramework")>
+							<#local summaryMoA><para role="indent"><@com.richText summary.KeyValueForChemicalSafetyAssessment.MoAAnalysisHumanRelevanceFramework.MoAAnalysisHumanRelevanceFramework/></para></#local>
+						</#if>
+						<#if summaryMoA?has_content>
+							<#if merge>
+								<#local moa = moa + [summaryMoA]/>
+							<#else>
+								<para><emphasis role="bold">Mode of Action Analysis / Human Relevance Framework: </emphasis></para>${summaryMoA}
+							</#if>
+						</#if>
+	
+	
+					<#--Discussion-->
+						<#if summary.hasElement("Discussion.Discussion") && summary.Discussion.Discussion?has_content>
+							<#local summaryDiscussion><para role="indent"><@com.richText summary.Discussion.Discussion/></para></#local>
+							<#if merge>
+								<#local addInfo = addInfo + [summaryDiscussion]/>
+							<#else>
+								<para><emphasis role="bold">Additional information: </emphasis></para>${summaryDiscussion}
+							</#if>
+						</#if>
+	
+					<#--Additional Info-->
+						<#local summaryAddInfo = ""/>
+	
+						<#if summary.documentSubType=="ToxicityToReproduction_EU_PPP" || summary.documentSubType=="Sensitisation">
+	
+							<#local summaryAddInfo = []/>
+							<#list summary.KeyValueForChemicalSafetyAssessment?children as csaEntry>
+								<#if csaEntry?node_type=="block">
+									<#local addInfoPath><#compress>
+										<#if csaEntry.hasElement("EndpointConclusion.AdditionalInformation")>
+											csaEntry.EndpointConclusion.AdditionalInformation
+										<#elseif csaEntry.hasElement("AdditionalInformation.AdditionalInfo")>
+											csaEntry.AdditionalInformation.AdditionalInfo
+										</#if>
+									</#compress></#local>
+									<#if addInfoPath?has_content && addInfoPath?eval?has_content>
+										<#local csaName>${csaEntry?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}:</#local>
+										<#local csaAddInfo><para role="indent">
+										<#--  <emphasis role="underline">${csaName}</emphasis> -->
+											<@com.richText addInfoPath?eval/></para>
+										</#local>
+										<#local summaryAddInfo = summaryAddInfo + [csaAddInfo]/>
+									</#if>
+								</#if>
+							</#list>
+							<#local summaryAddInfo>${summaryAddInfo?join("<?linebreak?>")}</#local>
+	
+						<#elseif summary.hasElement("AdditionalInformation.AdditionalInfo") && summary.AdditionalInformation.AdditionalInfo?has_content>
+	
+							<#local summaryAddInfo><para role="indent"><@com.richText summary.AdditionalInformation.AdditionalInfo/></para></#local>
+						</#if>
+	
+						<#if summaryAddInfo?has_content>
+							<#if merge>
+								<#local addInfo =  addInfo + [summaryAddInfo]/>
+							<#else>
+								<para><emphasis role="bold">Additional information: </emphasis></para>${summaryAddInfo}
+							</#if>
+						</#if>
+	
+					<#--Justification-->
+						<#if summary.hasElement("JustificationForClassificationOrNonClassification") && summary.JustificationForClassificationOrNonClassification?has_content>
+	
+							<#local summaryJustification><#compress>
+								<#list summary.JustificationForClassificationOrNonClassification?children as just>
+									<#if just?has_content>
+										<para role="indent">
+											<#if just_has_next>${just?node_name?replace("([A-Z]{1})", " $1", "r")?lower_case?cap_first}:</#if>
+											<@com.richText just/>
+										</para>
+									</#if>
+								</#list>
+							</#compress></#local>
+							<#if merge>
+								<#local justification =  justification + [summaryJustification]/>
+							<#else>
+								<para><emphasis role="bold">Justification for classification or non-classification:</emphasis></para>${summaryJustification}
+							</#if>
 						</#if>
 					</#list>
+	
+					<#if merge>
+						<#if keyInfo?has_content>
+							<para><emphasis role="bold">Key information: </emphasis></para>
+							${keyInfo?join("")}
+							<@com.emptyLine/>
+						</#if>
+	
+						<#if endpointsHash?has_content>
+							<para><emphasis role="bold">Key values for chemical safety assessment: </emphasis></para>
+							<@getSummaryFromHash endpointsHash/>
+							<@com.emptyLine/>
+						</#if>
+	
+						<#if moa?has_content>
+							<para><emphasis role="bold">Mode of Action Analysis / Human Relevance Framework:</emphasis></para>
+							${moa?join("")}
+							<@com.emptyLine/>
+						</#if>
+	
+						<#if addInfo?has_content>
+							<para><emphasis role="bold">Additional information:</emphasis></para>
+							${addInfo?join("")}
+							<@com.emptyLine/>
+						</#if>
+	
+					<#--                    <#if discussion?has_content>-->
+					<#--                        <para><emphasis role="bold">Discussion:</emphasis></para>-->
+					<#--                        ${discussion?join("")}-->
+					<#--                        <@com.emptyLine/>-->
+					<#--                    </#if>-->
+	
+						<#if justification?has_content>
+							<para><emphasis role="bold">Justification for classification or non classification:</emphasis></para>
+							${justification?join("")}
+							<@com.emptyLine/>
+						</#if>
+					</#if>
+	
 				</#if>
 			</#list>
 		</#if>
@@ -10539,16 +10766,17 @@
 				<#local valuePath = "summary." + propertyData["path"] + "." + value["field"] />
 				<#local val = valuePath?eval />
 				<#if val?has_content>
-				<#-- preText -->
+					<para>
+					<#-- preText -->
 					${value["preText"]!}
 
-				<#-- value
-                NOTE: the "type" field in the hashMap could be omitted and just use node_type for each case
-                e.g. picklist_single, picklist_multi...-->
+					<#-- value
+					NOTE: the "type" field in the hashMap could be omitted and just use node_type for each case
+					e.g. picklist_single, picklist_multi...-->
 					<#if value["type"]=='listValue'>
-						<@com.picklist val />
+						<@com.value val />
 					<#elseif value["type"]=='mListValue'>
-						<@com.picklistMultiple  val />
+						<@com.value  val />
 					<#elseif value["type"]=='value'>
 						<#if (val?node_type)=="decimal">
 							<@com.number val />
@@ -10559,10 +10787,10 @@
 						</#if>
 					</#if>
 
-				<#-- postText -->
+					<#-- postText -->
 					${value["postText"]!}
 
-				<#-- atValuePath -->
+					<#-- atValuePath -->
 					<#if value["atField"]?has_content>
 						<#local atValuePath = "summary." + propertyData["path"] + "." + value["atField"] />
 						<#local atVal = atValuePath?eval />
@@ -10570,11 +10798,11 @@
 							at <@com.quantity atVal />
 						</#if>
 					</#if>
+					</para>
 				</#if>
-
-				<#if value_has_next>
-					<?linebreak?>
-				</#if>
+<#--				<#if value_has_next>-->
+<#--					<?linebreak?>-->
+<#--				</#if>-->
 			</#list>
 		</#if>
 	</#compress>

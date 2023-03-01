@@ -1,17 +1,16 @@
-
 <!-- 4. ENVIRONMENTAL FATE PROPERTIES template file -->
 
 <!-- General discussion of environmental fate and pathways -->
 <#macro environmentalFateAndPathwaysSummary _subject>
 <#compress>
-
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "EnvironmentalFateAndPathways") />
-
 	<#if summaryList?has_content>
 		<para><emphasis role="underline"><emphasis role="bold">General discussion of environmental fate and pathways:</emphasis></emphasis></para>
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+			<#if summary?has_content>
+				<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+			</#if>
 		</#list>
 	</#if>		
 </#compress>
@@ -94,32 +93,21 @@
 <!-- Summary Discussion for hydrolysis -->
 <#macro hydrolysisSummary _subject>
 <#compress>
-
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "Hydrolysis") />
-					
+	<!-- get doc key for hydrolysis -->
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "Hydrolysis") />					
 	<#if summaryList?has_content>
-		<#list summaryList as summary>
-		
+		<#list summaryList as summary>		
+			<!-- check if summary has content for printing title -->
 			<#assign summarytext = getCSAValueTextHydrolysis(summary)/>					
-			<#if summarytext?has_content>
-				<@CSAValueText summary typeText typeText1 />
+			<#if summary?has_content && summarytext?has_content>
+			<@com.emptyLine />
+				<!-- print hardcoded title if summary has content -->
+				<@CSAValueText summary "Discussion" "The following information is taken into account for any hazard / risk / persistency assessment:" />
+				<!-- print doc name if more than 1 summary -->
+				<#assign printSummaryName = summaryList?size gt 1 />
+			<!-- macro for summary output -->
+			<@studyandsummaryCom.endpointSummary summary valueForCsaText "Hydrolysis" printSummaryName/>	
 			</#if>
-			
-			<#assign summaryCSAValue = getCSAValuesHydrolysis(summary)/>
-			<#if summaryCSAValue?has_content>
-				<#assign valueForCsaText>
-					<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeForHydrolysis?has_content>
-						Half-life for hydrolysis: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeForHydrolysis /> 
-					</#if>
-					
-					<#if summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf?has_content>
-						at <@com.quantity summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf />
-					</#if>
-				</#assign>
-			</#if>
-			
-			<#assign printSummaryName = summaryList?size gt 1 />
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>	
 		</#list>
 	</#if>
 		
@@ -219,30 +207,17 @@
 <!-- Summary Discussion for Phototransformation in air -->
 <#macro phototransformationInAirSummary _subject>
 <#compress>
-
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "PhototransformationInAir") />
-		
-	<#if summaryList?has_content>
-	
-		<#assign summaryCSAValue = getCSAValuesPhototransformationInAir(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueText summaryCSAValue typeText typeText1 />
-		</#if>
-		<#assign printSummaryName = summaryList?size gt 1 />
-		<#list summaryList as summary>
-			<#assign valueForCsaText>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInAir?has_content>
-					Half-life in air: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInAir/>
-				<?linebreak?>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.DegradationRateConstantWithOHRadicals?has_content>
-					Degradation rate constant with OH radicals: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.DegradationRateConstantWithOHRadicals/>
-				</#if>
-			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "PhototransformationInAir") />		
+	<#if summaryList?has_content>		
+		<#list summaryList as summary>			
+			<#assign summaryCSAValue = getCSAValuesPhototransformationInAir(summary)/>
+			<#if summary?has_content && summaryCSAValue?has_content>
+				<@CSAValueText summary "Discussion" "The following information is taken into account for any hazard / risk / persistency assessment:" />			
+				<#assign printSummaryName = summaryList?size gt 1 />
+			<@studyandsummaryCom.endpointSummary summary valueForCsaText "PhototransformationInAir" printSummaryName/>
+			</#if>
 		</#list>
-	</#if>
-				
+	</#if>				
 </#compress>
 </#macro>				
 				
@@ -343,24 +318,16 @@
 <#macro phototransformationInWaterSummary _subject>
 <#compress>	
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "PhototransformationInWater") />	
-				
-	<#if summaryList?has_content>
-		<#assign summaryCSAValue = getCSAValuesPhototransformationInWater(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueText summaryCSAValue typeText typeText1 />
-		</#if>
-		<#assign printSummaryName = summaryList?size gt 1 />
+	<#if summaryList?has_content>		
 		<#list summaryList as summary>
-			<#assign valueForCsaText>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInWater?has_content>
-				Half-life in freshwater: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInWater/>	
-				</#if>
-			</#assign>
-		
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+			<#assign summaryCSAValue = getCSAValuesPhototransformationInWater(summary)/>
+			<#if summaryCSAValue?has_content>
+				<@CSAValueText summary "Discussion" "The following information is taken into account for any hazard / risk / persistency assessment:" />	
+				<#assign printSummaryName = summaryList?size gt 1 />			
+			<@studyandsummaryCom.endpointSummary summary "" "PhototransformationInWater" printSummaryName/>
+			</#if>	
 		</#list>
-	</#if>
-	
+	</#if>	
 </#compress>
 </#macro>	
 	
@@ -455,26 +422,18 @@
 	
 <!-- Summary Discussion Phototransformation in soil -->
 <#macro phototransformationInSoilSummary _subject>
-<#compress>		
-	
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "PhototransformationInSoil") />
-								
-	<#if summaryList?has_content>
-		<#assign summaryCSAValue = getCSAValuesInSoil(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueText summaryCSAValue typeText typeText1 />
-		</#if>
-		<#assign printSummaryName = summaryList?size gt 1 />
+<#compress>			
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "PhototransformationInSoil") />								
+	<#if summaryList?has_content>		
 		<#list summaryList as summary>
-			<#assign valueForCsaText>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil?has_content>
-				Half-life in soil: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil/>
-				</#if>
-			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+			<#assign summaryCSAValue = getCSAValuesInSoil(summary)/>
+			<#if summaryCSAValue?has_content>
+				<@CSAValueText summary "Discussion" "The following information is taken into account for any hazard / risk / persistency assessment:" />
+				<#assign printSummaryName = summaryList?size gt 1 />			
+				<@studyandsummaryCom.endpointSummary summary "" "PhototransformationInSoil" printSummaryName/>
+			</#if>
 		</#list>
-	</#if>
-				
+	</#if>				
 </#compress>
 </#macro>
 
@@ -605,8 +564,10 @@
 						</td>
 						<!-- Results -->
 						<td>
+            
 							<para>Disappearance time (DT) of parent compound:</para>
 							<@disappearanceTimeList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.DTParentCompound)/>
+
 							<para>% Degradation of test substance:</para>
 							<@degradationOfTestSubstanceList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.Degradation)/>
 							<para>
@@ -642,86 +603,38 @@
 <!-- Summary Discussion of biodegradation in water screening tests -->
 <#macro biodegradationScreeningInWaterScreeningTestsSummary _subject>
 <#compress>	
-		
+<#local summaryCSAValueT = [] />		
 	<!-- Discussion -->
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BiodegradationInWaterScreeningTests") />
-					
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BiodegradationInWaterScreeningTests") />			
 	<#if !summaryList?has_content>
-	No relevant information available.
-		<#else/>
-		
-		<#assign summaryCSAValue = getCSAValuesBiodegradationInWaterScreeningTests(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueText_screening summaryCSAValue typeText typeText1 />
-		</#if>
-		<#assign printSummaryName = summaryList?size gt 1 />
+		No relevant information available.
+		<#else>	
 		<#list summaryList as summary>
-			<#assign valueForCsaText>
-				<#if summary.KeyValueForChemicalSafetyAssessment.BiodegradationInWater?has_content>
-				Biodegradation in water: <@com.picklist summary.KeyValueForChemicalSafetyAssessment.BiodegradationInWater/>
-				</#if>
-				<para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.TypeOfWater?has_content>
-					Type of water: <@com.picklist summary.KeyValueForChemicalSafetyAssessment.TypeOfWater />
-				</#if>
-				</para>
-			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
-		</#list>
-	</#if>
-	
+			<#if summary?has_content>
+			<@CSAValueText summary "Discussion (screening testing)" "The following information is taken into account for any hazard / risk / persistency assessment:" />
+			<#assign printSummaryName = summaryList?size gt 1 />
+				<@studyandsummaryCom.endpointSummary summary "" "BiodegradationInWaterScreeningTests" printSummaryName/>
+			</#if>
+		</#list>	
+	</#if>	
 </#compress>
 </#macro>	
 
 <!-- Summary Discussion of biodegradation in water and sediment simulation tests -->
 <#macro biodegradationScreeningInWaterSedimentSimulationSummary _subject>
-<#compress>	
-	
+<#compress>		
 	<!-- Discussion -->
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BiodegradationInWaterAndSedimentSimulationTests") />
-	
-	<#if summaryList?has_content>
-		<#assign summaryCSAValue = getCSAValuesBiodegradationInWaterAndSedimentSimulationTests(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueText_simulation summaryCSAValue typeText typeText1 />
-		</#if>
-		<#assign printSummaryName = summaryList?size gt 1 />
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BiodegradationInWaterAndSedimentSimulationTests") />	
+	<#if summaryList?has_content>				
 		<#list summaryList as summary>
-			<#assign valueForCsaText>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInFreshwater?has_content>
-				Half-life in freshwater: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInFreshwater/> 
-				<#if summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOfFreshwater?has_content>
-					at <@com.quantity summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOfFreshwater/>
-					<?linebreak?>
-				</#if>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInMarineWater?has_content>
-				Half-life in marine water: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInMarineWater/> 
-				<#if summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOfMarineWater?has_content>
-					at <@com.quantity summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOfMarineWater/>
-					<?linebreak?>
-				</#if>
-				</#if>
-				<?linebreak?>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInFreshwaterSediment?has_content>
-				Half-life in freshwater sediment: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInFreshwaterSediment/> 
-				<#if summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOfFreshwaterSediment?has_content>
-					at <@com.quantity summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOfFreshwaterSediment/>
-					<?linebreak?>
-				</#if>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInMarineWaterSediment?has_content>
-				Half-life in marine water sediment: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInMarineWaterSediment/> 
-				<#if summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOfMarineWaterSediment?has_content>
-					at <@com.quantity summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOfMarineWaterSediment/>
-					<?linebreak?>
-				</#if>
-				</#if>
-			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+			<#assign summaryCSAValue = getCSAValuesBiodegradationInWaterAndSedimentSimulationTests(summary)/>
+			<#if summary?has_content && summaryCSAValue?has_content>
+				<@CSAValueText summary "Discussion (simulation testing)" "The following information is taken into account for any hazard / risk / persistency assessment:" />
+				<#assign printSummaryName = summaryList?size gt 1 />			
+				<@studyandsummaryCom.endpointSummary summary "" "BiodegradationInWaterAndSedimentSimulationTests" printSummaryName/>
+			</#if>
 		</#list>
-	</#if>
-		
+	</#if>		
 </#compress>
 </#macro>	
 
@@ -821,60 +734,49 @@
 <!-- Summary Discussion for Biodegradation in soil -->
 <#macro biodegradationInSoilSummary _subject>
 <#compress>
-
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BiodegradationInSoil") />
-	
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BiodegradationInSoil") />	
 	<#if summaryList?has_content>
-		<#assign summaryCSAValue = getCSAValuesInSoil(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueText summaryCSAValue typeText typeText1 />
-		</#if>
-		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-			<#assign valueForCsaText>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil?has_content>
-				Half-life in soil: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil/> 
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf?has_content>
-					at <@com.quantity summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf/>
-				</#if>
-			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+			<#assign summaryCSAValue = getCSAValuesInSoil(summary)/>
+			<#if summary?has_content && summaryCSAValue?has_content>
+				<@CSAValueText summary "Discussion" "The following information is taken into account for any hazard / risk / persistency assessment:" />
+				<#assign printSummaryName = summaryList?size gt 1 />		
+				<@studyandsummaryCom.endpointSummary summary "" "BiodegradationInSoil" printSummaryName/>
+			</#if>
 		</#list>
-	</#if>
-	
+	</#if>	
 </#compress>
 </#macro>
 
 <!-- Summary Discussion for stability -->
 <#macro stabilitySummary _subject>
-<#compress>
-	
+<#compress>	
 	<#assign summaryStabilityList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "Stability")/>
 	<#if summaryStabilityList?has_content>	
-	<#assign printStabilitySummaryName = summaryStabilityList?size gt 1 />
-	<para><emphasis role="HEAD-WoutNo">Abiotic degradation</emphasis></para>				
+		<para><emphasis role="HEAD-WoutNo">Abiotic degradation</emphasis></para>				
 		<#list summaryStabilityList as summary>
-			<@studyandsummaryCom.endpointSummary summary "" printSummaryStabilityName/>
+		<#assign printStabilitySummaryName = summaryStabilityList?size gt 1 />
+			<#if summary?has_content>
+			<@studyandsummaryCom.endpointSummary summary "" "Stability" printSummaryStabilityName/>
+			</#if>
 		</#list>
-	</#if>
-	
+	</#if>	
 </#compress>
 </#macro>
 
 <!-- Summary Discussion for biodegradation -->
 <#macro biodegradationSummary _subject>
-<#compress>
-	
+<#compress>	
 	<#assign summaryBiodegradationList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "Biodegradation") />	
-	<#if summaryBiodegradationList?has_content >
+	<#if summaryBiodegradationList?has_content>
 	<#assign printBiodegradationSummaryName = summaryBiodegradationList?size gt 1 />
-	<para><emphasis role="HEAD-WoutNo">Biotic degradation</emphasis></para>
+		<para><emphasis role="HEAD-WoutNo">Biotic degradation</emphasis></para>
 		<#list summaryBiodegradationList as summary>
-			<@studyandsummaryCom.endpointSummary summary "" printBiodegradationSummaryName/>
+			<#if summary?has_content>
+				<@studyandsummaryCom.endpointSummary summary "" "Biodegradation" printBiodegradationSummaryName/>
+			</#if>
 		</#list>
-	</#if>
-	
+	</#if>	
 </#compress>
 </#macro>
 
@@ -964,44 +866,17 @@
 <!-- Summary Discussion for Environmental distribution -->
 <#macro adsorptionDesorptionSummary _subject>
 <#compress>
-
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "AdsorptionDesorption") />
-	<#if summaryList?has_content>
+	<#if summaryList?has_content>		
 		<#list summaryList as summary>
-	
-			<#assign summaryCSAValue = getCSAValuesAdsorptionDesorption(summary)/>
-			
-			<#if summaryCSAValue?has_content>
-			<@CSAValueTextEnvironmentAssessment summaryCSAValue typeText typeText1 />
-				
-			<#assign valueForCsaText>					
-			Koc at 20°C: <@com.number summary.KeyValueForChemicalSafetyAssessment.KocAt20Celsius/>
-			<?linebreak?>
-			<#if summary.KeyValueForChemicalSafetyAssessment.OtherAdsorptionCoefficients?has_content>
-				Other adsorption coefficients: 
-				<#list summary.KeyValueForChemicalSafetyAssessment.OtherAdsorptionCoefficients as blockItem>
-					<para role="indent">
-						<@com.picklist blockItem.Type/>
-						<#if blockItem.TypeValue?has_content || blockItem.AtTheTemperatureOf?has_content>
-							<#if blockItem.TypeValue?has_content>
-								: <@com.number blockItem.TypeValue/>
-							</#if>
-							<#if blockItem.AtTheTemperatureOf?has_content>
-								at <@com.quantity blockItem.AtTheTemperatureOf/>
-							</#if>
-						</#if>
-					</para>									
-					</#list>
-				</#if>
-			</#assign>					
+			<#assign csaValueAdsorption = getCSAValuesAdsorptionDesorption(summary)>	
+			<#if summary?has_content && csaValueAdsorption?has_content>		
+			<#assign printSummaryName = summaryList?size gt 1 />						
+				<@CSAValueText summary "Discussion" "The following information is taken into account for any environmental exposure assessment:" />
+				<@studyandsummaryCom.endpointSummary summary "" "AdsorptionDesorption" printSummaryName/>
 			</#if>
-				
-			<#assign printSummaryName = summaryList?size gt 1 />				
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
-			
 		</#list>
-	</#if>
-		
+	</#if>		
 </#compress>
 </#macro>		
 
@@ -1071,30 +946,17 @@
 
 <!-- Summary Discussion for Henry's law constant -->
 <#macro henrysLawConstantSummary _subject>
-<#compress>	
-
+<#compress>
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "HenrysLawConstant") />
-			
 	<#if summaryList?has_content>
-		<#assign summaryCSAValue = getCSAValuesHenrysLawConstant(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueTextEnvironmentAssessment summaryCSAValue typeText typeText1 />
-		</#if>
-		<#assign printSummaryName = summaryList?size gt 1 />
-		<#list summaryList as summary>
-			<#assign valueForCsaText>
-				<#if summary.KeyValueForChemicalSafetyAssessment.HenrysLawConstant?has_content>
-					Henry's law constant (H): <@com.number summary.KeyValueForChemicalSafetyAssessment.HenrysLawConstant/> (in Pa m³/mol) 
-				</#if>
-				
-				<#if summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf?has_content>
-					at <@com.quantity summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf/>
-				</#if>
-			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+		<#list summaryList as summary>			
+		<#assign printSummaryName = summaryList?size gt 1 />	
+			<#if getCSAValuesHenrysLawConstant(summary)>		
+				<@CSAValueText summary "Discussion" "The following information is taken into account for any environmental exposure assessment:" />
+				<@studyandsummaryCom.endpointSummary summary "" "HenrysLawConstant" printSummaryName/>
+			</#if>
 		</#list>
-	</#if>
-		
+	</#if>		
 </#compress>
 </#macro>		
 		
@@ -1199,15 +1061,15 @@
 	
 <!-- Summary Discussion of environmental distribution -->
 <#macro transportAndDistributionSummary _subject>
-<#compress>	
-
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "TransportAndDistribution") />
-			
+<#compress>
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "TransportAndDistribution") />			
 	<#if summaryList?has_content>
 	<#assign printSummaryName = summaryList?size gt 1 />
-			<#list summaryList as summary>
-				<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
-			</#list>
+		<#list summaryList as summary>
+			<#if summary?has_content>
+			<@studyandsummaryCom.endpointSummary summary "" "TransportAndDistribution" printSummaryName/>
+			</#if>
+		</#list>
 	</#if>
 </#compress>
 </#macro>	
@@ -1393,7 +1255,7 @@
 	
 		<#list summaryList as summary>
 			<#if summary?has_content>
-				<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+				<@studyandsummaryCom.endpointSummary summary "" "Bioaccumulation" printSummaryName/>
 			</#if>
 		</#list>
 	</#if>
@@ -1403,31 +1265,15 @@
 <!-- Summary Discussion of bioaccumulation aquatic and sediment -->
 <#macro bioaccumulationAquaticSedimentSummary _subject>
 <#compress>	
-	
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BioaccumulationAquaticSediment") />				
-	
-	<#if summaryList?has_content>
-		<#assign summaryCSAValue = getCSAValuesBioaccumulationAquaticSediment(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueTextBioaccumulationAquatic summaryCSAValue typeText typeText1 />
-		</#if>
-		
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BioaccumulationAquaticSediment") />	
+	<#if summaryList?has_content>	
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
-							
-			<#assign valueForCsaText>
-			<#if summary.KeyValueForChemicalSafetyAssessment.BcfAquaticSpecies?has_content || summary.KeyValueForChemicalSafetyAssessment.BMFInFish?has_content>
-					<#if summary.KeyValueForChemicalSafetyAssessment.BcfAquaticSpecies?has_content>
-						BCF: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.BcfAquaticSpecies/>
-					</#if>
-					<?linebreak?>
-					<#if summary.KeyValueForChemicalSafetyAssessment.BMFInFish?has_content>
-						BMF in fish: <@com.number summary.KeyValueForChemicalSafetyAssessment.BMFInFish/> dimensionless
-					</#if>
-				
-			</#if>
-			</#assign>
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+			<#assign summaryCSAValue = getCSAValuesBioaccumulationAquaticSediment(summary)/>
+			<#if summaryCSAValue?has_content>
+				<@CSAValueText summary "Aquatic bioaccumulation" "The following information is taken into account for any environmental exposure assessment:" />			
+				<@studyandsummaryCom.endpointSummary summary valueForCsaText "BioaccumulationAquaticSediment" printSummaryName/>
+			</#if>			
 		</#list>
 	</#if>
 </#compress>
@@ -1436,28 +1282,15 @@
 <!-- Summary Discussion of bioaccumulation terrestrial -->
 <#macro bioaccumulationTerrestrialSummary _subject>
 <#compress>	
-	
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BioaccumulationTerrestrial") />
-		
-	<para><emphasis role="HEAD-WoutNo"></emphasis></para>
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "BioaccumulationTerrestrial") />		
 	<#if summaryList?has_content>
-		
-		<#assign summaryCSAValue = getCSAValuesBioaccumulationTerrestrial(summaryList)/>
-		<#if summaryCSAValue?has_content>
-			<@CSAValueTextBioaccumulationTerrestrial summaryCSAValue typeText typeText1 />
-		</#if>
-		
-		<#assign printSummaryName = summaryList?size gt 1 />
-		
 		<#list summaryList as summary>
-			
-				<#assign valueForCsaText>
-					<#if summary.KeyValueForChemicalSafetyAssessment.BcfTerrestrialSpecies?has_content>
-						BCF: <@com.quantity summary.KeyValueForChemicalSafetyAssessment.BcfTerrestrialSpecies/>
-					</#if>
-				</#assign>
-				
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+			<#assign summaryCSAValue = getCSAValuesBioaccumulationTerrestrial(summary)/>
+			<#if summary?has_content && summaryCSAValue?has_content>
+				<@CSAValueText summary "Terrestrial bioaccumulation" "The following information is taken into account for any environmental exposure assessment:" />		
+				<#assign printSummaryName = summaryList?size gt 1 />
+			<@studyandsummaryCom.endpointSummary summary valueForCsaText "BioaccumulationTerrestrial" printSummaryName/>
+			</#if>
 		</#list>
 	</#if>
 </#compress>
@@ -1766,7 +1599,7 @@
 		<#list halfLifeRepeatableBlock as blockItem>
 			<para role="indent">
 			
-				<@com.range blockItem.HalfLife/>
+				<@com.value blockItem.Parameter/>
 
 				<#if pppRelevant??>
 					<#if blockItem.StDev?has_content>
@@ -1806,7 +1639,7 @@
 			<#local referenceSubstance = iuclid.getDocumentForKey(blockItem.ReferenceSubstance) />
 			<#if referenceSubstance?has_content>
 				<para role="indent">
-
+        
 					<@com.value blockItem.No/> 
 
 					<#if referenceSubstance.ReferenceSubstanceName?has_content>						
@@ -1826,6 +1659,7 @@
 					<#if blockItem.hasElement("MaximumOccurrence") && blockItem.MaximumOccurrence?has_content>
 						Maximum ocurrence: <@com.value blockItem.MaximumOccurrence/>
 					</#if>
+
 				</para>
 			</#if>
 		</#list>
@@ -2237,38 +2071,41 @@
 		<#return [] />
 	</#if>
 	
-	<#list summaryList as summary>
-		<#if isCSAHenrysLawConstant(summary)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
+		<#if isCSAHenrysLawConstant(summaryList)>
+			<#return true/>			
 		</#if>				
-	</#list>	
 	
-	<#return valuesCSA />	
+	
+	<#return false />	
 </#function>
 <#function isCSAHenrysLawConstant summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.HenrysLawConstant?has_content || summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf?has_content || summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.HenrysLawConstant?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf?has_content 
+	|| summary.KeyInformation.KeyInformation?has_content />
 </#function>
 
-<#function getCSAValuesAdsorptionDesorption summary>
-	<#local valuesCSA = []/>
+<#function getCSAValuesAdsorptionDesorption summaryList>
 	
 	<#if !(summaryList?has_content)>
-		<#return [] />
+		<#return false />
 	</#if>
 	
-	<#if isCSAValuesAdsorptionDesorption(summary)>
-		<#local valuesCSA = valuesCSA + [summary]/>			
-	</#if>	
-		<#list summary.KeyValueForChemicalSafetyAssessment.OtherAdsorptionCoefficients as blockItem>
+	<#if isCSAValuesAdsorptionDesorption(summaryList)>
+		<#return true/>			
+	<#else>	
+		<#list summaryList.KeyValueForChemicalSafetyAssessment.OtherAdsorptionCoefficients as blockItem>
 			<#if isCSAAdsorptionDesorptionBlockItem(blockItem)>
-				<#local valuesCSA = valuesCSA + [blockItem]/>			
+				<#return true/>			
 			</#if>					
 		</#list>
+	</#if>
 	
-	<#return valuesCSA />	
+	<#return false />	
 </#function>
 <#function isCSAValuesAdsorptionDesorption summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.KocAt20Celsius?has_content || summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.KocAt20Celsius?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf
+	|| summary.KeyInformation.KeyInformation?has_content />
 </#function>
 
 <#function isCSAAdsorptionDesorptionBlockItem blockItem>
@@ -2281,34 +2118,39 @@
 		<#return [] />
 	</#if>
 	
-	<#list summaryList as summary>
-		<#if isCSABiodegradationInWaterAndSedimentSimulationTests(summary)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
-	</#list>	
+	<#if isCSABiodegradationInWaterAndSedimentSimulationTests(summaryList)>
+		<#local valuesCSA = valuesCSA + [summaryList]/>			
+	</#if>				
 	
 	<#return valuesCSA />	
 </#function>
 <#function isCSABiodegradationInWaterAndSedimentSimulationTests summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeInFreshwater?has_content || summary.KeyValueForChemicalSafetyAssessment.HalflifeInFreshwaterSediment?has_content || summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.BiodegradationInFreshwater?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.BiodegradationInMarineWater?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.BiodegradationInFreshwaterSediment?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.BiodegradationInMarineWaterSediment?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.WholeSystem?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.BiodegradationInSewageTreatmentPlant?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.BiodegradationInSewerSystem?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.RouteOfBiodegradation?has_content
+	|| summary.KeyInformation.KeyInformation?has_content />
 </#function>
 <#function getCSAValuesBiodegradationInWaterScreeningTests summaryList>
-	<#local valuesCSA = []/>
+	<#assign valuesCSA = []/>
 	
 	<#if !(summaryList?has_content)>
 		<#return [] />
 	</#if>
-	
-	<#list summaryList as summary>
-		<#if isCSABiodegradationInWaterScreeningTests(summary)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
-	</#list>	
+
+	<#if isCSABiodegradationInWaterScreeningTests(summaryList)>
+		<#local valuesCSA = valuesCSA + [summaryList]/>
+		<#else><#return [] />	
+	</#if>	
 	
 	<#return valuesCSA />	
 </#function>
 <#function isCSABiodegradationInWaterScreeningTests summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.BiodegradationInWater?has_content || summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.BiodegradationInWater?has_content || summary.KeyInformation.KeyInformation?has_content || summary.KeyValueForChemicalSafetyAssessment.TypeOfWater?has_content />
 </#function>
 <#function getCSAValuesInSoil summaryList>
 	<#local valuesCSA = []/>
@@ -2316,17 +2158,16 @@
 	<#if !(summaryList?has_content)>
 		<#return [] />
 	</#if>
-	
-	<#list summaryList as summary>
-		<#if isCSAPhototransformationInSoil(summary)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
-	</#list>	
-	
+
+	<#if isCSAPhototransformationInSoil(summaryList)>
+		<#local valuesCSA = valuesCSA + [summaryList]/>			
+	</#if>	
+
 	<#return valuesCSA />	
 </#function>
 <#function isCSAPhototransformationInSoil summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil?has_content || summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil?has_content 
+	|| summary.KeyInformation.KeyInformation?has_content />
 </#function>
 <#function getCSAValuesPhototransformationInWater summaryList>
 	<#local valuesCSA = []/>
@@ -2335,16 +2176,15 @@
 		<#return [] />
 	</#if>
 	
-	<#list summaryList as summary>
-		<#if isCSAPhototransformationInWater(summary)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
-	</#list>
+	<#if isCSAPhototransformationInWater(summaryList)>
+		<#local valuesCSA = valuesCSA + [summaryList]/>			
+	</#if>	
 	
 	<#return valuesCSA />	
 </#function>
 <#function isCSAPhototransformationInWater summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeInWater?has_content || summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeInWater?has_content 
+	|| summary.KeyInformation.KeyInformation?has_content />
 </#function>
 <#function getCSAValuesPhototransformationInAir summaryList>
 	<#local valuesCSA = []/>
@@ -2353,11 +2193,9 @@
 		<#return [] />
 	</#if>
 	
-	<#list summaryList as summary>
-		<#if isCSAPhototransformationInAir(summary)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
-	</#list>
+	<#if isCSAPhototransformationInAir(summaryList)>
+		<#local valuesCSA = valuesCSA + [summaryList]/>			
+	</#if>
 	
 	<#return valuesCSA />	
 </#function>
@@ -2372,16 +2210,16 @@
 		<#return [] />
 	</#if>
 	
-	<#list summaryList as summary>
-		<#if isCSABioaccumulationAquaticSediment(summary)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
-	</#list>
-	
+	<#if isCSABioaccumulationAquaticSediment(summaryList)>
+		<#local valuesCSA = valuesCSA + [summaryList]/>			
+	</#if>			
+
 	<#return valuesCSA />	
 </#function>
 <#function isCSABioaccumulationAquaticSediment summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.BcfAquaticSpecies?has_content || summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.BcfAquaticSpecies?has_content 
+	|| summary.KeyValueForChemicalSafetyAssessment.BMFInFish?has_content 
+	|| summary.KeyInformation.KeyInformation?has_content />
 </#function>
 
 <#function getCSAValuesBioaccumulationTerrestrial summaryList>
@@ -2391,11 +2229,9 @@
 		<#return [] />
 	</#if>
 	
-	<#list summaryList as summary>
-		<#if isCSABioaccumulationTerrestrial(summary)>
-			<#local valuesCSA = valuesCSA + [summary]/>			
-		</#if>				
-	</#list>
+	<#if isCSABioaccumulationTerrestrial(summaryList)>
+		<#local valuesCSA = valuesCSA + [summaryList]/>			
+	</#if>
 	
 	<#return valuesCSA />	
 </#function>
@@ -2437,41 +2273,12 @@
 	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeForHydrolysis?has_content || summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf?has_content />
 </#function>
 
-<#macro CSAValueText summaryCSAValue typeText="Discussion" typeText1="The following information is taken into account for any hazard / risk / persistency assessment:">
+<#macro CSAValueText summary typeText="" typeText1="">
 <#compress>
-	<para><emphasis role="HEAD-WoutNo">${typeText}</emphasis></para>
-	<para><emphasis role="underline">${typeText1}</emphasis></para>
-</#compress>
-</#macro>
-<#macro CSAValueTextEnvironmentAssessment summaryCSAValue typeText="Discussion" typeText1="The following information is taken into account for any environmental exposure assessment:">
-<#compress>
-	<para><emphasis role="HEAD-WoutNo">${typeText}</emphasis></para>
-	<para><emphasis role="underline">${typeText1}</emphasis></para>
-</#compress>
-</#macro>
-<#macro CSAValueTextBioaccumulationAquatic summaryCSAValue typeText="Aquatic bioaccumulation" typeText1="The following information is taken into account for any environmental exposure assessment:">
-<#compress>
-	<para><emphasis role="HEAD-WoutNo">${typeText}</emphasis></para>
-	<para><emphasis role="underline">${typeText1}</emphasis></para>
-</#compress>
-</#macro>
-<#macro CSAValueTextBioaccumulationTerrestrial summaryCSAValue typeText="Terrestrial bioaccumulation" typeText1="The following information is taken into account for any environmental exposure assessment:">
-<#compress>
-	<para><emphasis role="HEAD-WoutNo">${typeText}</emphasis></para>
-	<para><emphasis role="underline">${typeText1}</emphasis></para>
-</#compress>
-</#macro>
-
-<#macro CSAValueText_screening summaryCSAValue typeText="Discussion (screening testing)" typeText1="The following information is taken into account for any hazard / risk / persistency assessment:">
-<#compress>
-	<para><emphasis role="HEAD-WoutNo">${typeText}</emphasis></para>
-	<para><emphasis role="underline">${typeText1}</emphasis></para>
-</#compress>
-</#macro>
-
-<#macro CSAValueText_simulation summaryCSAValue typeText="Discussion (simulation testing)" typeText1="The following information is taken into account for any hazard / risk / persistency assessment:">
-<#compress>
-	<para><emphasis role="HEAD-WoutNo">${typeText}</emphasis></para>
+	<para><emphasis role="HEAD-WoutNo">
+		<#assign docUrl=iuclid.webUrl.documentView(summary.documentKey) />
+		<ulink url="${docUrl}">${typeText!}</ulink>
+	</emphasis></para>
 	<para><emphasis role="underline">${typeText1}</emphasis></para>
 </#compress>
 </#macro>
