@@ -615,7 +615,9 @@
 							<para>
 								Transformation products: <@com.picklist study.ResultsAndDiscussion.TransformationProducts/>
 							</para>
-							<@transformationProductList study.ResultsAndDiscussion.IdentityTransformation/>
+							<#--  <@transformationProductList study.ResultsAndDiscussion.IdentityTransformation/>  -->
+							<#-- this path does not exist anymore, instead:-->
+							<@transformationProductsDetailsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TransformationProductsDetails)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -791,7 +793,10 @@
 							<para>
 								Transformation products: <@com.picklist study.ResultsAndDiscussion.TransformationProducts/>
 							</para>
-							<@transformationProductList study.ResultsAndDiscussion.IdentityTransformation/>
+							<#--  <@transformationProductList study.ResultsAndDiscussion.IdentityTransformation/>  -->
+							<#-- this path does not exist anymore, now there is -->
+							<@transformationProductsDetailsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TransformationProductsDetails)/>
+							
 						</td>
 						<!-- Remarks -->
 						<td>
