@@ -375,7 +375,6 @@
 		
 	<@assessmentEntitiesList summary />
 
-<<<<<<< HEAD
 	<#if !(docSubType=="Explosiveness" || docSubType=="Flammability" || docSubType=="FlashPoint" || docSubType=="OxidisingProperties")>
 		<#if docSubType=="Hydrolysis" || docSubType=="PhototransformationInAir" || docSubType=="PhototransformationInWater" || docSubType=="PhototransformationInSoil" || 
 		docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
