@@ -363,17 +363,29 @@
 	</#if>
 
 	<@summaryKeyInformation summary/>
+
+	<#if valueForCsaText?has_content>
+		<@com.emptyLine/>
+		<para>
+			<emphasis role="bold">Value used for CSA:</emphasis>
+			<?linebreak?>
+			${valueForCsaText}
+		</para>
+	</#if>
 		
 	<@assessmentEntitiesList summary />
 
-	<#if docSubType=="Hydrolysis" || docSubType=="PhototransformationInAir" || docSubType=="PhototransformationInWater" || docSubType=="PhototransformationInSoil" || 
-	docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
-	docSubType=="Biodegradation" || docSubType=="AdsorptionDesorption" || docSubType=="HenrysLawConstant" || docSubType=="TransportAndDistribution" || 
-	docSubType=="Bioaccumulation" || docSubType=="BioaccumulationAquaticSediment" || docSubType=="BioaccumulationTerrestrial">
-	<@fateCSAtable summary/>
-	<#else>
-	<@ecotoxSummary _subject "${docSubType}"/>
-	<#else>
+	<#if !(docSubType=="Explosiveness" || docSubType=="Flammability" || docSubType=="FlashPoint" || docSubType=="OxidisingProperties")>
+
+		<#if docSubType=="Hydrolysis" || docSubType=="PhototransformationInAir" || docSubType=="PhototransformationInWater" || docSubType=="PhototransformationInSoil" || 
+		docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
+		docSubType=="Biodegradation" || docSubType=="AdsorptionDesorption" || docSubType=="HenrysLawConstant" || docSubType=="TransportAndDistribution" || 
+		docSubType=="Bioaccumulation" || docSubType=="BioaccumulationAquaticSediment" || docSubType=="BioaccumulationTerrestrial">
+		<@fateCSAtable summary/>
+		<#else>
+		<@ecotoxSummary _subject "${docSubType}"/>
+		</#if>
+	
 	</#if>
 
 	<@summaryAdditionalInformation summary/>
