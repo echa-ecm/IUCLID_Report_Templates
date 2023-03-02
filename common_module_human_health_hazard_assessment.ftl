@@ -8338,8 +8338,8 @@
 		<#if vitroSys.NegativeControl?has_content>
 			<para>Negative control: <@com.value vitroSys.NegativeControl/></para>
 		</#if>
-		<#if vitroSys.control?has_content>
-			<para>Positive control: <@com.value vitroSys.control/></para>
+		<#if vitroSys.PositiveControl?has_content>
+			<para>Positive control: <@com.value vitroSys.PositiveControl/></para>
 		</#if>
 
 		<#if vitroSys.DetailsOnStudyDesign?has_content>
