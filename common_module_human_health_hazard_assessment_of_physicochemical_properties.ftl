@@ -120,23 +120,24 @@
 <#macro explosivesSummary _subject>
 <#compress>
 
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "Explosiveness") />
-				
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "Explosiveness") />				
 	<#if summaryList?has_content>
 		<@com.emptyLine/><para><emphasis role="HEAD-WoutNo">Discussion</emphasis></para>
 		<#assign printSummaryName = summaryList?size gt 1 />
+
 		<#list summaryList as summary>
-			
-			<#if summary.KeyInformation.KeyInformation?has_content>
-				<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
+			<#if summary?has_content>			
+				<#if summary.KeyInformation.KeyInformation?has_content>
+					<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
+				</#if>			
+				<#local valueForCsaText>
+				<@iuclid.label for=summary.ResultsAndDiscussion var="keyvalue"/>
+					<#if summary.ResultsAndDiscussion.Explosiveness?has_content>
+					${keyvalue}: <@com.picklist summary.ResultsAndDiscussion.Explosiveness/>
+					</#if>
+				</#local>		
+					<@studyandsummaryCom.endpointSummary summary valueForCsaText "Explosiveness" printSummaryName/>
 			</#if>
-			
-			<#assign valueForCsaText>
-				<#if summary.ResultsAndDiscussion.Explosiveness?has_content>
-				Explosiveness: <@com.picklist summary.ResultsAndDiscussion.Explosiveness/>
-				</#if>
-			</#assign>		
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
 		</#list>
 	</#if>
 	
@@ -309,25 +310,17 @@
 	<#if summaryList?has_content>
 		<@com.emptyLine/><para><emphasis role="HEAD-WoutNo">Discussion</emphasis></para>		
 		<#list summaryList as summary>
-			
-			<#if summary.KeyInformation.KeyInformation?has_content>
-				<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
-			</#if>
-			
-			<#assign printSummaryName = summaryList?size gt 1 />
-			<para><emphasis role="bold"><@com.text summary.name/></emphasis></para>
-				
-				<emphasis role="bold">Key value for chemical safety assessment:</emphasis>
-					
-				Flammability: <@com.picklist summary.KeyValueChemicalAssessment.Flammability/>
-			
+			<#if summary?has_content>
 				<#if summary.KeyInformation.KeyInformation?has_content>
-					<para><@com.richText summary.KeyInformation.KeyInformation/></para>
+					<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 				</#if>
-								
-				<#if summary.Discussion.Discussion?has_content>
-					<para><emphasis role="bold">Additional information:</emphasis> <@com.richText summary.Discussion.Discussion/></para>
-				</#if>					
+				<#assign printSummaryName = summaryList?size gt 1 />				
+				<#local valueForCsaText>
+				<@iuclid.label for=summary.KeyValueChemicalAssessment var="keyvalue"/>
+					${keyvalue}: <@com.picklist summary.KeyValueChemicalAssessment.Flammability/>
+				</#local>		
+					<@studyandsummaryCom.endpointSummary summary valueForCsaText "Flammability" printSummaryName/>
+			</#if>			
 		</#list>
 	</#if>		
 	
@@ -441,8 +434,7 @@
 <#macro flashPointSummary _subject>
 <#compress>
 
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "FlashPoint") />
-				
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "FlashPoint") />				
 	
 	<#if summaryList?has_content>
 		<@com.emptyLine/><para><emphasis role="HEAD-WoutNo">Discussion</emphasis></para>
@@ -452,8 +444,16 @@
 			<#if summary.KeyInformation.KeyInformation?has_content>
 			<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 			</#if>
+
+			<#local valueForCsaText>
+			<@iuclid.label for=summary.KeyValueForChemicalSafetyAssessment.FlashPoint var="flashpoint"/>
+				<#if summary.KeyValueForChemicalSafetyAssessment.FlashPoint?has_content>
+				${flashpoint}: <@com.value summary.KeyValueForChemicalSafetyAssessment.FlashPoint/> 
+				<@com.value summary.KeyValueForChemicalSafetyAssessment.AtThePressureOf />
+				</#if>
+			</#local>
 			
-			<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaText "FlashPoint" printSummaryName/>
 		</#list>
 	</#if>	
 
@@ -640,12 +640,13 @@
 			</#if>
 			
 			<#assign valueForCsaText>
+			<@iuclid.label for=summary.KeyValueChemicalAssessment.Oxidising var="oxidisingProperties"/>			
 				<#if summary.KeyValueChemicalAssessment.Oxidising?has_content>			
-				Oxidising properties: <@com.picklist summary.KeyValueChemicalAssessment.Oxidising/>
+				${oxidisingProperties}: <@com.picklist summary.KeyValueChemicalAssessment.Oxidising/>
 				</#if>
 			</#assign>		
 			
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaText "OxidisingProperties" printSummaryName/>
 			
 		</#list>
 	</#if>
