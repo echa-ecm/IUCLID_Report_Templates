@@ -564,9 +564,10 @@
 						</td>
 						<!-- Results -->
 						<td>
-							<para>Half-life (DT50):</para>
-							<@biodegradationHalfLifeList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.HalfLifeOfParentCompound50DisappearanceTimeDT50)/>
-							
+            
+							<para>Disappearance time (DT) of parent compound:</para>
+							<@disappearanceTimeList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.DTParentCompound)/>
+
 							<para>% Degradation of test substance:</para>
 							<@degradationOfTestSubstanceList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.Degradation)/>
 							<para>
@@ -575,7 +576,9 @@
 							<para>
 								Transformation products: <@com.picklist study.ResultsAndDiscussion.TransformationProducts/>
 							</para>
-							<@transformationProductList study.ResultsAndDiscussion.IdentityTransformation/>
+							<#--  <@transformationProductList study.ResultsAndDiscussion.IdentityTransformation/>  -->
+							<#-- this path does not exist anymore, instead:-->
+							<@transformationProductsDetailsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TransformationProductsDetails)/>
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -688,8 +691,8 @@
 						</td>
 						<!-- Results -->
 						<td>
-							<para>Half-life (DT50):</para>
-							<@biodegradationInSoilHalfLifeList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.HalfLifeOfParentCompound)/>
+							<para>Disappearance time (DT) of parent compound:</para>
+							<@disappearanceTimeList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.DTParentCompound)/>
 							
 							<para>% Degradation of test substance:</para>
 							<@degradationOfTestSubstanceList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.Degradation)/>
@@ -703,7 +706,10 @@
 							<para>
 								Transformation products: <@com.picklist study.ResultsAndDiscussion.TransformationProducts/>
 							</para>
-							<@transformationProductList study.ResultsAndDiscussion.IdentityTransformation/>
+							<#--  <@transformationProductList study.ResultsAndDiscussion.IdentityTransformation/>  -->
+							<#-- this path does not exist anymore, now there is -->
+							<@transformationProductsDetailsList studyandsummaryCom.orderByKeyResult(study.ResultsAndDiscussion.TransformationProductsDetails)/>
+							
 						</td>
 						<!-- Remarks -->
 						<td>
@@ -1587,7 +1593,7 @@
 </#compress>
 </#macro>
 
-<#macro biodegradationHalfLifeList halfLifeRepeatableBlock>
+<#macro biodegradationHalfLifeList halfLifeRepeatableBlock><#-- DEPRECATED to be removed -->
 <#compress>
 	<#if halfLifeRepeatableBlock?has_content>
 		<#list halfLifeRepeatableBlock as blockItem>
@@ -1633,11 +1639,26 @@
 			<#local referenceSubstance = iuclid.getDocumentForKey(blockItem.ReferenceSubstance) />
 			<#if referenceSubstance?has_content>
 				<para role="indent">
-					<@com.picklist blockItem.No/> 
+        
+					<@com.value blockItem.No/> 
 
-						<#if referenceSubstance.ReferenceSubstanceName?has_content>						
-							<@com.referenceSubstanceName com.getReferenceSubstanceKey(blockItem.ReferenceSubstance) />						
-						</#if>
+					<#if referenceSubstance.ReferenceSubstanceName?has_content>						
+						<@com.referenceSubstanceName com.getReferenceSubstanceKey(blockItem.ReferenceSubstance) />						
+					</#if>
+
+					<#if blockItem.hasElement("ParentCompoundS") && blockItem.ParentCompoundS?has_content>
+						<#local parents= []/>
+						<#list blockItem.ParentCompoundS as parentLink>
+							<#local comp = iuclid.getDocumentForKey(parentLink) />
+							<#local parent><@com.value comp.ReferenceSubstanceName/></#local>
+							<#local parents = parents + [parent]/>
+						</#list>
+						(parent: ${parents?join("; ")})
+					</#if>
+
+					<#if blockItem.hasElement("MaximumOccurrence") && blockItem.MaximumOccurrence?has_content>
+						Maximum ocurrence: <@com.value blockItem.MaximumOccurrence/>
+					</#if>
 
 				</para>
 			</#if>
@@ -1694,42 +1715,59 @@
 </#compress>
 </#macro>
 
-<#macro biodegradationInSoilHalfLifeList halfLifeRepeatableBlock>
+<#macro disappearanceTimeList halfLifeRepeatableBlock> <#-- before called biodegradationInSoilHalfLifeList, covers also the old biodegradationHalfLifeList-->
 <#compress>
 	<#if halfLifeRepeatableBlock?has_content>
 		<#list halfLifeRepeatableBlock as blockItem>
 			<para role="indent">
-				<#if pppRelevant??>
-					<#if blockItem.SoilNo?has_content>
-						<@com.picklist blockItem.SoilNo/>:
+
+				
+				<#if pppRelevant??><#-- for PPP only: print soil number first -->
+					<#if blockItem.hasElement("SoilNo") && blockItem.SoilNo?has_content>
+						Soil <@com.value blockItem.SoilNo/>:
 					</#if>
 				</#if>
 
-				<#if blockItem.HalfLife?has_content>
-					<@com.range blockItem.HalfLife/> 
+				<#if blockItem.Parameter?has_content>
+					<@com.value blockItem.Parameter/><#if blockItem.TypeOfValue?has_content> (<@com.value blockItem.TypeOfValue/>)</#if><#if blockItem.Value?has_content>: <@com.value blockItem.Value/></#if>
 				</#if>
 
-				<#if pppRelevant??>
+				<#if pppRelevant??><#-- for PPP only: standard devaiation -->
 					<#if blockItem.StDev?has_content>
-						[sd=<@com.number blockItem.StDev/>]
+						[sd=<@com.value blockItem.StDev/>]
+					</#if>
+				</#if>
+
+				<#if blockItem.hasElement("Compartment") && blockItem.Compartment?has_content>
+					in <@com.picklist blockItem.Compartment/>
+				</#if>
+
+				<#if blockItem.Temp?has_content>
+					at <@com.value blockItem.Temp/>
+				</#if>
+
+				<#-- for PPP only: additional fields -->
+				<#if pppRelevant??>
+					<#if blockItem.hasElement("Type") && blockItem.Type?has_content>
+						(<@com.value blockItem.Type/>)
+					<#elseif blockItem.hasElement("TypeOfKineticsAndMethodOfCalculation") && blockItem.TypeOfKineticsAndMethodOfCalculation?has_content>
+						(<@com.value blockItem.TypeOfKineticsAndMethodOfCalculation/>)
 					</#if>
 
-					<#if blockItem.Temp?has_content>
-						at <@com.range blockItem.Temp/>
-					</#if>
+					<#-- NOTE: other additional parameters are missing: ChiSquare2Error, CI95, KineticParameters-->
 
-					<#if blockItem.Type?has_content>
-						(<@com.picklist blockItem.Type/>)
-					</#if>
+				<#-- for other than PPP: print soil number in parenthesis -->
 				<#else>
 
-					<#if blockItem.SoilNo?has_content>
-						(<@com.picklist blockItem.SoilNo/>)
+					<#if blockItem.hasElement("SoilNo") && blockItem.SoilNo?has_content>
+						(<@com.value blockItem.SoilNo/>)
 					</#if>
 				</#if>
 
-				<#if blockItem.RemarksOnResults?has_content>
-					(<@com.picklist blockItem.RemarksOnResults/>)
+				<#if blockItem.hasElement("RemarksOnResults") && blockItem.RemarksOnResults?has_content>
+					(<@com.value blockItem.RemarksOnResults/>)
+				<#elseif blockItem.hasElement("RemarksOnResult") && blockItem.RemarksOnResult?has_content>
+					(<@com.value blockItem.RemarksOnResult/>)
 				</#if>
 			</para>
 		</#list>
@@ -2298,7 +2336,11 @@
 
 		<#if res.MaterialMassBalance?has_content>
 			<para>Material (mass) balance:</para>
-			<para role="indent"><@massBalanceList res.MaterialMassBalance/></para>
+			<para role="indent"><@massBalanceList studyandsummaryCom.orderByKeyResult(res.MaterialMassBalance)/></para>
+		</#if>
+
+		<#if res.MineralizationRateInCO2?has_content>
+			<para>Mineralization rate (in CO2): <@com.value res.MineralizationRateInCO2/></para>
 		</#if>
 
 		<#if res.Degradation?has_content>
@@ -2306,16 +2348,16 @@
 			<para role="indent"><@degradationOfTestSubstanceList studyandsummaryCom.orderByKeyResult(res.Degradation)/></para>
 		</#if>
 
-		<#if res.HalfLifeOfParentCompound?has_content>
-			<para>Half-life / dissipation time of parent compound:</para>
-			<para role="indent"><@biodegradationInSoilHalfLifeList studyandsummaryCom.orderByKeyResult(res.HalfLifeOfParentCompound)/></para>
+		<#if res.DTParentCompound?has_content>
+			<para>Disappearance time (DT) of parent compound:</para>
+			<para role="indent"><@disappearanceTimeList studyandsummaryCom.orderByKeyResult(res.DTParentCompound)/></para>
 		</#if>
 
-		<#if res.TransformationProducts?has_content || res.IdentityTransformation?has_content>
-			<para>Transformation products: <@com.picklist res.TransformationProducts/></para>
-			<para role="indent"><@transformationProductList res.IdentityTransformation/></para>
+		<#if res.TransformationProducts?has_content || res.TransformationProductsDetails?has_content || res.TransfProductsDetails?has_content >
+			<para>Transformation products: <@com.value res.TransformationProducts/></para>
+			<para><@transformationProductsDetailsList studyandsummaryCom.orderByKeyResult(res.TransformationProductsDetails)/></para>
 			<#if res.TransfProductsDetails?has_content>
-				<para role="indent">(<@com.text res.TransfProductsDetails/>)</para>
+				<para role="indent">Details: <@com.text res.TransfProductsDetails/></para>
 			</#if>
 		</#if>
 
@@ -2344,6 +2386,27 @@
 	</#compress>
 </#macro>
 
+<#macro results_fieldStudies study>
+	<#compress>
+	
+	<#local res = study.ResultsAndDiscussion/>
+
+	<#if res.HalfLifeOfParentCompound50DisappearanceTimeDT50?has_content>
+		<para>Half-life of parent compound / 50% disappearance time (DT50):</para>
+		<para role="indent"><@disappearanceTimeList studyandsummaryCom.orderByKeyResult(res.HalfLifeOfParentCompound50DisappearanceTimeDT50)/></para>
+	</#if>
+
+	<#if res.TransformationProductsDetails?has_content || res.TransfProductsDetails?has_content >
+		<para>Transformation products:</para>
+		<para><@transformationProductsDetailsList studyandsummaryCom.orderByKeyResult(res.TransformationProductsDetails)/></para>
+		<#if res.TransfProductsDetails?has_content>
+			<para role="indent">Details: <@com.text res.TransfProductsDetails/></para>
+		</#if>
+	</#if>
+
+	</#compress>
+</#macro>
+
 <#macro results_biodegradationWaterSedimentSimulation study>
 	<#compress>
 		<#local res=study.ResultsAndDiscussion/>
@@ -2355,7 +2418,7 @@
 
 		<#if res.MeanTotalRecovery?has_content>
 			<para>Mean total recovery:</para>
-			<para role="indent"><@massBalanceList res.MeanTotalRecovery/></para>
+			<para role="indent"><@massBalanceList studyandsummaryCom.orderByKeyResult(res.MeanTotalRecovery)/></para>
 		</#if>
 
 		<#if res.Degradation?has_content>
@@ -2363,24 +2426,20 @@
 			<para role="indent"><@degradationOfTestSubstanceList studyandsummaryCom.orderByKeyResult(res.Degradation)/></para>
 		</#if>
 
-		<#if res.HalfLifeOfParentCompound50DisappearanceTimeDT50?has_content>
-			<para>Half-life of parent compound / 50% disappearance time (DT50):</para>
-			<para role="indent"><@biodegradationHalfLifeList studyandsummaryCom.orderByKeyResult(res.HalfLifeOfParentCompound50DisappearanceTimeDT50)/></para>
+		<#if res.DTParentCompound?has_content>
+			<para>Disappearance time (DT) of parent compound:</para>
+			<para role="indent"><@disappearanceTimeList studyandsummaryCom.orderByKeyResult(res.DTParentCompound)/></para>
 		</#if>
 
 		<#if res.MineralizationRateInCO2?has_content>
 			<para>Mineralization rate (in CO2): <@com.quantity study.ResultsAndDiscussion.MineralizationRateInCO2/></para>
 		</#if>
 
-		<#if res.OtherKineticParameters?has_content>
-			<para>Other kinetic parameters: <@com.picklistMultiple res.OtherKineticParameters/></para>
-		</#if>
-
-		<#if res.TransformationProducts?has_content || res.IdentityTransformation?has_content>
-			<para>Transformation products: <@com.picklist res.TransformationProducts/></para>
-			<para role="indent"><@transformationProductList res.IdentityTransformation/></para>
+		<#if res.TransformationProducts?has_content || res.TransformationProductsDetails?has_content || res.TransfProductsDetails?has_content >
+			<para>Transformation products: <@com.value res.TransformationProducts/></para>
+			<para><@transformationProductsDetailsList studyandsummaryCom.orderByKeyResult(res.TransformationProductsDetails)/></para>
 			<#if res.TransfProductsDetails?has_content>
-				<para role="indent">(<@com.text res.TransfProductsDetails/>)</para>
+				<para role="indent">Details: <@com.text res.TransfProductsDetails/></para>
 			</#if>
 		</#if>
 
@@ -2684,28 +2743,28 @@
 						<@com.picklist blockItem.Compartment/>:
 					</#if>
 
+					<#if blockItem.TotalExtractable?has_content>
+						Total extractable: <@com.range blockItem.TotalExtractable/>%.
+					</#if>
+
+					<#if blockItem.NonExtractable?has_content>
+						Non extractable: <@com.range blockItem.NonExtractable/>%.
+					</#if>
+
+					<#if blockItem.CO2?has_content>
+						CO2: <@com.range blockItem.CO2/>%.
+					</#if>
+
+					<#if blockItem.OtherVolatiles?has_content>
+						Other volatiles: <@com.range blockItem.OtherVolatiles/>%.
+					</#if>
+
 					<#if blockItem.Recovery?has_content>
 						<@com.number blockItem.Recovery/>% recovery
 					</#if>
 
 					<#if blockItem.StDev?has_content>
 						[sd=<@com.number blockItem.StDev/>]
-					</#if>
-
-					<#if blockItem.TotalExtractable?has_content>
-						.Total extractable: <@com.range blockItem.TotalExtractable/>%
-					</#if>
-
-					<#if blockItem.NonExtractable?has_content>
-						.Non extractable: <@com.range blockItem.NonExtractable/>%
-					</#if>
-
-					<#if blockItem.CO2?has_content>
-						.CO2: <@com.range blockItem.CO2/>%
-					</#if>
-
-					<#if blockItem.OtherVolatiles?has_content>
-						.Other volatiles: <@com.range blockItem.OtherVolatiles/>%
 					</#if>
 
 					<#if blockItem.RemarksOnResults?has_content>
@@ -2795,19 +2854,23 @@
 				<para role="indent">
 
 					<#if blockItem.SoilNo?has_content>
-						<@com.picklist blockItem.SoilNo/>:
+						<@com.value blockItem.SoilNo/>:
 					</#if>
 
 					<#if blockItem.Temp?has_content>
-						Temperature: <@com.text blockItem.Temp/>
+						Temperature: <@com.value blockItem.Temp/>.
 					</#if>
 
 					<#if blockItem.Humidity?has_content>
-						. Humidity: <@com.text blockItem.Humidity/>
+						Humidity: <@com.value blockItem.Humidity/>.
+					</#if>
+
+					<#if blockItem.SterileConditions?has_content>
+						Sterile conditions: <@com.value blockItem.SterileConditions/>.
 					</#if>
 
 					<#if blockItem.MicrobialBiomass?has_content>
-						. Microbial biomass: <@com.text blockItem.MicrobialBiomass/>
+						Microbial biomass: <@com.value blockItem.MicrobialBiomass/>.
 					</#if>
 					.
 
@@ -2926,17 +2989,86 @@
 	</#compress>
 </#macro>
 
+<#macro transformationProductsDetailsList block>
+	<#compress>
+	<#-- NOTE: could be turned into a table; X2 and 95%CI not reported-->
+
+		<#list block as blockItem>
+			<para role="indent">
+
+				<#if blockItem.IdentityOfCompound?has_content>
+					<#local comp = iuclid.getDocumentForKey(blockItem.IdentityOfCompound) />
+					<@com.value comp.ReferenceSubstanceName/>
+
+					<#if blockItem.ParentCompoundS?has_content>
+						<#local parents= []/>
+						<#list blockItem.ParentCompoundS as parentLink>
+							<#local comp = iuclid.getDocumentForKey(parentLink) />
+							<#local parent><@com.value comp.ReferenceSubstanceName/></#local>
+							<#local parents = parents + [parent]/>
+						</#list>
+						(parent: ${parents?join("; ")})
+					</#if>
+					:
+				</#if>
+
+				<#if blockItem.hasElement("SoilNo") && blockItem.SoilNo?has_content>
+					Soil <@com.value blockItem.SoilNo/>:
+				<#elseif blockItem.hasElement("Compartment") && blockItem.Compartment?has_content>
+					Compartment: <@com.value blockItem.Compartment/>
+				</#if>
+
+				<#if blockItem.KineticFormationFraction?has_content>
+					Kinetic formation fraction: <@com.value blockItem.KineticFormationFraction/>.
+				</#if>
+
+				<#if blockItem.MaximumOccurrence?has_content>
+					Maximum occurrence: <@com.value blockItem.MaximumOccurrence/>%
+
+					<#if blockItem.TimepointOfMaximumOccurrenceObservedInDays?has_content>
+						at <@com.value blockItem.TimepointOfMaximumOccurrenceObservedInDays/> days
+					</#if>
+					.
+				</#if>
+
+				<#if blockItem.Parameter?has_content>
+					<@com.value blockItem.Parameter/><#if blockItem.TypeOfValue?has_content> (<@com.value blockItem.TypeOfValue/>)</#if><#if blockItem.Value?has_content>: <@com.value blockItem.Value/></#if>.
+				
+					<#if blockItem.StDev?has_content>
+						[sd=<@com.value blockItem.StDev/>]
+					</#if>
+
+					<#if blockItem.Temp?has_content>
+						at <@com.value blockItem.Temp/>
+					</#if>
+
+					<#if blockItem.TypeOfKineticsAndMethodOfCalculation?has_content>
+						(
+						<@com.value blockItem.TypeOfKineticsAndMethodOfCalculation/>
+						<#if blockItem.KineticParameters?has_content>
+							, kinetic parameters: <@com.value blockItem.KineticParameters/>
+						</#if>
+						)
+					</#if>
+				</#if>
+
+			</para>
+		</#list>
+
+	</#compress>
+</#macro>
+
 <#--Methods-->
 <#macro fateMethod study>
 	<#compress>
 
 		<#--General-->
 		<#if study.MaterialsAndMethods.hasElement("TestType") && study.MaterialsAndMethods.TestType?has_content>
-			<para><emphasis role='bold'>Test type:</emphasis><@com.picklist study.MaterialsAndMethods.TestType/></para>
+			<para><emphasis role='bold'>Test type: </emphasis><@com.picklist study.MaterialsAndMethods.TestType/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("TypeOfMeasurement") && study.MaterialsAndMethods.TypeOfMeasurement?has_content>
-			<para><emphasis role='bold'>Type of measurement:</emphasis><@com.value study.MaterialsAndMethods.TypeOfMeasurement/></para>
+			<para><emphasis role='bold'>Type of measurement: </emphasis><@com.value study.MaterialsAndMethods.TypeOfMeasurement/></para>
 		</#if>
 
 		<#if study.MaterialsAndMethods.hasElement("TypeOfStudy") && study.MaterialsAndMethods.TypeOfStudy?has_content>
@@ -2958,7 +3090,7 @@
 			<para><emphasis role='bold'>Media: </emphasis><@com.value study.MaterialsAndMethods.Media/></para>
 		</#if>
 
-	<#--Study Design-->
+		<#--Study Design-->
 		<#if study.MaterialsAndMethods.hasElement("StudyDesign") && study.MaterialsAndMethods.StudyDesign?has_content>
 			<para><emphasis role='bold'>Study design:</emphasis></para>
 
@@ -2975,7 +3107,16 @@
 			<#elseif study.documentSubType=="MonitoringData">
 				<@methods_studyDesign_monitoring study/>
 			</#if>
+		<#elseif study.documentSubType=="FieldStudies"><#-- path is not harmonised under Study design like for other cases (might change in future) -->
+			<#if study.MaterialsAndMethods.TestMaterials.SoilProperties?has_content || study.MaterialsAndMethods.TestMaterials.DetailsOnSoilCharacteristics?has_content>
+			<para><emphasis role='bold'>Soil properties:</emphasis></para>
+			<@soilTypeList study.MaterialsAndMethods.TestMaterials.SoilProperties/>
+			<para role="indent">Details: <@com.value study.MaterialsAndMethods.TestMaterials.DetailsOnSoilCharacteristics/></para>
 		</#if>
+
+		</#if>
+
+
 
 	</#compress>
 </#macro>
@@ -3004,13 +3145,17 @@
 
 		<#if stdes.OxygenConditions?has_content>
 			<para>Oxygen conditions:</para>
-			<para role="indent"><@com.picklist stdes.OxygenConditions/></para>
+			<para role="indent"><@com.value stdes.OxygenConditions/></para>
 		</#if>
 
-		<#if stdes.SoilClassification?has_content || stdes.SoilProperties?has_content ||  stdes.DetailsOnSoilCharacteristics?has_content>
-			<para>Soil: <@com.picklist stdes.SoilClassification/></para>
+		<#if stdes.ContinuousDarkness>
+			<para>Continuous darkness: <@com.value stdes.ContinuousDarkness/></para>
+		</#if>
+
+		<#if stdes.SoilClassification?has_content || stdes.SoilProperties?has_content || stdes.DetailsOnSoilCharacteristics?has_content>
+			<para>Soil: <@com.value stdes.SoilClassification/></para>
 			<@soilTypeList stdes.SoilProperties/>
-			<para role="indent">Details:<@com.text stdes.DetailsOnSoilCharacteristics/></para>
+			<para role="indent">Details:<@com.value stdes.DetailsOnSoilCharacteristics/></para>
 		</#if>
 
 		<#if stdes.DurationOfTestContactTime?has_content>
@@ -3024,18 +3169,18 @@
 		</#if>
 
 		<#if stdes.ParameterFollowed?has_content>
-			<para>Parameter followed for biodegradation estimation: <@com.picklistMultiple stdes.ParameterFollowed/></para>
+			<para>Parameter followed for biodegradation estimation: <@com.value stdes.ParameterFollowed/></para>
 		</#if>
 
 		<#if stdes.DetailsOnAnalyticalMethods?has_content>
 			<para>Details on analytical methods:</para>
-			<para role="indent"><@com.text stdes.DetailsOnAnalyticalMethods/></para>
+			<para role="indent"><@com.value stdes.DetailsOnAnalyticalMethods/></para>
 		</#if>
 
 		<#if stdes.ExperimentalConditions?has_content || stdes.DetailsOnExperimentalConditions?has_content>
 			<para>Experimental conditions:</para>
 			<para role="indent"><@experimentalConditionsList stdes.ExperimentalConditions/></para>
-			<para role="indent">Details: <@com.text stdes.DetailsOnExperimentalConditions/></para>
+			<para role="indent">Details: <@com.value stdes.DetailsOnExperimentalConditions/></para>
 		</#if>
 
 	</#compress>
@@ -3280,6 +3425,10 @@
 		<#if stdes.OxygenConditions?has_content>
 			<para>Oxygen conditions:</para>
 			<para role="indent"><@com.picklist stdes.OxygenConditions/></para>
+		</#if>
+
+		<#if stdes.ContinuousDarkness>
+			<para>Continuous darkness: <@com.value stdes.ContinuousDarkness/></para>
 		</#if>
 
 		<#if stdes.InoculumOrTestSystem?has_content || stdes.DetailsOnInoculum>
@@ -4157,7 +4306,7 @@
 					<td>
 						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 						<#if substance?has_content>
-							<@com.text substance.ChemicalName/>
+							<@com.text substance.ReferenceSubstanceName/>
 						</#if>
 						<#if item.ParentMetabolite?has_content>
 							(<@com.picklist item.ParentMetabolite/>)
@@ -4381,5 +4530,111 @@
 			</tbody>
 		</table>
 
+	</#compress>
+</#macro>
+
+<#-- transformationProductsSummaryTable generates an HTML table from the transformation products block of some 
+	summaries e.g. biodegradation in soil, field studies, and biodegradation in water and sediment.
+
+	The columns are transformation product, compartment (if it exists), kinetic formation fraction, maximum occurrence, and linked studies. 
+	If the compartment column exists, the table has five columns, and if not, it has four columns.
+
+	If more than one summary is passed to the macro, all transformation products from all summaries are put together into 
+	the same table. If summaries with compartment and without are put together, "soil" is automatically taken for the compartment of
+	biodegradation in soil and field studies.
+
+	Inputs:
+	- summaryList: single summary or list of summary documents with transformation products blocks
+-->
+<#macro transformationProductsSummaryTable summaryList>
+	<#compress>
+
+	<#-- transform to sequence if it's not -->
+	<#if !summaryList?is_sequence>
+		<#local summaryList=[summaryList]/>
+	</#if>
+
+	<#-- NOTE: a hash could be created to be able to sort results -->
+
+	<#-- make a condition to check if the trProducts block exists and add the compartment column (only in biodegradation in water) -->
+	<#local compartmentExists=false/>
+	<#local trProductsExist=false/>
+	<#list summaryList as summary>
+		<#if summary.hasElement('InformationOnTransformationProducts.InformationOnTransformationProducts')>
+			<#local trProductsExist=true/>
+			<#list summary.InformationOnTransformationProducts.InformationOnTransformationProducts as block>
+				<#if block.hasElement("Compartment")>
+					<#local compartmentExists=true/>
+					<#break>
+				</#if>
+			</#list>
+		</#if>
+	</#list>
+
+	<#if trProductsExist>
+		<#-- make table header -->
+		<table border="1">
+
+			<#if compartmentExists>
+				<col width="25%" />
+				<col width="20%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="25%" />
+			<#else>
+				<col width="30%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="40%" />
+			</#if>
+			
+
+			<thead align="center" valign="middle">
+			<tr>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Transformation product</emphasis></th>
+				<#if compartmentExists><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Compartment</emphasis></th></#if>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Kinetic formation fraction</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Maximum occurrence</emphasis></th>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Linked studies</emphasis></th>
+			</tr>
+
+			</thead>
+			<tbody valign="middle">
+
+			<#-- populate table -->
+			<#list summaryList as summary>
+				<#list summary.InformationOnTransformationProducts.InformationOnTransformationProducts as item>
+					<tr>
+						<td>
+							<#local substance=iuclid.getDocumentForKey(item.IdentityOfTheTransformationProduct)/>
+							<#if substance?has_content>
+								<@com.text substance.ReferenceSubstanceName/>
+							</#if>
+						</td>
+						<#if compartmentExists>
+							<td>
+								<#if item.hasElement("Compartment")>
+									<@com.value item.Compartment/>
+								<#else>
+									soil
+								</#if>
+							</td>
+						</#if>
+						<td>
+							<@com.value item.KineticFormationFraction/>
+						</td>
+						<td>
+							<@com.value item.MaximumOccurrence/>
+						</td>
+						<td>
+							${studyandsummaryCom.getSummaryLinks(item, ['LinkToRelevantStudyRecord'])}
+						</td>
+					</tr>
+				</#list>
+			</#list>
+			</tbody>
+		</table>
+	</#if>
+	
 	</#compress>
 </#macro>
