@@ -1751,6 +1751,12 @@
 						<#if blockItem.Conc?has_content>
 							Conc: <@com.quantity blockItem.Conc/>.
 						</#if>
+						<#if pppRelevant??><#-- added for april release-->
+							Surface active: <@com.value blockItem.SurfaceActive/>. 
+							<#if blockItem.CriticalMicelleConcentrationCMC?has_content>
+								Critical micelle concentration (CMC): <@com.value blockItem.CriticalMicelleConcentrationCMC/>.
+							</#if>
+						</#if>
 						<#if blockItem.RemarksOnResults?has_content>
 							(<@com.picklist blockItem.RemarksOnResults/>)
 						</#if>
@@ -1846,9 +1852,23 @@
 						<#if blockItem.No?has_content>
 							<@com.picklist blockItem.No/>
 						</#if>
+
 						<#if blockItem.ReferenceSubstance?has_content>
 							<#local referenceSubs = iuclid.getDocumentForKey(blockItem.ReferenceSubstance)/>
 							<@com.text referenceSubs.ReferenceSubstanceName/>.
+						</#if>
+
+						<#if blockItem.hasElement("ParentCompoundS") && blockItem.ParentCompoundS?has_content>
+							<#local parents= []/>
+							<#list blockItem.ParentCompoundS as parentLink>
+								<#local comp = iuclid.getDocumentForKey(parentLink) />
+								<#local parent><@com.value comp.ReferenceSubstanceName/></#local>
+								<#local parents = parents + [parent]/>
+							</#list>
+							(parent: ${parents?join("; ")})
+						</#if>
+						<#if blockItem.hasElement("MaximumOccurrence") && blockItem.MaximumOccurrence?has_content>
+							Maximum ocurrence: <@com.value blockItem.MaximumOccurrence/>
 						</#if>
 					</para>
 				</#if>
@@ -1958,7 +1978,51 @@
 </#macro>
 
 <#--3. Macro for Spectra - it's a flexible record and not an endpoint summary. Has a totally different layout than appendixE-->
-<#macro opticalStudies subject>
+<#macro results_analyticalInformation study>
+	<#compress>
+		<para><emphasis role="bold">Methods and results of analysis</emphasis></para>
+
+		<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDetermination?has_content>
+			<para><emphasis role="underline">Analytical determination:</emphasis></para>
+			<@analyticalDeterminationList study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDetermination/>
+		</#if>
+		<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.OpticalActivity?has_content>
+			<para><emphasis role="underline">Optical activity:</emphasis></para>
+			<para role="indent"><@com.picklist study.AnalyticalInformation.MethodsAndResultsOfAnalysis.OpticalActivity/></para>
+		</#if>
+		<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDeterminationForNanoforms?has_content>
+			<para><emphasis role="underline">Analytical determination for nanoforms:</emphasis></para>
+			<@analyticalDeterminationForNanoformsList study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDeterminationForNanoforms/>
+		</#if>
+		<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks?has_content>
+			<para><emphasis role="underline">Remarks:</emphasis></para>
+			<para role="indent"><@com.text study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks/></para>
+		</#if>
+
+		<#--Related compositions-->
+		<#if study.AnalyticalInformation.RelatedCompositions.RelatedCompositions?has_content>
+			<para><emphasis role="bold">Related compositions:</emphasis></para>
+			<#list study.AnalyticalInformation.RelatedCompositions.RelatedCompositions as compLink>
+				<#local comp=iuclid.getDocumentForKey(compLink)/>
+				<para role="indent">
+					<#if comp.GeneralInformation.Name?has_content>
+						<@com.text comp.GeneralInformation.Name/>
+					<#else>
+						<@com.text comp.name/>
+					</#if>
+				</para>
+			</#list>
+		</#if>
+
+		<#--Discussion-->
+		<#if study.AnalyticalInformation.AdditionalInformation.Discussion?has_content>
+			<para><emphasis role="bold">Additional information:</emphasis></para>
+			<para role="indent"><@com.richText study.AnalyticalInformation.AdditionalInformation.Discussion/></para>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro opticalStudies subject><#-- DEPRECATED -->
 	<#compress>
 
 		<#local studyList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_RECORD", "AnalyticalInformation") />
@@ -2013,47 +2077,7 @@
 				</#if>
 
 				<sect4 xml:id="${study.documentKey.uuid!}" label="/${study_index+1}"><title  role="HEAD-5" >${study.name}</title>
-
-					<para><emphasis role="bold">Methods and results of analysis</emphasis></para>
-
-					<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDetermination?has_content>
-						<para><emphasis role="underline">Analytical determination:</emphasis></para>
-						<@analyticalDeterminationList study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDetermination/>
-					</#if>
-					<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.OpticalActivity?has_content>
-						<para><emphasis role="underline">Optical activity:</emphasis></para>
-						<para role="indent"><@com.picklist study.AnalyticalInformation.MethodsAndResultsOfAnalysis.OpticalActivity/></para>
-					</#if>
-					<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDeterminationForNanoforms?has_content>
-						<para><emphasis role="underline">Analytical determination for nanoforms:</emphasis></para>
-						<@analyticalDeterminationForNanoformsList study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDeterminationForNanoforms/>
-					</#if>
-					<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks?has_content>
-						<para><emphasis role="underline">Remarks:</emphasis></para>
-						<para role="indent"><@com.text study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks/></para>
-					</#if>
-
-					<#--Related compositions-->
-					<#if study.AnalyticalInformation.RelatedCompositions.RelatedCompositions?has_content>
-						<para><emphasis role="bold">Related compositions:</emphasis></para>
-						<#list study.AnalyticalInformation.RelatedCompositions.RelatedCompositions as compLink>
-							<#local comp=iuclid.getDocumentForKey(compLink)/>
-							<para role="indent">
-								<#if comp.GeneralInformation.Name?has_content>
-									<@com.text comp.GeneralInformation.Name/>
-								<#else>
-									<@com.text comp.name/>
-								</#if>
-							</para>
-						</#list>
-					</#if>
-
-					<#--Discussion-->
-					<#if study.AnalyticalInformation.AdditionalInformation.Discussion?has_content>
-						<para><emphasis role="bold">Additional information:</emphasis></para>
-						<para role="indent"><@com.richText study.AnalyticalInformation.AdditionalInformation.Discussion/></para>
-					</#if>
-
+					<@results_analyticalInformation study/>
 				</sect4>
 
 				<@com.emptyLine/>
