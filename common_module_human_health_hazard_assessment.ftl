@@ -17,7 +17,7 @@
 		
         <#assign printSummaryName = summaryList?size gt 1 />
         <#list summaryList as summary>
-            <@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+            <@studyandsummaryCom.endpointSummary summary "" "ExposureRelatedObservationsHumans" printSummaryName/>
         </#list>
 	</#if>
 </#compress>
@@ -850,74 +850,27 @@
 <#compress>
 
 	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "AcuteToxicity") />
-
 	<#if summaryList?has_content>
-	<#assign printSummaryName = summaryList?size gt 1 />
-			
 	<#list summaryList as summary>
+	<#assign printSummaryName = summaryList?size gt 1 />
 	
 		<#if summary.KeyInformation.KeyInformation?has_content>
-			<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
-		</#if>
-		<@com.emptyLine/>
-	
+			<@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis>
+		</#if>	
+
 		<#if printSummaryName>
-			<para><emphasis role="bold"><@com.text summary.name/></emphasis></para>
+			<emphasis role="bold"><@com.text summary.name/></emphasis>
 		</#if>
 
-		<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
-	   
-		<#if 
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion?has_content ||
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content ||
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content ||
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion?has_content ||
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content ||
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content ||
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion?has_content ||
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content ||
-		summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content
-		>
+		<@studyandsummaryCom.summaryKeyInformation summary/>
 
-		<@com.emptyLine/>
-		<para><emphasis role="bold">Value used for CSA:</emphasis></para>
-		<para>Acute oral toxicity: 
-			<para><@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion/></para>
-			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit?has_content>
-				(<@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelUnit/>) 
-			</#if>
-			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue?has_content>
-				<@com.range summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute.EndpointConclusion.EffectLevelValue/>
-			</#if>
-		</para>
+		<!-- get CSA values for each route -->
+		<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute" "" />
+		<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute" ""/>
+		<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute" ""/>
 
-		<para>Acute dermal toxicity: 
-			<para><@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion/></para>
-			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit?has_content>
-				(<@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelUnit/>)
-			</#if>
-			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue?has_content>
-				<@com.range summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute.EndpointConclusion.EffectLevelValue/>
-			</#if>
-		</para>
-
-		<para>Acute inhalation toxicity: 
-			<para><@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion/></para>
-			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit?has_content>
-				(<@com.value summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelUnit/>) 
-			</#if>
-			<#if summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue?has_content>
-				<@com.range summary.KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute.EndpointConclusion.EffectLevelValue/>
-			</#if>
-		</para>
-		</#if>
-		
-		<para><@studyandsummaryCom.relevantStudies summary "placeholder"/></para>
-		
-		<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>
-
+		<@studyandsummaryCom.summaryAdditionalInformation summary/>
 		<@justification summary "JustifClassifAcuteTox"/>
-
 	</#list>	
 	
 		<!-- relevant to CSR only -->
@@ -1473,7 +1426,7 @@
 
 	<#if summaryList?has_content>
 	<#assign printSummaryName = summaryList?size gt 1 />
-	
+
 		<#list summaryList as summary>
 			
 			<#if summary.KeyInformation.KeyInformation?has_content>
@@ -1486,19 +1439,10 @@
 			</#if>
 
 			<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.RespiratoryIrritation.EndpointConclusion?has_content>
-			<@com.emptyLine/>
-			<para><emphasis role="bold">Value used for CSA:</emphasis></para>
-			
-			Skin irritation / corrosion: <@com.value summary.KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion.EndpointConclusion/>
-			Eye irritation: <@com.value summary.KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation.EndpointConclusion/>
-			Respiratory irritation: <@com.value summary.KeyValueForChemicalSafetyAssessment.RespiratoryIrritation.EndpointConclusion/>
-			</#if>
-			
-			<para><@studyandsummaryCom.relevantStudies summary "SkinIrritationCorrosion"/></para>	
+
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion" />
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation" />
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.RespiratoryIrritation" />
 			
 			<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>
 
@@ -2211,26 +2155,13 @@
 	<#assign printSummaryName = summaryList?size gt 1 />
             
 		<#list summaryList as summary>
-			<#if summary.KeyInformation.KeyInformation?has_content>
-			<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
-			</#if>
-			<@com.emptyLine/>
 			
-			<#if summary?has_content>
-				<emphasis role="HEAD-WoutNo">Skin sensitisation</emphasis>
-				<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
-				<#else/>
-				<para>no information available on skin sensitisation</para>
+			<#if summary.KeyInformation.KeyInformation?has_content>
+			<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>	
+				<@studyandsummaryCom.summaryKeyInformation summary/>
 			</#if>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.SkinSensitisation.EndpointConclusion?has_content>
-				<@com.emptyLine/>
-				<emphasis role="bold">Value used for CSA:</emphasis> <@com.value summary.KeyValueForChemicalSafetyAssessment.SkinSensitisation.EndpointConclusion/>
-			</#if>
-			
-			<para><@studyandsummaryCom.relevantStudies summary "SkinSensitisation"/></para>	
-			
-			<@studyandsummaryCom.summaryAdditionalInformation summary/>
+			<emphasis role="HEAD-WoutNo">Skin sensitisation</emphasis><@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.SkinSensitisation" />
 
 		</#list>
 	
@@ -2264,19 +2195,8 @@
 					<@com.emptyLine/>
 					<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 				</#if>
-				<@com.emptyLine/>
 				
-				<#if summary?has_content>
-					<emphasis role="HEAD-WoutNo">Respiratory sensitisation</emphasis>
-					<#else/>
-					<para>no information available on respiratory sensitisation</para>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.EndpointConclusion?has_content>
-					<@com.emptyLine/>
-					<emphasis role="bold">Value used for CSA:</emphasis> <@com.value summary.KeyValueForChemicalSafetyAssessment.RespiratorySensitisation.EndpointConclusion/>
-				</#if>
-
-				<para><@studyandsummaryCom.relevantStudies summary "RespiratorySensitisation"/></para>
+				<emphasis role="HEAD-WoutNo">Respiratory sensitisation</emphasis><@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.RespiratorySensitisation" />
 				
 				<@studyandsummaryCom.summaryAdditionalInformation summary/>
 
@@ -2722,153 +2642,34 @@
 		<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 		</#if>
 		<@com.emptyLine/>
-		
-			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Species?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Organ?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Species?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Organ?has_content>
-							
+						
 				<@studyandsummaryCom.summaryKeyInformation summary/>
 			
+				
 				<#if summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType?has_content>
 				<@com.emptyLine/>
-				Toxic effect type (for all routes and effects): <@com.value summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType/>
+				Toxic effect type (for all routes and effects): <#assign toxicEffect><@com.value summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType/></#assign>${toxicEffect}
 				</#if>
-			
-				<#assign valueForCsaTextOralSystemic>
-				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelUnit/>:
-				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.EffectLevelValue/>;
-				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content>	
-					<@com.text summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek/> hours/week;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Species?has_content>	
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Species/>)
-				</#if>
-			   <?linebreak?>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Organ?has_content>
-					Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm.Organ/>
-				</#if>
-				</#assign>
-			</#if>							
-			<@endpointSummary summary valueForCsaTextOralSystemic "valueForCsaTextOralSystemic" "ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm" printSummaryName/>
 
+				<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm" "EndpointConclusionSystemicEffectsOralRoute" />
+				
+				<#assign summaryPathToRepeated = {
+				'oralShortTerm' : {'subPath' : "KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm", 'endpointPath' : "KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute", 'endpointNodePath' : "EndpointConclusionSystemicEffectsOralRoute"},
+				'oralSubChron' : {'subPath' : "KeyValueForChemicalSafetyAssessment.SubChronicToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsSubchronic", 'endpointPath' : "KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute", 'endpointNodePath' : "EndpointConclusionSystemicEffectsOralRoute"},
+				'oralChron' : {'subPath' : "KeyValueForChemicalSafetyAssessment.ChronicToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsChronic", 'endpointPath' : "KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute", 'endpointNodePath' : "EndpointConclusionSystemicEffectsOralRoute"},
+				'dermalShortTerm' : {'subPath' : "KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm", 'endpointPath' : "KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsDermal", 'endpointNodePath' : "EndpointConclusionSystemicEffectsDermal"}
+				
+				}/>
 
-			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsInhalation?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Species?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Organ?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek>
-			
-			<#assign valueForCsaTextInhalationSystemic>
-				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsInhalation/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelUnit/>:
-				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.EffectLevelValue/>;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content>	
-					<@com.text summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek/> hours/week;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Species?has_content>	
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Species/>)
-				</#if>
-				<?linebreak?>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Organ?has_content>
-				Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.Organ/>
-				</#if>
-			</#assign>
-			</#if>			
-			<@endpointSummary summary valueForCsaTextInhalationSystemic "valueForCsaTextInhalationSystemic" "ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm" printSummaryName/>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.Species?has_content>
-			
-			<#assign valueForCsaTextInhalationLocal>                    
-				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EndpointConclusion/></para>					
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelUnit/>:
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.EffectLevelValue/>;
-					
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.TestType?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.TestType/>;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.Species?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects.Species/>)
-					
-				</#if>
-			</#assign>
-			</#if>
-			
-			<@endpointSummary summary valueForCsaTextInhalationLocal "valueForCsaTextInhalationLocal" "RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityInhalationLocalEffects" printSummaryName/>
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsDermal?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.Species?has_content>
-			
-			<#assign valueForCsaTextDermalSystemic>
-			   <para><@com.value summary.KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsDermal/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelUnit/>:
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.EffectLevelValue/>;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek?has_content>	
-					<@com.text summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityInhalationSystemicEffectsShortTerm.ExperimentalExposureTimePerWeek/> hours/week;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.Species?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm.Species/>)
-				</#if>
-			</#assign>
-			</#if>
-			
-			<@endpointSummary summary valueForCsaTextDermalSystemic "valueForCsaTextDermalSystemic" "ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm" printSummaryName/>				
-			
-			<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.TestType?has_content || 
-			summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.Species?has_content>
-			
-			<#assign valueForCsaTextDermalLocal>
-				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EndpointConclusion/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelUnit/>:
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.EffectLevelValue/>;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.TestType?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.TestType/>;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.Species?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects.Species/>)					
-				</#if>
-			</#assign>
-			
-			</#if>
-			
-			<@endpointSummary summary valueForCsaTextDermalLocal "valueForCsaTextDermalLocal" "RepeatedDoseToxicityLocalEffects.RepeatedDoseToxicityDermalLocalEffects" printSummaryName/>
-			
+				<#list summaryPathToRepeated?keys as prop>
+					<#local sectionReference = summaryPathToRepeated[prop].subPath />
+					<#local sectionReferenceSub = summaryPathToRepeated[prop].endpointPath />
+
+					<#local completeCSAvalueToxPath = ("summary." + "${sectionReference}")?eval />
+					<#local completeCSAvalueToxPathExtension = ("summary" + ".${sectionReferenceSub}")?eval />
+						<@studyandsummaryCom.listOfCSAvalues summary completeCSAvalueToxPath completeCSAvalueToxPathExtension />
+				</#list>
+
 			<para>
 				<@justification summary "Remarks"/>					
 			</para>			
@@ -3191,14 +2992,7 @@
 				<para><@com.richText summary.KeyInformation.KeyInformation/></para>
 			</#if>
 			
-			<para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.EndpointConclusion?has_content>
-				<@com.emptyLine/>
-				<emphasis role="bold">Value used for CSA (genetic toxicity in vitro):</emphasis> Genetic toxicity: <@com.value summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro.EndpointConclusion/>
-				</#if>
-			</para>
-
-			<para><@studyandsummaryCom.relevantStudies summary "GeneticToxicityInVitro"/></para>	
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro" />	
 		
 			<!-- in vivo -->				
 			
@@ -3206,21 +3000,14 @@
 			<para><emphasis role="underline">The following information is taken into account for any hazard / risk assessment (genetic toxicity in vivo):</emphasis></para>
 				<para><@com.richText summary.KeyInformation.KeyInformation/></para>
 			</#if>
-			
-			<para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.EndpointConclusion?has_content>
-				<@com.emptyLine/>
-				<emphasis role="bold">Value used for CSA (genetic toxicity in vivo):</emphasis> Genetic toxicity: <@com.value summary.KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo.EndpointConclusion/>
-				</#if>
-			</para>
+						
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo" />
 		
 			<#if summary.JustificationForClassificationOrNonClassification.Remarks?has_content>
 			<@com.emptyLine/>
 				<para><emphasis role="bold"><emphasis role="underline">Justification for classification or non classification</emphasis></emphasis></para>
 				<para><@com.richText summary.JustificationForClassificationOrNonClassification.Remarks/></para>
 			</#if>
-			
-			<para><@studyandsummaryCom.relevantStudies summary "GeneticToxicityInVivo"/></para>	
 			
 			<#if summary.Discussion.Discussion?has_content>
 				<para>
@@ -3660,101 +3447,20 @@
 			<#if summary.KeyInformation.KeyInformation?has_content>
 			<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 			</#if>
-			<@com.emptyLine/>
+			
+			<#if printSummaryName>
+			<emphasis role="bold"><@com.text summary.name/></emphasis>
+			</#if>
 		
 			<para>
 				<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>			
 			
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelUnit?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelValue?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.TestType?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Species?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Organ?has_content>
-				
-				<#assign valueForCsaTextOralCacrinogenicity>
-					<para><@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EndpointConclusion/></para>
-					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelUnit/>) 
-					</#if>
-						
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.EffectLevelValue/>
-					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.TestType/>);
-					</#if>
-					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Species?has_content>
-						 (<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Species/>)							
-					</#if>
-					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Organ?has_content> 
-					Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute.Organ/>
-					</#if>
-					
-				</#assign>
-				</#if>		
-				<@endpointSummary summary valueForCsaTextOralCacrinogenicity "valueForCsaTextOralCacrinogenicity" "CarcinogenicityViaOralRoute" printSummaryName/>
+				<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute" />
 								
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelUnit?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelValue?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.TestType?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Species?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Organ?has_content>
-				
-				<#assign valueForCsaTextDermalCarcinogenicity>
-					 <para><@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EndpointConclusion/></para>
-					 
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelUnit/>)
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelValue?has_content>
-						<@com.range summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.EffectLevelValue/>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.TestType/>);
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Species?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Species/>)					
-					</#if>					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Organ?has_content>
-					Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute.Organ/>
-					</#if>
-				</#assign>
-				</#if>		
-				<@endpointSummary summary valueForCsaTextDermalCarcinogenicity "valueForCsaTextDermalCarcinogenicity" "CarcinogenicityViaDermalRoute" false/>
+				<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute" />
 	
-				<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelUnit?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelValue?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.TestType?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Species?has_content ||
-				summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Organ?has_content>
-				
-				<#assign valueForCsaTextInhalationCarcinogenicity>
-					<para><@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EndpointConclusion/></para>
-					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelUnit/>) 
-					</#if>
-					
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.EffectLevelValue/>
-					
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.TestType/>);
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Species?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Species/>)							
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Organ?has_content>
-					Target organs: <@com.value summary.KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute.Organ/>
-					</#if>
-				</#assign>
-				</#if>					
-				<@endpointSummary summary valueForCsaTextInhalationCarcinogenicity "valueForCsaTextInhalationCarcinogenicity" "CarcinogenicityViaInhalationRoute" false/>
+				<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute" />	
 
 			<@justification summary "JustifClassifCarc"/>
 				
@@ -5191,90 +4897,11 @@
 			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.Species?has_content
-			>
-
-				<#assign valueForCsaTextOralNeurotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion?has_content>
-						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EndpointConclusion/></para>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelUnit/>) 
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelValue?has_content>
-						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.EffectLevelValue/>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.TestType/>);
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.Species?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute.Species/>)					
-					</#if>
-				</#assign>
-			</#if>
-			<@endpointSummary summary valueForCsaTextOralNeurotoxicity "valueForCsaTextOralNeurotoxicity" "EffectOnNeurotoxicityViaOralRoute" printSummaryName/>
-
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.Species?has_content
-			>
-
-				<#assign valueForCsaTextDermalNeurotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion?has_content>
-						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EndpointConclusion/></para>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelUnit/>) 
-					</#if>	
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelValue?has_content>
-						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.EffectLevelValue/>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.TestType/>);
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.Species?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute.Species/>)						
-					</#if>
-				</#assign>
-			</#if>			
-			<@endpointSummary summary valueForCsaTextDermalNeurotoxicity "valueForCsaTextDermalNeurotoxicity" "EffectOnNeurotoxicityViaDermalRoute" false/>
-
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.Species?has_content
-			>
-
-				<#assign valueForCsaTextInhalationNeurotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion?has_content>
-						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EndpointConclusion/></para>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelUnit/>) 
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelValue?has_content>
-						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.EffectLevelValue/>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.TestType/>);
-					</#if>	
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.Species?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute.Species/>)
-						
-					</#if>
-				</#assign>
-			</#if>						
-			<@endpointSummary summary valueForCsaTextInhalationNeurotoxicity "valueForCsaTextInhalationNeurotoxicity" "EffectOnNeurotoxicityViaInhalationRoute" false/>
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute" />
+				
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute" />
+			
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute" />	
 
 			<@justification summary "JustifClassifRepTox"/>
 
@@ -5316,84 +4943,11 @@
 			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 			
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.Species?has_content>
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute" />	
 			
-				<#assign valueForCsaTextOralImmunotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion?has_content>
-						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EndpointConclusion/></para>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelUnit/>) 
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelValue?has_content>
-						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.EffectLevelValue/>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.TestType/>);
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.Species?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute.Species/>)
-					
-					</#if>
-				</#assign>
-			</#if>			
-			<@endpointSummary summary valueForCsaTextOralImmunotoxicity "valueForCsaTextOralImmunotoxicity" "EffectOnImmunotoxicityViaOralRoute" false/>
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute" />		
 
-
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.Species?has_content>
-				<#assign valueForCsaTextDermalImmunotoxicity>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion?has_content>
-						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EndpointConclusion/></para>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelUnit/>) 
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelValue?has_content>
-						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.EffectLevelValue/>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.TestType/>)
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.Species?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute.Species/>)
-						
-					</#if>
-				</#assign>
-			</#if>				
-			<@endpointSummary summary valueForCsaTextDermalImmunotoxicity "valueForCsaTextDermalImmunotoxicity" "EffectOnImmunotoxicityViaDermalRoute" false/>
-
-			<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.Species?has_content>
-				<#assign valueForCsaTextInhalationImmunotoxicity>				
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion?has_content>
-						<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EndpointConclusion/></para>
-					</#if>		
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelUnit/>)
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelValue?has_content>
-						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.EffectLevelValue/>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.TestType?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.TestType/>);
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.Species?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute.Species/>)						
-					</#if>
-				</#assign>
-			</#if>				
-			<@endpointSummary summary valueForCsaTextInhalationImmunotoxicity "valueForCsaTextInhalationImmunotoxicity" "EffectOnImmunotoxicityViaInhalationRoute" false/>
+			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute" />		
 
 			<@justification summary "JustifClassifRepTox"/>
 
@@ -6811,6 +6365,11 @@
 
 
 <#macro endpointSummary summary valueCsa="" valueForCsaText="" path="" printName=false>
+<#assign completeCSAvalueLinkedPath = [] />
+<#if summary.hasElement("LinkToRelevantStudyRecord")>
+<#assign completeCSAvalueLinkedPath = ("summary." + "${path}" + ".LinkToRelevantStudyRecord")?eval />
+</#if>
+
 	<para>
 		<#if printName>
 			<para><emphasis role="bold"><@com.text summary.name/></emphasis></para>
@@ -6826,7 +6385,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- inhalation systemic -->
@@ -6837,7 +6396,7 @@
 				<?linebreak?>
 				${valueCsa}
 			</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 			
 		<!-- inhalation local -->
@@ -6848,7 +6407,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>	
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 
 		<!-- dermal systemic -->
@@ -6859,7 +6418,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>	
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- dermal local -->
@@ -6870,7 +6429,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		<@studyandsummaryCom.summaryAdditionalInformation summary/>
 		</#if>
 		
@@ -6882,7 +6441,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- oral effects on fertility -->
@@ -6893,7 +6452,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- oral effects immunotoxicity -->
@@ -6904,7 +6463,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- oral effects neurotoxicity -->
@@ -6915,7 +6474,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- oral effects developmental -->
@@ -6926,7 +6485,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- dermal effects carcinogenicity -->
@@ -6937,7 +6496,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- dermal effects immunotoxicity -->
@@ -6948,7 +6507,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- dermal effects on fertility -->
@@ -6959,7 +6518,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- dermal effects on developmental toxicity -->
@@ -6970,7 +6529,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- dermal effects on neurotoxicity -->
@@ -6981,7 +6540,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		</#if>
 		
 		<!-- inhalation immunotoxicity -->
@@ -6992,7 +6551,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		<@studyandsummaryCom.summaryAdditionalInformation summary/>
 		</#if>
 		
@@ -7004,7 +6563,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		<@studyandsummaryCom.summaryAdditionalInformation summary/>
 		</#if>
 		
@@ -7016,7 +6575,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		<@summaryAdditionalInformationForHumanHealth summary valueForCsaText/>
 		</#if>
 		
@@ -7028,7 +6587,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		<@summaryAdditionalInformationForHumanHealth summary valueForCsaText/>
 		</#if>
 		
@@ -7040,7 +6599,7 @@
 			<?linebreak?>
 			${valueCsa}
 		</para>
-		<para><@studyandsummaryCom.relevantStudies summary "${path}"/></para>	
+		<para><@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/></para>	
 		<@summaryAdditionalInformationForHumanHealth summary valueForCsaText/>
 		</#if>
 				
@@ -8338,8 +7897,8 @@
 		<#if vitroSys.NegativeControl?has_content>
 			<para>Negative control: <@com.value vitroSys.NegativeControl/></para>
 		</#if>
-		<#if vitroSys.control?has_content>
-			<para>Positive control: <@com.value vitroSys.control/></para>
+		<#if vitroSys.PositiveControl?has_content>
+			<para>Positive control: <@com.value vitroSys.PositiveControl/></para>
 		</#if>
 
 		<#if vitroSys.DetailsOnStudyDesign?has_content>

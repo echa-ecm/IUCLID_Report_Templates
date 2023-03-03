@@ -375,7 +375,7 @@
 		
 	<@assessmentEntitiesList summary />
 
-	<#if !(docSubType=="Explosiveness" || docSubType=="Flammability" || docSubType=="FlashPoint" || docSubType=="OxidisingProperties")>
+	<#if !(docSubType=="Explosiveness" || docSubType=="Flammability" || docSubType=="FlashPoint" || docSubType=="OxidisingProperties" || docSubType=="ExposureRelatedObservationsHumans")>
 		<#if docSubType=="Hydrolysis" || docSubType=="PhototransformationInAir" || docSubType=="PhototransformationInWater" || docSubType=="PhototransformationInSoil" || 
 		docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
 		docSubType=="Biodegradation" || docSubType=="AdsorptionDesorption" || docSubType=="HenrysLawConstant" || docSubType=="TransportAndDistribution" || 
@@ -387,6 +387,70 @@
 	</#if>
 
 	<@summaryAdditionalInformation summary/>
+</#macro>
+
+<#macro toxCSAValues summary printSummaryName pathToCSA="" pathextension="" >
+<#compress>
+<!-- full path to block representing each route -->
+<#local completeCSAvalueToxPath = ("summary." + "${pathToCSA}")?eval />
+
+<!-- get label for name of the route -->
+<@iuclid.label for=completeCSAvalueToxPath var="label"/>
+
+<!-- applicable only for repeated dose (and maybe reprotox) an additional path to get endpoint conclusion info -->
+<#if pathextension?has_content>
+<#local completeCSAvalueToxPathExtension = ("summary" + ".KeyValueForChemicalSafetyAssessment." + "${pathextension}")?eval />
+</#if>
+
+<!-- full path to the relevant linked study record -->
+<#if summary.hasElement("LinkToRelevantStudyRecord")>
+<#local completeCSAvalueLinkedPath = ("summary." + "${pathToCSA}" + ".LinkToRelevantStudyRecord")?eval />
+</#if>
+
+<?linebreak?>
+
+<!-- Get the relevant linked study record -->
+<para><emphasis role="bold">Value used for CSA:</emphasis></para>
+<#if summary.hasElement("LinkToRelevantStudyRecord")>
+	<@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/>
+<#else>
+</#if>
+
+<!-- get toxic effect field; for repeated dose only -->
+<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.ToxicEffectType") && summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType?has_content>
+<@iuclid.label for=summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType var="toxicEffectLabel"/>
+${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType /></#if>
+<para>
+<!-- *temp solution to get the endpoint conclusion for repeated dose toxicity - solution needed for extracting once, the relevant conclusion -->
+<#if completeCSAvalueToxPathExtension?has_content && completeCSAvalueToxPathExtension?node_name=="EndpointConclusionSystemicEffectsOralRoute">
+<@iuclid.label for=completeCSAvalueToxPathExtension var="labelEndpointConclusion"/><para><emphasis role="bold">${labelEndpointConclusion}</emphasis>: <@com.value completeCSAvalueToxPathExtension /></para></#if>
+	<!-- all tox docs except repeated dose and maybe reprotox -->
+	<#if summary.documentSubType!="RepeatedDoseToxicity">
+	<emphasis role="bold">${label}</emphasis>: 
+		<@listOfCSAvalues summary completeCSAvalueToxPath "" />
+	</#if>	
+</para>	
+</#compress>
+</#macro>
+
+<#macro listOfCSAvalues summary completeCSAvalueToxPath completeCSAvalueToxPathExtension>
+
+<@iuclid.label for=completeCSAvalueToxPath var="titleLabel"/>
+<#local parentNode = (completeCSAvalueToxPath)?parent />
+<@iuclid.label for=parentNode var="parentNodeHigh"/>
+
+<#if summary.documentSubType=="RepeatedDoseToxicity">
+<#if completeCSAvalueToxPath?has_content><?linebreak?><emphasis role="bold">${titleLabel} </emphasis></#if>
+<#if parentNode?has_content><?linebreak?><emphasis role="bold">${parentNodeHigh} </emphasis></#if>
+</#if>
+<!-- list and fetch, where node_name corresponds, the CSA values -->
+<#list completeCSAvalueToxPath?children as child>
+	<#if child?has_content>	
+		<#if child?node_name=="EndpointConclusion"><@com.value child /></#if><#if child?node_name=="EffectLevelUnit"> (<@com.value child />: </#if><#if child?node_name=="EffectLevelValue"><@com.value child />)<?linebreak?></#if><#if child?node_name=="ExperimentalExposureTimePerWeek">(<@com.value child />)<?linebreak?></#if>
+		<#if child?node_name=="TestType">(<@com.value child />; </#if><#if child?node_name=="Species">(<@com.value child />)<?linebreak?></#if>
+			<#if child?node_name=="Organ">Target organ: <@com.value child /></#if>
+	</#if>
+</#list>
 </#macro>
 
 <#macro assessmentEntitiesList summary>
@@ -918,7 +982,7 @@
 </#macro>
 
 <#-- Macro to get relevant studies linked to a summary -->
-<#macro relevantStudies summary path>
+<#macro relevantStudies summary pathLinkedStudy>
 
 <#local docDefId = summary.documentType +"."+ summary.documentSubType/>
 
@@ -948,6 +1012,23 @@
 		</#if>
 	
 	<#else>
+
+	<#if summary?has_content>
+			<#-- some summaries do ot have links to studies, the following #if condition takes care of these exceptions -->
+			<#if docDefId=="ENDPOINT_SUMMARY.AcuteToxicity" || docDefId=="ENDPOINT_SUMMARY.IrritationCorrosion" || docDefId=="ENDPOINT_SUMMARY.Sensitisation" ||
+			docDefId=="ENDPOINT_SUMMARY.RepeatedDoseToxicity" || docDefId=="ENDPOINT_SUMMARY.GeneticToxicity" || docDefId=="ENDPOINT_SUMMARY.Carcinogenicity" ||
+			docDefId=="ENDPOINT_SUMMARY.ToxicityToReproduction" || docDefId=="ENDPOINT_SUMMARY.Neurotoxicity" || docDefId=="ENDPOINT_SUMMARY.Immunotoxicity">	
+			<#if summary?has_content>
+				<@com.emptyLine/>
+				<#list pathLinkedStudy as studyReferences>
+					<#if studyReferences?has_content>
+					<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
+						<para>Relevant studies: <@com.text studyLink.name/></para>
+					</#if>
+				</#list>
+			</#if>
+			</#if>
+	</#if>
 
 	
 	<#assign summaryPathToDataMap = {
