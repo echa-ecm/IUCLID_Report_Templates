@@ -280,8 +280,13 @@
 											<#else>
 												<#local propertyName = property/>
 											</#if>
-											<#--  <command linkend="${_subject.documentKey.uuid!}_${summary.documentSubType}">${propertyName!}</command>  -->
-											<ulink url="${docUrl}">${propertyName!}</ulink>
+											<#-- option to cross-reference:  <command linkend="${_subject.documentKey.uuid!}_${summary.documentSubType}">${propertyName!}</command>  -->
+											<#-- print link only for full table (when title is printed) -->
+											<#if printTitle>
+												<ulink url="${docUrl}">${propertyName!}</ulink>
+											<#else>
+												${propertyName!}
+											</#if>
 										<#else>
 											<#if docUrl?has_content>
 												<ulink url="${docUrl}">${property!}</ulink>
