@@ -166,20 +166,36 @@
 			"infoReq" : "Nanomaterial catalytic activity"}
 }/>
 
+<#-- physicalChemicalPropertiesTable generates an HTML table with physicochemical properties of a chemical substance / mixture. 
+	The properties are obtained from two maps:
+		- propertyToDataMap, which contains the main properties
+		- additionalPropertyToDataMap, which contains additional properties
+	These maps have the name of the property as key and values are hashmaps containing:
+		- 'subtype'
+		- 'values': list of hashmaps for every value to be printed, with fields:
+			- 'field': path of object to be printed
+			- 'conditions': list of paths to additional objects to be printed (which will be join to the main one by the word 'at'); might not exist
+			- 'preText': text to be printed before the values; might not exist
+			- 'postText': text to be printed after the values; might not exist
+		- 'infoReq': requirement name
+		- 'pppName': name for PPP applications (if different to standard property name)
+	They are parsed using the macro valueForCSA
+
+	If pppRelevant is true and includeMetabolites is true, the macro also includes information for any metabolites associated with the substance as provided by the
+	global varible _metabolites. Also for PPP, a property is printed in the table only if the CSA value exists (otherwise it is ignored)
+
+	Input parameters:
+
+	- _subject: ENTITY object (SUBSTANCE or MIXTURE)
+	- selectedDocSubTypes=[]: list of subtypes of endpoint summaries to include in the table (defaults to empty list, meaning all summaries in the hashMap will be used)
+	- printTitle=true: whether to print a title for the table (defaults to true)
+	- includeMetabolites=true: whether to include metabolites in the table (defaults to true), provided the global variable _metabolites has content
+-->
 <#macro physicalChemicalPropertiesTable _subject selectedDocSubTypes=[] printTitle=true includeMetabolites=true>
 	<#compress>
 
 	<#-- Main properties table -->
-	<#-- for PPP, define list of properties to be used and their order -->
-	<#--  <#if pppRelevant??>
-		<#local properties = ["Melting / freezing point", "Boiling point", "Vapour pressure", "Volatility", "Physical state", 
-			"Water solubility", "Solubility in organic solvents / fat solubility", "Partition coefficient n-octanol/water (log value)", "Dissociation constant",
-			"Flammability","Autoflammability / self-ignition temperature", "Flash point", "Explosive properties", "Surface tension", "Oxidising properties",
-			"pH", "Viscosity", "Relative density", ]
-		/>
-	<#else>  -->
 	<#local properties = propertyToDataMap?keys />
-	<#--  </#if>  -->
 
 	<#if properties?has_content>
 
@@ -267,6 +283,7 @@
 						<#local usespan = true />
 
 						<#list summaryList as summary>
+							
 							<#-- if PPP and no CSA value, skip -->
 							<#if !pppRelevant?? || propertyData?keys?seq_contains("values")>
 								<tr>
@@ -528,7 +545,18 @@
 	<#return false>
 </#function>
 
+<#--  valueForCSA prints the value for CSA extracted from a summary following the structure of the hashMap in propertyData
 
+	First, the macro tries to find the CSA block in the summary using the function "studyandsummaryCom.getObjectFromPathOptions()" 
+	with a list of possible paths where the CSA block might be located. 
+
+	Then, if the "values" property of the "propertyData" object is not empty and the CSA block has been found, the macro loops through each item in the "values" list.
+
+	Inputs:
+	- summary: ENDPOINT_SUMMARY object
+	- propertyData: hashMap mapping the type of summary and the property to be printed
+
+#-->
 <#macro valueForCSA summary propertyData>
 	<#compress>
 
