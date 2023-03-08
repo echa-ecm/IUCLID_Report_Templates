@@ -196,12 +196,11 @@
 	<#compress>
 
 		<#-- Get doc-->
-		<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", 'AnalyticalProfileOfBatches') />
+		<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", 'AnalyticalProfileOfBatches') />
 
 		<#-- Iterate-->
 		<#if summaryList?has_content>
 			<@com.emptyLine/>
-<#--			<para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>-->
 
 			<#local printSummaryName = summaryList?size gt 1 />
 
@@ -219,13 +218,12 @@
 				<#if summary.DescriptionOfKeyInformation?has_content>
 					<para><emphasis role="bold">Key information: </emphasis></para>
 
-
 					<#if summary.DescriptionOfKeyInformation.DescriptionOfKeyInformation?has_content>
-						<para role="indent"><@com.richText summary.DescriptionOfKeyInformation.DescriptionOfKeyInformation/></para>
+						<para style="background-color:#f7f7f7" role="indent"><@com.richText summary.DescriptionOfKeyInformation.DescriptionOfKeyInformation/></para>
 					</#if>
 
 					<#if summary.DescriptionOfKeyInformation.DescriptionOfKeyInformationConfidential?has_content>
-						<para role="indent"><emphasis role="underline">Confidential</emphasis><@com.richText summary.DescriptionOfKeyInformation.DescriptionOfKeyInformationConfidential/></para>
+						<para style="background-color:#f7f7f7" role="indent"><emphasis role="underline">Confidential</emphasis><@com.richText summary.DescriptionOfKeyInformation.DescriptionOfKeyInformationConfidential/></para>
 					</#if>
 
 				</#if>
@@ -241,34 +239,47 @@
 
 						<#if (summary.AdministrativeDataSummary.BatchAnalysis?size>1)>
 							<para><emphasis role="underline">Batch analysis #${batchAn_index+1}</emphasis></para>
+							<@com.emptyLine/>
 						</#if>
 
-						<#if batchAn.SubstanceCompositionAnalysis?has_content>
-							<para role="small"><@batchAnalysisTable batchAn techSpec/></para>
-						<#else>
-							<para>No batch composition has been provided.</para>
+						<#-- site -->
+						<#if batchAn.ManufacturingSite?has_content>
+							<#local site=iuclid.getDocumentForKey(batchAn.ManufacturingSite)/>
+							Manufacturing site: <@printSite site/>
 						</#if>
 
+						<#-- remarks -->
 						<#if batchAn.Remarks?has_content>
 							<para>Remarks:</para>
 							<para role="indent"><@com.text batchAn.Remarks/></para>
 						</#if>
 
-						<#if batchAn.Reference?has_content>
-							<para>Reference:</para>
-							<#list batchAn.Reference as refKey>
-								<#local ref=iuclid.getDocumentForKey(refKey)/>
-								<#local refUrl=iuclid.webUrl.documentView(ref.documentKey) />
-
-								<para role="indent">
-									<ulink url="${refUrl}">
-										<@com.text ref.GeneralInfo.Name/><#if ref.GeneralInfo.LiteratureType?has_content> (<@com.picklist ref.GeneralInfo.LiteratureType/>)</#if>,
-										<@com.text ref.GeneralInfo.Author/>, <@com.number ref.GeneralInfo.ReferenceYear/><#if ref.GeneralInfo.ReportNo?has_content>,<@com.text ref.GeneralInfo.ReportNo/></#if>
-									</ulink>
-								</para>
-							</#list>
-							<para role="indent"><@com.text batchAn.Remarks/></para>
+						<#-- cross-referenced study -->
+						<#if batchAn.CrossReference?has_content>
+							<para>Linked studies:</para>
+							<@printCrossReferences batchAn.CrossReference/>
 						</#if>
+						
+						<#-- reference -->
+						<#if batchAn.Reference?has_content>
+							<para>References:</para>
+							<@printReferences batchAn.Reference/>
+						</#if>
+
+						<#-- batch table -->
+						<#if batchAn.SubstanceCompositionAnalysis?has_content>
+							<para>Batch analysis:</para>
+							<para role="small"><@batchAnalysisTable batchAn techSpec/></para>
+						<#else>
+							<para>No batch composition has been provided.</para>
+						</#if>
+
+						<#-- QC table -->
+						<#if batchAn.QualityControl?has_content>
+							<para>Quality control:</para>
+							<para role="small"><@batchQC batchAn.QualityControl site techSpec/></para>
+						</#if>
+
 						<@com.emptyLine/>
 
 					</#list>
@@ -277,12 +288,11 @@
 				<#--Discussion-->
 				<#if summary.Discussion.Discussion?has_content>
 					<para><emphasis role="bold">Discussion:</emphasis></para>
-					<para role="indent"><@com.richText summary.Discussion.Discussion/></para>
+					<para style="background-color:#f7f7f7" role="indent"><@com.richText summary.Discussion.Discussion/></para>
 				</#if>
 
 			</#list>
 		</#if>
-
 
 	</#compress>
 </#macro>
@@ -430,6 +440,146 @@
 	</#compress>
 </#macro>
 
+<#macro batchQC qcBlock site techSpec>
+	<#compress>
+
+		<#list qcBlock as qc>
+
+			<#local units><@com.value qc.Units/></#local>
+
+			<#if ((qcBlock?size)>1)><para><emphasis role="underline">QC #${qc?index+1}:</emphasis></para></#if>
+
+			<table border="1">
+				<title></title>
+
+				<col width="5%" />
+				<col width="20%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
+
+
+				<tbody>
+
+					<tr valign="middle">
+						<td colspan="6"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Site of manufacture</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?>
+							<#if site?has_content><@printSite site/></#if>
+						</td>
+					</tr>
+
+					<tr valign="middle">
+						<td colspan="6"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Number of batches / lots analysed</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?><@com.value qc.NumberOfBatches/></td>
+					</tr>
+
+					<tr valign="middle">
+						<td colspan="6"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Date batches/lots produced</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?><@com.value qc.Date/></td>
+					</tr>
+
+					<tr align="center" valign="middle">
+						<td><?dbfo bgcolor="#FBDDA6" ?></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?></td>
+						<td colspan="4"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Content <#if units?has_content>(${units})</#if></emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?></td>
+					</tr>
+
+					<tr align="center" valign="middle">
+						<td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">No.</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Component</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Minimum observed</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Mean value</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Standard deviation</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Maximum observed</emphasis></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Proposed specification</emphasis></td>
+					</tr>
+
+					<#-- list over components 
+						NOTE: it could be sorted to take A.s. first
+					-->
+					<#list qc.QCData as qcData>
+						<tr>
+							<td>${qcData?index+1}</td>
+							<td>
+								<#if qcData.Component?has_content>
+									<#local comp=iuclid.getDocumentForKey(qcData.Component)/>
+									<#local compUrl=iuclid.webUrl.documentView(comp.documentKey) />
+									<ulink url="${compUrl}"><@com.value comp.ReferenceSubstanceName/></ulink>
+								</#if>
+							</td>
+							<td><@com.value qcData.Min/></td>
+							<td><@com.value qcData.Avg/></td>
+							<td><@com.value qcData.SD/></td>
+							<td><@com.value qcData.Max/></td>
+							<td><?dbfo bgcolor="#FBDDA6" ?>
+								<#if techSpec?has_content && qcData.Component?has_content>
+									<#local conc = getComponentFromSubstanceComposition(techSpec, comp)/>
+									${conc}
+								</#if>
+							</td>
+						</tr>
+					</#list>
+					
+				</tbody>
+			</table>
+
+			<@com.emptyLine/>
+
+		</#list>
+
+	</#compress>
+</#macro>
+
+<#macro printCrossReferences crefs role='indent'>
+	<#compress>
+		<#list crefs as cref>
+			<para role="${role}">
+				<#if cref.ReasonPurposeForCrossReference?has_content>
+					<@com.value cref.ReasonPurposeForCrossReference/>:
+				</#if>
+
+				<#if cref.RelatedInformation?has_content>
+					<#local study=iuclid.getDocumentForKey(cref.RelatedInformation)/>
+					<#local studyUrl=iuclid.webUrl.documentView(study.documentKey) />
+					<ulink url="${studyUrl}"><@com.text study.name/></ulink>
+				</#if>
+
+				<#if cref.Remarks?has_content>
+					- <@com.value cref.Remarks/>
+				</#if>
+			</para>
+		</#list>
+	</#compress>
+</#macro>
+
+<#macro printReferences refs role='indent'>
+	<#compress>
+		<#list refs as refKey>
+			
+			<#local ref=iuclid.getDocumentForKey(refKey)/>
+			<#local refUrl=iuclid.webUrl.documentView(ref.documentKey) />
+
+			<para role="${role}">
+				<ulink url="${refUrl}">
+					<@com.text ref.GeneralInfo.Name/><#if ref.GeneralInfo.LiteratureType?has_content> (<@com.picklist ref.GeneralInfo.LiteratureType/>)</#if>,
+					<@com.text ref.GeneralInfo.Author/>, <@com.number ref.GeneralInfo.ReferenceYear/><#if ref.GeneralInfo.ReportNo?has_content>,<@com.text ref.GeneralInfo.ReportNo/></#if>
+				</ulink>
+			</para>
+
+		</#list>
+	</#compress>
+</#macro>
+
+<#macro printSite site>
+	<#compress>
+		<#local siteUrl=iuclid.webUrl.documentView(site.documentKey) />
+		<ulink url="${siteUrl}"><@com.value site.GeneralInfo.SiteName/></ulink>
+	</#compress>
+</#macro>
+
 <#function getAllBatchCompositions subject>
 
 	<#local allBatchCompositions=[]/>
@@ -457,6 +607,30 @@
 	</#list>
 
 	<#return batchCompositions/>
+</#function>
+
+<#function getComponentFromSubstanceComposition substanceComp component>
+	
+	<#local compTypes=["Constituents", "Impurities", "Additives"]/>
+
+	<#list compTypes as compType>
+		<#local substanceCompPath='substanceComp.'+compType+'.'+compType>
+		<#local substanceCompPath=substanceCompPath?eval/>
+		<#if substanceCompPath?has_content>
+			<#list substanceCompPath as comp>
+				<#if comp.ReferenceSubstance?has_content>
+					<#local refSub=iuclid.getDocumentForKey(comp.ReferenceSubstance)/>
+					<#local refSubUuid=refSub.documentKey.uuid/>
+					<#if refSubUuid==component.documentKey.uuid>
+						<#local conc><@com.value comp.ProportionTypical/></#local>
+						<#return conc/>
+					</#if>
+				</#if>
+			</#list>
+		</#if>
+	</#list>
+
+	<#return ''/>
 </#function>
 
 
