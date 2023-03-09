@@ -881,7 +881,6 @@ ${textValue}
 	</#compress>
 </#macro>
 
-
 <#--Macro to interatively print all children fields of an element-->
 <#macro children path exclude=[] titleEmphasis=false role1="" role2="indent">
 	<#compress>
