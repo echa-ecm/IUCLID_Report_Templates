@@ -120,23 +120,24 @@
 <#macro explosivesSummary _subject>
 <#compress>
 
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "Explosiveness") />
-				
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "Explosiveness") />				
 	<#if summaryList?has_content>
 		<@com.emptyLine/><para><emphasis role="HEAD-WoutNo">Discussion</emphasis></para>
 		<#assign printSummaryName = summaryList?size gt 1 />
+
 		<#list summaryList as summary>
-			
-			<#if summary.KeyInformation.KeyInformation?has_content>
-				<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
+			<#if summary?has_content>			
+				<#if summary.KeyInformation.KeyInformation?has_content>
+					<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
+				</#if>			
+				<#local valueForCsaText>
+				<@iuclid.label for=summary.ResultsAndDiscussion var="keyvalue"/>
+					<#if summary.ResultsAndDiscussion.Explosiveness?has_content>
+					${keyvalue}: <@com.picklist summary.ResultsAndDiscussion.Explosiveness/>
+					</#if>
+				</#local>		
+					<@studyandsummaryCom.endpointSummary summary valueForCsaText "Explosiveness" printSummaryName/>
 			</#if>
-			
-			<#assign valueForCsaText>
-				<#if summary.ResultsAndDiscussion.Explosiveness?has_content>
-				Explosiveness: <@com.picklist summary.ResultsAndDiscussion.Explosiveness/>
-				</#if>
-			</#assign>		
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
 		</#list>
 	</#if>
 	
@@ -309,25 +310,17 @@
 	<#if summaryList?has_content>
 		<@com.emptyLine/><para><emphasis role="HEAD-WoutNo">Discussion</emphasis></para>		
 		<#list summaryList as summary>
-			
-			<#if summary.KeyInformation.KeyInformation?has_content>
-				<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
-			</#if>
-			
-			<#assign printSummaryName = summaryList?size gt 1 />
-			<para><emphasis role="bold"><@com.text summary.name/></emphasis></para>
-				
-				<emphasis role="bold">Key value for chemical safety assessment:</emphasis>
-					
-				Flammability: <@com.picklist summary.KeyValueChemicalAssessment.Flammability/>
-			
+			<#if summary?has_content>
 				<#if summary.KeyInformation.KeyInformation?has_content>
-					<para><@com.richText summary.KeyInformation.KeyInformation/></para>
+					<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 				</#if>
-								
-				<#if summary.Discussion.Discussion?has_content>
-					<para><emphasis role="bold">Additional information:</emphasis> <@com.richText summary.Discussion.Discussion/></para>
-				</#if>					
+				<#assign printSummaryName = summaryList?size gt 1 />				
+				<#local valueForCsaText>
+				<@iuclid.label for=summary.KeyValueChemicalAssessment var="keyvalue"/>
+					${keyvalue}: <@com.picklist summary.KeyValueChemicalAssessment.Flammability/>
+				</#local>		
+					<@studyandsummaryCom.endpointSummary summary valueForCsaText "Flammability" printSummaryName/>
+			</#if>			
 		</#list>
 	</#if>		
 	
@@ -441,8 +434,7 @@
 <#macro flashPointSummary _subject>
 <#compress>
 
-	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "FlashPoint") />
-				
+	<#assign summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", "FlashPoint") />				
 	
 	<#if summaryList?has_content>
 		<@com.emptyLine/><para><emphasis role="HEAD-WoutNo">Discussion</emphasis></para>
@@ -452,8 +444,16 @@
 			<#if summary.KeyInformation.KeyInformation?has_content>
 			<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 			</#if>
+
+			<#local valueForCsaText>
+			<@iuclid.label for=summary.KeyValueForChemicalSafetyAssessment.FlashPoint var="flashpoint"/>
+				<#if summary.KeyValueForChemicalSafetyAssessment.FlashPoint?has_content>
+				${flashpoint}: <@com.value summary.KeyValueForChemicalSafetyAssessment.FlashPoint/> 
+				<@com.value summary.KeyValueForChemicalSafetyAssessment.AtThePressureOf />
+				</#if>
+			</#local>
 			
-			<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaText "FlashPoint" printSummaryName/>
 		</#list>
 	</#if>	
 
@@ -640,12 +640,13 @@
 			</#if>
 			
 			<#assign valueForCsaText>
+			<@iuclid.label for=summary.KeyValueChemicalAssessment.Oxidising var="oxidisingProperties"/>			
 				<#if summary.KeyValueChemicalAssessment.Oxidising?has_content>			
-				Oxidising properties: <@com.picklist summary.KeyValueChemicalAssessment.Oxidising/>
+				${oxidisingProperties}: <@com.picklist summary.KeyValueChemicalAssessment.Oxidising/>
 				</#if>
 			</#assign>		
 			
-			<@studyandsummaryCom.endpointSummary summary valueForCsaText printSummaryName/>
+			<@studyandsummaryCom.endpointSummary summary valueForCsaText "OxidisingProperties" printSummaryName/>
 			
 		</#list>
 	</#if>
@@ -1750,6 +1751,12 @@
 						<#if blockItem.Conc?has_content>
 							Conc: <@com.quantity blockItem.Conc/>.
 						</#if>
+						<#if pppRelevant??><#-- added for april release-->
+							Surface active: <@com.value blockItem.SurfaceActive/>. 
+							<#if blockItem.CriticalMicelleConcentrationCMC?has_content>
+								Critical micelle concentration (CMC): <@com.value blockItem.CriticalMicelleConcentrationCMC/>.
+							</#if>
+						</#if>
 						<#if blockItem.RemarksOnResults?has_content>
 							(<@com.picklist blockItem.RemarksOnResults/>)
 						</#if>
@@ -1845,9 +1852,23 @@
 						<#if blockItem.No?has_content>
 							<@com.picklist blockItem.No/>
 						</#if>
+
 						<#if blockItem.ReferenceSubstance?has_content>
 							<#local referenceSubs = iuclid.getDocumentForKey(blockItem.ReferenceSubstance)/>
 							<@com.text referenceSubs.ReferenceSubstanceName/>.
+						</#if>
+
+						<#if blockItem.hasElement("ParentCompoundS") && blockItem.ParentCompoundS?has_content>
+							<#local parents= []/>
+							<#list blockItem.ParentCompoundS as parentLink>
+								<#local comp = iuclid.getDocumentForKey(parentLink) />
+								<#local parent><@com.value comp.ReferenceSubstanceName/></#local>
+								<#local parents = parents + [parent]/>
+							</#list>
+							(parent: ${parents?join("; ")})
+						</#if>
+						<#if blockItem.hasElement("MaximumOccurrence") && blockItem.MaximumOccurrence?has_content>
+							Maximum ocurrence: <@com.value blockItem.MaximumOccurrence/>
 						</#if>
 					</para>
 				</#if>
@@ -1957,7 +1978,51 @@
 </#macro>
 
 <#--3. Macro for Spectra - it's a flexible record and not an endpoint summary. Has a totally different layout than appendixE-->
-<#macro opticalStudies subject>
+<#macro results_analyticalInformation study>
+	<#compress>
+		<para><emphasis role="bold">Methods and results of analysis</emphasis></para>
+
+		<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDetermination?has_content>
+			<para><emphasis role="underline">Analytical determination:</emphasis></para>
+			<@analyticalDeterminationList study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDetermination/>
+		</#if>
+		<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.OpticalActivity?has_content>
+			<para><emphasis role="underline">Optical activity:</emphasis></para>
+			<para role="indent"><@com.picklist study.AnalyticalInformation.MethodsAndResultsOfAnalysis.OpticalActivity/></para>
+		</#if>
+		<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDeterminationForNanoforms?has_content>
+			<para><emphasis role="underline">Analytical determination for nanoforms:</emphasis></para>
+			<@analyticalDeterminationForNanoformsList study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDeterminationForNanoforms/>
+		</#if>
+		<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks?has_content>
+			<para><emphasis role="underline">Remarks:</emphasis></para>
+			<para role="indent"><@com.text study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks/></para>
+		</#if>
+
+		<#--Related compositions-->
+		<#if study.AnalyticalInformation.RelatedCompositions.RelatedCompositions?has_content>
+			<para><emphasis role="bold">Related compositions:</emphasis></para>
+			<#list study.AnalyticalInformation.RelatedCompositions.RelatedCompositions as compLink>
+				<#local comp=iuclid.getDocumentForKey(compLink)/>
+				<para role="indent">
+					<#if comp.GeneralInformation.Name?has_content>
+						<@com.text comp.GeneralInformation.Name/>
+					<#else>
+						<@com.text comp.name/>
+					</#if>
+				</para>
+			</#list>
+		</#if>
+
+		<#--Discussion-->
+		<#if study.AnalyticalInformation.AdditionalInformation.Discussion?has_content>
+			<para><emphasis role="bold">Additional information:</emphasis></para>
+			<para role="indent"><@com.richText study.AnalyticalInformation.AdditionalInformation.Discussion/></para>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro opticalStudies subject><#-- DEPRECATED -->
 	<#compress>
 
 		<#local studyList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_RECORD", "AnalyticalInformation") />
@@ -2012,47 +2077,7 @@
 				</#if>
 
 				<sect4 xml:id="${study.documentKey.uuid!}" label="/${study_index+1}"><title  role="HEAD-5" >${study.name}</title>
-
-					<para><emphasis role="bold">Methods and results of analysis</emphasis></para>
-
-					<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDetermination?has_content>
-						<para><emphasis role="underline">Analytical determination:</emphasis></para>
-						<@analyticalDeterminationList study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDetermination/>
-					</#if>
-					<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.OpticalActivity?has_content>
-						<para><emphasis role="underline">Optical activity:</emphasis></para>
-						<para role="indent"><@com.picklist study.AnalyticalInformation.MethodsAndResultsOfAnalysis.OpticalActivity/></para>
-					</#if>
-					<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDeterminationForNanoforms?has_content>
-						<para><emphasis role="underline">Analytical determination for nanoforms:</emphasis></para>
-						<@analyticalDeterminationForNanoformsList study.AnalyticalInformation.MethodsAndResultsOfAnalysis.AnalyticalDeterminationForNanoforms/>
-					</#if>
-					<#if study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks?has_content>
-						<para><emphasis role="underline">Remarks:</emphasis></para>
-						<para role="indent"><@com.text study.AnalyticalInformation.MethodsAndResultsOfAnalysis.Remarks/></para>
-					</#if>
-
-					<#--Related compositions-->
-					<#if study.AnalyticalInformation.RelatedCompositions.RelatedCompositions?has_content>
-						<para><emphasis role="bold">Related compositions:</emphasis></para>
-						<#list study.AnalyticalInformation.RelatedCompositions.RelatedCompositions as compLink>
-							<#local comp=iuclid.getDocumentForKey(compLink)/>
-							<para role="indent">
-								<#if comp.GeneralInformation.Name?has_content>
-									<@com.text comp.GeneralInformation.Name/>
-								<#else>
-									<@com.text comp.name/>
-								</#if>
-							</para>
-						</#list>
-					</#if>
-
-					<#--Discussion-->
-					<#if study.AnalyticalInformation.AdditionalInformation.Discussion?has_content>
-						<para><emphasis role="bold">Additional information:</emphasis></para>
-						<para role="indent"><@com.richText study.AnalyticalInformation.AdditionalInformation.Discussion/></para>
-					</#if>
-
+					<@results_analyticalInformation study/>
 				</sect4>
 
 				<@com.emptyLine/>
