@@ -200,7 +200,6 @@
 
 		<#-- Iterate-->
 		<#if summaryList?has_content>
-			<@com.emptyLine/>
 
 			<#local printSummaryName = summaryList?size gt 1 />
 
@@ -584,7 +583,7 @@
 
 	<#local allBatchCompositions=[]/>
 
-	<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "ENDPOINT_SUMMARY", 'AnalyticalProfileOfBatches') />
+	<#local summaryList = iuclid.getSectionDocumentsForParentKey(subject.documentKey, "FLEXIBLE_SUMMARY", 'AnalyticalProfileOfBatches') />
 
 	<#list summaryList as summary>
 		<#local summaryBatchCompositions = getBatchCompositions(summary)/>
