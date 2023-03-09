@@ -879,10 +879,9 @@
 			</#if>
 
 			<#if metabComp.MetabolitesInfo.MetabolitesInfoOverview?has_content>
-				<para>
-					<emphasis role="underline">Metabolites information overview: </emphasis>
-					<@com.richText metabComp.MetabolitesInfo.MetabolitesInfoOverview/>
-				</para>
+				<para><emphasis role="underline">Metabolites information overview: </emphasis></para>
+				<para style="background-color:#f7f7f7"><@com.richText metabComp.MetabolitesInfo.MetabolitesInfoOverview/></para>
+				
 			</#if>
 
 			<#if metabComp.ListMetabolites?has_content>
