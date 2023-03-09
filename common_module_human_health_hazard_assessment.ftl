@@ -10366,3 +10366,555 @@
 		</#if>
 	</#compress>
 </#macro>
+
+<#--  Function to create a hashmap with CSA info from tox summaries  -->
+<#function getToxCSA summary csaPath=['KeyValueForChemicalSafetyAssessment'] excludePath=['']>
+	<#--  Initialize sequence that will hold CSA values  -->
+	<#local summaryCSAseq = []/>
+	
+	<#if summary?node_name!="Phototoxicity">
+		<#--  Consider different path names, if not provided  -->
+		<#local csaBlock = keyAppendixE.getObjectFromPathOptions(summary, csaPath)/>
+
+		<#--  Iterate over CSA block children  -->
+		<#if csaBlock?has_content>
+			<#list csaBlock?children as block>
+				
+				<#--  Take the label of the field as block name  -->
+				<@iuclid.label for=block var="blockName"/>
+
+				<#--  Process if path is not to be excluded  -->
+				<#if !excludePath?seq_contains(block?node_name)>
+					<#if block?node_type=="block">
+
+						<#--  ACUTE TOXICITY - IRRITATION/CORROTION - SENSITISATION - GENOTOXICITY - CARCINOGENICITY - NEUROTOXICITY  -->
+						<#if summary?node_name=="AcuteToxicity" || summary?node_name=="IrritationCorrosion" || summary?node_name=="Sensitisation" || summary?node_name=="GeneticToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity">
+							<#--  Links  -->
+							<#local links = ''/>
+							<#local links = keyAppendixE.getSummaryLinks(block, ["LinkToRelevantStudyRecord"])/>
+
+							<#--  Endpoint conclusion  -->
+							<#local endpointConclusion>
+								<#compress>
+									<#if block.hasElement("EndpointConclusion")>
+										<@com.value block.EndpointConclusion/>
+									</#if>
+								</#compress>
+							</#local>
+
+							<#--  Dose descriptor  -->
+							<#local doseDescriptor>
+								<#compress>
+									<#if block.hasElement("EffectLevelUnit")>
+										<@com.value block.EffectLevelUnit/>
+									</#if>
+								</#compress>
+							</#local>
+
+							<#--  Effect level  -->
+							<#local effLev>
+								<#compress>
+									<#if block.hasElement("EffectLevelValue")>
+										<@com.value block.EffectLevelValue/>
+									</#if>
+								</#compress>
+							</#local>
+
+							<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity">
+								<#--  Study duration  -->
+								<#local duration>
+									<#compress>
+										<#if block.hasElement("TestType")>
+											<@com.value block.TestType/>
+										</#if>
+									</#compress>
+								</#local>
+
+								<#--  Species  -->
+								<#local species>
+									<#compress>
+										<#if block.hasElement("Species")>
+											<@com.value valuePath=block.Species printDescription=false/>
+										</#if>
+									</#compress>
+								</#local>
+
+								<#if summary?node_name=="Carcinogenicity">
+									<#--  System  -->
+									<#local system>
+										<#compress>
+											<#if block.hasElement("System")>
+												<@com.value block.System/>
+											</#if>
+										</#compress>
+									</#local>
+
+									<#--  Organ  -->
+									<#local organ>
+										<#compress>
+											<#if block.hasElement("Organ")>
+												<@com.value block.Organ/>
+											</#if>
+										</#compress>
+									</#local>
+								</#if>
+							</#if>
+
+							<#--  Append variables to final sequence  -->
+							<#if summary?node_name=="Carcinogenicity">
+								<#if endpointConclusion?has_content || doseDescriptor?has_content || effLev?has_content || links?has_content || duration?has_content || species?has_content || system?has_content || organ?has_content>
+									<#local summaryCSAseq = summaryCSAseq + [{'endpoint': blockName, "links" : links!, "descriptor" : doseDescriptor!, "effect" : effLev!, "conclusion" : endpointConclusion!, "duration" : duration!, "species":species!, "system":system!, "organ":organ!}]/>
+								</#if>
+							<#elseif summary?node_name=="Neurotoxicity">
+								<#if endpointConclusion?has_content || doseDescriptor?has_content || effLev?has_content || links?has_content || duration?has_content || species?has_content>
+									<#local summaryCSAseq = summaryCSAseq + [{'endpoint': blockName, "links" : links!, "descriptor" : doseDescriptor!, "effect" : effLev!, "conclusion" : endpointConclusion!, "duration" : duration!, "species":species!}]/>
+								</#if>
+							<#else>
+								<#if endpointConclusion?has_content || doseDescriptor?has_content || effLev?has_content || links?has_content>
+									<#local summaryCSAseq = summaryCSAseq + [{'endpoint': blockName!, "links" : links!, "descriptor":doseDescriptor!, "effect":effLev!, "conclusion":endpointConclusion!}]/>
+								</#if>
+							</#if>
+
+						<#--  REPEATED DOSE TOXICITY  -->
+						<#elseif summary?node_name=="RepeatedDoseToxicity">
+							<#list block?children as subBlock>
+								<#--  Take the label of the field as block name  -->
+								<@iuclid.label for=subBlock var="subBlockName"/>
+
+								<#if subBlock?node_type=="block">
+									<#--  Links  -->
+									<#local links = ''/>
+									<#local links = keyAppendixE.getSummaryLinks(subBlock, ["LinkToRelevantStudyRecord"])/>
+
+									<#--  Dose descriptor  -->
+									<#local doseDescriptor>
+										<#compress>
+											<#if subBlock.hasElement("EffectLevelUnit")>
+												<@com.value subBlock.EffectLevelUnit/>
+											</#if>
+										</#compress>
+									</#local>
+
+									<#--  Effect level  -->
+									<#local effLev>
+										<#compress>
+											<#if subBlock.hasElement("EffectLevelValue")>
+												<@com.value subBlock.EffectLevelValue/>
+											</#if>
+										</#compress>
+									</#local>
+
+									<#--  Experimental exposure time per week (hours/week)  -->
+									<#local exposure>
+										<#compress>
+											<#if subBlock.hasElement("ExperimentalExposureTimePerWeek")>
+												<@com.value subBlock.ExperimentalExposureTimePerWeek/>
+											</#if>
+										</#compress>
+									</#local>
+
+									<#--  Species  -->
+									<#local species>
+										<#compress>
+											<#if subBlock.hasElement("Species")>
+												<@com.value valuePath=subBlock.Species printDescription=false/>
+											</#if>
+										</#compress>
+									</#local>
+
+									<#--  System  -->
+									<#local system>
+										<#compress>
+											<#if subBlock.hasElement("System")>
+												<@com.value subBlock.System/>
+											</#if>
+										</#compress>
+									</#local>
+
+									<#--  Organ  -->
+									<#local organ>
+										<#compress>
+											<#if subBlock.hasElement("Organ")>
+												<@com.value subBlock.Organ/>
+											</#if>
+										</#compress>
+									</#local>
+
+									<#--  Append variables to final sequence  -->
+									<#if doseDescriptor?has_content || effLev?has_content || links?has_content || exposure?has_content || species?has_content || system?has_content || organ?has_content>
+										<#local summaryCSAseq = summaryCSAseq + [{'endpoint': blockName + " - " + subBlockName!, "links" : links!, "descriptor" : doseDescriptor!, "effect" : effLev!, "exposure" : exposure!, "species":species!, "system":system!, "organ":organ!}]/>
+									</#if>
+								</#if>
+							</#list>
+
+						<#--  REPRODUCTIVE TOXICITY  -->
+						<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
+							<#list block?children as subBlock>
+								<#--  Take the label of the field as subBlockName  -->
+								<@iuclid.label for=subBlock var="subBlockName"/>
+
+								<#--  Links  -->
+								<#if subBlock?node_type=="block">
+									<#if subBlock?node_name=="LinkToRelevantStudyRecords">
+										<#local links = keyAppendixE.getSummaryLinks(subBlock, ["StudyNameType"])/>
+									</#if>
+								</#if>
+
+								<#if !subBlock?node_name?matches("LinkToRelevantStudyRecords") && !subBlock?node_name?matches("DescriptionOfKeyInformation") && !subBlock?node_name?matches("AdditionalInformation")>
+									<#if subBlock?node_name?matches("EffectOnDevelopmentalToxicityViaOralRoute") || subBlock?node_name?matches("EffectOnDevelopmentalToxViaOralRouteMaternal")>
+										<#if subBlock?node_name?matches("EffectOnDevelopmentalToxicityViaOralRoute")>
+											<#local devToxPath = subBlock.DevTox />
+										<#elseif subBlock?node_name?matches("EffectOnDevelopmentalToxViaOralRouteMaternal")>
+											<#local devToxPath = subBlock.MaternalToxicity />
+										</#if>
+										
+										<#list devToxPath as devTox>
+											<#--  Endpoint conclusion  -->
+											<#local endpointConclusion>
+												<#compress>
+													<#if devTox.hasElement("EndpointConclusion")>
+														<@com.value devTox.EndpointConclusion/>
+													</#if>
+												</#compress>
+											</#local>
+
+											<#--  Basis For Effect Level  -->
+											<#local basisEffLev>
+												<#compress>
+													<#if devTox.hasElement("BasisForEffectLevel")>
+														<@com.value devTox.BasisForEffectLevel/>
+													</#if>
+												</#compress>
+											</#local>
+
+											<#--  Dose descriptor  -->
+											<#local doseDescriptor>
+												<#compress>
+													<#if devTox.hasElement("EffectLevelUnit")>
+														<@com.value devTox.EffectLevelUnit/>
+													</#if>
+												</#compress>
+											</#local>
+
+											<#--  Effect level  -->
+											<#local effLev>
+												<#compress>
+													<#if devTox.hasElement("EffectLevelValue")>
+														<@com.value devTox.EffectLevelValue/>
+													</#if>
+												</#compress>
+											</#local>
+
+											<#--  Study duration  -->
+											<#local duration>
+												<#compress>
+													<#if devTox.hasElement("TestType")>
+														<@com.value devTox.TestType/>
+													</#if>
+												</#compress>
+											</#local>
+
+											<#--  Experimental exposure time per week (hours/week)  -->
+											<#local exposure>
+												<#compress>
+													<#if devTox.hasElement("ExperimentalExposureTimePerWeek")>
+														<@com.value devTox.ExperimentalExposureTimePerWeek/>
+													</#if>
+												</#compress>
+											</#local>
+
+											<#--  Species  -->
+											<#local species>
+												<#compress>
+													<#if devTox.hasElement("Species")>
+														<@com.value valuePath=devTox.Species printDescription=false/>
+													</#if>
+												</#compress>
+											</#local>
+
+											<#--  Append variables to final sequence  -->
+											<#if links?has_content || endpointConclusion?has_content || basisEffLev?has_content || doseDescriptor?has_content || effLev?has_content || duration?has_content || exposure?has_content || species?has_content>
+												<#local summaryCSAseq = summaryCSAseq + [{'endpoint': subBlockName!, "links" : links!, "conclusion" : endpointConclusion!, "basis" : basisEffLev!, "descriptor" : doseDescriptor!, "effect" : effLev!, "duration" : duration!, "exposure" : exposure!, "species":species!}]/>
+											</#if>
+										</#list>
+									<#else>
+										<#--  Endpoint conclusion  -->
+										<#local endpointConclusion>
+											<#compress>
+												<#if subBlock.hasElement("EndpointConclusion")>
+													<@com.value subBlock.EndpointConclusion/>
+												</#if>
+											</#compress>
+										</#local>
+
+										<#--  Basis For Effect Level  -->
+										<#local basisEffLev>
+											<#compress>
+												<#if subBlock.hasElement("BasisForEffectLevel")>
+													<@com.value subBlock.BasisForEffectLevel/>
+												</#if>
+											</#compress>
+										</#local>
+
+										<#--  Dose descriptor  -->
+										<#local doseDescriptor>
+											<#compress>
+												<#if subBlock.hasElement("EffectLevelUnit")>
+													<@com.value subBlock.EffectLevelUnit/>
+												</#if>
+											</#compress>
+										</#local>
+
+										<#--  Effect level  -->
+										<#local effLev>
+											<#compress>
+												<#if subBlock.hasElement("EffectLevelValue")>
+													<@com.value subBlock.EffectLevelValue/>
+												</#if>
+											</#compress>
+										</#local>
+
+										<#--  Study duration  -->
+										<#local duration>
+											<#compress>
+												<#if subBlock.hasElement("TestType")>
+													<@com.value subBlock.TestType/>
+												</#if>
+											</#compress>
+										</#local>
+
+										<#--  Experimental exposure time per week (hours/week)  -->
+										<#local exposure>
+											<#compress>
+												<#if subBlock.hasElement("ExperimentalExposureTimePerWeek")>
+													<@com.value subBlock.ExperimentalExposureTimePerWeek/>
+												</#if>
+											</#compress>
+										</#local>
+
+										<#--  Species  -->
+										<#local species>
+											<#compress>
+												<#if subBlock.hasElement("Species")>
+													<@com.value valuePath=subBlock.Species printDescription=false/>
+												</#if>
+											</#compress>
+										</#local>
+
+										<#--  Append variables to final sequence  -->
+										<#if links?has_content || endpointConclusion?has_content || basisEffLev?has_content || doseDescriptor?has_content || effLev?has_content || duration?has_content || exposure?has_content || species?has_content>
+											<#local summaryCSAseq = summaryCSAseq + [{'endpoint': subBlockName!, "links" : links!, "conclusion" : endpointConclusion!, "basis" : basisEffLev!, "descriptor" : doseDescriptor!, "effect" : effLev!, "duration" : duration!, "exposure" : exposure!, "species":species!}]/>
+										</#if>
+									</#if>
+								</#if>
+							</#list>
+						</#if>
+					</#if>
+				</#if>
+			</#list>
+		</#if>
+	<#else>
+		<#--  PHOTOTOXICITY  -->
+		<#--  Iterate over csaPath  -->
+		<#list csaPath as path>
+			<#--  Get block at path (CSA or Links)  -->
+			<#local block = keyAppendixE.getObjectFromPathOptions(summary, [path])/>
+
+			<#if block?has_content>
+				<#list block?children as child>
+					<#if child?node_name=="Link">
+						<#--  Get links to relevant study record(s)  -->
+						<#local links = keyAppendixE.getSummaryLinks(block, [child?node_name])/>
+
+					<#elseif child?node_name=="Results">
+						<#--  Take the label of the field as childName  -->
+						<@iuclid.label for=child var="childName"/>
+
+						<#--  Get phototoxicity  -->
+						<#local endpointConclusion>
+							<#compress>
+								<@com.value block.Results/>
+							</#compress>
+						</#local>
+					</#if>
+				</#list>
+			</#if>
+		</#list>
+
+		<#--  Append variables to final sequence  -->
+		<#if links?has_content || phototoxicity?has_content>
+			<#local summaryCSAseq = summaryCSAseq + [{'endpoint': childName!, 'conclusion' : endpointConclusion!, "links" : links!}]/>
+		</#if>
+	</#if>
+
+	<#--  Initialize a hash that will hold information from all summaries  -->
+	<#--  <#local endpointsHash = {}/>
+
+	<#list summaryCSAseq as seqEntry>
+		<#if endpointsHash[seqEntry["name"]]??>
+			<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
+			<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
+		<#else>
+			<#local endpointsHash = endpointsHash + {seqEntry["name"]:[seqEntry]}/>
+		</#if>
+	</#list>  -->
+	
+	<#return summaryCSAseq/>
+</#function>
+
+<#--  Macro for the basic summary table of tox CSA  -->
+<#macro toxCSAtable summaryList >
+	<#compress>
+		<#if !summaryList?is_sequence>
+			<#local summaryList=[summaryList]/>
+		</#if>
+
+		<#list summaryList as summary>
+			<#--  Initialize a hash that will hold information from all summaries  -->
+			<#if summary?node_name=="Phototoxicity">
+				<#local endpointsHash = getToxCSA(summary, ['KeyValueCsa', 'LinkToRelevantStudyRecord'])/>
+			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
+				<#local endpointsHash = getToxCSA(summary, ['KeyValueForChemicalSafetyAssessment'], ['ToxicityToReproductionOtherStudies', 'MoAAnalysisHumanRelevanceFramework'])/>
+			<#else>
+				<#local endpointsHash = getToxCSA(summary)/>
+			</#if>
+
+			<#--  Parse the hash and create the table  -->
+			<#if endpointsHash?has_content>
+				<#--  CREATE TABLE  -->
+				<table border="1">
+					<#--  Set columns width  -->
+					<#if summary?node_name=="AcuteToxicity">
+						<col width="24%"/>
+						<col width="14%"/>
+						<col width="28%"/>
+						<col width="34%"/>
+					<#elseif summary?node_name=="RepeatedDoseToxicity">
+						<col width="20%"/>
+						<col width="12%"/>
+						<col width="10%"/>
+						<col width="10%"/>
+						<col width="17%"/>
+						<col width="10%"/>
+						<col width="20%"/>
+					<#elseif summary?node_name=="Carcinogenicity">
+						<col width="14%"/>
+						<col width="12%"/>
+						<col width="12%"/>
+						<col width="11%"/>
+						<col width="11%"/>
+						<col width="13%"/>
+						<col width="10%"/>
+						<col width="17%"/>
+					</#if>
+
+					<#--  Define table header  -->
+					<thead>
+						<tr align="center" valign="middle"><?dbfo bgcolor="#FBDDA6" ?>
+							<th><emphasis role="bold">Endpoint</emphasis></th>
+							
+							<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<th><emphasis role="bold">Dose descriptor, Effect level</emphasis></th>
+							</#if>
+
+							<#if summary?node_name!="RepeatedDoseToxicity">
+								<th><emphasis role="bold">Endpoint Conclusion</emphasis></th>
+							</#if>
+
+							<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<th><emphasis role="bold">Basis For Effect Level</emphasis></th>
+							</#if>
+
+							<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<th><emphasis role="bold">Exposure (hours/week)</emphasis></th>
+							</#if>
+
+							<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<th><emphasis role="bold">Study duration</emphasis></th>
+							</#if>
+
+							<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<th><emphasis role="bold">Species</emphasis></th>
+
+								<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP">
+									<th><emphasis role="bold">System</emphasis></th>
+									<th><emphasis role="bold">Organ</emphasis></th>
+								</#if>
+							</#if>
+
+							<th><emphasis role="bold">Linked studies</emphasis></th>
+						</tr>
+					</thead>
+
+					<#--  Define table body  -->
+					<tbody valign="middle">
+						<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+							<#local fertRowSpan = 0>
+							<#local devToxRowSpan = 0>
+
+							<#local prevEndpoint = ''>
+
+							<#list endpointsHash as item>
+								<#if !item.endpoint?truncate(15)?matches(prevEndpoint?truncate(15))>
+									<#if item.endpoint?starts_with("Effect on fertility")>
+										<#local fertRowSpan++>
+									<#elseif item.endpoint?starts_with("Effect on developmental")>
+										<#local devToxRowSpan++>
+									</#if>
+								</#if>
+
+								<#local prevEndpoint = item.endpoint>
+							</#list>
+						</#if>
+
+
+						<#list endpointsHash as item>
+							<tr>
+								<td>${item.endpoint}</td>
+
+								<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+									<td>${item.descriptor} ${item.effect}</td>
+								</#if>
+
+								<#if summary?node_name!="RepeatedDoseToxicity">
+									<td>${item.conclusion}</td>
+								</#if>
+
+								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+									<td>${item.basis}</td>
+								</#if>
+
+								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+									<td>${item.exposure}</td>
+								</#if>
+
+								<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+									<td>${item.duration}</td>
+								</#if>
+								
+								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+									<td>${item.species}</td>
+
+									<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP">
+										<td>${item.system}</td>
+										<td>${item.organ}</td>
+									</#if>
+								</#if>
+
+								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+									<#if item?index==0>
+										<td rowspan="${fertRowSpan}">${item.links}</td>
+									<#elseif item?index==fertRowSpan>
+										<td rowspan="${devToxRowSpan}">${item.links}</td>
+									</#if>
+								<#else>
+									<td>${item.links}</td>
+								</#if>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+		</#list>
+	</#compress>
+</#macro>
