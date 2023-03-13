@@ -10374,7 +10374,7 @@
 	
 	<#if summary?node_name!="Phototoxicity">
 		<#--  Consider different path names, if not provided  -->
-		<#local csaBlock = keyAppendixE.getObjectFromPathOptions(summary, csaPath)/>
+		<#local csaBlock = studyandsummaryCom.getObjectFromPathOptions(summary, csaPath)/>
 
 		<#--  Iterate over CSA block children  -->
 		<#if csaBlock?has_content>
