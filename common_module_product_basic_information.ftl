@@ -62,7 +62,7 @@
 					<#if mixtureCompositions.GeneralInformation.FormulationType?has_content>
 					<tr>
 						<td>Formulation</td>
-						<td><@com.picklistMultiple mixtureCompositions.GeneralInformation.FormulationType /></td>					
+						<td><@com.value mixtureCompositions.GeneralInformation.FormulationType /></td>					
 					</tr>
 					</#if>
 					
@@ -221,7 +221,7 @@
 				</#if>
 
 				<#if record.GeneralInformation.FormulationType?has_content>
-					<para><emphasis role="underline">Formulation type:</emphasis> <@com.picklistMultiple record.GeneralInformation.FormulationType/></para>
+					<para><emphasis role="underline">Formulation type:</emphasis> <@com.value record.GeneralInformation.FormulationType/></para>
 				</#if>
 
 
@@ -315,7 +315,7 @@
 			<#list recordList as record>
 				<#if record.GeneralInformation.InformationOnIntendedUseAndApplication.FunctionAddressed?has_content>
 					<#list record.GeneralInformation.InformationOnIntendedUseAndApplication.FunctionAddressed as functionEntry>
-						<#local function><@com.picklist functionEntry/></#local>
+						<#local function><@com.value functionEntry/></#local>
 						<#if !functionList?seq_contains(function)>
 							<#local functionList=functionList + [function]/>
 						</#if>
