@@ -10522,7 +10522,7 @@
 			<#--  Initialize a hash that will hold information from all summaries  -->
 			<#if summary?node_name=="Phototoxicity">
 				<#local endpointsHash = getToxCSA(summary, ['KeyValueCsa', 'LinkToRelevantStudyRecord'])/>
-			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
+			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 				<#local endpointsHash = getToxCSA(summary, ['KeyValueForChemicalSafetyAssessment'], ['ToxicityToReproductionOtherStudies', 'MoAAnalysisHumanRelevanceFramework'])/>
 			<#else>
 				<#local endpointsHash = getToxCSA(summary)/>
