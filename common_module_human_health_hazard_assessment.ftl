@@ -436,23 +436,7 @@
 			summary.KeyValue.AbsorptionInhal?has_content>
 			
 				<@com.emptyLine/>
-				<para><emphasis role="bold">Value used for CSA:</emphasis></para>
-				
-				<#if summary.KeyValue.Bioaccumulation?has_content>
-					<para>Bioaccumulation potential: <@com.value summary.KeyValue.Bioaccumulation/></para>
-				</#if>
-				
-				<#if summary.KeyValue.AbsorptionOral?has_content>		
-					<para>Absorption rate - oral (%): <@com.number summary.KeyValue.AbsorptionOral/></para>
-				</#if>
-				
-				<#if summary.KeyValue.AbsorptionDerm?has_content>
-					<para>Absorption rate - dermal (%): <@com.number summary.KeyValue.AbsorptionDerm/></para>
-				</#if>
-				
-				<#if summary.KeyValue.AbsorptionInhal?has_content>
-					<para>Absorption rate - inhalation (%): <@com.number summary.KeyValue.AbsorptionInhal/></para>
-				</#if>
+				<@toxCSAtable summary/>
 			
 			</#if>
 			
@@ -865,9 +849,7 @@
 		<@studyandsummaryCom.summaryKeyInformation summary/>
 
 		<!-- get CSA values for each route -->
-		<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.AcuteToxicityViaOralRoute" "" />
-		<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.AcuteToxicityViaDermalRoute" ""/>
-		<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.AcuteToxicityViaInhalationRoute" ""/>
+		<@toxCSAtable summary/>
 
 		<@studyandsummaryCom.summaryAdditionalInformation summary/>
 		<@justification summary "JustifClassifAcuteTox"/>
@@ -1440,10 +1422,9 @@
 
 			<para><@studyandsummaryCom.summaryKeyInformation summary/></para>
 
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.SkinIrritationCorrosion" />
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EyeRespirationIrritation" />
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.RespiratoryIrritation" />
-			
+			<!-- get CSA values for each route -->
+			<@toxCSAtable summary/>
+
 			<para><@studyandsummaryCom.summaryAdditionalInformation summary/></para>
 
 			<@justification summary "Remarks"/>
@@ -2161,8 +2142,6 @@
 				<@studyandsummaryCom.summaryKeyInformation summary/>
 			</#if>
 
-			<emphasis role="HEAD-WoutNo">Skin sensitisation</emphasis><@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.SkinSensitisation" />
-
 		</#list>
 	
 		<!-- relevant to CSR only -->
@@ -2196,8 +2175,9 @@
 					<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
 				</#if>
 				
-				<emphasis role="HEAD-WoutNo">Respiratory sensitisation</emphasis><@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.RespiratorySensitisation" />
-				
+				<!-- get CSA values for each route -->
+				<@toxCSAtable summary/>
+
 				<@studyandsummaryCom.summaryAdditionalInformation summary/>
 
 				<@justification summary "Remarks"/>
@@ -2651,24 +2631,8 @@
 				Toxic effect type (for all routes and effects): <#assign toxicEffect><@com.value summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType/></#assign>${toxicEffect}
 				</#if>
 
-				<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm" "EndpointConclusionSystemicEffectsOralRoute" />
-				
-				<#assign summaryPathToRepeated = {
-				'oralShortTerm' : {'subPath' : "KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsShortTerm", 'endpointPath' : "KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute", 'endpointNodePath' : "EndpointConclusionSystemicEffectsOralRoute"},
-				'oralSubChron' : {'subPath' : "KeyValueForChemicalSafetyAssessment.SubChronicToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsSubchronic", 'endpointPath' : "KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute", 'endpointNodePath' : "EndpointConclusionSystemicEffectsOralRoute"},
-				'oralChron' : {'subPath' : "KeyValueForChemicalSafetyAssessment.ChronicToxicitySystemicEffects.RepeatedDoseToxicityViaOralRouteSystemicEffectsChronic", 'endpointPath' : "KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsOralRoute", 'endpointNodePath' : "EndpointConclusionSystemicEffectsOralRoute"},
-				'dermalShortTerm' : {'subPath' : "KeyValueForChemicalSafetyAssessment.ShortTermRepeatedDoseToxicitySystemicEffects.RepeatedDoseToxicityDermalSystemicEffectsShortTerm", 'endpointPath' : "KeyValueForChemicalSafetyAssessment.EndpointConclusionSystemicEffectsDermal", 'endpointNodePath' : "EndpointConclusionSystemicEffectsDermal"}
-				
-				}/>
-
-				<#list summaryPathToRepeated?keys as prop>
-					<#local sectionReference = summaryPathToRepeated[prop].subPath />
-					<#local sectionReferenceSub = summaryPathToRepeated[prop].endpointPath />
-
-					<#local completeCSAvalueToxPath = ("summary." + "${sectionReference}")?eval />
-					<#local completeCSAvalueToxPathExtension = ("summary" + ".${sectionReferenceSub}")?eval />
-						<@studyandsummaryCom.listOfCSAvalues summary completeCSAvalueToxPath completeCSAvalueToxPathExtension />
-				</#list>
+				<!-- get CSA values for each route -->
+				<@toxCSAtable summary/>
 
 			<para>
 				<@justification summary "Remarks"/>					
@@ -2992,17 +2956,16 @@
 				<para><@com.richText summary.KeyInformation.KeyInformation/></para>
 			</#if>
 			
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.GeneticToxicityInVitro" />	
-		
 			<!-- in vivo -->				
 			
 			<#if summary.KeyInformation.KeyInformation?has_content>
 			<para><emphasis role="underline">The following information is taken into account for any hazard / risk assessment (genetic toxicity in vivo):</emphasis></para>
 				<para><@com.richText summary.KeyInformation.KeyInformation/></para>
 			</#if>
-						
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.GeneticToxicityInVivo" />
-		
+
+			<!-- get CSA values for each route -->
+			<@toxCSAtable summary/>
+				
 			<#if summary.JustificationForClassificationOrNonClassification.Remarks?has_content>
 			<@com.emptyLine/>
 				<para><emphasis role="bold"><emphasis role="underline">Justification for classification or non classification</emphasis></emphasis></para>
@@ -3456,12 +3419,9 @@
 				<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>			
 			
-				<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.CarcinogenicityViaOralRoute" />
-								
-				<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.CarcinogenicityViaDermalRoute" />
-	
-				<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.CarcinogenicityViaInhalationRoute" />	
-
+				<!-- get CSA values for each route -->
+				<@toxCSAtable summary/>
+				
 			<@justification summary "JustifClassifCarc"/>
 				
 			<!-- relevant to CSR only -->
@@ -4025,8 +3985,6 @@
 		Toxic effect type (for all routes and effects - fertility / developmental toxicity): <@com.value summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType/>
 		<@com.emptyLine/>
 		</#if>	
-
-		<para><emphasis role="bold">Effects on fertility</emphasis></para>
 						
 			<#if summary.KeyInformation.KeyInformation?has_content>
 				<para><@com.emptyLine/>
@@ -4037,93 +3995,16 @@
 				<@com.richText summary.KeyInformation.KeyInformation/>
 				</para>
 			</#if>
+
+				<!-- get CSA values for each route -->
+				<@toxCSAtable summary/>
+
+				<@justification summary "JustificationForClassificationOrNonClassification"/>
 			
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.ExperimentalExposureTimePerWeek?has_content
-			>
-			
-				<#assign valueForCsaTextOralFertilityEffects>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EndpointConclusion/>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelUnit?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelUnit/>): 
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue?has_content>
-						<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.EffectLevelValue/>
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.TestType?has_content>
-						(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.TestType/>,
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.ExperimentalExposureTimePerWeek?has_content>	
-						<@com.text summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.ExperimentalExposureTimePerWeek/> hours/week
-					</#if>
-					<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species?has_content>						
-						<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaOralRoute.Species/>)					
-					</#if>
-				</#assign>
-			</#if>
-			<@endpointSummary summary valueForCsaTextOralFertilityEffects "valueForCsaTextOralFertilityEffects" "EffectsOnFertility.EffectOnFertilityViaOralRoute" printSummaryName/>
-
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species?has_content
-			>
-
-			<#assign valueForCsaTextDermalEffectsOnFertility>
-				<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EndpointConclusion/>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelUnit/>): 
-				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.EffectLevelValue/>
+				<!-- relevant to CSR only -->
+				<#if csrRelevant??>
+				<@studyandsummaryCom.modeOfActionOtherReproductiveTox summary />	
 				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.TestType?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.TestType/>,
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.ExperimentalExposureTimePerWeek?has_content>	
-					<@com.text summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.ExperimentalExposureTimePerWeek/> hours/week;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species?has_content>						
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaDermalRoute.Species/>)					
-				</#if>
-			</#assign>
-			</#if>
-			<@endpointSummary summary valueForCsaTextDermalEffectsOnFertility "valueForCsaTextDermalEffectsOnFertility" "EffectsOnFertility.EffectOnFertilityViaDermalRoute" false/>
-
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species?has_content
-			>
-
-			<#assign valueForCsaTextInhalationEffectsOnFertility>
-				<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EndpointConclusion/>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelUnit/>):
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.EffectLevelValue/>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.TestType?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.TestType/>,
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.ExperimentalExposureTimePerWeek?has_content>	
-					<@com.text summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.ExperimentalExposureTimePerWeek/> hours/week;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnFertility.EffectOnFertilityViaInhalationRoute.Species/>)					
-				</#if>
-			</#assign>
-			</#if>
-			<@endpointSummary summary valueForCsaTextInhalationEffectsOnFertility "valueForCsaTextInhalationEffectsOnFertility" "EffectsOnFertility.EffectOnFertilityViaInhalationRoute" false/>
-		</#list>
 
 			<#if csrRelevant??>
 			   <#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "HealthSurveillanceData") />
@@ -4143,132 +4024,8 @@
                 </#if>
 				<@com.emptyLine/>
 			</#if>
-                
-		<para><emphasis role="bold">Developmental toxicity</emphasis></para>
-                
-		<#list summaryList as summary>
-		
-			<#if summary.KeyInformation.KeyInformation?has_content>
-				<para><@com.emptyLine/><emphasis role="underline">The following information is taken into account for any hazard / risk assessment:</emphasis></para>
-			</#if>
-			<@com.emptyLine/>
-			
-			<para>
-			<@com.richText summary.KeyInformation.KeyInformation/>
-			</para>
 
-			<emphasis role="underline">Effect on developmental toxicity - development (via oral route)</emphasis>	
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species?has_content
-			>
-			
-				<#assign valueForCsaTextOralDevelopmentalToxicity>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EndpointConclusion/>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelUnit/>): 
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.EffectLevelValue/>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.TestType?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.TestType/>;
-				</#if>	
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute.Species/>)						
-				</#if>
-				</#assign>
-			</#if>
-			<@endpointSummary summary valueForCsaTextOralDevelopmentalToxicity "valueForCsaTextOralDevelopmentalToxicity" "EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute" false/>
-			
-			<emphasis role="underline">Effect on developmental toxicity - development (via dermal route)</emphasis>
-			
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelUnit?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species?has_content
-			>
-
-			<#assign valueForCsaTextDermalDevelopmentToxicity>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EndpointConclusion/>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelUnit/>):
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.EffectLevelValue/>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute.Species/>)
-				</#if>
-			</#assign>
-			</#if>
-			<@endpointSummary summary valueForCsaTextDermalDevelopmentToxicity "valueForCsaTextDermalDevelopmentToxicity" "EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaDermalRoute" false/>
-			
-			<emphasis role="underline">Effect on developmental toxicity - development (via inhalation route)</emphasis>
-			<#if 
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EndpointConclusion?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelValue?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.TestType?has_content ||
-			summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species?has_content
-			>
-
-			<#assign valueForCsaTextInhalationDevelopmentalToxicity>
-				<para><@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EndpointConclusion/></para>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelUnit?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelUnit/>): 
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelValue?has_content>
-					<@com.range summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.EffectLevelValue/>
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.TestType?has_content>
-					(<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.TestType/>;
-				</#if>
-				<#if summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species?has_content>
-					<@com.value summary.KeyValueForChemicalSafetyAssessment.EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute.Species/>)
-					
-				</#if>
-			</#assign>
-			</#if>
-			<@endpointSummary summary valueForCsaTextInhalationDevelopmentalToxicity "valueForCsaTextInhalationDevelopmentalToxicity" "EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaInhalationRoute" false/>
-
-			<@justification summary "JustificationForClassificationOrNonClassification"/>
-			
-				<!-- relevant to CSR only -->
-				<#if csrRelevant??>
-				<@studyandsummaryCom.modeOfActionOtherReproductiveTox summary />	
-				</#if>
-			
-		</#list>		
-				
-			<#if csrRelevant??>
-                <#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "HealthSurveillanceData") />
-                <#assign studyList1 = getSortedDevelopmentToxicity(studyList) />
-                <#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "EpidemiologicalData") />
-                <#assign studyList2 = getSortedDevelopmentToxicity(studyList) />
-                <#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "DirectObservationsClinicalCases") />
-                <#assign studyList3 = getSortedDevelopmentToxicity(studyList) />
-                <#assign studyList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "ExposureRelatedObservationsOther") />
-                <#assign studyList4 = getSortedDevelopmentToxicity(studyList) />
-
-                <#if !(studyList1?has_content) && !(studyList2?has_content) && !(studyList3?has_content) && !(studyList4?has_content)>
-                    <#else/>
-				        <para><@com.emptyLine/><emphasis role="underline">Discussion of human information:</emphasis></para>
-                        See "Summary and discussion of human information" in chapter 5 HUMAN HEALTH HAZARD ASSESSMENT
-                        <!-- TO DO - TO FIND WHAT INFO GOES HERE - WITH ROBERTA -->
-                </#if>
-			</#if>
-			
-			
-		<#assign summaryList1 = [] />
-
+	</#list>
 	</#if>
 	
 </#compress>
@@ -4897,11 +4654,8 @@
 			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaOralRoute" />
-				
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaDermalRoute" />
-			
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnNeurotoxicityViaInhalationRoute" />	
+			<!-- get CSA values for each route -->
+			<@toxCSAtable summary/>
 
 			<@justification summary "JustifClassifRepTox"/>
 
@@ -4943,11 +4697,8 @@
 			<@com.richText summary.KeyInformation.KeyInformation/>
 			</para>
 			
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaOralRoute" />	
-			
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaDermalRoute" />		
-
-			<@studyandsummaryCom.toxCSAValues summary printSummaryName "KeyValueForChemicalSafetyAssessment.EffectOnImmunotoxicityViaInhalationRoute" />		
+			<!-- get CSA values for each route -->
+			<@toxCSAtable summary/>
 
 			<@justification summary "JustifClassifRepTox"/>
 
@@ -10064,7 +9815,7 @@
 						</#if>
 	
 					<#-- Key information-->
-						<#if summary.documentSubType=="ToxicityToReproduction_EU_PPP" || summary.documentSubType=="GeneticToxicity">
+						<#if summary.documentSubType=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary.documentSubType=="GeneticToxicity">
 	
 							<#local summaryKeyInfo = []/>
 							<#list summary.KeyValueForChemicalSafetyAssessment?children as csaEntry>
@@ -10215,7 +9966,7 @@
 					<#--Additional Info-->
 						<#local summaryAddInfo = ""/>
 	
-						<#if summary.documentSubType=="ToxicityToReproduction_EU_PPP" || summary.documentSubType=="Sensitisation">
+						<#if summary.documentSubType=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary.documentSubType=="Sensitisation">
 	
 							<#local summaryAddInfo = []/>
 							<#list summary.KeyValueForChemicalSafetyAssessment?children as csaEntry>
@@ -10548,7 +10299,7 @@
 							</#list>
 
 						<#--  REPRODUCTIVE TOXICITY  -->
-						<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
+						<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 							<#list block?children as subBlock>
 								<#--  Take the label of the field as subBlockName  -->
 								<@iuclid.label for=subBlock var="subBlockName"/>
@@ -10561,11 +10312,9 @@
 								</#if>
 
 								<#if !subBlock?node_name?matches("LinkToRelevantStudyRecords") && !subBlock?node_name?matches("DescriptionOfKeyInformation") && !subBlock?node_name?matches("AdditionalInformation")>
-									<#if subBlock?node_name?matches("EffectOnDevelopmentalToxicityViaOralRoute") || subBlock?node_name?matches("EffectOnDevelopmentalToxViaOralRouteMaternal")>
-										<#if subBlock?node_name?matches("EffectOnDevelopmentalToxicityViaOralRoute")>
-											<#local devToxPath = subBlock.DevTox />
-										<#elseif subBlock?node_name?matches("EffectOnDevelopmentalToxViaOralRouteMaternal")>
-											<#local devToxPath = subBlock.MaternalToxicity />
+									<#if subBlock?node_name?matches("EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute") >
+										<#if subBlock?node_name?matches("EffectsOnDevelopmentalToxicity.EffectOnDevelopmentalToxicityViaOralRoute")>
+											<#local devToxPath = subBlock />
 										</#if>
 										
 										<#list devToxPath as devTox>
@@ -10773,7 +10522,7 @@
 			<#--  Initialize a hash that will hold information from all summaries  -->
 			<#if summary?node_name=="Phototoxicity">
 				<#local endpointsHash = getToxCSA(summary, ['KeyValueCsa', 'LinkToRelevantStudyRecord'])/>
-			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
+			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
 				<#local endpointsHash = getToxCSA(summary, ['KeyValueForChemicalSafetyAssessment'], ['ToxicityToReproductionOtherStudies', 'MoAAnalysisHumanRelevanceFramework'])/>
 			<#else>
 				<#local endpointsHash = getToxCSA(summary)/>
@@ -10813,7 +10562,7 @@
 						<tr align="center" valign="middle"><?dbfo bgcolor="#FBDDA6" ?>
 							<th><emphasis role="bold">Endpoint</emphasis></th>
 							
-							<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+							<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
 								<th><emphasis role="bold">Dose descriptor, Effect level</emphasis></th>
 							</#if>
 
@@ -10821,22 +10570,22 @@
 								<th><emphasis role="bold">Endpoint Conclusion</emphasis></th>
 							</#if>
 
-							<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+							<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
 								<th><emphasis role="bold">Basis For Effect Level</emphasis></th>
 							</#if>
 
-							<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+							<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
 								<th><emphasis role="bold">Exposure (hours/week)</emphasis></th>
 							</#if>
 
-							<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+							<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
 								<th><emphasis role="bold">Study duration</emphasis></th>
 							</#if>
 
-							<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+							<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
 								<th><emphasis role="bold">Species</emphasis></th>
 
-								<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP">
+								<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
 									<th><emphasis role="bold">System</emphasis></th>
 									<th><emphasis role="bold">Organ</emphasis></th>
 								</#if>
@@ -10848,7 +10597,7 @@
 
 					<#--  Define table body  -->
 					<tbody valign="middle">
-						<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+						<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 							<#local fertRowSpan = 0>
 							<#local devToxRowSpan = 0>
 
@@ -10872,7 +10621,7 @@
 							<tr>
 								<td>${item.endpoint}</td>
 
-								<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 									<td>${item.descriptor} ${item.effect}</td>
 								</#if>
 
@@ -10880,28 +10629,33 @@
 									<td>${item.conclusion}</td>
 								</#if>
 
-								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 									<td>${item.basis}</td>
 								</#if>
 
-								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 									<td>${item.exposure}</td>
 								</#if>
 
-								<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 									<td>${item.duration}</td>
 								</#if>
 								
-								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 									<td>${item.species}</td>
 
-									<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP">
+									<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction" && summary?node_name!="Toxicokinetics" && summary?node_name!="AcuteToxicity" 
+									&& summary?node_name!="IrritationCorrosion" && summary?node_name!="Sensitisation">
 										<td>${item.system}</td>
 										<td>${item.organ}</td>
 									</#if>
+
 								</#if>
 
-								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+
+								
+
+								<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 									<#if item?index==0>
 										<td rowspan="${fertRowSpan}">${item.links}</td>
 									<#elseif item?index==fertRowSpan>
