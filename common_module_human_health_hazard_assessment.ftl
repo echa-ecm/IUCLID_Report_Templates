@@ -10387,8 +10387,10 @@
 								</#if>
 							</#list>
 
-						<#--  REPRODUCTIVE TOXICITY EU PPP  -->
-						<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
+
+						<#--  REPRODUCTIVE TOXICITY  -->
+						<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
+
 							<#list block?children as subBlock>
 								<#--  Take the label of the field as subBlockName  -->
 								<@iuclid.label for=subBlock var="subBlockName"/>
@@ -10578,7 +10580,7 @@
 			<#--  Initialize a hash that will hold information from all summaries  -->
 			<#if summary?node_name=="Phototoxicity">
 				<#local endpointsHash = getToxCSA(summary, ['KeyValueCsa', 'LinkToRelevantStudyRecord'])/>
-			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
+			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 				<#local endpointsHash = getToxCSA(summary, ['KeyValueForChemicalSafetyAssessment'], ['ToxicityToReproductionOtherStudies', 'MoAAnalysisHumanRelevanceFramework'])/>
 			<#else>
 				<#local endpointsHash = getToxCSA(summary)/>
@@ -10618,7 +10620,9 @@
 						<tr align="center" valign="middle"><?dbfo bgcolor="#FBDDA6" ?>
 							<th><emphasis role="bold">Endpoint</emphasis></th>
 							
+
 							<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
+
 								<th><emphasis role="bold">Dose descriptor, Effect level</emphasis></th>
 							</#if>
 
@@ -10626,7 +10630,7 @@
 								<th><emphasis role="bold">Endpoint Conclusion</emphasis></th>
 							</#if>
 
-							<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+							<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
 								<th><emphasis role="bold">Basis For Effect Level</emphasis></th>
 							</#if>
 
@@ -10642,6 +10646,7 @@
 								<th><emphasis role="bold">Species</emphasis></th>
 
 								<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction">
+
 									<th><emphasis role="bold">System</emphasis></th>
 									<th><emphasis role="bold">Organ</emphasis></th>
 								</#if>
@@ -10653,7 +10658,7 @@
 
 					<#--  Define table body  -->
 					<tbody valign="middle">
-						<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+						<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 							<#local fertRowSpan = 0>
 							<#local devToxRowSpan = 0>
 
@@ -10684,7 +10689,7 @@
 									<td>${item.conclusion}</td>
 								</#if>
 
-								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 									<td>${item.basis}</td>
 								</#if>
 
@@ -10700,13 +10705,14 @@
 									<td>${item.species}</td>
 
 									<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction" && summary?node_name!="Toxicokinetics" && summary?node_name!="AcuteToxicity" && summary?node_name!="IrritationCorrosion" && summary?node_name!="Sensitisation">
+
 										<td>${item.system}</td>
 										<td>${item.organ}</td>
 									</#if>
 
 								</#if>
 
-								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
 									<#if item?index==0>
 										<td rowspan="${fertRowSpan}">${item.links}</td>
 									<#elseif item?index==fertRowSpan>
