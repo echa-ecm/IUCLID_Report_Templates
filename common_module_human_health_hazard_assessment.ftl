@@ -10123,9 +10123,74 @@
 	<#--  Initialize sequence that will hold CSA values  -->
 	<#local summaryCSAseq = []/>
 	
-	<#if summary?node_name!="Phototoxicity">
+	
+
+	<#--  PHOTOTOXICITY  -->
+	<#if summary?node_name=="Phototoxicity">
+		<#--  Iterate over csaPath  -->
+		<#list csaPath as path>
+			<#--  Get block at path (CSA or Links)  -->
+			<#local block = studyandsummaryCom.getObjectFromPathOptions(summary, [path])/>
+
+			<#if block?has_content>
+				<#list block?children as child>
+					<#if child?node_name=="Link">
+						<#--  Get links to relevant study record(s)  -->
+						<#local links = studyandsummaryCom.getSummaryLinks(block, [child?node_name])/>
+
+					<#elseif child?node_name=="Results">
+						<#--  Take the label of the field as childName  -->
+						<@iuclid.label for=child var="childName"/>
+
+						<#--  Get phototoxicity  -->
+						<#local endpointConclusion>
+							<#compress>
+								<@com.value block.Results/>
+							</#compress>
+						</#local>
+					</#if>
+				</#list>
+			</#if>
+		</#list>
+
+		<#--  Append variables to final sequence  -->
+		<#if links?has_content || phototoxicity?has_content>
+			<#local summaryCSAseq = summaryCSAseq + [{'endpoint': childName!, 'conclusion' : endpointConclusion!, "links" : links!}]/>
+		</#if>
+
+	<#--  TOXICOKINETICS  -->
+	<#elseif summary?node_name=="Toxicokinetics">
+		<#local linksBlock = studyandsummaryCom.getObjectFromPathOptions(summary, ["LinkToRelevantStudyRecord"])/>
+
+		<#--  Get links to relevant study record(s)  -->
+		<#if linksBlock?has_content>
+			<#local links = studyandsummaryCom.getSummaryLinks(linksBlock, ["Link"])/>
+		</#if>
+
+		<#local CSABlock = studyandsummaryCom.getObjectFromPathOptions(summary, ["KeyValue"])/>
+
+		<#if CSABlock?has_content>
+			<#list CSABlock?children as child>
+				<#--  Take the label of the field as childName  -->
+				<@iuclid.label for=child var="childName"/>
+
+				<#--  Get endpoint conclusion  -->
+				<#local endpointConclusion>
+					<#compress>
+						<@com.value child/>
+					</#compress>
+				</#local>
+
+				<#--  Append variables to final sequence  -->
+				<#if links?has_content || endpointConclusion?has_content>
+					<#local summaryCSAseq = summaryCSAseq + [{'endpoint': childName!, 'conclusion' : endpointConclusion!, "links" : links!}]/>
+				</#if>
+			</#list>
+		</#if>
+	
+	<#else>
 		<#--  Consider different path names, if not provided  -->
-		<#local csaBlock = keyAppendixE.getObjectFromPathOptions(summary, csaPath)/>
+		<#local csaBlock = studyandsummaryCom.getObjectFromPathOptions(summary, csaPath)/>
 
 		<#--  Iterate over CSA block children  -->
 		<#if csaBlock?has_content>
@@ -10142,7 +10207,7 @@
 						<#if summary?node_name=="AcuteToxicity" || summary?node_name=="IrritationCorrosion" || summary?node_name=="Sensitisation" || summary?node_name=="GeneticToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity">
 							<#--  Links  -->
 							<#local links = ''/>
-							<#local links = keyAppendixE.getSummaryLinks(block, ["LinkToRelevantStudyRecord"])/>
+							<#local links = studyandsummaryCom.getSummaryLinks(block, ["LinkToRelevantStudyRecord"])/>
 
 							<#--  Endpoint conclusion  -->
 							<#local endpointConclusion>
@@ -10235,7 +10300,7 @@
 								<#if subBlock?node_type=="block">
 									<#--  Links  -->
 									<#local links = ''/>
-									<#local links = keyAppendixE.getSummaryLinks(subBlock, ["LinkToRelevantStudyRecord"])/>
+									<#local links = studyandsummaryCom.getSummaryLinks(subBlock, ["LinkToRelevantStudyRecord"])/>
 
 									<#--  Dose descriptor  -->
 									<#local doseDescriptor>
@@ -10307,7 +10372,7 @@
 								<#--  Links  -->
 								<#if subBlock?node_type=="block">
 									<#if subBlock?node_name=="LinkToRelevantStudyRecords">
-										<#local links = keyAppendixE.getSummaryLinks(subBlock, ["StudyNameType"])/>
+										<#local links = studyandsummaryCom.getSummaryLinks(subBlock, ["StudyNameType"])/>
 									</#if>
 								</#if>
 
@@ -10462,38 +10527,6 @@
 				</#if>
 			</#list>
 		</#if>
-	<#else>
-		<#--  PHOTOTOXICITY  -->
-		<#--  Iterate over csaPath  -->
-		<#list csaPath as path>
-			<#--  Get block at path (CSA or Links)  -->
-			<#local block = keyAppendixE.getObjectFromPathOptions(summary, [path])/>
-
-			<#if block?has_content>
-				<#list block?children as child>
-					<#if child?node_name=="Link">
-						<#--  Get links to relevant study record(s)  -->
-						<#local links = keyAppendixE.getSummaryLinks(block, [child?node_name])/>
-
-					<#elseif child?node_name=="Results">
-						<#--  Take the label of the field as childName  -->
-						<@iuclid.label for=child var="childName"/>
-
-						<#--  Get phototoxicity  -->
-						<#local endpointConclusion>
-							<#compress>
-								<@com.value block.Results/>
-							</#compress>
-						</#local>
-					</#if>
-				</#list>
-			</#if>
-		</#list>
-
-		<#--  Append variables to final sequence  -->
-		<#if links?has_content || phototoxicity?has_content>
-			<#local summaryCSAseq = summaryCSAseq + [{'endpoint': childName!, 'conclusion' : endpointConclusion!, "links" : links!}]/>
-		</#if>
 	</#if>
 
 	<#--  Initialize a hash that will hold information from all summaries  -->
@@ -10616,7 +10649,6 @@
 							</#list>
 						</#if>
 
-
 						<#list endpointsHash as item>
 							<tr>
 								<td>${item.endpoint}</td>
@@ -10660,6 +10692,10 @@
 										<td rowspan="${fertRowSpan}">${item.links}</td>
 									<#elseif item?index==fertRowSpan>
 										<td rowspan="${devToxRowSpan}">${item.links}</td>
+									</#if>
+								<#elseif summary?node_name=="Toxicokinetics">
+									<#if item?index==0>
+										<td rowspan="${endpointsHash?size}">${item.links}</td>
 									</#if>
 								<#else>
 									<td>${item.links}</td>
