@@ -10381,7 +10381,7 @@
 										</#if>
 									<#elseif summary?node_name=="ToxicityToReproduction">
 										<#if endpointConclusion?has_content || doseDescriptor?has_content || effLev?has_content || duration?has_content || links?has_content || exposure?has_content || species?has_content>
-											<#local summaryCSAseq = summaryCSAseq + [{'endpoint': blockName + " - " + subBlockName!, "links" : links!, "conclusion" : endpointConclusion!, "descriptor" : doseDescriptor!, "effect" : effLev!, "duration" : duration!, "exposure" : exposure!, "species":species!}]/>
+											<#local summaryCSAseq = summaryCSAseq + [{'endpoint': subBlockName!, "links" : links!, "conclusion" : endpointConclusion!, "descriptor" : doseDescriptor!, "effect" : effLev!, "duration" : duration!, "exposure" : exposure!, "species":species!}]/>
 										</#if>
 									</#if>
 								</#if>
@@ -10389,7 +10389,7 @@
 
 
 						<#--  REPRODUCTIVE TOXICITY  -->
-						<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
+						<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
 
 							<#list block?children as subBlock>
 								<#--  Take the label of the field as subBlockName  -->
@@ -10580,7 +10580,7 @@
 			<#--  Initialize a hash that will hold information from all summaries  -->
 			<#if summary?node_name=="Phototoxicity">
 				<#local endpointsHash = getToxCSA(summary, ['KeyValueCsa', 'LinkToRelevantStudyRecord'])/>
-			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
+			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
 				<#local endpointsHash = getToxCSA(summary, ['KeyValueForChemicalSafetyAssessment'], ['ToxicityToReproductionOtherStudies', 'MoAAnalysisHumanRelevanceFramework'])/>
 			<#else>
 				<#local endpointsHash = getToxCSA(summary)/>
@@ -10630,7 +10630,7 @@
 								<th><emphasis role="bold">Endpoint Conclusion</emphasis></th>
 							</#if>
 
-							<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="ToxicityToReproduction">
+							<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
 								<th><emphasis role="bold">Basis For Effect Level</emphasis></th>
 							</#if>
 
@@ -10646,7 +10646,6 @@
 								<th><emphasis role="bold">Species</emphasis></th>
 
 								<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction">
-
 									<th><emphasis role="bold">System</emphasis></th>
 									<th><emphasis role="bold">Organ</emphasis></th>
 								</#if>
@@ -10658,7 +10657,7 @@
 
 					<#--  Define table body  -->
 					<tbody valign="middle">
-						<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
+						<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
 							<#local fertRowSpan = 0>
 							<#local devToxRowSpan = 0>
 
@@ -10689,7 +10688,7 @@
 									<td>${item.conclusion}</td>
 								</#if>
 
-								<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
+								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
 									<td>${item.basis}</td>
 								</#if>
 
@@ -10705,14 +10704,12 @@
 									<td>${item.species}</td>
 
 									<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction" && summary?node_name!="Toxicokinetics" && summary?node_name!="AcuteToxicity" && summary?node_name!="IrritationCorrosion" && summary?node_name!="Sensitisation">
-
 										<td>${item.system}</td>
 										<td>${item.organ}</td>
 									</#if>
-
 								</#if>
 
-								<#if summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
+								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
 									<#if item?index==0>
 										<td rowspan="${fertRowSpan}">${item.links}</td>
 									<#elseif item?index==fertRowSpan>
