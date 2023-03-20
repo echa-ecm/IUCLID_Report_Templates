@@ -6692,7 +6692,7 @@
 			</para>
 
 			<para>
-			Test concentrations: <@com.text study.MaterialsAndMethods.Method.TestConcentrationsWithJustificationForTopDose/>
+			Test concentrations: <@com.text study.MaterialsAndMethods.Method.JustificationForDeviationFromTheHighDoseLevel/>
 			</para>
 
 			<para>
