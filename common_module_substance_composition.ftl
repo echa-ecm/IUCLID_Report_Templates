@@ -5,27 +5,40 @@
 
 	<#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "SubstanceComposition") />
 
-	<#--Remove substance composition documents that correspond to batches if there is more than 1 entry-->
+	<#--Remove substance composition documents that correspond to batches if there is more than 1 entry, also checking for composition type-->
 	<#local addMessage=''/>
-	<#if (recordList?size > 1) && !includeBatchCompositions>
+	<#if !includeBatchCompositions>
 		<#local batchCompositions=getAllBatchCompositions(_subject)/>
 		<#local filtRecordList=[]/>
+		
 		<#list recordList as record>
-			<#local isBatch=false>
-			<#list batchCompositions as batchComp>
-				<#if batchComp.documentKey=record.documentKey>
-					<#local isBatch=true/>
-					<#break>
+			
+			<#-- first check that it's the legal entity composition-->
+			<#local compType><@com.value record.GeneralInformation.TypeOfComposition/></#local>
+			<#if compType == "legal entity composition of the substance">
+
+				<#-- then check it's not a batch -->
+				<#local isBatch=false>
+
+				<#if batchCompositions?has_content>
+					<#list batchCompositions as batchComp>
+						<#if batchComp.documentKey=record.documentKey>
+							<#local isBatch=true/>
+							<#break>
+						</#if>
+					</#list>
 				</#if>
-			</#list>
-			<#if !isBatch>
-				<#local filtRecordList=com.addDocumentToSequenceAsUnique(record, filtRecordList)/>
+
+				<#if !isBatch>
+					<#local filtRecordList=com.addDocumentToSequenceAsUnique(record, filtRecordList)/>
+				</#if>
+
 			</#if>
 		</#list>
 
 		<#-- If all compositions are used as batches, report a message -->
 		<#if (recordList?size>0) && (filtRecordList?size==0)>
-			<#local addMessage> For batch compositions, see section below.</#local>
+			<#local addMessage> No legal entity composition of the substance has been provided. For batch compositions, see section below.</#local>
 		</#if>
 		
 		<#assign recordList=filtRecordList/>
@@ -380,7 +393,7 @@
 		<tbody>
 			<tr align="center" valign="middle">
 				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Component</emphasis></th>
-				<th colspan="${nBatch}+1"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Batches</emphasis></th>
+				<th colspan="${nBatch+1}"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Batches</emphasis></th>
 				<#if techSpecExists>
 					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?>
 						<emphasis role="bold">
@@ -398,6 +411,8 @@
 
 			<#list batchCompHash as refSubUuid, refSubData>
 				<tr>
+					<#-- substance -->
+
 					<td>
 						<command linkend="${refSubUuid}"><@com.text refSubData['ref'].ReferenceSubstanceName/></command>
 						<#assign referenceSubstancesInformation = com.addDocumentToSequenceAsUnique(refSubData['ref'], referenceSubstancesInformation) />
@@ -416,31 +431,29 @@
 						${refTypes}
 					</td>
 
+
+					<#-- batches -->
 					<#local concValues = []/>
-
-					<#list 0..nBatch as i>
+					<#list 0..(nBatch-1) as i>
 						<#local batchNo>batch${i}</#local>
-						<#if techSpecExists || i!=nBatch>
-							<td>
-								<#if refSubData?keys?seq_contains(batchNo)>
+						<td>
+							<#if refSubData?keys?seq_contains(batchNo)>
 
-										<#if refSubData[batchNo]['conc']?has_content>
-											<#--  <para>${refSubData[batchNo]['conc']}</para>  -->
-											<para><@com.value refSubData[batchNo]['conc']/></para>
-											<#local concValue><@com.number refSubData[batchNo]['conc']/></#local>
-											<#local concValues = concValues + [concValue]/>
-										</#if>
-										<#if refSubData[batchNo]['range']?has_content>
-											<#--  <para>[${refSubData[batchNo]['range']}]</para>  -->
-											<para>[<@com.value refSubData[batchNo]['range']/>]</para>
+								<#if refSubData[batchNo]['conc']?has_content>
+									<para><@com.value refSubData[batchNo]['conc']/></para>
 
-										</#if>
+									<#-- add value to list for later calculation of mean and SD -->
+									<#local concValue>${refSubData[batchNo]['conc'].lower.value}</#local>
+									<#local concValues = concValues + [concValue]/>
 								</#if>
-							</td>
-						</#if>
+								<#if refSubData[batchNo]['range']?has_content>
+									<para>[<@com.value refSubData[batchNo]['range']/>]</para>
+								</#if>
+							</#if>
+						</td>
 					</#list>
 
-					<#-- calculate average - 3SD for active substance and average + 3SD for the rest -->
+					<#-- average - 3SD for active substance and average + 3SD for the rest -->
 					<td>
 						<#if concValues?has_content>
 							<#attempt>
@@ -448,20 +461,20 @@
 								<#-- Calculate the mean of the numbers -->
 								<#local sum = 0/>
 								<#list concValues as num>
-									<#local sum += num/>
-								</#if>
+									<#local sum = sum + num?number/>
+								</#list>
 								<#local mean = sum/concValues?size/>
 
 								<#-- Calculate the variance of the numbers -->
-								<#local variance = 0>
+								<#local variance = 0/>
 								<#list concValues as num>
-									<#local diff = num - mean>
-									<#local variance = variance + (diff * diff)>
+									<#local diff = num?number - mean>
+									<#local variance = variance + (diff * diff)/>
 								</#list>
-								<#local variance = variance / (concValues?size - 1)>
+								<#local variance = variance / (concValues?size - 1)/><#-- this is for the sample SD, if population then it's convValues?size -->
 
 								<#-- Calculate the standard deviation of the numbers -->
-								<#local standardDeviation = sqrt(variance)>
+								<#local standardDeviation = sqrt(variance)/>
 
 								<#-- calculate +- 3SD -->
 								<#if refTypes?contains("constituent")>
@@ -473,17 +486,39 @@
 								</#if>
 
 								<#-- Output the standard deviation -->
-								${meanSD} (${mean} ${symbol} 3 * ${standardDeviation})
+								${meanSD} 
+								<#--  (${mean} ${symbol} 3 * ${standardDeviation})  -->
 
 							<#recover>
 								error!
 							</#attempt>
 
 						<#else>
-							N.A.
+							n.a.
 						</#if>
 
 					</td>
+					
+					<#-- technical specification -->
+					<#if techSpecExists>
+						
+						<#local batchNo>batch${nBatch}</#local>
+
+						<td>
+							<#if refSubData?keys?seq_contains(batchNo)>
+
+								<#if refSubData[batchNo]['conc']?has_content>
+									<para><@com.value refSubData[batchNo]['conc']/></para>
+								</#if>
+
+								<#if refSubData[batchNo]['range']?has_content>
+									<para>[<@com.value refSubData[batchNo]['range']/>]</para>
+								</#if>
+
+							</#if>
+						</td>
+
+					</#if>
 				</tr>
 			</#list>
 		</tbody>
@@ -491,6 +526,30 @@
 
 	</#compress>
 </#macro>
+
+<#function sqrt number>
+  <#-- Set an initial guess for the square root -->
+	<#assign guess = 5.0>
+
+	<#-- Set the maximum number of iterations to perform -->
+	<#assign maxIterations = 100>
+
+	<#-- Define the tolerance for the error in the square root calculation -->
+	<#assign tolerance = 0.0001>
+
+	<#-- Iterate using the Newton-Raphson method to find the square root -->
+	<#list 1..maxIterations as i>
+	<#assign newGuess = (guess + (number / guess)) / 2.0>
+	<#assign error = (newGuess - guess) / newGuess>
+	<#if error * error < tolerance>
+		<#break>
+	<#else>
+		<#assign guess = newGuess>
+	</#if>
+	</#list>
+
+	<#return guess/>
+</#function>
 
 <#macro batchQC qcBlock site techSpec>
 	<#compress>
