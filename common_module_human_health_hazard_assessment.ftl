@@ -6692,7 +6692,7 @@
 			</para>
 
 			<para>
-			Test concentrations: <@com.text study.MaterialsAndMethods.Method.TestConcentrationsWithJustificationForTopDose/>
+			Test concentrations: <@com.text study.MaterialsAndMethods.Method.JustificationForDeviationFromTheHighDoseLevel/>
 			</para>
 
 			<para>
@@ -7415,7 +7415,7 @@
 			<#if method.MetabolicActivationSystem?has_content><para role="indent"><@com.text method.MetabolicActivationSystem/></para></#if>
 		</#if>
 
-		<#if method.TestConcentrationsWithJustificationForTopDose?has_content><para role="indent">Doses:</para><para role="indent"><@com.text method.TestConcentrationsWithJustificationForTopDose/></para></#if>
+		<#if method.JustificationForDeviationFromTheHighDoseLevel?has_content><para role="indent">Doses:</para><para role="indent"><@com.text method.JustificationForDeviationFromTheHighDoseLevel/></para></#if>
 		<#if method.Vehicle?has_content><para role="indent">Vehicle: </para><para role="indent"><@com.text method.Vehicle/></para></#if>
 
 		<#if method.Controls?has_content>
