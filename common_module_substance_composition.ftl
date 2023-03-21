@@ -340,8 +340,8 @@
 						<#local refSubFunction>
 							<#if comp.hasElement('Function')><@com.picklist comp.Function/></#if>
 						</#local>
-						<#local conc><@com.range comp.ProportionTypical/></#local>
-						<#local concRange><@com.range comp.Concentration/></#local>
+						<#local conc=comp.ProportionTypical />
+						<#local concRange=comp.Concentration/>
 
 						<#local batchHash = {'conc':conc, 'range': concRange}/>
 
@@ -380,7 +380,7 @@
 		<tbody>
 			<tr align="center" valign="middle">
 				<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Component</emphasis></th>
-				<th colspan="${nBatch}"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Batches</emphasis></th>
+				<th colspan="${nBatch}+1"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Batches</emphasis></th>
 				<#if techSpecExists>
 					<th rowspan="2"><?dbfo bgcolor="#FBDDA6" ?>
 						<emphasis role="bold">
@@ -393,6 +393,7 @@
 				<#list 0..(nBatch-1) as i>
 					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold"><@com.text batchCompList[i].GeneralInformation.Name/></emphasis></th>
 				</#list>
+				<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Mean +- 3xSD</emphasis></th>
 			</tr>
 
 			<#list batchCompHash as refSubUuid, refSubData>
@@ -415,6 +416,8 @@
 						${refTypes}
 					</td>
 
+					<#local concValues = []/>
+
 					<#list 0..nBatch as i>
 						<#local batchNo>batch${i}</#local>
 						<#if techSpecExists || i!=nBatch>
@@ -422,15 +425,65 @@
 								<#if refSubData?keys?seq_contains(batchNo)>
 
 										<#if refSubData[batchNo]['conc']?has_content>
-											<para>${refSubData[batchNo]['conc']}</para>
+											<#--  <para>${refSubData[batchNo]['conc']}</para>  -->
+											<para><@com.value refSubData[batchNo]['conc']/></para>
+											<#local concValue><@com.number refSubData[batchNo]['conc']/></#local>
+											<#local concValues = concValues + [concValue]/>
 										</#if>
 										<#if refSubData[batchNo]['range']?has_content>
-											<para>[${refSubData[batchNo]['range']}]</para>
+											<#--  <para>[${refSubData[batchNo]['range']}]</para>  -->
+											<para>[<@com.value refSubData[batchNo]['range']/>]</para>
+
 										</#if>
 								</#if>
 							</td>
 						</#if>
 					</#list>
+
+					<#-- calculate average - 3SD for active substance and average + 3SD for the rest -->
+					<td>
+						<#if concValues?has_content>
+							<#attempt>
+
+								<#-- Calculate the mean of the numbers -->
+								<#local sum = 0/>
+								<#list concValues as num>
+									<#local sum += num/>
+								</#if>
+								<#local mean = sum/concValues?size/>
+
+								<#-- Calculate the variance of the numbers -->
+								<#local variance = 0>
+								<#list concValues as num>
+									<#local diff = num - mean>
+									<#local variance = variance + (diff * diff)>
+								</#list>
+								<#local variance = variance / (concValues?size - 1)>
+
+								<#-- Calculate the standard deviation of the numbers -->
+								<#local standardDeviation = sqrt(variance)>
+
+								<#-- calculate +- 3SD -->
+								<#if refTypes?contains("constituent")>
+									<#local meanSD = mean - 3*standardDeviation/>
+									<#local symbol="-"/> 
+								<#else>
+									<#local meanSD = mean + 3*standardDeviation/>
+									<#local symbol="+"/> 
+								</#if>
+
+								<#-- Output the standard deviation -->
+								${meanSD} (${mean} ${symbol} 3 * ${standardDeviation})
+
+							<#recover>
+								error!
+							</#attempt>
+
+						<#else>
+							N.A.
+						</#if>
+
+					</td>
 				</tr>
 			</#list>
 		</tbody>
