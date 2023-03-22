@@ -522,7 +522,9 @@
 					<para><emphasis role="underline">----- Metabolite <emphasis role="bold">${entityList[summary_index]}</emphasis> -----</emphasis></para>
 					<@com.emptyLine/>
 				</#if>
-				<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+				<@studyandsummaryCom.summaryKeyInformation summary/>
+				<@studyandsummaryCom.assessmentEntitiesList summary />
+				<@studyandsummaryCom.summaryAdditionalInformation summary/>
 			</#list>
 		</#if>
 

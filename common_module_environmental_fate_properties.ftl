@@ -9,7 +9,7 @@
 		<#assign printSummaryName = summaryList?size gt 1 />
 		<#list summaryList as summary>
 			<#if summary?has_content>
-				<@studyandsummaryCom.endpointSummary summary "" printSummaryName/>
+				<@studyandsummaryCom.endpointSummary summary "" "EnvironmentalFateAndPathways" printSummaryName/>
 			</#if>
 		</#list>
 	</#if>		
@@ -2166,8 +2166,7 @@
 	<#return valuesCSA />	
 </#function>
 <#function isCSAPhototransformationInSoil summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeInSoil?has_content 
-	|| summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyInformation.KeyInformation?has_content />
 </#function>
 <#function getCSAValuesPhototransformationInWater summaryList>
 	<#local valuesCSA = []/>
