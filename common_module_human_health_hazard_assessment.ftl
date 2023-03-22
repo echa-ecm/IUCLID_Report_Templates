@@ -8630,9 +8630,9 @@
 			</#list>
 		</para>
 
-		<#if study.ResultsAndDiscussion.ResultsDetails?has_content>
+		<#if study.ResultsAndDiscussion.ResultsOfExaminations.ResultsDetails?has_content>
 			<para>
-				Details: <para role="indent"><@com.text study.ResultsAndDiscussion.ResultsDetails/></para>
+				Details: <para role="indent"><@com.text study.ResultsAndDiscussion.ResultsOfExaminations.ResultsDetails/></para>
 			</para>
 		</#if>
 
@@ -9120,9 +9120,10 @@
 			<para role="indent">
 				Test material preparation:
 
-				<#if des.TestMaterialPreparation.ConcentrationSelection?has_content>
+				<#--  THIS FIELD DOES NOT EXIST ANYMORE SINCE THE APRIL 2023 RELEASE, and it does not seem to be replaced by another field  -->
+				<#--  <#if des.TestMaterialPreparation.ConcentrationSelection?has_content>
 					<para role="indent2">Concentration selection: <@com.value des.TestMaterialPreparation.ConcentrationSelection/>.</para>
-				</#if>
+				</#if>  -->
 				<#if des.TestMaterialPreparation.Vehicle?has_content>
 					<para role="indent2">Vehicle / solvent: <@com.value des.TestMaterialPreparation.Vehicle/>.</para>
 				</#if>
@@ -9231,63 +9232,88 @@
 <#--4. Results summaries-->
 
 <#macro toxRefValuesTable summary>
+    <#if summary?has_content>
+        <#local toxRefPath2ValMap = {"AcceptableOperatorExposureLevel":"Aoel", "AcceptableDailyIntake":"Adi", "AcuteReferenceDose":"Arfd", "AcuteAcceptableOperatorExposureLevel":"Aaoel"}/>
 
-	<#local toxRefPath2ValMap = {"AcceptableOperatorExposureLevel":"Aoel", "AcceptableDailyIntake":"Adi", "AcuteReferenceDose":"Arfd", "AcuteAcceptableOperatorExposureLevel":"Aaoel"}/>
+        <#--  CREATE TABLE  -->
+        <table border="1">
+            <#--  Define table header  -->
+            <thead>
+                <tr><?dbfo bgcolor="#FBDDA6" ?>
+                    <th><emphasis role="bold">Reference Value</emphasis></th>
+                    <th><emphasis role="bold">Study</emphasis></th>
+                    <th><emphasis role="bold">Route</emphasis></th>
+                    <th><emphasis role="bold">Uncertainty factor (UF)</emphasis></th>
+                    <th><emphasis role="bold">Dose descriptor</emphasis></th>
+                    <th><emphasis role="bold">Justification</emphasis></th>
+                </tr>
+            </thead>
 
-	<table border="1">
-		<tbody>
+            <#--  Define table body  -->
+            <tbody>
+                <#list summary.HumanHealthHazardCharacteristics?children as child>
+				<#if child?has_content>
+                    <#local toxRef=toxRefPath2ValMap[child?node_name]/>
 
-		<tr>
-			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Reference Value</emphasis></th>
-			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Study</emphasis></th>
-			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Route</emphasis></th>
-			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Uncertainty factor (UF)</emphasis></th>
-			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Dose descriptor</emphasis></th>
-			<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Justification</emphasis></th>
-		</tr>
+                    <#if child[toxRef]?has_content && !child.NoAllocated >
+                        <tr>
+                            <#--  Reference Value column  -->
+                            <td>
+                                ${toxRef?upper_case} = <@com.quantity child[toxRef]/>
+                            </td>
 
-		<#list summary.HumanHealthHazardCharacteristics?children as child>
-			<#local toxRef=toxRefPath2ValMap[child?node_name]/>
+                            <#--  Study column  -->
+                            <td>
+                                <@com.picklistMultiple child.StudyRetained/>
+                            </td>
 
-			<#if child[toxRef]?has_content || child.NoAllocated >
-				<tr>
-					<td>
-						${toxRef?upper_case}
-						<#if child.NoAllocated>
-							: Not allocated
-						<#else>
-							= <@com.quantity child[toxRef]/>
-						</#if>
-					</td>
-					<td>
-						<@com.value child.StudyRetained/>
-					</td>
-					<td>
-						<#local route><@com.value child.RouteOfOriginalStudy/></#local>
-						${route}
-						<#if child.hasElement("OralAbsorption") && route?matches(".*oral.*") && child.OralAbsorption?has_content>
-							(<@com.number child.OralAbsorption/>%)
-						</#if>
-					</td>
-					<td>
-						<@com.text child.OverallUncertainty/>
-						<#if child.JustificationOverallUf?has_content>
-							- <@com.text child.JustificationOverallUf/>
-						</#if>
-					</td>
-					<td>
-						<@com.value child.DoseDescriptorStartingPoint/>
-						<#if child.field8204?has_content> = <@com.quantity child.field8204/></#if>
-					</td>
-					<td>
-						<#if child.NoAllocated><@com.text child.Justification/></#if>
-						<@com.richText child.JustificationAndComments/>
-					</td>
+                            <#--  Route column  -->
+                            <td>
+                                <#local route><@com.picklist child.RouteOfOriginalStudy/></#local>
+                                ${route}
+                                <#if child.hasElement("OralAbsorption") && route?matches(".*oral.*") && child.OralAbsorption?has_content>
+                                    (<@com.number child.OralAbsorption/>%)
+                                </#if>
+                            </td>
 
-				</tr>
-			</#if>
-		</#list>
-		</tbody></table>
+                            <#--  Uncertainty factor (UF) column  -->
+                            <td>
+                                <@com.text child.OverallUncertainty/>
+                                <#if child.JustificationOverallUf?has_content>
+                                    - <@com.text child.JustificationOverallUf/>
+                                </#if>
+                            </td>
+
+                            <#--  Dose descriptor column  -->
+                            <td>
+                                <@com.picklist child.DoseDescriptorStartingPoint/>
+                                <#--  <#if child.field8204?has_content> = <@com.quantity child.field8204/></#if>  -->
+                            </td>
+
+                            <#--  Justification column  -->
+                            <td>
+                                <@com.richText child.JustificationAndComments/>
+                            </td>
+                        </tr>
+                    <#elseif child[toxRef]?has_content && child.NoAllocated >
+                        <tr>
+                            <td colspan="6" align="center">
+                                ${toxRef?upper_case} not allocated<sbr/>
+                                <@com.text child.Justification/>
+                            </td>
+                        </tr>
+                    <#else>
+                        <tr>
+                            <td colspan="6" align="center">
+                                No ${toxRef?upper_case} available
+                            </td>
+                        </tr>
+                    </#if>
+				</#if>
+                </#list>
+            </tbody>
+        </table>
+    </#if>
 </#macro>
 
 <#--Endocrine disrupting properties-->
@@ -10123,8 +10149,6 @@
 	<#--  Initialize sequence that will hold CSA values  -->
 	<#local summaryCSAseq = []/>
 	
-	
-
 	<#--  PHOTOTOXICITY  -->
 	<#if summary?node_name=="Phototoxicity">
 		<#--  Iterate over csaPath  -->
@@ -10187,7 +10211,88 @@
 				</#if>
 			</#list>
 		</#if>
-	
+
+	<#--  DERMAL ABSORPTION  -->
+	<#elseif summary?node_name=="DermalAbsorption">
+		<#--  Iterate over csaPath  -->
+		<#list csaPath as path>
+			<#--  Get block at path (CSA or Links)  -->
+			<#local block = studyandsummaryCom.getObjectFromPathOptions(summary, [path])/>
+
+			<#if block?has_content>
+				<#if block?node_name=="LinkToRelevantStudyRecord">
+					<#--  Get links to relevant study record(s)  -->
+					<#local links = studyandsummaryCom.getSummaryLinks(block, ["Link"])/>
+
+				<#elseif block?node_name=="KeyValueCsa">
+					<#--  Get endpoint  -->
+					<#local endpoint>
+						<#compress>
+							<#if block.hasElement("Endpoint")>
+								<@com.value block.Endpoint/>
+							</#if>
+						</#compress>
+					</#local>
+
+					<#--  Get type of information  -->
+					<#local infoType>
+						<#compress>
+							<#if block.hasElement("TypeOfInformation")>
+								<@com.value block.TypeOfInformation/>
+							</#if>
+						</#compress>
+					</#local>
+
+					<#--  Get species  -->
+					<#local species>
+						<#compress>
+							<#if block.hasElement("Species")>
+								<@com.value block.Species/>
+							</#if>
+						</#compress>
+					</#local>
+
+					<#--  Get results  -->
+					<#local results>
+						<#compress>
+							<#if block.hasElement("Results")>
+								<#list block.Results as row>
+									<#if row.Concentration?has_content>
+										<@com.value row.Concentration/>
+									</#if>
+
+									<#if row.Parameter?has_content>
+										<@com.value row.Parameter/>
+									</#if>
+									 - absorption: 
+									<#if row.Absorption?has_content>
+										<@com.value row.Absorption/>
+									</#if>
+
+									<#if row?has_next>
+										<@com.emptyLine/>
+									</#if>
+								</#list>
+							</#if>
+						</#compress>
+					</#local>
+
+					<#--  Get justification  -->
+					<#local justification>
+						<#compress>
+							<#if block.hasElement("Justification")>
+								<@com.value block.Justification/>
+							</#if>
+						</#compress>
+					</#local>
+				</#if>
+			</#if>
+		</#list>
+
+		<#--  Append variables to final sequence  -->
+		<#if links?has_content || endpoint?has_content || infoType?has_content || species?has_content || results?has_content  || justification?has_content>
+			<#local summaryCSAseq = summaryCSAseq + [{'endpoint': endpoint!, 'infoType' : infoType!, 'species' : species!, 'results' : results!, 'justification' : justification!, "links" : links!}]/>
+		</#if>
 	<#else>
 		<#--  Consider different path names, if not provided  -->
 		<#local csaBlock = studyandsummaryCom.getObjectFromPathOptions(summary, csaPath)/>
@@ -10203,8 +10308,8 @@
 				<#if !excludePath?seq_contains(block?node_name)>
 					<#if block?node_type=="block">
 
-						<#--  ACUTE TOXICITY - IRRITATION/CORROTION - SENSITISATION - GENOTOXICITY - CARCINOGENICITY - NEUROTOXICITY  -->
-						<#if summary?node_name=="AcuteToxicity" || summary?node_name=="IrritationCorrosion" || summary?node_name=="Sensitisation" || summary?node_name=="GeneticToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity">
+						<#--  ACUTE TOXICITY - IRRITATION/CORROTION - SENSITISATION - GENOTOXICITY - CARCINOGENICITY - NEUROTOXICITY - IMMUNOTOXICITY  -->
+						<#if summary?node_name=="AcuteToxicity" || summary?node_name=="IrritationCorrosion" || summary?node_name=="Sensitisation" || summary?node_name=="GeneticToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="Immunotoxicity">
 							<#--  Links  -->
 							<#local links = ''/>
 							<#local links = studyandsummaryCom.getSummaryLinks(block, ["LinkToRelevantStudyRecord"])/>
@@ -10236,7 +10341,7 @@
 								</#compress>
 							</#local>
 
-							<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity">
+							<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="Immunotoxicity">
 								<#--  Study duration  -->
 								<#local duration>
 									<#compress>
@@ -10281,7 +10386,7 @@
 								<#if endpointConclusion?has_content || doseDescriptor?has_content || effLev?has_content || links?has_content || duration?has_content || species?has_content || system?has_content || organ?has_content>
 									<#local summaryCSAseq = summaryCSAseq + [{'endpoint': blockName, "links" : links!, "descriptor" : doseDescriptor!, "effect" : effLev!, "conclusion" : endpointConclusion!, "duration" : duration!, "species":species!, "system":system!, "organ":organ!}]/>
 								</#if>
-							<#elseif summary?node_name=="Neurotoxicity">
+							<#elseif summary?node_name=="Neurotoxicity" || summary?node_name=="Immunotoxicity">
 								<#if endpointConclusion?has_content || doseDescriptor?has_content || effLev?has_content || links?has_content || duration?has_content || species?has_content>
 									<#local summaryCSAseq = summaryCSAseq + [{'endpoint': blockName, "links" : links!, "descriptor" : doseDescriptor!, "effect" : effLev!, "conclusion" : endpointConclusion!, "duration" : duration!, "species":species!}]/>
 								</#if>
@@ -10386,7 +10491,6 @@
 									</#if>
 								</#if>
 							</#list>
-
 
 						<#--  REPRODUCTIVE TOXICITY  -->
 						<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
@@ -10577,155 +10681,172 @@
 		</#if>
 
 		<#list summaryList as summary>
-			<#--  Initialize a hash that will hold information from all summaries  -->
-			<#if summary?node_name=="Phototoxicity">
-				<#local endpointsHash = getToxCSA(summary, ['KeyValueCsa', 'LinkToRelevantStudyRecord'])/>
-			<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
-				<#local endpointsHash = getToxCSA(summary, ['KeyValueForChemicalSafetyAssessment'], ['ToxicityToReproductionOtherStudies', 'MoAAnalysisHumanRelevanceFramework'])/>
+			<#if summary?node_name=="NonDietaryExpo">
+				<@nonDietaryExpoSummary summary/><@com.emptyLine/>
+			<#elseif summary?node_name=="ToxRefValues">
+				<para><emphasis role="bold">Toxicological reference values: </emphasis></para>
+				<@toxRefValuesTable summary/><@com.emptyLine/>
 			<#else>
-				<#local endpointsHash = getToxCSA(summary)/>
-			</#if>
+				<#--  Initialize a hash that will hold information from all summaries  -->
+				<#if summary?node_name=="Phototoxicity" || summary?node_name=="DermalAbsorption">
+					<#local endpointsHash = getToxCSA(summary, ['KeyValueCsa', 'LinkToRelevantStudyRecord'])/>
+				<#elseif summary?node_name=="ToxicityToReproduction_EU_PPP">
+					<#local endpointsHash = getToxCSA(summary, ['KeyValueForChemicalSafetyAssessment'], ['ToxicityToReproductionOtherStudies', 'MoAAnalysisHumanRelevanceFramework'])/>
+				<#else>
+					<#local endpointsHash = getToxCSA(summary)/>
+				</#if>
 
-			<#--  Parse the hash and create the table  -->
-			<#if endpointsHash?has_content>
-				<#--  CREATE TABLE  -->
-				<table border="1">
-					<#--  Set columns width  -->
-					<#if summary?node_name=="AcuteToxicity">
-						<col width="24%"/>
-						<col width="14%"/>
-						<col width="28%"/>
-						<col width="34%"/>
-					<#elseif summary?node_name=="RepeatedDoseToxicity">
-						<col width="20%"/>
-						<col width="12%"/>
-						<col width="10%"/>
-						<col width="10%"/>
-						<col width="17%"/>
-						<col width="10%"/>
-						<col width="20%"/>
-					<#elseif summary?node_name=="Carcinogenicity">
-						<col width="14%"/>
-						<col width="12%"/>
-						<col width="12%"/>
-						<col width="11%"/>
-						<col width="11%"/>
-						<col width="13%"/>
-						<col width="10%"/>
-						<col width="17%"/>
-					</#if>
-
-					<#--  Define table header  -->
-					<thead>
-						<tr align="center" valign="middle"><?dbfo bgcolor="#FBDDA6" ?>
-							<th><emphasis role="bold">Endpoint</emphasis></th>
-							
-
-							<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
-
-								<th><emphasis role="bold">Dose descriptor, Effect level</emphasis></th>
-							</#if>
-
-							<#if summary?node_name!="RepeatedDoseToxicity">
-								<th><emphasis role="bold">Endpoint Conclusion</emphasis></th>
-							</#if>
-
-							<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
-								<th><emphasis role="bold">Basis For Effect Level</emphasis></th>
-							</#if>
-
-							<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
-								<th><emphasis role="bold">Exposure (hours/week)</emphasis></th>
-							</#if>
-
-							<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
-								<th><emphasis role="bold">Study duration</emphasis></th>
-							</#if>
-
-							<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
-								<th><emphasis role="bold">Species</emphasis></th>
-
-								<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction">
-									<th><emphasis role="bold">System</emphasis></th>
-									<th><emphasis role="bold">Organ</emphasis></th>
-								</#if>
-							</#if>
-
-							<th><emphasis role="bold">Linked studies</emphasis></th>
-						</tr>
-					</thead>
-
-					<#--  Define table body  -->
-					<tbody valign="middle">
-						<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
-							<#local fertRowSpan = 0>
-							<#local devToxRowSpan = 0>
-
-							<#local prevEndpoint = ''>
-
-							<#list endpointsHash as item>
-								<#if !item.endpoint?truncate(15)?matches(prevEndpoint?truncate(15))>
-									<#if item.endpoint?starts_with("Effect on fertility")>
-										<#local fertRowSpan++>
-									<#elseif item.endpoint?starts_with("Effect on developmental")>
-										<#local devToxRowSpan++>
-									</#if>
-								</#if>
-
-								<#local prevEndpoint = item.endpoint>
-							</#list>
+				<#--  Parse the hash and create the table  -->
+				<#if endpointsHash?has_content>
+					<#--  CREATE TABLE  -->
+					<table border="1">
+						<#--  Set columns width  -->
+						<#if summary?node_name=="AcuteToxicity">
+							<col width="24%"/>
+							<col width="14%"/>
+							<col width="28%"/>
+							<col width="34%"/>
+						<#elseif summary?node_name=="RepeatedDoseToxicity">
+							<col width="20%"/>
+							<col width="12%"/>
+							<col width="10%"/>
+							<col width="10%"/>
+							<col width="17%"/>
+							<col width="10%"/>
+							<col width="20%"/>
+						<#elseif summary?node_name=="Carcinogenicity">
+							<col width="14%"/>
+							<col width="12%"/>
+							<col width="12%"/>
+							<col width="11%"/>
+							<col width="11%"/>
+							<col width="13%"/>
+							<col width="10%"/>
+							<col width="17%"/>
 						</#if>
 
-						<#list endpointsHash as item>
-							<tr>
-								<td>${item.endpoint}</td>
+						<#--  Define table header  -->
+						<thead>
+							<tr align="center" valign="middle"><?dbfo bgcolor="#FBDDA6" ?>
+								<th><emphasis role="bold">Endpoint</emphasis></th>
 
-								<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
-									<td>${item.descriptor} ${item.effect}</td>
+								<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="Immunotoxicity">
+									<th><emphasis role="bold">Dose descriptor, Effect level</emphasis></th>
 								</#if>
 
-								<#if summary?node_name!="RepeatedDoseToxicity">
-									<td>${item.conclusion}</td>
+								<#if summary?node_name!="RepeatedDoseToxicity" && summary?node_name!="DermalAbsorption">
+									<th><emphasis role="bold">Endpoint Conclusion</emphasis></th>
 								</#if>
 
 								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
-									<td>${item.basis}</td>
+									<th><emphasis role="bold">Basis For Effect Level</emphasis></th>
 								</#if>
 
 								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
-									<td>${item.exposure}</td>
+									<th><emphasis role="bold">Exposure (hours/week)</emphasis></th>
 								</#if>
 
-								<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
-									<td>${item.duration}</td>
+								<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="Immunotoxicity">
+									<th><emphasis role="bold">Study duration</emphasis></th>
 								</#if>
-								
-								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
-									<td>${item.species}</td>
 
-									<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction" && summary?node_name!="Toxicokinetics" && summary?node_name!="AcuteToxicity" && summary?node_name!="IrritationCorrosion" && summary?node_name!="Sensitisation">
-										<td>${item.system}</td>
-										<td>${item.organ}</td>
+								<#if summary?node_name=="DermalAbsorption">
+									<th><emphasis role="bold">Type of information</emphasis></th>
+									<th><emphasis role="bold">Justification</emphasis></th>
+									<th><emphasis role="bold">Results</emphasis></th>
+								</#if>
+
+								<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="DermalAbsorption" || summary?node_name=="Immunotoxicity">
+									<th><emphasis role="bold">Species</emphasis></th>
+
+									<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction" && summary?node_name!="DermalAbsorption" && summary?node_name!="Immunotoxicity">
+										<th><emphasis role="bold">System</emphasis></th>
+										<th><emphasis role="bold">Organ</emphasis></th>
 									</#if>
 								</#if>
 
-								<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
-									<#if item?index==0>
-										<td rowspan="${fertRowSpan}">${item.links}</td>
-									<#elseif item?index==fertRowSpan>
-										<td rowspan="${devToxRowSpan}">${item.links}</td>
-									</#if>
-								<#elseif summary?node_name=="Toxicokinetics">
-									<#if item?index==0>
-										<td rowspan="${endpointsHash?size}">${item.links}</td>
-									</#if>
-								<#else>
-									<td>${item.links}</td>
-								</#if>
+								<th><emphasis role="bold">Linked studies</emphasis></th>
 							</tr>
-						</#list>
-					</tbody>
-				</table>
+						</thead>
+
+						<#--  Define table body  -->
+						<tbody valign="middle">
+							<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+								<#local fertRowSpan = 0>
+								<#local devToxRowSpan = 0>
+
+								<#local prevEndpoint = ''>
+
+								<#list endpointsHash as item>
+									<#if !item.endpoint?truncate(15)?matches(prevEndpoint?truncate(15))>
+										<#if item.endpoint?starts_with("Effect on fertility")>
+											<#local fertRowSpan++>
+										<#elseif item.endpoint?starts_with("Effect on developmental")>
+											<#local devToxRowSpan++>
+										</#if>
+									</#if>
+
+									<#local prevEndpoint = item.endpoint>
+								</#list>
+							</#if>
+
+							<#list endpointsHash as item>
+								<tr>
+									<td>${item.endpoint}</td>
+
+									<#if summary?node_name=="AcuteToxicity" || summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="Immunotoxicity">
+										<td>${item.descriptor} ${item.effect}</td>
+									</#if>
+
+									<#if summary?node_name!="RepeatedDoseToxicity" && summary?node_name!="DermalAbsorption">
+										<td>${item.conclusion}</td>
+									</#if>
+
+									<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+										<td>${item.basis}</td>
+									</#if>
+
+									<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction">
+										<td>${item.exposure}</td>
+									</#if>
+
+									<#if summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="Immunotoxicity">
+										<td>${item.duration}</td>
+									</#if>
+
+									<#if summary?node_name=="DermalAbsorption">
+										<td>${item.infoType}</td>
+										<td>${item.justification}</td>
+										<td>${item.results}</td>
+									</#if>
+									
+									<#if summary?node_name=="RepeatedDoseToxicity" || summary?node_name=="Carcinogenicity" || summary?node_name=="Neurotoxicity" || summary?node_name=="ToxicityToReproduction_EU_PPP" || summary?node_name=="ToxicityToReproduction" || summary?node_name=="DermalAbsorption" || summary?node_name=="Immunotoxicity">
+										<td>${item.species}</td>
+
+										<#if summary?node_name!="Neurotoxicity" && summary?node_name!="ToxicityToReproduction_EU_PPP" && summary?node_name!="ToxicityToReproduction" && summary?node_name!="Toxicokinetics" && summary?node_name!="AcuteToxicity" && summary?node_name!="IrritationCorrosion" && summary?node_name!="Sensitisation" && summary?node_name!="DermalAbsorption" && summary?node_name!="Immunotoxicity">
+											<td>${item.system}</td>
+											<td>${item.organ}</td>
+										</#if>
+									</#if>
+
+									<#if summary?node_name=="ToxicityToReproduction_EU_PPP">
+										<#if item?index==0>
+											<td rowspan="${fertRowSpan}">${item.links}</td>
+										<#elseif item?index==fertRowSpan>
+											<td rowspan="${devToxRowSpan}">${item.links}</td>
+										</#if>
+									<#elseif summary?node_name=="Toxicokinetics">
+										<#if item?index==0>
+											<td rowspan="${endpointsHash?size}">${item.links}</td>
+										</#if>
+									<#else>
+										<td>${item.links}</td>
+									</#if>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
 			</#if>
 		</#list>
 	</#compress>
