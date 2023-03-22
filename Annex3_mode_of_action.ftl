@@ -5,7 +5,7 @@
 	<#if summary?has_content>
 		<para><emphasis role="bold">Section 5.6.3: <@nameOfSummary summary/></emphasis></para>
 		<para><emphasis role="underline">Detailed information on mode of action / Human relevance framework: </emphasis></para>
-		<@com.richText summary.KeyValueForChemicalSafetyAssessment.ModeOfActionAnalysisHumanRelevanceFramework.ModeOfActionAnalysis/>
+		<@com.value summary.ModeOfActionAnalysisHumanRelevanceFramework/>
 		<@com.emptyLine/>
 	</#if>
 </#list>
@@ -15,7 +15,7 @@
 	<#if summary?has_content>
 		<para><emphasis role="bold">Section 5.7.3: <@nameOfSummary summary/></emphasis></para>
 		<para><emphasis role="underline">Detailed information on mode of action / Human relevance framework: </emphasis></para>
-		<@com.richText summary.KeyValueForChemicalSafetyAssessment.MoAHumanRelevanceFramework.MoAHumanRelevanceFramework/>
+		<@com.value summary.MoAHumanRelevanceFramework/>
 		<@com.emptyLine/>
 	</#if>
 </#list>
@@ -25,7 +25,7 @@
 	<#if summary?has_content>
 		<para><emphasis role="bold">Section 5.8.3: <@nameOfSummary summary/></emphasis></para>
 		<para><emphasis role="underline">Detailed information on mode of action / Human relevance framework: </emphasis></para>
-		<@com.richText summary.KeyValueForChemicalSafetyAssessment.MoAHumanRelevanceFramework.MoAHumanRelevanceFramework/>
+		<@com.value summary.MoAHumanRelevanceFramework/>
 		<@com.emptyLine/>
 	</#if>
 </#list>
@@ -35,7 +35,7 @@
 	<#if summary?has_content>
 		<para><emphasis role="bold">Section 5.9.3: <@nameOfSummary summary/></emphasis></para>
 		<para><emphasis role="underline">Detailed information on mode of action / Human relevance framework: </emphasis></para>
-		<@com.richText summary.KeyValueForChemicalSafetyAssessment.MoAAnalysisHumanRelevanceFramework.MoAAnalysisHumanRelevanceFramework/>
+		<@com.value summary.MoAAnalysisHumanRelevanceFramework/>
 		<@com.emptyLine/>
 	</#if>
 </#list>
