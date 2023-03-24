@@ -20,6 +20,13 @@
 	</#if>
 </#macro>
 
+<#-- get sub entity key for sub entity report generation -->
+<#function getSubEntityKey subEntityUuid>
+    <#assign subKey = (subEntityUuid + "/" + entity.root.documentKey.snapshotUuid) />
+    <#assign subEntityKey = iuclid.getDocumentForKey(subKey) />
+	<#return subEntityKey />
+</#function>
+
 <#-- Initialize the following variables to include or exclude information for the CSR, PAR, DAR, RAR -->
 
 <#global relevance = {
