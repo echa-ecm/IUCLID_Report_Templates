@@ -48,7 +48,6 @@
             <col width="10%"/>
             <col width="10%"/>
             <col width="8%"/>
-            <#--  <col width="17%"/>  -->
             
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -227,7 +226,6 @@
             <col width="9%"/>
             <col width="9%"/>
             <col width="9%"/>
-            <#--  <col width="28%"/>  -->
             
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -380,7 +378,6 @@
             <col width="34%"/>
             <col width="16%"/>
             <col width="16%"/>
-            <#--  <col width="30%"/>  -->
 
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -495,7 +492,6 @@
             <col width="13%"/>
             <col width="12%"/>
             <col width="10%"/>
-            <#--  <col width="10%"/>  -->
 
             <#--  Define table header  -->
             <thead align="center" valign="middle">
