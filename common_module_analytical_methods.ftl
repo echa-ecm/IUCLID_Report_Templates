@@ -30,7 +30,7 @@
 </#macro>
 
 <#--  RECOVERY TABLE  -->
-<#macro printRecoveryTable resultsPath >
+<#macro printRecoveryTable resultsPath footnotes=true >
     <#local recovery = resultsPath.Recovery />
 
     <#if recovery?has_content>
@@ -40,15 +40,15 @@
             <title>Recovery</title>
 
             <#--  Set columns width  -->
-            <col width="11%"/>
-            <col width="11%"/>
-            <col width="8%"/>
-            <col width="13%"/>
-            <col width="11%"/>
-            <col width="10%"/>
-            <col width="10%"/>
-            <col width="9%"/>
+            <col width="21%"/>
             <col width="17%"/>
+            <col width="9%"/>
+            <col width="14%"/>
+            <col width="11%"/>
+            <col width="10%"/>
+            <col width="10%"/>
+            <col width="8%"/>
+            <#--  <col width="17%"/>  -->
             
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -93,11 +93,11 @@
                             RSD (%)
                         </emphasis>
                     </th>
-                    <th>
+                    <#--  <th>
                         <emphasis role="bold">
                             Remarks
                         </emphasis>
-                    </th>
+                    </th>  -->
                 </tr>
             </thead>
             
@@ -116,6 +116,10 @@
                                 <ulink url="${analyteUrl}"><@com.value analyte.ReferenceSubstanceName /></ulink>
                             <#else>
                                 N/A
+                            </#if>
+
+                            <#if footnotes>
+                                <superscript><emphasis>(${row?index + 1})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -183,21 +187,28 @@
                         </td>
 
                         <#--  Remarks cell  -->
-                        <td>
+                        <#--  <td>
                             <#if row.Remarks?has_content>
                                 <#local remarks>
                                     <@com.text row.Remarks />
                                 </#local>
-
                                 ${remarks?truncate(50)}
                             <#else>
                                 N/A
                             </#if>
-                        </td>
+                        </td>  -->
                     </tr>
                 </#list>
             </tbody>
         </table>
+
+        <#if footnotes>
+            <para role="small">
+                <emphasis>
+                    <@printRemarksFromTable recovery />
+                </emphasis>
+            </para>
+        </#if>
     </#if>
 
     <#--  Print additional details on recovery results section  -->
@@ -211,7 +222,7 @@
 </#macro>
 
 <#--  REPEATABILITY TABLE  -->
-<#macro printRepeatabilityTable resultsPath >
+<#macro printRepeatabilityTable resultsPath footnotes=true >
     <#local repeatability = resultsPath.Repeatability />
 
     <#if repeatability?has_content>
@@ -221,14 +232,14 @@
             <title>Repeatability</title>
 
             <#--  Set columns width  -->
-            <col width="14%"/>
-            <col width="15%"/>
+            <col width="29%"/>
+            <col width="22%"/>
+            <col width="12%"/>
             <col width="10%"/>
             <col width="9%"/>
-            <col width="8%"/>
-            <col width="8%"/>
             <col width="9%"/>
-            <col width="28%"/>
+            <col width="9%"/>
+            <#--  <col width="28%"/>  -->
             
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -268,11 +279,11 @@
                             Horrat value
                         </emphasis>
                     </th>
-                    <th>
+                    <#--  <th>
                         <emphasis role="bold">
                             Remarks
                         </emphasis>
-                    </th>
+                    </th>  -->
                 </tr>
             </thead>
             
@@ -291,6 +302,10 @@
                                 <ulink url="${analyteUrl}"><@com.value analyte.ReferenceSubstanceName /></ulink>
                             <#else>
                                 N/A
+                            </#if>
+
+                            <#if footnotes>
+                                <superscript><emphasis>(${row?index + 1})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -349,26 +364,33 @@
                         </td>
 
                         <#--  Remarks cell  -->
-                        <td>
+                        <#--  <td>
                             <#if row.Remarks?has_content>
                                 <#local remarks>
                                     <@com.text row.Remarks />
                                 </#local>
-
                                 ${remarks?truncate(50)}
                             <#else>
                                 N/A
                             </#if>
-                        </td>
+                        </td>  -->
                     </tr>
                 </#list>
             </tbody>
         </table>
+
+        <#if footnotes>
+            <para role="small">
+                <emphasis>
+                    <@printRemarksFromTable repeatability />
+                </emphasis>
+            </para>
+        </#if>
     </#if>
 </#macro>
 
 <#--  LOQ/LOD TABLE  -->
-<#macro printLOQLODTable resultsPath >
+<#macro printLOQLODTable resultsPath footnotes=true>
     <#local LOQLOD = resultsPath.LOQLOD />
 
     <#if LOQLOD?has_content>
@@ -378,11 +400,11 @@
             <title>LOQ/LOD</title>
 
             <#--  Set columns width  -->
-            <col width="20%"/>
-            <col width="20%"/>
-            <col width="15%"/>
-            <col width="15%"/>
-            <col width="30%"/>
+            <col width="34%"/>
+            <col width="34%"/>
+            <col width="16%"/>
+            <col width="16%"/>
+            <#--  <col width="30%"/>  -->
 
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -407,11 +429,11 @@
                             LOD
                         </emphasis>
                     </th>
-                    <th>
+                    <#--  <th>
                         <emphasis role="bold">
                             Remarks
                         </emphasis>
-                    </th>
+                    </th>  -->
                 </tr>
             </thead>
             
@@ -430,6 +452,10 @@
                                 <ulink url="${analyteUrl}"><@com.value analyte.ReferenceSubstanceName /></ulink>
                             <#else>
                                 N/A
+                            </#if>
+
+                            <#if footnotes>
+                                <superscript><emphasis>(${row?index + 1})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -461,26 +487,33 @@
                         </td>
 
                         <#--  Remarks cell  -->
-                        <td>
+                        <#--  <td>
                             <#if row.Remarks?has_content>
                                 <#local remarks>
                                     <@com.text row.Remarks />
                                 </#local>
-
                                 ${remarks?truncate(50)}
                             <#else>
                                 N/A
                             </#if>
-                        </td>
+                        </td>  -->
                     </tr>
                 </#list>
             </tbody>
         </table>
+
+        <#if footnotes>
+            <para role="small">
+                <emphasis>
+                    <@printRemarksFromTable LOQLOD />
+                </emphasis>
+            </para>
+        </#if>
     </#if>
 </#macro>
 
 <#--  CALIBRATION TABLE  -->
-<#macro printCalibrationTable resultsPath >
+<#macro printCalibrationTable resultsPath footnotes=true>
     <#local calibration = resultsPath.Calibration />
 
     <#if calibration?has_content>
@@ -490,15 +523,15 @@
             <title>Calibration</title>
 
             <#--  Set columns width  -->
+            <col width="17%"/>
+            <col width="14%"/>
+            <col width="11%"/>
+            <col width="11%"/>
             <col width="12%"/>
+            <col width="13%"/>
             <col width="12%"/>
             <col width="10%"/>
-            <col width="10%"/>
-            <col width="12%"/>
-            <col width="12%"/>
-            <col width="12%"/>
-            <col width="10%"/>
-            <col width="10%"/>
+            <#--  <col width="10%"/>  -->
 
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -543,11 +576,11 @@
                             Nb replicates
                         </emphasis>
                     </th>
-                    <th>
+                    <#--  <th>
                         <emphasis role="bold">
                             Remarks
                         </emphasis>
-                    </th>
+                    </th>  -->
                 </tr>
             </thead>
             
@@ -566,6 +599,10 @@
                                 <ulink url="${analyteUrl}"><@com.value analyte.ReferenceSubstanceName /></ulink>
                             <#else>
                                 N/A
+                            </#if>
+
+                            <#if footnotes>
+                                <superscript><emphasis>(${row?index + 1})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -635,22 +672,41 @@
                         </td>
 
                         <#--  Remarks cell  -->
-                        <td>
+                        <#--  <td>
                             <#if row.Remarks?has_content>
                                 <#local remarks>
                                     <@com.text row.Remarks />
                                 </#local>
-
                                 ${remarks?truncate(50)}
                             <#else>
                                 N/A
                             </#if>
-                        </td>
+                        </td>  -->
                     </tr>
                 </#list>
             </tbody>
         </table>
+
+        <#if footnotes>
+            <para role="small">
+                <emphasis>
+                    <@printRemarksFromTable calibration />
+                </emphasis>
+            </para>
+        </#if>
     </#if>
+</#macro>
+
+<#macro printRemarksFromTable tablePath>
+    <#list tablePath as row>
+        <#if row.Remarks?has_content>
+            <superscript>(${row?index + 1})</superscript><@com.value row.Remarks />
+
+            <#if row?has_next>
+                <@com.emptyLine/>
+            </#if>
+        </#if>
+    </#list>
 </#macro>
 
 
