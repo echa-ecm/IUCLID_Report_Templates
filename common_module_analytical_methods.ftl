@@ -586,6 +586,9 @@
             
             <#--  Define table body  -->
             <tbody valign="middle">
+                <#--  Initialize the counter that keeps track of the remarks index  -->
+                <#local remarksCounter = 0 />
+
                 <#--  Iterate over recovery block  -->
                 <#list calibration as row>
                     <tr>
@@ -602,7 +605,11 @@
                             </#if>
 
                             <#if footnotes>
-                                <superscript><emphasis>(${row?index + 1})</emphasis></superscript>
+                                <#if row.Remarks?has_content>
+                                    <#local remarksCounter++ />
+
+                                    <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
+                                </#if>
                             </#if>
                         </td>
 
@@ -670,18 +677,6 @@
                                 N/A
                             </#if>
                         </td>
-
-                        <#--  Remarks cell  -->
-                        <#--  <td>
-                            <#if row.Remarks?has_content>
-                                <#local remarks>
-                                    <@com.text row.Remarks />
-                                </#local>
-                                ${remarks?truncate(50)}
-                            <#else>
-                                N/A
-                            </#if>
-                        </td>  -->
                     </tr>
                 </#list>
             </tbody>
@@ -697,11 +692,20 @@
     </#if>
 </#macro>
 
+<#--  This macro retrieves the remarks field from an IUCLID table (taken as an argument) and prints the results as footnotes  -->
 <#macro printRemarksFromTable tablePath>
+    <#--  Initialize the counter that keeps track of the remarks index  -->
+    <#local remarksCounter = 0 />
+
+    <#--  Iterate over the table  -->
     <#list tablePath as row>
         <#if row.Remarks?has_content>
-            <superscript>(${row?index + 1})</superscript><@com.value row.Remarks />
+            <#local remarksCounter++ />
 
+            <#--  Print remarks  -->
+            <superscript>(${remarksCounter})</superscript><@com.value row.Remarks />
+
+            <#--  Add empty line  -->
             <#if row?has_next>
                 <@com.emptyLine/>
             </#if>
