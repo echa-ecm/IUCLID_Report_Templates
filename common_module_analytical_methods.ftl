@@ -93,16 +93,14 @@
                             RSD (%)
                         </emphasis>
                     </th>
-                    <#--  <th>
-                        <emphasis role="bold">
-                            Remarks
-                        </emphasis>
-                    </th>  -->
                 </tr>
             </thead>
             
             <#--  Define table body  -->
             <tbody valign="middle">
+                <#--  Initialize the counter that keeps track of the remarks index  -->
+                <#local remarksCounter = 0 />
+
                 <#--  Iterate over recovery block  -->
                 <#list recovery as row>
                     <tr>
@@ -118,8 +116,10 @@
                                 N/A
                             </#if>
 
-                            <#if footnotes>
-                                <superscript><emphasis>(${row?index + 1})</emphasis></superscript>
+                            <#if footnotes && row.Remarks?has_content>
+                                <#local remarksCounter++ />
+
+                                <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -185,18 +185,6 @@
                                 N/A
                             </#if>
                         </td>
-
-                        <#--  Remarks cell  -->
-                        <#--  <td>
-                            <#if row.Remarks?has_content>
-                                <#local remarks>
-                                    <@com.text row.Remarks />
-                                </#local>
-                                ${remarks?truncate(50)}
-                            <#else>
-                                N/A
-                            </#if>
-                        </td>  -->
                     </tr>
                 </#list>
             </tbody>
@@ -279,16 +267,14 @@
                             Horrat value
                         </emphasis>
                     </th>
-                    <#--  <th>
-                        <emphasis role="bold">
-                            Remarks
-                        </emphasis>
-                    </th>  -->
                 </tr>
             </thead>
             
             <#--  Define table body  -->
             <tbody valign="middle">
+                <#--  Initialize the counter that keeps track of the remarks index  -->
+                <#local remarksCounter = 0 />
+
                 <#--  Iterate over recovery block  -->
                 <#list repeatability as row>
                     <tr>
@@ -304,8 +290,10 @@
                                 N/A
                             </#if>
 
-                            <#if footnotes>
-                                <superscript><emphasis>(${row?index + 1})</emphasis></superscript>
+                            <#if footnotes && row.Remarks?has_content>
+                                <#local remarksCounter++ />
+
+                                <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -362,18 +350,6 @@
                                 N/A
                             </#if>
                         </td>
-
-                        <#--  Remarks cell  -->
-                        <#--  <td>
-                            <#if row.Remarks?has_content>
-                                <#local remarks>
-                                    <@com.text row.Remarks />
-                                </#local>
-                                ${remarks?truncate(50)}
-                            <#else>
-                                N/A
-                            </#if>
-                        </td>  -->
                     </tr>
                 </#list>
             </tbody>
@@ -429,16 +405,14 @@
                             LOD
                         </emphasis>
                     </th>
-                    <#--  <th>
-                        <emphasis role="bold">
-                            Remarks
-                        </emphasis>
-                    </th>  -->
                 </tr>
             </thead>
             
             <#--  Define table body  -->
             <tbody valign="middle">
+                <#--  Initialize the counter that keeps track of the remarks index  -->
+                <#local remarksCounter = 0 />
+
                 <#--  Iterate over recovery block  -->
                 <#list LOQLOD as row>
                     <tr>
@@ -454,8 +428,10 @@
                                 N/A
                             </#if>
 
-                            <#if footnotes>
-                                <superscript><emphasis>(${row?index + 1})</emphasis></superscript>
+                            <#if footnotes && row.Remarks?has_content>
+                                <#local remarksCounter++ />
+
+                                <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -485,18 +461,6 @@
                                 N/A
                             </#if>
                         </td>
-
-                        <#--  Remarks cell  -->
-                        <#--  <td>
-                            <#if row.Remarks?has_content>
-                                <#local remarks>
-                                    <@com.text row.Remarks />
-                                </#local>
-                                ${remarks?truncate(50)}
-                            <#else>
-                                N/A
-                            </#if>
-                        </td>  -->
                     </tr>
                 </#list>
             </tbody>
@@ -576,11 +540,6 @@
                             Nb replicates
                         </emphasis>
                     </th>
-                    <#--  <th>
-                        <emphasis role="bold">
-                            Remarks
-                        </emphasis>
-                    </th>  -->
                 </tr>
             </thead>
             
@@ -604,12 +563,10 @@
                                 N/A
                             </#if>
 
-                            <#if footnotes>
-                                <#if row.Remarks?has_content>
-                                    <#local remarksCounter++ />
+                            <#if footnotes && row.Remarks?has_content>
+                                <#local remarksCounter++ />
 
-                                    <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
-                                </#if>
+                                <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
                             </#if>
                         </td>
 
