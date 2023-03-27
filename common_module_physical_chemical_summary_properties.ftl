@@ -214,7 +214,7 @@
 				<col width="33%" />
 				<col width="15%" />
 			<#elseif pppRelevant??>
-				<#if includeMetabolites>
+				<#if includeMetabolites && _metabolites??>
 					<col width="20%" />
 					<col width="20%" />
 					<col width="30%" />
@@ -232,12 +232,13 @@
 
 			<tbody valign="middle">
 				<tr align="center">
-					<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
 					<#if pppRelevant??>
-						<#if includeMetabolites><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th></#if>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
+						<#if includeMetabolites && _metabolites??><th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Substance</emphasis></th></#if>
 						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA</emphasis></th>
 						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Linked studies</emphasis></th>
 					<#else>
+						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Property</emphasis></th>
 						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Value used for CSA / Discussion</emphasis></th>
 						<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Description of key information</emphasis></th>
 						<#if darRelevant?? && rarRelevant??>
@@ -258,7 +259,7 @@
 						<#local summaryList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_SUMMARY", propertyData["subType"]) />
 
 						<#-- for PPP, if there are metabolites, at them to the list of documents -->
-						<#if pppRelevant?? && includeMetabolites>
+						<#if pppRelevant?? && includeMetabolites && _metabolites??>
 
 							<#-- get a list of entities of same size as summaryList-->
 							<#local entityList = []/>
@@ -288,19 +289,30 @@
 							<#if !pppRelevant?? || propertyData?keys?seq_contains("values")>
 								<tr>
 								<!-- Property -->
-								<#if usespan>
-									<td  rowspan="${summaryList?size}">
+
+								<#if usespan> 
+									<td  rowspan="${summaryList?size}">  
 										<#local docUrl=iuclid.webUrl.documentView(summary.documentKey) />
+										
 										<#if pppRelevant??>
+											
 											<#if propertyData.pppName??>
 												<#local propertyName = propertyData.pppName!/>
 											<#else>
 												<#local propertyName = property/>
-											</#if>
+											</#if>  
+											
 											<#-- option to cross-reference:  <command linkend="${_subject.documentKey.uuid!}_${summary.documentSubType}">${propertyName!}</command>  -->
 											<#-- print link only for full table (when title is printed) -->
-											<#if printTitle>
+											<#if printTitle & !includeMetabolites>
 												<ulink url="${docUrl}">${propertyName!}</ulink>
+
+												<#if (summaryList?size>1)>
+													<#list 1..(summaryList?size-1) as index>
+														<#local docUrl=iuclid.webUrl.documentView(summaryList[index].documentKey) />
+														<ulink url="${docUrl}">[${index+1}]</ulink>
+													</#list>
+												</#if>
 											<#else>
 												${propertyName!}
 											</#if>
@@ -311,15 +323,19 @@
 												${property!}
 											</#if>
 										</#if>
+										
 									</td>
-									<#assign usespan = false />
+									
+									<#local usespan = false />
 								</#if>
 
 								<!-- for PPP: substance name -->
 								<#if pppRelevant??>
-									<#if includeMetabolites>
+
+									<#if includeMetabolites && _metabolites??>
 										<td>
-											<@com.text entityList[summary_index]/>
+											<#local docUrl=iuclid.webUrl.documentView(summary.documentKey) />
+											<ulink url="${docUrl}"><@com.text entityList[summary_index]/></ulink>
 										</td>
 									</#if>
 
