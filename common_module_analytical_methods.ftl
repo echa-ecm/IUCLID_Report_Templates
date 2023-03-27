@@ -30,7 +30,7 @@
 </#macro>
 
 <#--  RECOVERY TABLE  -->
-<#macro printRecoveryTable resultsPath >
+<#macro printRecoveryTable resultsPath footnotes=true >
     <#local recovery = resultsPath.Recovery />
 
     <#if recovery?has_content>
@@ -40,15 +40,14 @@
             <title>Recovery</title>
 
             <#--  Set columns width  -->
-            <col width="11%"/>
-            <col width="11%"/>
-            <col width="8%"/>
-            <col width="13%"/>
-            <col width="11%"/>
-            <col width="10%"/>
-            <col width="10%"/>
-            <col width="9%"/>
+            <col width="21%"/>
             <col width="17%"/>
+            <col width="9%"/>
+            <col width="14%"/>
+            <col width="11%"/>
+            <col width="10%"/>
+            <col width="10%"/>
+            <col width="8%"/>
             
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -93,16 +92,14 @@
                             RSD (%)
                         </emphasis>
                     </th>
-                    <th>
-                        <emphasis role="bold">
-                            Remarks
-                        </emphasis>
-                    </th>
                 </tr>
             </thead>
             
             <#--  Define table body  -->
             <tbody valign="middle">
+                <#--  Initialize the counter that keeps track of the remarks index  -->
+                <#local remarksCounter = 0 />
+
                 <#--  Iterate over recovery block  -->
                 <#list recovery as row>
                     <tr>
@@ -116,6 +113,12 @@
                                 <ulink url="${analyteUrl}"><@com.value analyte.ReferenceSubstanceName /></ulink>
                             <#else>
                                 N/A
+                            </#if>
+
+                            <#if footnotes && row.Remarks?has_content>
+                                <#local remarksCounter++ />
+
+                                <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -181,23 +184,18 @@
                                 N/A
                             </#if>
                         </td>
-
-                        <#--  Remarks cell  -->
-                        <td>
-                            <#if row.Remarks?has_content>
-                                <#local remarks>
-                                    <@com.text row.Remarks />
-                                </#local>
-
-                                ${remarks?truncate(50)}
-                            <#else>
-                                N/A
-                            </#if>
-                        </td>
                     </tr>
                 </#list>
             </tbody>
         </table>
+
+        <#if footnotes>
+            <para role="small">
+                <emphasis>
+                    <@printRemarksFromTable recovery />
+                </emphasis>
+            </para>
+        </#if>
     </#if>
 
     <#--  Print additional details on recovery results section  -->
@@ -211,7 +209,7 @@
 </#macro>
 
 <#--  REPEATABILITY TABLE  -->
-<#macro printRepeatabilityTable resultsPath >
+<#macro printRepeatabilityTable resultsPath footnotes=true >
     <#local repeatability = resultsPath.Repeatability />
 
     <#if repeatability?has_content>
@@ -221,14 +219,13 @@
             <title>Repeatability</title>
 
             <#--  Set columns width  -->
-            <col width="14%"/>
-            <col width="15%"/>
+            <col width="29%"/>
+            <col width="22%"/>
+            <col width="12%"/>
             <col width="10%"/>
             <col width="9%"/>
-            <col width="8%"/>
-            <col width="8%"/>
             <col width="9%"/>
-            <col width="28%"/>
+            <col width="9%"/>
             
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -268,16 +265,14 @@
                             Horrat value
                         </emphasis>
                     </th>
-                    <th>
-                        <emphasis role="bold">
-                            Remarks
-                        </emphasis>
-                    </th>
                 </tr>
             </thead>
             
             <#--  Define table body  -->
             <tbody valign="middle">
+                <#--  Initialize the counter that keeps track of the remarks index  -->
+                <#local remarksCounter = 0 />
+
                 <#--  Iterate over recovery block  -->
                 <#list repeatability as row>
                     <tr>
@@ -291,6 +286,12 @@
                                 <ulink url="${analyteUrl}"><@com.value analyte.ReferenceSubstanceName /></ulink>
                             <#else>
                                 N/A
+                            </#if>
+
+                            <#if footnotes && row.Remarks?has_content>
+                                <#local remarksCounter++ />
+
+                                <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -347,28 +348,23 @@
                                 N/A
                             </#if>
                         </td>
-
-                        <#--  Remarks cell  -->
-                        <td>
-                            <#if row.Remarks?has_content>
-                                <#local remarks>
-                                    <@com.text row.Remarks />
-                                </#local>
-
-                                ${remarks?truncate(50)}
-                            <#else>
-                                N/A
-                            </#if>
-                        </td>
                     </tr>
                 </#list>
             </tbody>
         </table>
+
+        <#if footnotes>
+            <para role="small">
+                <emphasis>
+                    <@printRemarksFromTable repeatability />
+                </emphasis>
+            </para>
+        </#if>
     </#if>
 </#macro>
 
 <#--  LOQ/LOD TABLE  -->
-<#macro printLOQLODTable resultsPath >
+<#macro printLOQLODTable resultsPath footnotes=true>
     <#local LOQLOD = resultsPath.LOQLOD />
 
     <#if LOQLOD?has_content>
@@ -378,11 +374,10 @@
             <title>LOQ/LOD</title>
 
             <#--  Set columns width  -->
-            <col width="20%"/>
-            <col width="20%"/>
-            <col width="15%"/>
-            <col width="15%"/>
-            <col width="30%"/>
+            <col width="34%"/>
+            <col width="34%"/>
+            <col width="16%"/>
+            <col width="16%"/>
 
             <#--  Define table header  -->
             <thead align="center" valign="middle">
@@ -407,16 +402,14 @@
                             LOD
                         </emphasis>
                     </th>
-                    <th>
-                        <emphasis role="bold">
-                            Remarks
-                        </emphasis>
-                    </th>
                 </tr>
             </thead>
             
             <#--  Define table body  -->
             <tbody valign="middle">
+                <#--  Initialize the counter that keeps track of the remarks index  -->
+                <#local remarksCounter = 0 />
+
                 <#--  Iterate over recovery block  -->
                 <#list LOQLOD as row>
                     <tr>
@@ -430,6 +423,12 @@
                                 <ulink url="${analyteUrl}"><@com.value analyte.ReferenceSubstanceName /></ulink>
                             <#else>
                                 N/A
+                            </#if>
+
+                            <#if footnotes && row.Remarks?has_content>
+                                <#local remarksCounter++ />
+
+                                <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -459,28 +458,23 @@
                                 N/A
                             </#if>
                         </td>
-
-                        <#--  Remarks cell  -->
-                        <td>
-                            <#if row.Remarks?has_content>
-                                <#local remarks>
-                                    <@com.text row.Remarks />
-                                </#local>
-
-                                ${remarks?truncate(50)}
-                            <#else>
-                                N/A
-                            </#if>
-                        </td>
                     </tr>
                 </#list>
             </tbody>
         </table>
+
+        <#if footnotes>
+            <para role="small">
+                <emphasis>
+                    <@printRemarksFromTable LOQLOD />
+                </emphasis>
+            </para>
+        </#if>
     </#if>
 </#macro>
 
 <#--  CALIBRATION TABLE  -->
-<#macro printCalibrationTable resultsPath >
+<#macro printCalibrationTable resultsPath footnotes=true>
     <#local calibration = resultsPath.Calibration />
 
     <#if calibration?has_content>
@@ -490,14 +484,13 @@
             <title>Calibration</title>
 
             <#--  Set columns width  -->
+            <col width="17%"/>
+            <col width="14%"/>
+            <col width="11%"/>
+            <col width="11%"/>
             <col width="12%"/>
+            <col width="13%"/>
             <col width="12%"/>
-            <col width="10%"/>
-            <col width="10%"/>
-            <col width="12%"/>
-            <col width="12%"/>
-            <col width="12%"/>
-            <col width="10%"/>
             <col width="10%"/>
 
             <#--  Define table header  -->
@@ -543,16 +536,14 @@
                             Nb replicates
                         </emphasis>
                     </th>
-                    <th>
-                        <emphasis role="bold">
-                            Remarks
-                        </emphasis>
-                    </th>
                 </tr>
             </thead>
             
             <#--  Define table body  -->
             <tbody valign="middle">
+                <#--  Initialize the counter that keeps track of the remarks index  -->
+                <#local remarksCounter = 0 />
+
                 <#--  Iterate over recovery block  -->
                 <#list calibration as row>
                     <tr>
@@ -566,6 +557,12 @@
                                 <ulink url="${analyteUrl}"><@com.value analyte.ReferenceSubstanceName /></ulink>
                             <#else>
                                 N/A
+                            </#if>
+
+                            <#if footnotes && row.Remarks?has_content>
+                                <#local remarksCounter++ />
+
+                                <superscript><emphasis>(${remarksCounter})</emphasis></superscript>
                             </#if>
                         </td>
 
@@ -633,24 +630,40 @@
                                 N/A
                             </#if>
                         </td>
-
-                        <#--  Remarks cell  -->
-                        <td>
-                            <#if row.Remarks?has_content>
-                                <#local remarks>
-                                    <@com.text row.Remarks />
-                                </#local>
-
-                                ${remarks?truncate(50)}
-                            <#else>
-                                N/A
-                            </#if>
-                        </td>
                     </tr>
                 </#list>
             </tbody>
         </table>
+
+        <#if footnotes>
+            <para role="small">
+                <emphasis>
+                    <@printRemarksFromTable calibration />
+                </emphasis>
+            </para>
+        </#if>
     </#if>
+</#macro>
+
+<#--  This macro retrieves the remarks field from an IUCLID table (taken as an argument) and prints the results as footnotes  -->
+<#macro printRemarksFromTable tablePath>
+    <#--  Initialize the counter that keeps track of the remarks index  -->
+    <#local remarksCounter = 0 />
+
+    <#--  Iterate over the table  -->
+    <#list tablePath as row>
+        <#if row.Remarks?has_content>
+            <#local remarksCounter++ />
+
+            <#--  Print remarks  -->
+            <superscript>(${remarksCounter})</superscript><@com.value row.Remarks />
+
+            <#--  Add empty line  -->
+            <#if row?has_next>
+                <@com.emptyLine/>
+            </#if>
+        </#if>
+    </#list>
 </#macro>
 
 
@@ -840,8 +853,13 @@
             </#list>
         </#if>
 
-        <#--  Iterate  -->
-        <#if summaryList?has_content>
+        <#-- Iterate-->
+        <#if !summaryList?has_content>
+            <@com.emptyLine/>
+            <para>No summary information available for this section.</para>
+            <@com.emptyLine/>
+        <#else>
+
             <@com.emptyLine/>
 
             <para><emphasis role="HEAD-WoutNo">Summary</emphasis></para>
