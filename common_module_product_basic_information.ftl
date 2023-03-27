@@ -35,11 +35,14 @@
 					</#if>
 			</tr>
 			
-			<tr>
-				<td>Producer of the plant protection product</td>				
-				<td></td>					
-			</tr>
-			
+			<#if ghsRelevant??><para></para>
+			<#else>		
+				<tr>
+					<td>Producer of the plant protection product</td>				
+					<td></td>					
+				</tr>
+			</#if>
+
 			<tr><?dbfo bgcolor="#EEEEEE"?>
 				<td colspan="2">Quantitative and qualitative information on the composition of the plant protection product</td> 
 			</tr>
@@ -59,7 +62,7 @@
 					<#if mixtureCompositions.GeneralInformation.FormulationType?has_content>
 					<tr>
 						<td>Formulation</td>
-						<td><@com.picklistMultiple mixtureCompositions.GeneralInformation.FormulationType /></td>					
+						<td><@com.value mixtureCompositions.GeneralInformation.FormulationType /></td>					
 					</tr>
 					</#if>
 					
@@ -122,12 +125,211 @@
 </#compress>
 </#macro>
 
+<#assign referenceSubstancesInformation = [] />
+
 <#macro referenceSubstanceData referenceSubstanceKey>
-<#compress>
-	<#local refSubst = iuclid.getDocumentForKey(referenceSubstanceKey) />
-	<#if refSubst?has_content>
-		<@com.text refSubst.GeneralInfo.ReferenceSubstanceName/>
-		EC no.: <@com.inventoryECNumber refSubst.Inventory.InventoryEntry/>
-  	</#if>
-</#compress>
+	<#compress>
+		<#local refSubst = iuclid.getDocumentForKey(referenceSubstanceKey) />
+		<#if refSubst?has_content>
+			<#if pppRelevant??>
+				<command linkend="${refSubst.documentKey.uuid!}"><@com.text refSubst.ReferenceSubstanceName/></command>
+				<#assign referenceSubstancesInformation = com.addDocumentToSequenceAsUnique(refSubst, referenceSubstancesInformation) />
+			<#else>
+				<@com.text refSubst.GeneralInfo.ReferenceSubstanceName/>
+				EC no.: <@com.inventoryECNumber refSubst.Inventory.InventoryEntry/>
+			</#if>
+		</#if>
+	</#compress>
 </#macro>
+
+<#-------------PPP additions---------------->
+<#macro productIdentity _subject includeTradeNames=true>
+	<#compress>
+
+		<para><emphasis role="underline">Name</emphasis>:
+			<@com.mixtureName _subject/>
+		</para>
+
+		<#if _subject.PublicName?has_content>
+			<para><emphasis role="underline">Public name</emphasis>: <@com.text _subject.PublicName/></para>
+		</#if>
+
+		<#if _subject.OtherNames?has_content>
+			<para><emphasis role="underline">Other identifiers:</emphasis></para>
+			<@com.otherIdentifiersList _subject.OtherNames 'indent'/>
+		</#if>
+
+		<#if includeTradeNames>
+			<para><emphasis role="underline">Trade names:</emphasis></para>
+			<@tradeNames _subject/>
+		</#if>
+
+	</#compress>
+</#macro>
+
+<#macro tradeNames _subject mixtureComposition=[]>
+	<#compress>
+
+		<#if !mixtureComposition?has_content>
+			<#local mixtureComposition = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "MixtureComposition") />
+		</#if>
+
+		<#if mixtureComposition?has_content>
+			<#list mixtureComposition as mixtureComp>
+				<#if (mixtureComposition?size>1)><para><emphasis role="bold">Product #{mixtureComp_index+1} - <@com.text mixtureComp.GeneralInformation.Name/></emphasis></para></#if>
+
+				<#if mixtureComp.GeneralInformation.TradeNames?has_content>
+					<#list mixtureComp.GeneralInformation.TradeNames as tradeName>
+						<para role="indent">
+							<@com.text tradeName.TradeName/>
+							<#if tradeName.Country?has_content>(<@com.picklistMultiple tradeName.Country/>)</#if>
+						</para>
+					</#list>
+				<#else>
+					<para role="indent">No trade names available for this product.</para>
+				</#if>
+			</#list>
+		</#if>
+	</#compress>
+</#macro>
+
+<#macro mixtureComposition _subject>
+	<#compress>
+
+		<#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "MixtureComposition") />
+		<#if !(recordList?has_content)>
+			No relevant information available.
+		<#else>
+
+			<#list recordList as record>
+
+				<para>
+					<emphasis role="HEAD-WoutNo">
+						<#if (recordList?size>1)>Composition #{record_index+1}:</#if>
+
+						<#if record.GeneralInformation.Name?has_content><@com.text record.GeneralInformation.Name/><#else><@com.text record.name/></#if>
+					</emphasis>
+				</para>
+
+				<#if record.GeneralInformation.TradeNames?has_content>
+					<para><emphasis role="underline">Trade names:</emphasis> <@tradeNames _subject=_subject mixtureComposition=[record]/></para>
+				</#if>
+
+				<#if record.GeneralInformation.Description?has_content>
+					<para><emphasis role="underline">Description:</emphasis></para>
+					<para role="indent"><@com.text record.GeneralInformation.Description/></para>
+				</#if>
+
+				<#if record.GeneralInformation.FormulationType?has_content>
+					<para><emphasis role="underline">Formulation type:</emphasis> <@com.value record.GeneralInformation.FormulationType/></para>
+				</#if>
+
+
+				<!-- Components -->
+				<#assign itemList = record.Components.Components />
+				<#if itemList?has_content>
+					<@com.emptyLine/>
+					<table border="1">
+						<title>Components
+							<#if record.GeneralInformation.Name?has_content>
+								(<@com.text record.GeneralInformation.Name/>)</#if></title>
+						<col width="20%" />
+						<col width="20%" />
+						<col width="20%" />
+						<col width="20%" />
+						<col width="20%" />
+						<tbody>
+						<tr>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Constituent</emphasis></th>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Function</emphasis></th>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Typical concentration</emphasis></th>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Concentration range</emphasis></th>
+							<th><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Remarks</emphasis></th>
+						</tr>
+						<#list itemList as item>
+							<tr>
+								<td>
+									<#--NOTE: this can be a substance, a reference substance or even a mixture-->
+									<@componentId item.Reference/>
+								</td>
+								<td>
+									<@com.picklist item.Function/>
+								</td>
+								<td>
+									<@com.value item.TypicalConcentration/>
+								</td>
+								<td>
+									<@com.range item.ConcentrationRange/>
+								</td>
+								<td>
+									<#if item.SubstanceOfConcern><emphasis role="bold">Substance of concern</emphasis><?linebreak?></#if>
+									<#if item.Gci><emphasis>Generic component identifier (CGI)</emphasis><?linebreak?></#if>
+									<#if item.Icg><emphasis>Interchangeable component group (ICG)</emphasis><?linebreak?></#if>
+									<#if item.Sfc><emphasis>Standard formula (SF) component</emphasis><?linebreak?></#if>
+									<#if item.SubstanceGeneratedInSitu><emphasis>Substance generated in situ</emphasis><?linebreak?></#if>
+
+									<@com.text item.Remarks/>
+								</td>
+							</tr>
+						</#list>
+						</tbody>
+					</table>
+				</#if>
+				<@com.emptyLine/>
+			</#list>
+		</#if>
+
+	</#compress>
+</#macro>
+
+<#--NOTE: to consider if this should be more detailed in case of mixtures/substances-->
+<#macro componentId link>
+	<#compress>
+		<#if link?has_content>
+			<#local component=iuclid.getDocumentForKey(link)/>
+			<#if component?has_content>
+				<#if component.documentType=="MIXTURE">
+					mixture <@com.mixtureName component/>
+				<#elseif component.documentType=="SUBSTANCE">
+					substance <@com.substanceName component/>
+					<#if component.ReferenceSubstance.ReferenceSubstance?has_content>
+						(ref. <@componentId component.ReferenceSubstance.ReferenceSubstance/>)
+					</#if>
+				<#elseif component.documentType=="REFERENCE_SUBSTANCE">
+					<@referenceSubstanceData link/>
+				</#if>
+			</#if>
+
+		</#if>
+	</#compress>
+</#macro>
+
+<#--This macro extracts the function from the ENDPOINT_STUDY_RECORD.EffectivenessAgainstTargetOrganisms of section 3.2-->
+<#macro functionsOfMixture _subject>
+	<#compress>
+
+		<#local functionList=[]/>
+
+		<#local recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "ENDPOINT_STUDY_RECORD", "EffectivenessAgainstTargetOrganisms") />
+		<#if recordList?has_content>
+			<#list recordList as record>
+				<#if record.GeneralInformation.InformationOnIntendedUseAndApplication.FunctionAddressed?has_content>
+					<#list record.GeneralInformation.InformationOnIntendedUseAndApplication.FunctionAddressed as functionEntry>
+						<#local function><@com.value functionEntry/></#local>
+						<#if !functionList?seq_contains(function)>
+							<#local functionList=functionList + [function]/>
+						</#if>
+					</#list>
+				</#if>
+			</#list>
+		</#if>
+
+		<#if functionList?has_content>
+			${functionList?join(", ")}
+		<#else>
+			No information on function available.
+		</#if>
+	</#compress>
+
+</#macro>
+
