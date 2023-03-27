@@ -304,7 +304,7 @@
 											
 											<#-- option to cross-reference:  <command linkend="${_subject.documentKey.uuid!}_${summary.documentSubType}">${propertyName!}</command>  -->
 											<#-- print link only for full table (when title is printed) -->
-											<#if printTitle & !includeMetabolites>
+											<#if printTitle && (!includeMetabolites || !_metabolites??)>
 												<ulink url="${docUrl}">${propertyName!}</ulink>
 
 												<#if (summaryList?size>1)>
