@@ -3305,7 +3305,7 @@
 	<#local endpointsHash = {}/>
 	<#list summaryList as summary>
 		<#local summaryCSAseq = getEcotoxSummarySeq_EU_PPP(summary)/>
-		<#list summarySeq as seqEntry>
+		<#list summaryCSAseq as seqEntry>
 			<#if endpointsHash[seqEntry["name"]]??>
 				<#local newSeqEntry = endpointsHash[seqEntry["name"]] + [seqEntry]/>
 				<#local endpointsHash = endpointsHash + {seqEntry["name"]:newSeqEntry}/>
