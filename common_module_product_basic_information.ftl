@@ -312,7 +312,7 @@
 			<#list recordList as record>
 				<#if record.GeneralInformation.InformationOnIntendedUseAndApplication.FunctionAddressed?has_content>
 					<#list record.GeneralInformation.InformationOnIntendedUseAndApplication.FunctionAddressed as functionEntry>
-						<#local function><@com.value functionEntry/></#local>
+						<#local function><@com.picklist functionEntry/></#local>
 						<#if !functionList?seq_contains(function)>
 							<#local functionList=functionList + [function]/>
 						</#if>
