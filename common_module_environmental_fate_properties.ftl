@@ -4508,7 +4508,7 @@
 							<#elseif substance.documentType=="REFERENCE_SUBSTANCE">
 								<@com.text substance.ReferenceSubstanceName/>
 							</#if>
-						</#if>						</#if>
+						</#if>						
 						<#if item.ParentMetabolite?has_content>
 							(<@com.picklist item.ParentMetabolite/>)
 						</#if>
