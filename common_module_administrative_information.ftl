@@ -533,7 +533,7 @@
 					<para role="indent"><para style="background-color:#f7f7f7" ><@com.richText record.KeyInformation.field4764/></para></para>
 
 					<#if record.KeyInformation.QualityControl?has_content> 
-						<para role='indent'>Quality control: <@com.text record.KeyInformation.QualityControl 'literal'/> <para>
+						<para role='indent'>Quality control: <@com.text record.KeyInformation.QualityControl 'literal'/> </para>
 					</#if>
 				</#if>
 
