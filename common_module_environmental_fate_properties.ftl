@@ -3550,7 +3550,7 @@
 		<#if summary.KeyValueCsa.DegradationMarineSediment.HalfLifeMarineWaterSed?has_content>
 			<para>Rate of degradation in marine water sediment:</para>
 			<para role='indent'>
-				Half-life in marine water sediment: <@com.value summary.KeyValueCsa.DegradationMarineSediment.HalfLifeMarineWaterSedr/>
+				Half-life in marine water sediment: <@com.value summary.KeyValueCsa.DegradationMarineSediment.HalfLifeMarineWaterSed/>
 					<#if summary.KeyValueCsa.DegradationMarineSediment.Temperature?has_content>at <@com.value summary.KeyValueCsa.DegradationMarineSediment.Temperature/></#if>
 			</para>
 		</#if>
@@ -4305,7 +4305,11 @@
 					<td>
 						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 						<#if substance?has_content>
-							<@com.text substance.ReferenceSubstanceName/>
+							<#if substance.documentType=="SUBSTANCE">
+								<@com.text substance.ChemicalName/>
+							<#elseif substance.documentType=="REFERENCE_SUBSTANCE">
+								<@com.text substance.ReferenceSubstanceName/>
+							</#if>
 						</#if>
 						<#if item.ParentMetabolite?has_content>
 							(<@com.picklist item.ParentMetabolite/>)
@@ -4429,7 +4433,11 @@
 				<td>
 					<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 					<#if substance?has_content>
-						<@com.text substance.ReferenceSubstanceName/>
+						<#if substance.documentType=="SUBSTANCE">
+							<@com.text substance.ChemicalName/>
+						<#elseif substance.documentType=="REFERENCE_SUBSTANCE">
+							<@com.text substance.ReferenceSubstanceName/>
+						</#if>
 					</#if>
 					<#if item.ParentMetabolite?has_content>
 						(<@com.picklist item.ParentMetabolite/>)
@@ -4495,8 +4503,12 @@
 					<td>
 						<#local substance=iuclid.getDocumentForKey(item.Substance)/>
 						<#if substance?has_content>
-							<@com.text substance.ReferenceSubstanceName/>
-						</#if>
+							<#if substance.documentType=="SUBSTANCE">
+								<@com.text substance.ChemicalName/>
+							<#elseif substance.documentType=="REFERENCE_SUBSTANCE">
+								<@com.text substance.ReferenceSubstanceName/>
+							</#if>
+						</#if>						
 						<#if item.ParentMetabolite?has_content>
 							(<@com.picklist item.ParentMetabolite/>)
 						</#if>
