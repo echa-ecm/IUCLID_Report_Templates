@@ -3147,7 +3147,7 @@
 			<para role="indent"><@com.value stdes.OxygenConditions/></para>
 		</#if>
 
-		<#if stdes.ContinuousDarkness>
+		<#if stdes.ContinuousDarkness?has_content>
 			<para>Continuous darkness: <@com.value stdes.ContinuousDarkness/></para>
 		</#if>
 
@@ -3426,7 +3426,7 @@
 			<para role="indent"><@com.picklist stdes.OxygenConditions/></para>
 		</#if>
 
-		<#if stdes.ContinuousDarkness>
+		<#if stdes.hasElement("ContinuousDarkness") && stdes.ContinuousDarkness?has_content>
 			<para>Continuous darkness: <@com.value stdes.ContinuousDarkness/></para>
 		</#if>
 
