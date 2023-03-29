@@ -588,7 +588,14 @@
 
 					<tr valign="middle">
 						<td colspan="6"><?dbfo bgcolor="#FBDDA6" ?><emphasis role="bold">Date batches/lots produced</emphasis></td>
-						<td><?dbfo bgcolor="#FBDDA6" ?><@com.value qc.Date/></td>
+						<td><?dbfo bgcolor="#FBDDA6" ?>
+							<#--NOTE: this part has been amended in the IUCLID doc, so in the new version only the elseif block is relevant and the first part can be removed -->
+							<#if qc.hasElement("Date")>
+								<@com.value qc.Date/>
+							<#elseif qc.hasElement("DateStart")>
+								<@com.value qc.DateStart/> - <@com.value qc.DateEnd/>
+							</#if>
+						</td>
 					</tr>
 
 					<tr align="center" valign="middle">
