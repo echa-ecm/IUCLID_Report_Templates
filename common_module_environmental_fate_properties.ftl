@@ -2104,7 +2104,7 @@
 </#function>
 <#function isCSAValuesAdsorptionDesorption summary>
 	<#return summary.KeyValueForChemicalSafetyAssessment.KocAt20Celsius?has_content 
-	|| summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf
+	|| summary.KeyValueForChemicalSafetyAssessment.AtTheTemperatureOf?has_content
 	|| summary.KeyInformation.KeyInformation?has_content />
 </#function>
 

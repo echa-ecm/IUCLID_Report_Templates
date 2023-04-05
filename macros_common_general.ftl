@@ -295,7 +295,12 @@ ${textValue}
 	<#compress>
 		<#escape x as x?html>
 
-			<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, locale) />
+			<#if !spcRelevant??>
+				<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, "en") />
+			<#elseif spcRelevant??>
+				<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, "${languageLocale}") />
+			</#if>
+
 			<#if localizedPhrase?has_content>
 
 				<#if !localizedPhrase.open || !(localizedPhrase.text?matches("other:")) || printOtherPhrase>
@@ -876,7 +881,7 @@ ${textValue}
 		<#elseif valueType=="document_reference"> 
 			<@com.documentReference valuePath/>
 		<#elseif valueType=="data_protection">
-			<@iuclid.phrase code=.node.confidentiality />
+			<@iuclid.phrase code=valuePath.node.confidentiality />
 		<#elseif valueType=="attachment">	
 			<@com.attachment valuePath/>
 		<#elseif valueType=="attachments">	

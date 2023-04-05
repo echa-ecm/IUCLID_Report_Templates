@@ -375,7 +375,7 @@
 		
 	<@assessmentEntitiesList summary />
 
-	<#if !(docSubType=="Explosiveness" || docSubType=="Flammability" || docSubType=="FlashPoint" || docSubType=="OxidisingProperties" || docSubType=="ExposureRelatedObservationsHumans")>
+	<#if !(docSubType=="PhysicalChemicalProperties" || docSubType=="Explosiveness" || docSubType=="Flammability" || docSubType=="FlashPoint" || docSubType=="OxidisingProperties" || docSubType=="ExposureRelatedObservationsHumans")>
 		<#if docSubType=="Hydrolysis" || docSubType=="PhototransformationInAir" || docSubType=="PhototransformationInWater" || docSubType=="PhototransformationInSoil" || 
 		docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
 		docSubType=="Biodegradation" || docSubType=="AdsorptionDesorption" || docSubType=="HenrysLawConstant" || docSubType=="TransportAndDistribution" || 

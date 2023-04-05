@@ -291,7 +291,7 @@
 								<!-- Property -->
 
 								<#if usespan> 
-									<td  rowspan="${summaryList?size}">  
+									<td> 
 										<#local docUrl=iuclid.webUrl.documentView(summary.documentKey) />
 										
 										<#if pppRelevant??>
