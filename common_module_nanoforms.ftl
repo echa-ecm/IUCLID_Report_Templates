@@ -5,26 +5,21 @@
 
 <#assign recordList = iuclid.getSectionDocumentsForParentKey(_subject.documentKey, "FLEXIBLE_RECORD", "SubstanceComposition") />
 <#if !(recordList?has_content)>
-	No relevant information available.		
-	<#else/>
+<@com.emptyLine/>
+
+	<#elseif recordList?has_content>
 	
 	<#list recordList as record>
+	<#if com.picklistValueMatchesPhrases(record.GeneralInformation.StateForm, ["solid: nanoform"])>
 		
-	<!-- Characterisation of nanoforms -->				
-	<#if com.picklistValueMatchesPhrases(record.GeneralInformation.StateForm, ["solid: nanoform"]) && !record.CharacterisationOfNanoforms?has_content>
-	
-		<@com.emptyLine/>
-		<para><emphasis role="bold">Characterisation of nanoforms</emphasis></para>
-		<para>No information available on characterisation of nanoforms</para>
-	
-	<#elseif record.CharacterisationOfNanoforms?has_content>
-	
+	<!-- Characterisation of nanoforms -->
+	<#if record?has_content && record.CharacterisationOfNanoforms?has_content>	
 		<@com.emptyLine/>
 		<para><emphasis role="bold">Characterisation of nanoforms</emphasis></para>
 	
 		<#if record.CharacterisationOfNanoforms.TypeOfInformationReported?has_content>
 		<para>
-		Type of information reported:  <@com.picklist record.CharacterisationOfNanoforms.TypeOfInformationReported />
+		Type of information reported: <@com.picklist record.CharacterisationOfNanoforms.TypeOfInformationReported />
 		</para>
 		</#if>
 	</#if>	
@@ -287,9 +282,9 @@
 			</para>
 		</#if>
 
+	</#if>
 	</#list>
-</#if>	
-		
+</#if>		
 </#compress>
 </#macro>
 						
