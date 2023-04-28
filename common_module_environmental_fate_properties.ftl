@@ -2159,7 +2159,7 @@
 		<#return [] />
 	</#if>
 
-	<#if isCSAPhototransformationInSoil(summaryList)>
+	<#if summaryList?has_content>
 		<#local valuesCSA = valuesCSA + [summaryList]/>			
 	</#if>	
 
@@ -2200,7 +2200,8 @@
 </#function>
 
 <#function isCSAPhototransformationInAir summary>
-	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeInAir?has_content || summary.KeyInformation.KeyInformation?has_content />
+	<#return summary.KeyValueForChemicalSafetyAssessment.HalflifeInAir?has_content || 
+	summary.KeyValueForChemicalSafetyAssessment.DegradationRateConstantWithOHRadicals || summary.KeyInformation.KeyInformation?has_content />
 </#function>
 <#function getCSAValuesBioaccumulationAquaticSediment summaryList>
 	<#local valuesCSA = []/>
