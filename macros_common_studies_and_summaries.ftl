@@ -1,5 +1,5 @@
 <!-- Common macros and functions for endpoint studies and summaries that could be reused in any template based on IUCLID6 data -->
-
+<#import "macros_common_general.ftl" as com>
 <#-- Macros to initialize and get assessment entity information -->
 
 <#-- Variable to hold the list of assessment entities -->
@@ -375,6 +375,12 @@
 		
 	<@assessmentEntitiesList summary />
 
+	<!-- 
+	The next part outputs summary tables for Fate and EcoTox. 
+	First excludes Phys-Chem docs
+	Secondly, includes only Fate docs to output *fateCSAtable
+	Thirdly expects all other docs to be EcoTox docs to output *ecotoxSummary
+	 -->
 	<#if !(docSubType=="PhysicalChemicalProperties" || docSubType=="Explosiveness" || docSubType=="Flammability" || docSubType=="FlashPoint" || docSubType=="OxidisingProperties" || docSubType=="ExposureRelatedObservationsHumans")>
 		<#if docSubType=="Hydrolysis" || docSubType=="PhototransformationInAir" || docSubType=="PhototransformationInWater" || docSubType=="PhototransformationInSoil" || 
 		docSubType=="BiodegradationInWaterScreeningTests" || docSubType=="BiodegradationInWaterAndSedimentSimulationTests" || docSubType=="BiodegradationInSoil" || docSubType=="Stability" || 
@@ -387,70 +393,6 @@
 	</#if>
 
 	<@summaryAdditionalInformation summary/>
-</#macro>
-
-<#macro toxCSAValues summary printSummaryName pathToCSA="" pathextension="" >
-<#compress>
-<!-- full path to block representing each route -->
-<#local completeCSAvalueToxPath = ("summary." + "${pathToCSA}")?eval />
-
-<!-- get label for name of the route -->
-<@iuclid.label for=completeCSAvalueToxPath var="label"/>
-
-<!-- applicable only for repeated dose (and maybe reprotox) an additional path to get endpoint conclusion info -->
-<#if pathextension?has_content>
-<#local completeCSAvalueToxPathExtension = ("summary" + ".KeyValueForChemicalSafetyAssessment." + "${pathextension}")?eval />
-</#if>
-
-<!-- full path to the relevant linked study record -->
-<#if summary.hasElement("LinkToRelevantStudyRecord")>
-<#local completeCSAvalueLinkedPath = ("summary." + "${pathToCSA}" + ".LinkToRelevantStudyRecord")?eval />
-</#if>
-
-<?linebreak?>
-
-<!-- Get the relevant linked study record -->
-<para><emphasis role="bold">Value used for CSA:</emphasis></para>
-<#if summary.hasElement("LinkToRelevantStudyRecord")>
-	<@studyandsummaryCom.relevantStudies summary completeCSAvalueLinkedPath/>
-<#else>
-</#if>
-
-<!-- get toxic effect field; for repeated dose only -->
-<#if summary.hasElement("KeyValueForChemicalSafetyAssessment.ToxicEffectType") && summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType?has_content>
-<@iuclid.label for=summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType var="toxicEffectLabel"/>
-${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.ToxicEffectType /></#if>
-<para>
-<!-- *temp solution to get the endpoint conclusion for repeated dose toxicity - solution needed for extracting once, the relevant conclusion -->
-<#if completeCSAvalueToxPathExtension?has_content && completeCSAvalueToxPathExtension?node_name=="EndpointConclusionSystemicEffectsOralRoute">
-<@iuclid.label for=completeCSAvalueToxPathExtension var="labelEndpointConclusion"/><para><emphasis role="bold">${labelEndpointConclusion}</emphasis>: <@com.value completeCSAvalueToxPathExtension /></para></#if>
-	<!-- all tox docs except repeated dose and maybe reprotox -->
-	<#if summary.documentSubType!="RepeatedDoseToxicity">
-	<emphasis role="bold">${label}</emphasis>: 
-		<@listOfCSAvalues summary completeCSAvalueToxPath "" />
-	</#if>	
-</para>	
-</#compress>
-</#macro>
-
-<#macro listOfCSAvalues summary completeCSAvalueToxPath completeCSAvalueToxPathExtension>
-
-<@iuclid.label for=completeCSAvalueToxPath var="titleLabel"/>
-<#local parentNode = (completeCSAvalueToxPath)?parent />
-<@iuclid.label for=parentNode var="parentNodeHigh"/>
-
-<#if summary.documentSubType=="RepeatedDoseToxicity">
-<#if completeCSAvalueToxPath?has_content><?linebreak?><emphasis role="bold">${titleLabel} </emphasis></#if>
-<#if parentNode?has_content><?linebreak?><emphasis role="bold">${parentNodeHigh} </emphasis></#if>
-</#if>
-<!-- list and fetch, where node_name corresponds, the CSA values -->
-<#list completeCSAvalueToxPath?children as child>
-	<#if child?has_content>	
-		<#if child?node_name=="EndpointConclusion"><@com.value child /></#if><#if child?node_name=="EffectLevelUnit"> (<@com.value child />: </#if><#if child?node_name=="EffectLevelValue"><@com.value child />)<?linebreak?></#if><#if child?node_name=="ExperimentalExposureTimePerWeek">(<@com.value child />)<?linebreak?></#if>
-		<#if child?node_name=="TestType">(<@com.value child />; </#if><#if child?node_name=="Species">(<@com.value child />)<?linebreak?></#if>
-			<#if child?node_name=="Organ">Target organ: <@com.value child /></#if>
-	</#if>
-</#list>
 </#macro>
 
 <#macro assessmentEntitiesList summary>
@@ -716,51 +658,51 @@ ${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.Tox
 
 	<#-- Mapping of fate summaries to fields to map -->
 	<#local summaryDocToCSAMap = {
-								"BiodegradationInSoil": [{"path": "BiodegradationInSoilForExposureAssessment", 
-															"result": ["HalflifeInSoil"], 
-															"conditions": ["AtTheTemperatureOf", "PHCondition1"]},
-														{"path": "BiodegradationInSoilForExposureAssessment", 
-															"result": ["HalflifeInSoilPhDependent"], 
-															"conditions": ["AtTheTemperatureOfPhDependent", "PHCondition2"]},
-														{"path": "BiodegradationInSoilForPersistenceAssessment", 
-															"result": ["DT50", "DT90"], 
-															"conditions": ["TemperatureOfTheTestSystem"]},
-														{"path": "RouteOfBiodegradation", "result": [], "conditions": []}
-														],
-								"HenrysLawConstant" : [{"path":'', "result": ["HenrysLawConstant"], "conditions":["AtTheTemperatureOf"]}],
-								"PhototransformationInSoil" : [{"path":'', "result": ["HalflifeInSoil"], "conditions":[]}],
-								"FieldStudies" : [{"path": "BiodegradationInSoilForExposureAssessment", 
-													"result": ["DT50"], "conditions": ["AtTheTemperatureOf", "PHCondition1"]},
-												{"path": "BiodegradationInSoilForExposureAssessment", 
-													"result": ["DT50PhDependent"], "conditions": ["AtTheTemperatureOfPhDependent", "PHCondition2"]},
-												{"path": "BiodegradationInSoilForPersistenceAssessment", 
-													"result": ["DT50", "DT90"], 
-													"conditions": ["TemperatureOfTheTestSystem"]},
-												{"path": "RouteOfBiodegradation", 
-													"result": [], 
-													"conditions": []}],								
-								"AdsorptionDesorption" : [{"path":'', "result": ["KocAt20Celsius"], "conditions":["AtTheTemperatureOf"]},							
-															<#-- below: repeatable block -->
-															{"path":'OtherAdsorptionCoefficients', "result":["TypeValue"], "type":"Type", "conditions":["AtTheTemperatureOf"]}],
-								"Hydrolysis" : [{"path":'', "result": ["HalflifeForHydrolysis"], "conditions":["AtTheTemperatureOf"]}],
-								"PhototransformationInWater" : [{"path":'', "result":["HalflifeInWater"], "conditions" : []}],
-								"BiodegradationInWaterScreeningTests" : [{"path":'', "result":["BiodegradationInWater"], "conditions" : ["TypeOfWater"]}],
-								"BiodegradationInWaterAndSedimentSimulationTests" :
-											[{"path":'BiodegradationInFreshwater', "result":["DT50ForExposureAssessment"], "conditions" : ["AtTheTemperatureOfExpo"]},
-											 {"path":'BiodegradationInFreshwater', "result":["DT50ForPersistenceAssessment", "DT90"], "conditions" : ["TemperatureOfTheTestSystem"]},
-											 {"path":'BiodegradationInMarineWater', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
-											 {"path":'BiodegradationInFreshwaterSediment', "result":["DT50ForExposureAssessment"], "conditions" : ["AtTheTemperatureOfExpo"]},
-											 {"path":'BiodegradationInFreshwaterSediment', "result":["DT50ForPersistenceAssessment", "DT90"], "conditions" : ["TemperatureOfTheTestSystem"]},
-											 {"path":'BiodegradationInMarineWaterSediment', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
-											 {"path":'WholeSystem', "result":["DT50ForExposureAssessmentFreshwaterAndSediment"], "conditions" : ["AtTheTemperatureOfWholeSystem"]},
-											 {"path":'WholeSystem', "result":["DT50ForPersistenceAssessmentFreshwaterAndSediment"], "conditions" : ["AtTheTemperatureOf"]},
-											 {"path":'WholeSystem', "result":["DT50MarineWaterAndSediment"], "conditions" : ["AtTheTemperatureOfMarine"]},
-											 {"path":'BiodegradationInSewageTreatmentPlant', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
-											 {"path":'BiodegradationInSewageTreatmentPlant', "result":["Degradation"], "conditions" : ["AtTheTemperatureOfSewage"]},
-											 {"path":'BiodegradationInSewerSystem', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
-											 {"path":'RouteOfBiodegradation', "result":[], "conditions" : []}],
-								"PhototransformationInAir" : [{"path":'', "result":["HalflifeInAir"], "conditions" : []},
-																{"path":'', "result":["DegradationRateConstantWithOHRadicals"], "conditions" : []}]
+			"BiodegradationInSoil": [{"path": "BiodegradationInSoilForExposureAssessment", 
+										"result": ["HalflifeInSoil"], 
+										"conditions": ["AtTheTemperatureOf", "PHCondition1"]},
+									{"path": "BiodegradationInSoilForExposureAssessment", 
+										"result": ["HalflifeInSoilPhDependent"], 
+										"conditions": ["AtTheTemperatureOfPhDependent", "PHCondition2"]},
+									{"path": "BiodegradationInSoilForPersistenceAssessment", 
+										"result": ["DT50", "DT90"], 
+										"conditions": ["TemperatureOfTheTestSystem"]},
+									{"path": "RouteOfBiodegradation", "result": [], "conditions": []}
+									],
+			"HenrysLawConstant" : [{"path":'', "result": ["HenrysLawConstant"], "conditions":["AtTheTemperatureOf"]}],
+			"PhototransformationInSoil" : [{"path":'', "result": ["HalflifeInSoil"], "conditions":[]}],
+			"FieldStudies" : [{"path": "BiodegradationInSoilForExposureAssessment", 
+								"result": ["DT50"], "conditions": ["AtTheTemperatureOf", "PHCondition1"]},
+							{"path": "BiodegradationInSoilForExposureAssessment", 
+								"result": ["DT50PhDependent"], "conditions": ["AtTheTemperatureOfPhDependent", "PHCondition2"]},
+							{"path": "BiodegradationInSoilForPersistenceAssessment", 
+								"result": ["DT50", "DT90"], 
+								"conditions": ["TemperatureOfTheTestSystem"]},
+							{"path": "RouteOfBiodegradation", 
+								"result": [], 
+								"conditions": []}],								
+			"AdsorptionDesorption" : [{"path":'', "result": ["KocAt20Celsius"], "conditions":["AtTheTemperatureOf"]},							
+										<#-- below: repeatable block -->
+										{"path":'OtherAdsorptionCoefficients', "result":["TypeValue"], "type":"Type", "conditions":["AtTheTemperatureOf"]}],
+			"Hydrolysis" : [{"path":'', "result": ["HalflifeForHydrolysis"], "conditions":["AtTheTemperatureOf"]}],
+			"PhototransformationInWater" : [{"path":'', "result":["HalflifeInWater"], "conditions" : []}],
+			"BiodegradationInWaterScreeningTests" : [{"path":'', "result":["BiodegradationInWater"], "conditions" : ["TypeOfWater"]}],
+			"BiodegradationInWaterAndSedimentSimulationTests" :
+						[{"path":'BiodegradationInFreshwater', "result":["DT50ForExposureAssessment"], "conditions" : ["AtTheTemperatureOfExpo"]},
+							{"path":'BiodegradationInFreshwater', "result":["DT50ForPersistenceAssessment", "DT90"], "conditions" : ["TemperatureOfTheTestSystem"]},
+							{"path":'BiodegradationInMarineWater', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
+							{"path":'BiodegradationInFreshwaterSediment', "result":["DT50ForExposureAssessment"], "conditions" : ["AtTheTemperatureOfExpo"]},
+							{"path":'BiodegradationInFreshwaterSediment', "result":["DT50ForPersistenceAssessment", "DT90"], "conditions" : ["TemperatureOfTheTestSystem"]},
+							{"path":'BiodegradationInMarineWaterSediment', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
+							{"path":'WholeSystem', "result":["DT50ForExposureAssessmentFreshwaterAndSediment"], "conditions" : ["AtTheTemperatureOfWholeSystem"]},
+							{"path":'WholeSystem', "result":["DT50ForPersistenceAssessmentFreshwaterAndSediment"], "conditions" : ["AtTheTemperatureOf"]},
+							{"path":'WholeSystem', "result":["DT50MarineWaterAndSediment"], "conditions" : ["AtTheTemperatureOfMarine"]},
+							{"path":'BiodegradationInSewageTreatmentPlant', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
+							{"path":'BiodegradationInSewageTreatmentPlant', "result":["Degradation"], "conditions" : ["AtTheTemperatureOfSewage"]},
+							{"path":'BiodegradationInSewerSystem', "result":["DT50"], "conditions" : ["AtTheTemperatureOf"]},
+							{"path":'RouteOfBiodegradation', "result":[], "conditions" : []}],
+			"PhototransformationInAir" : [{"path":'', "result":["HalflifeInAir"], "conditions" : []},
+											{"path":'', "result":["DegradationRateConstantWithOHRadicals"], "conditions" : []}]
 
 	}/>
 
@@ -821,9 +763,7 @@ ${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.Tox
 				<#if ! links?has_content>
 					<#local links = getSummaryLinks(summary, ["LinkToRelevantStudyRecord.Link"])/>
 				</#if>  
-						
-				
-
+								
 				<#-- append -->
 				<#if results?has_content || conditions?has_content || links?has_content>
 					<#local mySeq = mySeq + [{'name': endpoint!, "links" : links!, 
@@ -883,103 +823,6 @@ ${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.Tox
 	</#list>
 </#macro> 
 
-<#macro relevant summary>
-<#local docDefId = summary.documentType +"."+ summary.documentSubType/>
-<#if !(docDefId=="ENDPOINT_SUMMARY.AquaticToxicity" || docDefId=="ENDPOINT_SUMMARY.ToxicityOtherAquaOrganisms")>	
-
-	<#local fullPath = ("summary." + "KeyValueForChemicalSafetyAssessment")/>
-	<#local fullPath = fullPath?eval/>
-
-	<#assign items = []/>
-
-	<#list fullPath?children as child>
-		<#if child?has_content>
-				
-			<#local valueType=child?node_type/>
-			<@iuclid.label for=child var="descript"/>			
-			
-			${descript}
-
-			<@tableRelevantStudies summary child valueType descript /> 
-
-			<#else>No Endpoint Summary information available
-
-		</#if>
-	</#list>
-</#if>
-</#macro>
-
-<#macro tableRelevantStudies summary child valueType descript>
-
-<informaltable frame="all">
-	<tgroup cols='3'>										
-		<colspec width="33.3%" />
-		<colspec width="33.3%" />
-		<colspec width="33.3%" />
-			<tbody>
-		
-				<#if valueType=="block">
-				<row> 
-					<entry>
-						<#list child?children as child>
-						<@iuclid.label for=child var="description"/>
-									
-							<#if child?has_content>	
-							<#if description=="Link to relevant study record(s)">
-								<#list child as linkedRecords>
-									<#if linkedRecords?has_content>									         
-										<@com.documentReference linkedRecords/>	
-									</#if>
-								</#list>	
-							</#if>								
-							</#if>
-						</#list>
-					</entry>
-					<entry>
-						<#list child?children as child>
-						<@iuclid.label for=child var="description"/>											
-							<#if child?has_content>										         
-								<#if description=="Dose descriptor"> <@com.value child/>  </#if>
-							</#if>
-						</#list>
-					</entry>
-					<entry>
-						<#list child?children as child>
-						<@iuclid.label for=child var="description"/>
-									
-							<#if child?has_content>										         
-								<#if description=="Effect concentration"> <@com.value child/> </#if>
-							</#if>
-						</#list>
-					</entry>
-								
-				</row>
-				</#if>
-		</tbody>
-	</tgroup>
-</informaltable>
-</#macro>
-
-<#macro iterateHashMap summaryPathToDataMap summary>
-<#local properties = summaryPathToDataMap?keys />
-<#list properties as property>
-		<#if property?has_content>
-		<#-- Check whether the loaded document's type is the same as indicated in the current record of summaryPathToDataMap -->	
-			<#if summary?has_content>
-				<#local sectionReference = ("summary.KeyValueForChemicalSafetyAssessment." + summaryPathToDataMap[property].studyReferenceLink + ".LinkToRelevantStudyRecord")?eval  />
-				
-				<#if sectionReference?has_content>	
-					<#list sectionReference as studyReferences>
-						<#if studyReferences?has_content>
-						<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
-							<para>Relevant studies: <@com.text studyLink.name/></para>
-						</#if>
-					</#list>
-				</#if>
-			</#if>
-		</#if>
-		</#list>
-</#macro>
 
 <#-- Macro to get relevant studies linked to a summary -->
 <#macro relevantStudies summary pathLinkedStudy>
@@ -1009,74 +852,9 @@ ${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.Tox
 				</#list>
 			</#if>
 			</#if>
-		</#if>
-	
-	<#else>
-
-	<#if summary?has_content>
-			<#-- some summaries do ot have links to studies, the following #if condition takes care of these exceptions -->
-			<#if docDefId=="ENDPOINT_SUMMARY.AcuteToxicity" || docDefId=="ENDPOINT_SUMMARY.IrritationCorrosion" || docDefId=="ENDPOINT_SUMMARY.Sensitisation" ||
-			docDefId=="ENDPOINT_SUMMARY.RepeatedDoseToxicity" || docDefId=="ENDPOINT_SUMMARY.GeneticToxicity" || docDefId=="ENDPOINT_SUMMARY.Carcinogenicity" ||
-			docDefId=="ENDPOINT_SUMMARY.ToxicityToReproduction" || docDefId=="ENDPOINT_SUMMARY.Neurotoxicity" || docDefId=="ENDPOINT_SUMMARY.Immunotoxicity">	
-			<#if summary?has_content>
-				<@com.emptyLine/>
-				<#list pathLinkedStudy as studyReferences>
-					<#if studyReferences?has_content>
-					<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
-						<para>Relevant studies: <@com.text studyLink.name/></para>
-					</#if>
-				</#list>
-			</#if>
-			</#if>
-	</#if>
-
-	
-	<#assign summaryPathToDataMap = {
-		'Summary' : {'docType' : '${summary.documentType}', 'docSubType' : '${summary.documentSubType}', 'studyReferenceLink' : 'KeyValueForChemicalSafetyAssessment.FreshwaterAlgaeShortTerm', 'sectionName' : 'Acute Toxicity oral', 'subCategoryRelevant' : 'Yes'}
-		
-		}/>
-
-		<#list summaryPathToDataMap?keys as prop>
-		<#-- Check whether the loaded document's type is the same as indicated in the current record of summaryPathToDataMap -->
-		<#if summaryPathToDataMap[prop].docType == summary.documentType && summaryPathToDataMap[prop].docSubType == summary.documentSubType>
-		<#if docDefId=="ENDPOINT_SUMMARY.ToxicityToAquaticAlgae">
-			<#if summary?has_content>
-					<#local sectionReference = summaryPathToDataMap[prop].studyReferenceLink />
-					<#if sectionReference?has_content>
-						<@com.emptyLine/>
-						<#local studyRecordPath = "summary." + summaryPathToDataMap[prop].studyReferenceLink + ".LinkToRelevantStudyRecord" />
-						<#local study = studyRecordPath?eval />	
-						<#list study as studyReferences>
-							<#if studyReferences?has_content>
-							<#assign studyLink = iuclid.getDocumentForKey(studyReferences) />
-								<para>Relevant studies: <@com.text studyLink.name/></para>
-							</#if>
-						</#list>
-					</#if>
-			</#if>
-		</#if>
-		</#if>
-		</#list>
-		
+		</#if>		
 	</#if>
 </#macro>
-
-<#function isStudyInformationDifferentPath summary>
-<#if summary?has_content>							
-<#local docDefId = summary.documentType +"."+ summary.documentSubType/>
-
- <#if !(docDefId=="ENDPOINT_SUMMARY.AcuteToxicity" || docDefId=="ENDPOINT_SUMMARY.IrritationCorrosion" || docDefId=="ENDPOINT_SUMMARY.Sensitisation" ||
- docDefId=="ENDPOINT_SUMMARY.RepeatedDoseToxicity" || docDefId=="ENDPOINT_SUMMARY.GeneticToxicity" || docDefId=="ENDPOINT_SUMMARY.Carcinogenicity" ||
- docDefId=="ENDPOINT_SUMMARY.ToxicityToReproduction" || docDefId=="ENDPOINT_SUMMARY.Neurotoxicity" || docDefId=="ENDPOINT_SUMMARY.Immunotoxicity")>
-	<#return false>
-	<#else>
-		<#return true>
-	</#if>
-</#if>
-<#return false>
-</#function>
-
-
 
 <#-- Macros to print an endpoint summary's key information  -->
 <#macro summaryKeyInformation summary>
@@ -1224,36 +1002,39 @@ ${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.Tox
 <#macro "@multilingual_text">
 	<#if __skipElement(.node)><#return></#if>
 	<#if .node?has_content>
+	<@label .node/>
 	<@com.value .node/>,<#t>
-	<#else>No information available,</#if>
+	<#else></#if>
 </#macro>
 
 <#macro "@multilingual_text_small">
 	<#if __skipElement(.node)><#return></#if>
 	<#if .node?has_content>
+	<@label .node/>
 	<@com.value .node/>,<#t>
-	<#else>No information available,</#if>
+	<#else></#if>
 </#macro>
 
 <#macro "@multilingual_text_medium">
 	<#if __skipElement(.node)><#return></#if>
-	<@iuclid.label for=.node var="lbl" />
-	<#if lbl?has_content>
-<#--		uncomment next line and this will be displayed only if the label of the text is in "wantedNames" (line 2) -->
-<#--		<#if !wantedNames?seq_contains(lbl)><#return></#if> -->
-		${lbl},
-	</#if>
-	<#if __skipElement(.node)><#return></#if>
 	<#if .node?has_content>
+	<@label .node/>
 	<@com.value .node/>,<#t>
-	<#else>No information available,</#if>
+	<#else></#if>
+</#macro>
+
+<#macro label labelPath>
+	<@iuclid.label for=labelPath var="lbl" />
+	<#if lbl?has_content>
+		${lbl}:
+	</#if>
 </#macro>
 
 <#macro "@multilingual_text_large">
 	<#if __skipElement(.node)><#return></#if>
 	<#if .node?has_content>
 	<@com.value .node/>,<#t>
-	<#else>No information available,</#if>
+	<#else></#if>
 </#macro>
 
 <#macro "@multilingual_text_html">
@@ -1261,10 +1042,8 @@ ${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.Tox
 	<#if .node?has_content>
 		<#local multilingualContent=__multilingualContent(.node)/>
 		<#list multilingualContent?keys as lang>
-			<span>
-				<para role="i6LiteralText">${lang}</para>
-				${iuclid.convertHtmlToDocBook(multilingualContent[lang])},<#t>
-			</span>
+			<para role="i6LiteralText">${lang}</para>
+			${iuclid.convertHtmlToDocBook(multilingualContent[lang])},<#t>
 		</#list>
 	</#if>
 </#macro>
@@ -1272,127 +1051,137 @@ ${toxicEffectLabel}: <@com.value summary.KeyValueForChemicalSafetyAssessment.Tox
 <#macro "@text_small">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@text_medium">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@text_large">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@text_html">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@address">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@integer">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@decimal">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@date">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@quantity">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@range">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
+<@label .node/>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@picklist_single">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@picklist_multi">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@boolean">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
 <@com.value .node/>,<#t>
-<#else>No information available,</#if>
+<#else></#if>
 </#macro>
 
 <#macro "@attachment">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
 <@com.value .node/>,<#t>
-<#else>No information available,<#t></#if>
+<#else><#t></#if>
 </#macro>
 
 <#macro "@attachments">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
 <@com.value .node/>,<#t>
-<#else>No information available,<#t></#if>
+<#else><#t></#if>
 </#macro>
 
 <#macro "@document_reference">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
 <@com.value .node/>,<#t>
-<#else>No information available,<#t></#if>
+<#else><#t></#if>
 </#macro>
 
 <#macro "@document_references">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
 <@com.value .node/>,<#t>
-<#else>No information available,<#t></#if>
+<#else><#t></#if>
 </#macro>
 
 <#macro "@data_protection">
 <#if __skipElement(.node)><#return></#if>
 <#if .node?has_content>
 <@com.value .node/>,<#t>
-<#else>No information available,<#t></#if>
+<#else><#t></#if>
 </#macro>
 
 <#macro "@repeatable">

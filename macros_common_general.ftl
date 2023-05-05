@@ -291,14 +291,17 @@ ${textValue}
 </#compress>
 </#macro>
 
+
 <#macro picklist picklistValue locale="en" printOtherPhrase=false printDescription=true printRemarks=true>
 	<#compress>
 		<#escape x as x?html>
 
-			<#if !spcRelevant??>
+			<#if !(spcRelevant??) && locale?has_content>
 				<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, "en") />
-			<#elseif spcRelevant??>
+			<#elseif spcRelevant?? && languageLocale?has_content>
 				<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, "${languageLocale}") />
+			<#else>
+				<#local localizedPhrase = iuclid.localizedPhraseDefinitionFor(picklistValue.code, "en") />
 			</#if>
 
 			<#if localizedPhrase?has_content>
@@ -881,7 +884,9 @@ ${textValue}
 		<#elseif valueType=="document_reference"> 
 			<@com.documentReference valuePath/>
 		<#elseif valueType=="data_protection">
-			<@iuclid.phrase code=valuePath.node.confidentiality />
+			<#if data_protection?has_content && .node.confidentiality?has_content>
+			<@iuclid.phrase code=.node.confidentiality />
+			</#if>
 		<#elseif valueType=="attachment">	
 			<@com.attachment valuePath/>
 		<#elseif valueType=="attachments">	
@@ -1084,6 +1089,19 @@ ${textValue}
     
     <#return uuid/>
 </#function>
+
+<#macro localizeXsl l=''>
+	<#if l == ''>
+		<#local loc = .locale>
+	<#else>
+		<#local loc = l>
+	</#if>
+	<#escape x as x?html>
+		<meta:localizationParam xmlns:meta="http://echa.europa.eu/schemas/reporting/metadata">
+			<meta:param meta:name="locale">${loc}</meta:param>
+		</meta:localizationParam>
+	</#escape>
+</#macro>
 
 
 
