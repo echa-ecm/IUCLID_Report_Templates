@@ -326,16 +326,16 @@ ${textValue}
 </#compress>
 </#macro>
 
-<#macro range rangeValue locale="en">
+<#macro range rangeValue locale="en" includeQualifier="true">
 <#compress>
 	<#if rangeValue?has_content>
 		<#escape x as x?html>
 			<#if rangeValue.lower.value?has_content>
-				${rangeValue.lower.qualifier!}<@number rangeValue.lower.value/>
+				<#if includeQualifier=="true">${rangeValue.lower.qualifier!}</#if><@number rangeValue.lower.value/>
 			</#if>
 			<#if rangeValue.lower.value?has_content && rangeValue.upper.value?has_content>-</#if>
 			<#if rangeValue.upper.value?has_content>
-				${rangeValue.upper.qualifier!}<@number rangeValue.upper.value/>
+				<#if includeQualifier=="true">${rangeValue.upper.qualifier!}</#if><@number rangeValue.upper.value/>
 			</#if>
 		</#escape>
 		<#if rangeValue.unit?has_content>
