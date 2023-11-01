@@ -34,8 +34,8 @@
             <#if (docs?size>1)><para><emphasis role="underline">#${doc_index+1}: <ulink url="${docUrl}"><@com.text doc.name/></ulink></emphasis></para></#if>
 			
             <#-- get the path -->
-            <#local path="doc."+path/>
-			<#local docPath=path?eval/>
+            <#local combinedPath="doc."+path/>
+			<#local docPath=combinedPath?eval/>
             
             <#-- iterate through the path elements -->
             <#list docPath?children as child>  
